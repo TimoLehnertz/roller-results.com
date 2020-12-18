@@ -1,0 +1,19 @@
+.section
+    background-color: white
+    position: relative
+    transition: all 0.1s
+    // @include clipCap()
+
+    .content
+        padding: 20px
+
+        & > *
+            animation: content-fadeIn 0.9s forwards
+
+@keyframes content-fadeIn
+    from
+        opacity: 0
+        transform: translateY(-20px)
+    to
+        transform: translateY(0)
+        opacity: 1

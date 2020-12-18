@@ -1,0 +1,92 @@
+.btn
+    &.default
+        text-decoration: none
+        background-color: #555555
+        color: #CCC
+        padding: 10px
+    
+    &.round
+        border-radius: 10px
+        transition: border-radius 0.3s, border-width 0.2s
+        border: 1px solid #CCC
+
+        &:hover
+            border-radius: 40px
+        
+        &:active
+            border-radius: 0px
+
+    &.slide
+        z-index: 0
+        border: none
+        background: transparent
+        position: relative
+        overflow: hidden
+        transition: color 0.2s
+
+        &::after
+            content: ""
+            position: absolute
+            left: 0
+            right: 0
+            top: 0
+            bottom: 0
+            background-color: gray
+            z-index: -2
+
+        &::before
+            content: ""
+            display: block
+            position: absolute
+            right: 100%
+            bottom: 0
+            height: 100%
+            width: 200%
+            background: #444
+            border-left: 5px solid #333
+            border-right: 5px solid #333
+            transition: right 0.2s
+            transform-origin: rightbottom
+            z-index: -1
+        
+        &:hover::before
+            right: 10%
+
+        &:focus
+            &::before
+                right: -50%
+
+
+        &:hover
+            color: white
+
+        &.vertical
+            &::before
+                transform: skewX(45deg)// default
+            &.topleft
+                &::before
+                    transform: skewX(-45deg)
+
+            &.bottomleft
+                &::before
+                    transform: skewX(45deg)
+
+            &.topright
+                &::before
+                    right: -200%
+                &:hover::before
+                    right: -110%
+                &::before
+                    transform: skewX(45deg)
+                &:focus::before
+                    right: -50%
+            
+            &.bottomright
+                &::before
+                    right: -200%
+                &:hover::before
+                    right: -110%
+                &::before
+                    transform: skewX(-45deg)
+                &:focus::before
+                    right: -50%

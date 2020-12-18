@@ -1,0 +1,14 @@
+.headline
+    padding: 10px 50px
+    width: 100%
+    background-color: #CCC
+    margin-top: 0
+    animation: clipIn 0.6s forwards
+
+@keyframes clipIn
+    from 
+        filter: invert(80%)
+        clip-path: polygon(0% 0%, 100% 0%, 100% calc(100% - 0px), 0% calc(100% - 10px))
+    to
+        filter: invert(100%)
+        clip-path: polygon(0% 0%, 100% 0%, 100% calc(100% - 10px), 0% 100%)

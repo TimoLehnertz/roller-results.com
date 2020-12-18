@@ -14,5 +14,14 @@
     </head>
     <body class="body">
     <header class="header">
-        <input type="text" autocomplete="off" placeholder="Search">
+        <div class="left">
+            <i class="fas fa-clock"></i>
+            <span class="title">Speed-skate.org</span>
+        </div>
+        <div class="search-bar">
+            <input class="search-bar__input" type="text" autocomplete="off" placeholder="Search">
+        </div>
+        <div class="right">
+            | Options here |
+        </div>
     </header>

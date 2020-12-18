@@ -1,0 +1,23 @@
+@mixin arrow($left)
+    content: ""
+    position: absolute
+    @if $left
+        right: 50%
+        left: -10px
+    @else
+        left: 49%
+        right: -10px
+    top: 100%
+    background-color: $color-bg-bright-2
+    height: 22px
+    transform-origin: if($left, lefttop , righttop)
+    transform: skewY(if($left, 10deg, -10deg))
+
+@mixin clipCap()
+    animation: clipIn 1s forwards
+
+    @keyframes clipIn
+        from
+            clip-path: polygon(0 10px, 100% 10px, 100% calc(100% - 10px), 0px calc(100% - 10px))
+        to
+            clip-path: polygon(0 10px, 100% 0, 100% calc(100% - 10px), 0 100%)
