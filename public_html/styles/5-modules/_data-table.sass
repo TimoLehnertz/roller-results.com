@@ -1,0 +1,27 @@
+$border-color: #444
+$bg-color: #FFF
+$bg-color-zebra: #CCC
+
+.data-table
+    border-collapse: collapse
+    background-color: $bg-color
+
+    td + td
+        border-left: 1px solid $border-color
+
+    .zebra
+        background-color: $bg-color-zebra
+
+.data-table__head
+    border-bottom: 2px solid $border-color
+
+    td
+        text-align: center
+        padding: 10px
+        font-size: 1.2rem
+   
+
+.data-table__body
+    td
+        text-align: center
+        padding: 5px

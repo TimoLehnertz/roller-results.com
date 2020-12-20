@@ -1015,11 +1015,12 @@ button {
 }
 
 .data-dropdown {
+  z-index: 10;
   position: absolute;
   background: white;
   border: 1px solid #888;
-  border-radius: 10px;
   width: auto;
+  font-size: 1rem;
 }
 
 .data-dropdown__entry {
@@ -1037,5 +1038,82 @@ button {
 .data-dropdown__entry:hover {
   -webkit-filter: brightness(0.8);
           filter: brightness(0.8);
+}
+
+.data-dropdown__name {
+  border-bottom: 2px solid #888888;
+  padding: 3px 0;
+  font-size: 1.1rem;
+}
+
+/* Tooltip container */
+.tooltip {
+  position: relative;
+}
+
+/* Tooltip text */
+.tooltip .tooltiptext {
+  visibility: hidden;
+  background-color: #555;
+  color: #fff;
+  text-align: center;
+  padding: 5px 10px;
+  border-radius: 6px;
+  /* Position the tooltip text */
+  position: absolute;
+  z-index: 1;
+  bottom: 125%;
+  left: 50%;
+  margin-left: -60px;
+  /* Fade in tooltip */
+  opacity: 0;
+  -webkit-transition: opacity 0.3s;
+  transition: opacity 0.3s;
+}
+
+/* Tooltip arrow */
+.tooltip .tooltiptext::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #555 transparent transparent transparent;
+}
+
+/* Show the tooltip text when you mouse over the tooltip container */
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+  opacity: 1;
+}
+
+.data-table {
+  border-collapse: collapse;
+  background-color: #FFF;
+}
+
+.data-table td + td {
+  border-left: 1px solid #444;
+}
+
+.data-table .zebra {
+  background-color: #CCC;
+}
+
+.data-table__head {
+  border-bottom: 2px solid #444;
+}
+
+.data-table__head td {
+  text-align: center;
+  padding: 10px;
+  font-size: 1.2rem;
+}
+
+.data-table__body td {
+  text-align: center;
+  padding: 5px;
 }
 /*# sourceMappingURL=main.css.map */

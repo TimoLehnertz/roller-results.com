@@ -1,11 +1,30 @@
 "use strict";
 
 /**
+ * Tooltip
+ * 
+ * Dependencies:
+ *  Jquery.js
+ *  _tooltip.sass
+ */
+
+class Tooltip{
+    constructor(elem, text){
+        this.elem = elem;
+        this.text = text;
+        $(elem).addClass("tooltip");
+        $(elem).append(`<span class="tooltiptext">${text}</span>`);
+    }
+}
+
+/**
  * Drop down
  * 
  * Dependencies:
- *  JQuery
+ *  JQuery.js
  *  _dropdown.sass
+ *  Tooltip
+ *  fontawesome
  * 
  * constructor:
  *      elem    ->  elem to be used as opening for the dropdown
@@ -13,10 +32,11 @@
  *                  or an object in the form of
  *                  [
  *                      {
- *                              element: ? //Element to be represented / can be text
- *                              tooltip: ? //tooltip
- *                              children: [] //children to move to if clicked(in the same form as parent)
- *                              icon: //icon to be showed at the left @todo
+ *                              element: ? //Element to be represented / can be text,
+ *                              tooltip: ? //tooltip,
+ *                              children: [] //children to move to if clicked(in the same form as parent),
+ *                              icon: //icon to be showed at the left in form of class name from font awesome,
+ *                              onclick: //onclick event return true to close dropdown,
  *                       }
  *                  ]
  */
@@ -26,21 +46,68 @@ class Dropdown{
     static allDropDowns = [];
     static dropdownClass = "data-dropdown";
     static entryClass = "data-dropdown__entry";
+    static nameClass = "data-dropdown__name";
 
     constructor(elem, content){
-        console.log(typeof content);
         this.elem = elem;
         this.content = content;
         this.unfolded = false;
-        this.customClass = undefined;
-        this.dropDownElem = undefined;
         this.path = [];
+        this.customClass = undefined;
+        this.backIcon = "fas fa-arrow-circle-left";
+        this.name = undefined;
+        
+        /**
+         * animations
+         * anime.js objects are used
+         * factory functions
+         */
+        this.openAnimation = (bounds) => {
+            return  {
+                height: [0, bounds.height],
+                scale: [0.5, 1],
+                opacity: [0, 1],
+                duration: 100,
+                easing: "easeOutCubic"
+            }
+        }
+        
+        this.closeAnimation = () => {
+            return  {
+                height: 0,
+                scale: [1, 0.7],
+                opacity: [1, 0],
+                duration: 200,
+                easing: "easeOutCubic"
+            }
+        }
     }
 
-    setup(setup){console.log("setting up");
+    getDropDownElem(){
+        return this.dropDownElem.get();
+    }
+
+    /**
+     * Setip function to be called before init()
+     * @param {*} setup Object to be used as setup
+     */
+    setup(setup){
+        console.log("setting up");
         console.log(setup);
         if(setup.hasOwnProperty("customClass")){//custom class to be added to the dropdowns classList
             this.customClass = setup.customClass;
+        }
+        if(setup.hasOwnProperty("openAnimation")){//custom class to be added to the dropdowns classList
+            this.openAnimation = setup.openAnimation;
+        }
+        if(setup.hasOwnProperty("closeAnimation")){//custom class to be added to the dropdowns classList
+            this.closeAnimation = setup.closeAnimation;
+        }
+        if(setup.hasOwnProperty("backIcon")){//custom class to be added to the dropdowns classList
+            this.backIcon = setup.backIcon;
+        }
+        if(setup.hasOwnProperty("name")){//custom class to be added to the dropdowns classList
+            this.name = setup.name;
         }
     }
 
@@ -63,6 +130,9 @@ class Dropdown{
         }
     }
 
+    /**
+     * Initiate open and close events
+     */
     initEvents(){
         $(window).click(() => {
             this.close();
@@ -81,14 +151,20 @@ class Dropdown{
             this.parentObj = undefined;
             this.dropDownElem.css("display", "block");
             this.load(this.content);
+            const bounds = Dropdown.getFullBounds(this.dropDownElem);
+            const anim = this.openAnimation(bounds);
+            anim.targets = this.dropDownElem.get();
+            anime(anim);
         }
     }
 
     load(object){
         this.dropDownElem.empty();
         if(Array.isArray(object)){
-            console.log("array");
             this.path.push(object);
+            if(this.name != undefined){
+                this.dropDownElem.append(`<div class="${Dropdown.nameClass}">${this.name}</div>`);
+            }
             if(this.parentObj != undefined){
                 if(object != this.content){
                     this.dropDownElem.append(this.getBackButton());
@@ -101,7 +177,9 @@ class Dropdown{
             anime({
                 targets: this.dropDownElem.get(),
                 width: bounds.width + 20,
-                duration: 0
+                height: bounds.height,
+                duration: 50,
+                easing: "easeOutSine"
             });
         } else{
             console.log("todo")
@@ -109,12 +187,22 @@ class Dropdown{
     }
 
     getBackButton(){
-        const btn = $(`<div class="${Dropdown.entryClass}"><- Back</div>`);
+        const btn = $(`<div class="${Dropdown.entryClass}">Back</div>`);
+        btn.prepend(Dropdown.getIcon(this.backIcon, "margin right"));
         btn.click(() => {
             this.path.pop();
             this.load(this.path[this.path.length - 1]);
         });
         return btn;
+    }
+
+    /**
+     * get font awesome icon
+     * @param {text} faClass class from fonawesome
+     * @param {text} extraClasses extra classes to be appended useful for margin right / left
+     */
+    static getIcon(faClass, extraClasses){
+        return $(`<i class="${faClass} ${extraClasses != null ? extraClasses : ""}"><i>`);
     }
 
     getObjElem(obj){
@@ -130,13 +218,38 @@ class Dropdown{
                 this.load(obj.children);
             });
         }
+        /**
+         * onclick
+         */
+        if(obj.hasOwnProperty("onclick")){
+            elem.click(() => {
+                if(obj.onclick()){
+                    this.close();
+                }
+            });
+        }
+        /**
+         * tooltip
+         */
+        if(obj.hasOwnProperty("tooltip")){
+            new Tooltip(elem, obj.tooltip);
+        }
+        /**
+         * Icon
+         */
+        if(obj.hasOwnProperty("icon")){
+            elem.prepend(Dropdown.getIcon(obj.icon, "margin right"));
+        }
         return elem;
     }
 
     close(){
         if(this.unfolded){
             this.unfolded = false;
-            this.dropDownElem.css("display", "none");
+            const anim = this.closeAnimation();
+            anim.targets = this.dropDownElem.get();
+            anim.complete = () => {this.dropDownElem.css("display", "none")};
+            anime(anim);
         }
     }
 
@@ -148,6 +261,7 @@ class Dropdown{
 
     static getFullBounds(elem){
         const elemCpy = $(elem).clone();
+        elemCpy.find(".tooltiptext").remove();
         elemCpy.css("display", "block");
         elemCpy.css("opacity", "0");
         elemCpy.css("width", "");
@@ -161,6 +275,7 @@ class Dropdown{
 /**
  * Data-datble
  * Dependencies:
+ * Dropdown
  * table.sass
  * 
  * Data shoud be in format {
@@ -176,18 +291,43 @@ class Dropdown{
 
 class Table{
 
+    static class = "data-table";
+    static headClass = "data-table__head";
+    static bodyClass = "data-table__body";
+
     constructor(elem, data, name){
         this.data = data;
         this.elem = elem;
         this.name = name;
         this.layout = undefined;
+        this.layout = this.getLayout(this.data);
         this.init();
     }
 
     init(){
-        this.layout = this.getLayout(this.data);
         $(this.elem).empty();
         $(this.elem).append(this.getTable());
+        anime({
+            targets: `.${Table.class} tr`,
+            translateX: [-50, 0],
+            opacity: [0, 1],
+            duration: 50,
+            delay: anime.stagger(50), // increase delay by 100ms for each elements.
+            easing: "easeOutCubic",
+            complete: () => {
+                $(`.${Table.class} tr`).css("transform", "");
+            }
+        });
+    }
+
+    getLayoutIndex(name){
+        let i = 0;
+        for (const head of this.layout) {
+            if(head === name){
+                return i;
+            }
+            i++;
+        }
     }
 
     getLayout(data){
@@ -206,7 +346,7 @@ class Table{
     }
 
     getTable(){
-        const table = $(`<table class="data-table ${this.name}"></table>`);
+        const table = $(`<table class="${Table.class} ${this.name}"></table>`);
         $(table).append(this.getTableHead(this.layout));
         let zebra = false;
         for (const row of this.data) {
@@ -216,67 +356,62 @@ class Table{
         return table;
     }
 
+    sort(column, up){
+        const mul = up ? 1 : -1
+        this.data.sort(function(a, b){
+            if(a[column] == undefined){
+                return mul;
+            }
+            if(b[column] == undefined){
+                return -mul;
+            }
+            if(a[column] < b[column]) { return -1 * mul;}
+            if(a[column] > b[column]) { return 1 * mul;}
+            return 0;
+        });
+        this.init();
+        const index = this.getLayoutIndex(column);
+        this.getHeadElem(index).append(Dropdown.getIcon(`fas fa-sort-${up ? "up" : "down"}`, "margin left"));
+    }
+
+    getHeadElem(index){
+        return $(this.elem).find(".index-" + index);
+    }
+
     getTableHead(layout){
-        const head = $(`<tr class="data-table__head"></tr>`);
+        const head = $(`<tr class="${Table.headClass}"></tr>`);
+        let count = 0;
         for (const td of layout) {
-            const tdElem = $(`<td>${td}</td>`);
-            // let dropDown = new Dropdown(tdElem, $(`<p>Filter<br>testa<hr>testb</p>`));
-            let dropDown = new Dropdown(tdElem, [
+            const tdElem = $(`<td class="index-${count}">${td}</td>`);
+            let dropdown = new Dropdown(tdElem, [
                 {
-                    element: "test A",
-                    tooltip: "this is a test",
-                    children: [
-                        {
-                            element: "test A-1",
-                            tooltip: "this is a inner test",
-                        },{
-                            element: "test A-2",
-                            tooltip: "this is a inner test",
-                        },{
-                            element: "test A-3",
-                            tooltip: "this is a inner test",
-                        }
-                    ]
+                    element: "Sort ascending",
+                    icon: "fas fa-sort-up",
+                    onclick: () => {
+                        this.sort(td, true);
+                        return true;
+                    }
                 }, {
-                    element: $("<div>B</div>"),
-                    tooltip: "this is a test",
-                    children: [
-                        {
-                            element: "test B-1",
-                            tooltip: "this is a inner test",
-                        },{
-                            element: "test B-2",
-                            tooltip: "this is a inner test",
-                        },{
-                            element: "test B-3",
-                            tooltip: "this is a inner test",
-                        }
-                    ]
-                }, {
-                    element: "test C",
-                    tooltip: "this is a test",
-                    children: [
-                        {
-                            element: "test C-1",
-                            tooltip: "this is a inner test",
-                        },{
-                            element: "test C-2",
-                            tooltip: "this is a inner test",
-                        },{
-                            element: "test C-3",
-                            tooltip: "this is a inner test",
-                        }
-                    ]
-                }, 
+                    element: "Sort descending",
+                    icon: "fas fa-sort-down",
+                    onclick: () => {
+                        this.sort(td, false);
+                        return true;
+                    }
+                }
             ]);
-            dropDown.init();
+            dropdown.setup({
+                name: "Sort by " + td
+            })
+            dropdown.init();
             $(head).append(tdElem);
+            count++;
         }
         return head;
     }
 
     getRow(row, zebra){
-        const rowElem = $(`<tr ${zebra ? `class="zebra"` : ""}></tr>`);
+        const rowElem = $(`<tr class="${Table.bodyClass} ${zebra ? "zebra" : ""}"></tr>`);
         for (const column of this.layout) {
             if(row.hasOwnProperty(column)){
                 $(rowElem).append(this.getColumn(row[column]));
