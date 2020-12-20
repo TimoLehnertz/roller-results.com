@@ -22,5 +22,12 @@ const  testData = [
 
 $(() => {
     console.log("document loaded");
+    anime({
+        targets: ".anime",
+        translateY: [
+            {value: 200, duration: 500},
+            {value: 0, duration: 800}
+        ]
+    })
     const table = new Table($(".table-test"), testData, "test-table");
 })
