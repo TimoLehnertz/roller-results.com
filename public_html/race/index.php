@@ -26,5 +26,5 @@ echo "<script>const race = ". json_encode($race) .";</script>";
     </script>
 </main>
 <?php
-include_once "../footer.php";
+include_once "../footer.php";//s
 ?>
