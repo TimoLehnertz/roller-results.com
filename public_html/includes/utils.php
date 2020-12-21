@@ -10,9 +10,3 @@ function push_assoc_array_in_array(&$arr1, $arr2){
         $arr1[$key] = $value;
     }
 }
-
-function echoTableFromAssoc($array){
-    echo "<table>";
-        
-    echo "</table>";
-}

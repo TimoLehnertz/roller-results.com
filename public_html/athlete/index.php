@@ -16,7 +16,6 @@ if(!$person){
 include_once "../header.php";
 
 echo "<script>const person = [". json_encode($person) ."];</script>";
-
 ?>
 <main class="main">
     <h2>Athlete <?php echo $person["firstName"]." ".$person["sureName"]?></h2>

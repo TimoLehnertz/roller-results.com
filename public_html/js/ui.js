@@ -2,16 +2,16 @@ $(() => {
     $(".search-bar__input").on("input", searchChange);
 });
 
+let lastSearch = "";
+
 function searchChange(){
     const text = $(".search-bar__input").val();
+    lastSearch = text;
     search(text, (succsess, data) => {
         if(succsess){
-            
-            console.log(data);
-
             updateSearchBar(data);
         } else{
-
+            //Todo
         }
     });
 }
@@ -36,7 +36,7 @@ function sortSearch(search){
 
 function elemFromSearchOption(option){
     const elem = $(
-    `<a href="${lonkFromOption(option)}" class="search__option">
+    `<a href="${linkFromOption(option)}" class="search__option">
         <span class="search__name">${option.name}</span>
     </a>`);
     elem.prepend(iconFromSearch(option));
@@ -45,9 +45,9 @@ function elemFromSearchOption(option){
 }
 
 
-function lonkFromOption(option){
+function linkFromOption(option){
     if(option.type == "person"){
-        return `/athlete?id=${option.id}`;
+        return `/athlete?id=${option.id}&search=${lastSearch}`;
     }
     return `/${option.type}?id=${option.id}`;
 }

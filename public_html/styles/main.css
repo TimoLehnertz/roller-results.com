@@ -770,7 +770,7 @@ button {
   margin: 0;
 }
 
-.header .left {
+.header .left a {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -779,9 +779,11 @@ button {
           align-items: center;
   font-size: 1.3rem;
   height: 50px;
+  text-decoration: none;
+  color: #333;
 }
 
-.header .left i {
+.header .left a i {
   margin-right: 10px;
 }
 
