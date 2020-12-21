@@ -47,7 +47,7 @@ function elemFromSearchOption(option){
 
 function linkFromOption(option){
     if(option.type == "person"){
-        return `/athlete?id=${option.id}&search=${lastSearch}`;
+        return `/athlete?id=${option.id}&search1=${lastSearch}`;
     }
     return `/${option.type}?id=${option.id}`;
 }
