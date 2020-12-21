@@ -208,14 +208,13 @@ function search($name){
         $names = explode(" ", $name);
         $personIds = [];
         foreach ($names as $key => $value) {
-            echo "<br>".$value;
             $persons = query("CALL sp_searchPerson(?)", "s", $value);
             foreach ($persons as $key => $person) {
                 if(!in_array($person["id"], $personIds)){
                     $personIds[] = $person["id"];
                     $results[] = [
                         "id" => $person["id"],
-                        "name" => $person["firstname"]." ".$person["surename"]." - ".$person["country"],
+                        "name" => $person["firstName"]." ".$person["sureName"]." - ".$person["country"],
                         "priority" => 1,
                         "type" => "person"
                     ];

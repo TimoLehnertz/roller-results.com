@@ -318,6 +318,7 @@ class Table{
             easing: "easeOutCubic",
             complete: () => {
                 $(`.${Table.class} tr`).css("transform", "");
+                $(`.${Table.class} td`).css("position", "");
             }
         });
     }
