@@ -761,62 +761,6 @@ button {
   z-index: 10;
 }
 
-.layout {
-  width: 98vw;
-  min-height: 40vh;
-  margin-top: 40vh;
-}
-
-.layout.basic {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-orient: horizontal;
-  -webkit-box-direction: normal;
-      -ms-flex-direction: row;
-          flex-direction: row;
-  -ms-flex-pack: distribute;
-      justify-content: space-around;
-}
-
-.layout.basic .main {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-      -ms-flex-direction: column;
-          flex-direction: column;
-}
-
-.layout.basic .section {
-  width: 70vw;
-}
-
-.layout.basic .aside {
-  width: 25vw;
-}
-
-.layout.basic .aside h1, .layout.basic .section h1, .layout.basic .aside h2, .layout.basic .section h2 {
-  text-align: center;
-}
-
-@media only screen and (max-width: 800px) {
-  .layout.basic.basic {
-    -webkit-box-orient: vertical;
-    -webkit-box-direction: normal;
-        -ms-flex-direction: column;
-            flex-direction: column;
-  }
-  .layout.basic .section {
-    width: 100vw;
-  }
-  .layout.basic .aside {
-    margin-top: 10px;
-    width: 100%;
-  }
-}
-
 .header {
   display: -ms-grid;
   display: grid;
@@ -1115,5 +1059,12 @@ button {
 .data-table__body td {
   text-align: center;
   padding: 5px;
+}
+
+.result__person {
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: 10fr 1fr;
+      grid-template-columns: 10fr 1fr;
 }
 /*# sourceMappingURL=main.css.map */

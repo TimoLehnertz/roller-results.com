@@ -12,8 +12,12 @@ class Tooltip{
     constructor(elem, text){
         this.elem = elem;
         this.text = text;
-        $(elem).addClass("tooltip");
-        $(elem).append(`<span class="tooltiptext">${text}</span>`);
+        $(() => {this.init()});
+    }
+
+    init(){
+        $(this.elem).addClass("tooltip");
+        $(this.elem).append(`<span class="tooltiptext">${this.text}</span>`);
     }
 }
 
@@ -92,8 +96,6 @@ class Dropdown{
      * @param {*} setup Object to be used as setup
      */
     setup(setup){
-        console.log("setting up");
-        console.log(setup);
         if(setup.hasOwnProperty("customClass")){//custom class to be added to the dropdowns classList
             this.customClass = setup.customClass;
         }
@@ -301,7 +303,7 @@ class Table{
         this.name = name;
         this.layout = undefined;
         this.layout = this.getLayout(this.data);
-        this.init();
+        $(() => {this.init()});
     }
 
     init(){
@@ -312,7 +314,7 @@ class Table{
             translateX: [-50, 0],
             opacity: [0, 1],
             duration: 50,
-            delay: anime.stagger(50), // increase delay by 100ms for each elements.
+            delay: anime.stagger(10), // increase delay by 100ms for each elements.
             easing: "easeOutCubic",
             complete: () => {
                 $(`.${Table.class} tr`).css("transform", "");
@@ -422,8 +424,14 @@ class Table{
         return rowElem;
     }
     
-    getColumn(text){
-        const column = $(`<td>${text}</td>`);
-        return column;
+    getColumn(elem){
+        if (elem instanceof jQuery){
+            const e = $(`<td></td>`);
+            e.append(elem);
+            return e;
+        } else{
+
+        }
+        return $(`<td>${elem}</td>`);
     }
 }
