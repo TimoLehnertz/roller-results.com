@@ -219,7 +219,7 @@ function search($name){
         /**
          * persons names
          */
-        $names = explode(" ", $name);
+        $names = explode("  ", $name);
         $personIds = [];
         foreach ($names as $key => $value) {
             $persons = query("CALL sp_searchPerson(?)", "s", $value);
