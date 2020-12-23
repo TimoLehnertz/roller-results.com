@@ -1,10 +1,12 @@
 $(() => {
     $(".search-bar__input").on("input", searchChange);
+    $("body").click(updateSearchBar);
 });
 
 let lastSearch = "";
 
-function searchChange(){
+function searchChange(e){
+    e.stopPropagation();
     const text = $(".search-bar__input").val();
     lastSearch = text;
     search(text, (succsess, data) => {
@@ -16,10 +18,18 @@ function searchChange(){
     });
 }
 
+function closeSearchOptions(){
+    updateSearchBar([]);
+}
+
 function updateSearchBar(data){
-    data = sortSearch(data);
     const optionsElem = $(".search-bar__options");
     optionsElem.empty();
+    if(data.length > 0){
+        data = sortSearch(data);
+    } else{
+        return;
+    }
     for (const option of data) {
         optionsElem.append(elemFromSearchOption(option));
     }

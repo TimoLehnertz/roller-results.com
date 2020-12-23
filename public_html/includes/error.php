@@ -9,6 +9,7 @@ $ERROR_MAPPING = [
 ];
 
 function getErrormessage($errorCode){
+    global $ERROR_MAPPING;
     return $ERROR_MAPPING[$errorCode];
 }
 

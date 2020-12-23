@@ -1,7 +1,14 @@
 function countrytableFrompersons(persons){
     const table = [];
     for (const person of persons) {
-        table.push(trFromPerson(person));
+        const row = {
+            Name: personToTd(person),
+            Gender: person.gender,
+            Country: person.country,
+            Team: person.team,
+            Club: person.club
+        }
+        table.push(row);
     }
     return table;
 }
@@ -52,7 +59,6 @@ function trFromResult(result){
 
 function personToTd(person){
     const elem = $(`<a href="/athlete?id=${person.id}" class="result__person"><span>${person.firstName + "  " + person.sureName}</span></a`);
-    console.log(elem.find(".img-wrapper"));
     const coutryCode = countryNameToCode(person.country);
     if(coutryCode != undefined){
         elem.append($(`<a href="/country?id=${person.country}" class="img-wrapper"><img class="result__country-flag" src="https://www.countryflags.io/${coutryCode}/shiny/32.png"></a>`));

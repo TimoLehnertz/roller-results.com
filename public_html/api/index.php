@@ -61,6 +61,7 @@ function getPerson($id){
 function getCompetition($id){
     $result = query("CALL sp_getCompetition(?);", "i", intval($id));
     if(sizeof($result) > 0){
+        $result[0] ["races"] = getRacesFromCompetition($id);
         return $result[0];
     } else{
         return false;
@@ -99,10 +100,9 @@ function getRace($id){
  * {"id":349,"raceType":null,"relay":0,"distance":"15000 Elimination Track","raceLink":null,"category":"Jun","gender":"W","remark":null,"trackStreet":null,"idCompetition":null,"startDate":null,"endDate":null,"location":null,"competitionType":null,"gpx":null,"raceyear":null}
  */
 function getRacesFromCompetition($id){
-    $result = query("CALL sp_getRace(?);", "i", intval($id));
+    $result = query("CALL sp_getRacesFromCompetition(?);", "i", intval($id));
     if(sizeof($result) > 0){
-        $result[0]["results"] = getRaceResults($id);
-        return $result[0];
+        return $result;
     } else{
         return false;
     }
@@ -180,6 +180,7 @@ function getCountry($name){
 function search($name){
     $name = trim($name);//remove whitespaces at front and end
     $results = [];
+    setMaxResultSize(10);
     /**
      * Year
      */
@@ -277,5 +278,6 @@ function search($name){
     // if($delimiter != -1){
     //     $name = substr($name, $delimiter + 1);
     // }
+    setMaxResultSize(-1);
     return $results;
 }

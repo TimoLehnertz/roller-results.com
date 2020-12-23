@@ -8,7 +8,7 @@ if(!isset($_GET["id"])){
 }
 include_once "../api/index.php";
 
-$race = getrace($_GET["id"]);
+$race = getRace($_GET["id"]);
 if(!$race){
     throwError($ERROR_INVALID_ID);
 }
@@ -23,6 +23,11 @@ echo "<script>const race = ". json_encode($race) .";</script>";
     <div class="person-table"></div>
     <script>
         const table = new Table($(".person-table"), resultsTotable(race.results));
+        console.log(resultsTotable(race.results));
+        table.setup({
+            orderBy: {column: "place", up: true}
+        });
+        table.init();
     </script>
 </main>
 <?php

@@ -23,6 +23,7 @@ echo "<script>const persons = ". json_encode($persons) .";</script>";
     <div class="person-table"></div>
     <script>
         const table = new Table($(".person-table"), countrytableFrompersons(persons));
+        table.init();
     </script>
 </main>
 <?php

@@ -1,18 +1,25 @@
+<?php
+include_once "includes/error.php";
+?>
 <html>
     <head>
         <meta charset="UTF-8">
-        <meta name="Cologne Speed Team" content="width=device-width, initial-scale=1">
-        <title>Cologne Speed Team</title>
+        <meta name="viewport" content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0'>
+        <title>Inline data</title>
         <link rel="icon" type="image/gif" href="/img/rolle2.gif">
         <link rel="stylesheet" href="/styles/main.css">
-        <link href="https://fonts.googleapis.com/css2?family=Carter+One&display=swap" rel="stylesheet">
-        <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&display=swap" rel="stylesheet">
+        <!-- GOOGLE fonts -->
+        <link rel="preconnect" href="https://fonts.gstatic.com">
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,200;0,300;0,400;0,500;0,600;1,200;1,400;1,500;1,600&display=swap" rel="stylesheet">
+        
         <script src="/js/jquery-3.5.1.js"></script>
         <script src="/js/anime.min.js"></script>
         <script src="/js/ajaxAPI.js"></script>
         <script src="/js/lib.js"></script>
         <script src="/js/ui.js"></script>
         <script src="/js/interface.js"></script>
+
+        <!-- Font Awesome -->
         <script src="https://kit.fontawesome.com/bb5d468397.js" crossorigin="anonymous"></script>
     </head>
     <body class="body">
@@ -20,7 +27,7 @@
         <div class="left">
             <a href="/index.php">
                 <i class="fas fa-clock margin left"></i>
-                <span class="title">Speed-skate.org</span>
+                <span class="title">Inline data</span>
             </a>
         </div>
         <div class="search-bar">
@@ -29,6 +36,10 @@
                 $search = "";
                 if(isset($_GET["search1"])){
                     $search = $_GET["search1"];
+                }
+                //Error display
+                if(isset($_GET["error"])){
+                    echo "<script>$(() => {alert('". getErrormessage($_GET["error"]) ."'); window.location = removeParams('error');})</script>";
                 }
             ?>
             <input class="search-bar__input" type="text" autocomplete="off" placeholder="Search" value="<?=$search?>">

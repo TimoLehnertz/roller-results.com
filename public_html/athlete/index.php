@@ -22,6 +22,7 @@ echo "<script>const person = [". json_encode($person) ."];</script>";
     <div class="person-table"></div>
     <script>
         const table = new Table($(".person-table"), person);
+        table.init();
     </script>
 </main>
 <?php

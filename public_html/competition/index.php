@@ -15,14 +15,28 @@ if(!$comp){
 
 include_once "../header.php";
 
-echo "<script>const comp = [". json_encode($comp) ."];</script>";
+echo "<script>const comp = ". json_encode($comp) .";</script>";
 
 ?>
 <main class="main">
-    <h2>Competition <?php echo $comp["location"]." ".$comp["raceyear"]?></h2>
-    <div class="person-table"></div>
+    <h2><?= $comp["location"]." ".$comp["raceYear"]?></h2>
+    <div class="races-table"></div>
     <script>
-        const table = new Table($(".person-table"), comp);
+        console.log(comp)
+        const table = new Table($(".races-table"), comp.races);
+        table.setup({
+            rowLink: row => `/race?id=${row.id}`,
+            orderBy: {column: "distance", up: true},
+            layout: {
+                distance: {
+                    allowSort: false
+                },
+                category: {},
+                gender: {},
+                trackStreet: {}
+            }
+        })
+        table.init();
     </script>
 </main>
 <?php

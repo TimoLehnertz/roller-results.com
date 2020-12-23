@@ -184,7 +184,7 @@ class Dropdown{
                 easing: "easeOutSine"
             });
         } else{
-            console.log("todo")
+            console.log("todo");
         }
     }
 
@@ -301,12 +301,86 @@ class Table{
         this.data = data;
         this.elem = elem;
         this.name = name;
+        this.initiated = false;
         this.layout = undefined;
-        this.layout = this.getLayout(this.data);
-        $(() => {this.init()});
+        this.usedColumns= this.getUsedColumns();
+    }
+
+    /**
+     * Optional setup
+     * possible parameters:
+     *      RowLink
+     *      layout
+     * @param {{}} params 
+     */
+    setup(params){
+        /**
+         * Rowlink should be a callback wich takes a row and returns a url to wich the row should create a link
+         */
+        if(params.hasOwnProperty("rowLink")){
+            this.rowLink = params.rowLink;
+        }
+        /**
+         * way to configure individual rows
+         * should be in format
+         *  {
+         *      <row-name>: {
+         *          use: true / false | default: true
+         *          allowSort: true / false | default: true
+         *          initialSort: "asc" / "dsec" //unset for no initial sort | default: unset
+         *          displayName: "name" used to overwrite the column name on screen. No effect on data behind the scenes
+         *      }
+         *  }
+         */
+        if(params.hasOwnProperty("layout")){
+            this.layout = params.layout;
+        }
+        /**
+         * Specify the initial order 
+         * example
+         *  orderBy: {column: "place", up: true}
+         */
+        if(params.hasOwnProperty("orderBy")){
+            this.orderBy = params.orderBy;
+        }
+        this.usedColumns= this.getUsedColumns();
+    }
+
+    getDisplayNameOfColumn(column){
+        if(this.layout == undefined){
+            return column;
+        }
+        if (this.layout.hasOwnProperty(column)) {
+            const element = this.layout[column];
+            if(element.hasOwnProperty("displayName")){
+                return element.displayName;
+            } else{
+                return column;
+            }
+        } else{
+            return "-";
+        }
+    }
+
+    /**
+     * returns false if not set and {column: "name", up: true / false} if given
+     */
+    getInitialSort(){
+        if(this.orderBy == undefined){
+            return false;
+        } else{
+            return this.orderBy;
+        }
     }
 
     init(){
+        if(!this.initiated){
+            let initialSort = this.getInitialSort();
+            if(initialSort !== false){
+                this.initiated = true;// to prevent recursion as sort calls this function
+                this.sort(initialSort.column, initialSort.up);
+            }
+        }
         $(this.elem).empty();
         $(this.elem).append(this.getTable());
         anime({
@@ -321,26 +395,49 @@ class Table{
                 $(`.${Table.class} td`).css("position", "");
             }
         });
+        this.initiated = true;
     }
 
     getLayoutIndex(name){
         let i = 0;
-        for (const head of this.layout) {
-            if(head === name){
-                return i;
+        for (const key in this.layout) {
+            if(this.layout.hasOwnProperty(key)){
+                const head =this.layout[key];
+                if(head === name){
+                    return i;
+                }
             }
             i++;
         }
     }
 
-    getLayout(data){
-        const layout = [];
-        for (const columun in data[0]) {
-            if (data[0].hasOwnProperty(columun)) {
-                layout.push(columun);
+    getUsedColumns(){
+        const columns = [];
+        if(this.layout != undefined){
+            for (const key in this.layout) {
+                if (this.layout.hasOwnProperty(key)) {
+                    const element = this.layout[key];
+                    if(element.hasOwnProperty("use")){
+                        if(element.use){
+                            columns.push(key);
+                        }
+                    } else{
+                        columns.push(key);
+                    }
+                }
+            }
+            return columns;
+        }
+        for (const row of this.data) {
+            for (const column in row) {
+                if (row.hasOwnProperty(column)) {
+                    if(!columns.includes(column)){
+                        columns.push(column);
+                    }
+                }
             }
         }
-        return layout;
+        return columns;
     }
 
     updateData(data){
@@ -350,7 +447,7 @@ class Table{
 
     getTable(){
         const table = $(`<table class="${Table.class} ${this.name}"></table>`);
-        $(table).append(this.getTableHead(this.layout));
+        $(table).append(this.getTableHead());
         let zebra = false;
         for (const row of this.data) {
             $(table).append(this.getRow(row, zebra));
@@ -376,37 +473,50 @@ class Table{
         const index = this.getLayoutIndex(column);
         this.getHeadElem(index).append(Dropdown.getIcon(`fas fa-sort-${up ? "up" : "down"}`, "margin left"));
     }
-
+   
     getHeadElem(index){
         return $(this.elem).find(".index-" + index);
     }
 
-    getTableHead(layout){
+    getTableHead(){
+        console.log(this.usedColumns);
         const head = $(`<tr class="${Table.headClass}"></tr>`);
         let count = 0;
-        for (const td of layout) {
-            const tdElem = $(`<td class="index-${count}">${td}</td>`);
-            let dropdown = new Dropdown(tdElem, [
-                {
-                    element: "Sort ascending",
-                    icon: "fas fa-sort-up",
-                    onclick: () => {
-                        this.sort(td, true);
-                        return true;
-                    }
-                }, {
-                    element: "Sort descending",
-                    icon: "fas fa-sort-down",
-                    onclick: () => {
-                        this.sort(td, false);
-                        return true;
-                    }
+        for (const td of this.usedColumns) {
+            let use = true;
+            let allowSort = true;
+            if(this.layout != undefined){
+                if(this.layout.hasOwnProperty("allowSort")){
+                    allowSort = this.layout.allowSort;
                 }
-            ]);
-            dropdown.setup({
-                name: "Sort by " + td
-            })
-            dropdown.init();
+                if(this.layout.hasOwnProperty("use")){
+                    use = this.layout.use;
+                }
+            }
+            const tdElem = $(`<td class="index-${count}">${this.getDisplayNameOfColumn(td)}</td>`);
+            if(allowSort){
+                const dropdown = new Dropdown(tdElem, [
+                    {
+                        element: "Sort ascending",
+                        icon: "fas fa-sort-up",
+                        onclick: () => {
+                            this.sort(td, true);
+                            return true;
+                        }
+                    }, {
+                        element: "Sort descending",
+                        icon: "fas fa-sort-down",
+                        onclick: () => {
+                            this.sort(td, false);
+                            return true;
+                        }
+                    }
+                ]);
+                dropdown.setup({
+                    name: "Sort by " + td
+                })
+                dropdown.init();
+            }
             $(head).append(tdElem);
             count++;
         }
@@ -415,12 +525,17 @@ class Table{
 
     getRow(row, zebra){
         const rowElem = $(`<tr class="${Table.bodyClass} ${zebra ? "zebra" : ""}"></tr>`);
-        for (const column of this.layout) {
+        for (const column of this.usedColumns) {
             if(row.hasOwnProperty(column)){
                 $(rowElem).append(this.getColumn(row[column]));
             } else{
                 $(rowElem).append(this.getColumn(""));
             }
+        }
+        if(this.rowLink != undefined){
+            rowElem.click(() => {
+                window.location = this.rowLink(row);
+            })
         }
         return rowElem;
     }
@@ -430,9 +545,25 @@ class Table{
             const e = $(`<td></td>`);
             e.append(elem);
             return e;
+        } else if(elem == undefined){
+            return $(`<td></td>`);
         } else{
-
+            return $(`<td>${elem}</td>`);
         }
-        return $(`<td>${elem}</td>`);
     }
+}
+
+function removeParams(sParam) {
+    var url = window.location.href.split('?')[0]+'?';
+    var sPageURL = decodeURIComponent(window.location.search.substring(1)),
+        sURLVariables = sPageURL.split('&amp;'),
+        sParameterName,
+        i;
+    for (i = 0; i < sURLVariables.length; i++) {
+        sParameterName = sURLVariables[i].split('=');
+        if (sParameterName[0] != sParam) {
+            url = url + sParameterName[0] + '=' + sParameterName[1] + '&amp;'
+        }
+    }
+    return url.substring(0,url.length-1);
 }
