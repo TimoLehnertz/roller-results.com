@@ -1,5 +1,14 @@
 <?php
 include_once "includes/error.php";
+$loggedIn = false;
+if(isset($_COOKIE["accepted"])){
+    if($_COOKIE["accepted"]){
+        session_start();
+        if(isset($_SESSION["username"])){
+            $loggedIn = true;
+        }
+    }
+}
 ?>
 <html>
     <head>
@@ -43,11 +52,16 @@ include_once "includes/error.php";
                 }
             ?>
             <input class="search-bar__input" type="text" autocomplete="off" placeholder="Search" value="<?=$search?>">
-            <div class="search-bar__options">
-
-            </div>
+            <div class="search-bar__options"></div>
         </div>
         <div class="right">
+            <?php if($loggedIn){?>
+                
+            <?php } else {?>
+                <div class="btn slide vertical signup-btn default">
+                    <a href="/signup">Sign up</a>
+                </div>
+            <?php }?>
         </div>
     </header>
     

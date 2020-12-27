@@ -19,11 +19,7 @@ echo "<script>const person = [". json_encode($person) ."];</script>";
 ?>
 <main class="main">
     <h2>Athlete <?php echo $person["firstName"]." ".$person["sureName"]?></h2>
-    <div class="person-table"></div>
-    <script>
-        const table = new Table($(".person-table"), person);
-        table.init();
-    </script>
+    <p><?php echo $person["country"]?></p>
 </main>
 <?php
 include_once "../footer.php";
