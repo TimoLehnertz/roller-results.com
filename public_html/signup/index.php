@@ -11,7 +11,7 @@
     <p>It's quick and easy</p>
     <?php
         include_once "../includes/utils.php";
-        echo ip_info("Visitor", "City");
+        echo ip_info("Visitor", "Address");
     ?>
     <form action="signup.php" method="POST">
         <input type="email" placeholder="email" id="email" name="email" required>
