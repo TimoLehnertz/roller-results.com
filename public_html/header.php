@@ -58,7 +58,7 @@ if($loggedIn){
             <?php if($loggedIn){?>
                 <?php
                     if(canI("seeAdminPage")){
-                        echo "<a href='/admin'>Admin</a>";
+                        echo "<a href='/admin/index1.php'>Admin</a>";
                     }
                 ?>
                 <form action='/logout/index.php' method='POST'>
