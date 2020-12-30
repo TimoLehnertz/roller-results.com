@@ -42,3 +42,21 @@ function deleteImg($name){
     }
     return false;
 }
+
+function echoAthleteImg($athlete){
+    $name = $athlete["image"];
+    $file = "../img/uploads/$name";
+    $src = "/img/uploads/$name";
+    if(empty($name) || file_exists($src)){
+        $src = defaultProfileImgPath($athlete["gender"]);
+    }
+    echo "<img class='img athlete-img' src='$src' alt='profile image'>";
+}
+
+function defaultProfileImgPath($gender){
+    if(strtolower($gender) == "m"){
+        return "/img/profile-men.png";
+    } else{
+        return "/img/profile-female.jpg";
+    }
+}

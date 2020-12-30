@@ -349,6 +349,11 @@ template {
   font-family: "Poppins", sans-serif;
 }
 
+*, ::after, ::before {
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+}
+
 .body {
   background-color: #EEE;
   position: absolute;
@@ -373,6 +378,32 @@ button {
   margin-left: auto;
   margin-right: auto;
   display: block;
+}
+
+a {
+  position: relative;
+  color: inherit;
+  text-decoration: none;
+  line-height: 1.5;
+}
+
+a:hover::before {
+  background: #888;
+}
+
+a:hover {
+  color: #666;
+}
+
+a::before {
+  content: "";
+  position: absolute;
+  top: 95%;
+  width: 100%;
+  left: 0;
+  height: 3px;
+  border-radius: 2px;
+  background: linear-gradient(130deg, #ff7a18, #af002d 41.07%, #319197 76.05%);
 }
 
 .width.third {
@@ -1130,5 +1161,17 @@ button {
   display: grid;
   -ms-grid-columns: 10fr 1fr;
       grid-template-columns: 10fr 1fr;
+}
+
+.athlete-head {
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: 1fr 5fr;
+      grid-template-columns: 1fr 5fr;
+}
+
+.athlete-head .img {
+  max-width: 100%;
+  border: 4px solid #444;
 }
 /*# sourceMappingURL=main.css.map */
