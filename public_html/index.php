@@ -7,5 +7,5 @@ include_once "header.php";
     <div class="table-test"></div>
 </main>
 <?php
-include_once "footer.php";
+    include_once "footer.php";
 ?>
