@@ -9,9 +9,9 @@ if(!canI("configureAthletes")){
 include_once "../header.php";
 
 $NO_GET_API = true;
-include_once "../api/index.php";
-include_once "../api/personAPI.php";
-include_once "../api/imgAPI.php";
+include_once $_SERVER["DOCUMENT_ROOT"]."/api/index.php";
+include_once $_SERVER["DOCUMENT_ROOT"]."/api/personAPI.php";
+include_once $_SERVER["DOCUMENT_ROOT"]."/api/imgAPI.php";
 
 $search = "";
 if(!empty($_GET["search-athlete"])){
