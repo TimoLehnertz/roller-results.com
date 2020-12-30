@@ -349,14 +349,16 @@ template {
   font-family: "Poppins", sans-serif;
 }
 
-body {
+.body {
   background-color: #EEE;
   position: absolute;
   top: 0;
+  width: 100%;
 }
 
 .main {
   margin-top: 60px;
+  width: 100%;
 }
 
 .h1 {
@@ -451,7 +453,6 @@ button {
 }
 
 .btn.slide {
-  z-index: 0;
   border: none;
   background: transparent;
   position: relative;
@@ -768,6 +769,7 @@ button {
   position: fixed;
   width: 100%;
   margin: 0;
+  z-index: 1;
 }
 
 .header .left a {
@@ -794,6 +796,7 @@ button {
   -webkit-box-align: center;
       -ms-flex-align: center;
           align-items: center;
+  height: 50px;
 }
 
 .footer {
@@ -955,6 +958,8 @@ button {
   transition: -webkit-box-shadow 0.1s;
   transition: box-shadow 0.1s;
   transition: box-shadow 0.1s, -webkit-box-shadow 0.1s;
+  position: relative;
+  z-index: -100;
 }
 
 .search-bar:focus-within {

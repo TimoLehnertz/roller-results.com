@@ -1,13 +1,13 @@
 <?php
+include_once "headerMin.php";
+
 include_once "includes/error.php";
-$loggedIn = false;
-if(isset($_COOKIE["accepted"])){
-    if($_COOKIE["accepted"]){
-        session_start();
-        if(isset($_SESSION["username"])){
-            $loggedIn = true;
-        }
-    }
+include_once "api/userAPI.php";
+include_once "includes/roles.php";
+$loggedIn = isLoggedIn();
+$user;
+if($loggedIn){
+    $user = getUser($_SESSION["iduser"]);
 }
 ?>
 <html>
@@ -56,12 +56,21 @@ if(isset($_COOKIE["accepted"])){
         </div>
         <div class="right">
             <?php if($loggedIn){?>
-                
+                <?php
+                    if(canI("seeAdminPage")){
+                        echo "<a href='/admin'>Admin</a>";
+                    }
+                ?>
+                <form action='/logout/index.php' method='POST'>
+                    <button class="btn slide vertical signup-btn default" name="logout-submit" value="1" type="submit">Log out</button>
+                </form>
             <?php } else {?>
                 <div class="btn slide vertical signup-btn default">
                     <a href="/signup">Sign up</a>
                 </div>
+                <div class="btn slide vertical signup-btn default">
+                    <a href="/login">log in</a>
+                </div>
             <?php }?>
         </div>
     </header>
-    

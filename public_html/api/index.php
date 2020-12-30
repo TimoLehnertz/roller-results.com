@@ -21,25 +21,28 @@ include_once "../../data/dbh.php";
 /**
  * Getters
  */
-if(isset($_GET["getperson"])){
-    echo json_encode(getPerson($_GET["getperson"]));
-}
-if(isset($_GET["getcompetition"])){
-    echo json_encode(getCompetition($_GET["getcompetition"]));
-}
-if(isset($_GET["getresult"])){
-    echo json_encode(getResult($_GET["getresult"]));
-}
-if(isset($_GET["getrace"])){
-    echo json_encode(getRace($_GET["getrace"]));
-}
-if(isset($_GET["getcountry"])){
-    echo json_encode(getCountry($_GET["getcountry"]));
+if(!isset($NO_GET_API)){
+    if(isset($_GET["getperson"])){
+        echo json_encode(getPerson($_GET["getperson"]));
+    }
+    if(isset($_GET["getcompetition"])){
+        echo json_encode(getCompetition($_GET["getcompetition"]));
+    }
+    if(isset($_GET["getresult"])){
+        echo json_encode(getResult($_GET["getresult"]));
+    }
+    if(isset($_GET["getrace"])){
+        echo json_encode(getRace($_GET["getrace"]));
+    }
+    if(isset($_GET["getcountry"])){
+        echo json_encode(getCountry($_GET["getcountry"]));
+    }
+    
+    if(isset($_GET["search"])){
+        echo json_encode(search($_GET["search"]));
+    }
 }
 
-if(isset($_GET["search"])){
-    echo json_encode(search($_GET["search"]));
-}
 
 /**
  * example
@@ -220,33 +223,11 @@ function search($name){
         /**
          * persons names
          */
-        $names = explode("  ", $name);
-        $personIds = [];
-        foreach ($names as $key => $value) {
-            $persons = query("CALL sp_searchPerson(?)", "s", $value);
-            foreach ($persons as $key => $person) {
-                if(!in_array($person["id"], $personIds)){
-                    $personIds[] = $person["id"];
-                    $results[] = [
-                        "id" => $person["id"],
-                        "name" => $person["firstName"]." ".$person["sureName"]." - ".$person["country"],
-                        "priority" => 1,
-                        "type" => "person"
-                    ];
-                } else{
-                    $i = 0;
-                    foreach ($results as $key => $value) {
-                        if($value["type"] == "person" && $value["id"] == $person["id"]){
-                            $results[$i] ["priority"] = 5;
-                        }
-                        $i++;
-                    }
-                }
-            }
-        }
+        $results = array_merge($results, searchPersons($name));
         /**
          * competitionTypes
          */
+        $names = explode("  ", $name);
         foreach ($names as $key => $value) {
             $competitions = query("CALL sp_searchCompetitionType(?)", "s", $value);
             foreach ($competitions as $key => $competition) {
@@ -279,5 +260,34 @@ function search($name){
     //     $name = substr($name, $delimiter + 1);
     // }
     setMaxResultSize(-1);
+    return $results;
+}
+
+function searchPersons($name){
+    $results = [];
+    $names = explode("  ", $name);
+    $personIds = [];
+    foreach ($names as $key => $value) {
+        $persons = query("CALL sp_searchPerson(?)", "s", $value);
+        foreach ($persons as $key => $person) {
+            if(!in_array($person["id"], $personIds)){
+                $personIds[] = $person["id"];
+                $results[] = [
+                    "id" => $person["id"],
+                    "name" => $person["firstName"]." ".$person["sureName"]." - ".$person["country"],
+                    "priority" => 1,
+                    "type" => "person"
+                ];
+            } else{
+                $i = 0;
+                foreach ($results as $key => $value) {
+                    if($value["type"] == "person" && $value["id"] == $person["id"]){
+                        $results[$i] ["priority"] = 5;
+                    }
+                    $i++;
+                }
+            }
+        }
+    }
     return $results;
 }

@@ -8,6 +8,10 @@ let lastSearch = "";
 function searchChange(e){
     e.stopPropagation();
     const text = $(".search-bar__input").val();
+    if(text.length == 0){
+        $(".search-bar__options").empty();
+        return;
+    }
     lastSearch = text;
     search(text, (succsess, data) => {
         if(succsess){
@@ -37,8 +41,8 @@ function updateSearchBar(data){
 
 function sortSearch(search){
     search.sort((a, b) => {
-        if(a.score < b.score) { return -1}
-        if(a.score > b.score) { return 1}
+        if(a.priority < b.priority) { return 1}
+        if(a.priority > b.priority) { return -1}
         return 0;
     });
     return search;

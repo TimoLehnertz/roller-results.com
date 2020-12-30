@@ -35,7 +35,7 @@ echo "<script>const comp = ". json_encode($comp) .";</script>";
                 gender: {},
                 trackStreet: {}
             }
-        })
+        });
         table.init();
     </script>
 </main>

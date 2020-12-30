@@ -6,9 +6,14 @@
 function search(text, callback){
     $.ajax({
         url: "/api?search=" + text,
-        dataType:  "json",
-        success: (json) =>{
-            callback(true, json);
+        dataType:  "text",
+        success: (response) =>{
+            if(isJson(response)){
+                callback(true, JSON.parse(response));
+            } else{
+                callback(false, null);
+                console.log(response)
+            }
         },
         error: function(xhr, ajaxOptions, thrownError) {
             callback(false, null);
@@ -23,4 +28,10 @@ function search(text, callback){
  */
 function ajaxError(message){
     alert(message);
+}
+
+function isJson(text){
+    return /^[\],:{}\s]*$/.test(text.replace(/\\["\\\/bfnrtu]/g, '@').
+    replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g, ']').
+    replace(/(?:^|:|,)(?:\s*\[)+/g, ''));
 }
