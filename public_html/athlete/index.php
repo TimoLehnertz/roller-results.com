@@ -10,27 +10,39 @@ include_once "../api/index.php";
 include_once "../api/imgAPI.php";
 
 $person = getPerson($_GET["id"]);
+$firstName = $person["firstName"];
+$sureName = $person["sureName"];
+$country = $person["country"];
+$gender = $person["gender"];
+$club = $person["club"];
+$team = $person["team"];
+$birthYear = $person["birthYear"];
+
+if($birthYear < 1800 || !is_numeric($birthYear)){
+    unset($birthYear);
+}
+if(empty($club)){
+    unset($club);
+}
+if(empty($team)){
+    unset($team);
+}
+
 if(!$person){
     throwError($ERROR_INVALID_ID);
 }
 
 include_once "../header.php";
 
-echo "<script>const person = [". json_encode($person) ."];</script>";
+echo "<script>const person = ". json_encode($person) .";</script>";
 ?>
 <main class="main">
-    <div class="athlete-head">
-        <?php
-            echo echoAthleteImg($person);
-        ?>
-        <div>
-            <h2>Athlete <?php echo $person["firstName"]." ".$person["sureName"]?></h2>
-            <p><?php echo $person["country"]?></p>
-            <p><?php echo $person["gender"]?></p>
-        </div>
-    </div>
     
 </main>
+<script>
+    const profile = new Profile(athleteToProfile(person));
+    profile.appendTo($("main"));
+</script>
 <?php
 include_once "../footer.php";
 ?>

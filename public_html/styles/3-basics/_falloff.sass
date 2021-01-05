@@ -1,0 +1,22 @@
+.falloff
+    position: relative
+
+    &::after
+        content: ""
+        position: absolute
+        left: 0
+        right: 0
+        top: 0
+        bottom: 0
+
+    &::after
+        background: linear-gradient(90deg, #ffffff00, #ffffff00, rgba(255,255,255,1))
+
+    &.left::after
+        background: linear-gradient(-90deg,#ffffff00, #ffffff00, rgba(255,255,255,1))
+
+    &.top::after
+        background: linear-gradient(0deg, #ffffff00, #ffffff00, rgba(255,255,255,1))
+
+    &.bottom::after
+        background: linear-gradient(180deg,#ffffff00, #ffffff00, rgba(255,255,255,1))
