@@ -1,4 +1,23 @@
 .btn
+    &.border-only
+        border: none
+        outline: 2px solid white
+        background: transparent
+        padding: 10px
+        color: white
+        transition: outline-offset 0.1s, outline-width 0.1s
+
+        &.dark
+            color: #222
+            outline-color: #333
+
+        &:hover
+            outline-offset: 3px
+
+        &:active
+            outline-offset: -2px
+            outline-width: 7px
+
     &.default
         text-decoration: none
         background-color: #555555

@@ -8,8 +8,8 @@ include_once "../../data/dbh.php";
  * example data:
  * Array
  *   (
- *       [sureName] => Lehnertz
- *       [firstName] => Timo
+ *       [lastname] => Lehnertz
+ *       [firstname] => Timo
  *       [gender] => M
  *       [country] => Germany
  *       [linkCollection] => 
@@ -25,7 +25,7 @@ include_once "../../data/dbh.php";
  */
 function updatePerson($idperson, $person){
     global $mysqli;
-    $oldPerson = getPerson($idperson);
+    $oldPerson = getAthlete($idperson);
     $update = "";
     $delimiter = "";
     $types = "";

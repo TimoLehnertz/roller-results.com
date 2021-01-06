@@ -9,24 +9,7 @@ if(!isset($_GET["id"])){
 include_once "../api/index.php";
 include_once "../api/imgAPI.php";
 
-$person = getPerson($_GET["id"]);
-$firstName = $person["firstName"];
-$sureName = $person["sureName"];
-$country = $person["country"];
-$gender = $person["gender"];
-$club = $person["club"];
-$team = $person["team"];
-$birthYear = $person["birthYear"];
-
-if($birthYear < 1800 || !is_numeric($birthYear)){
-    unset($birthYear);
-}
-if(empty($club)){
-    unset($club);
-}
-if(empty($team)){
-    unset($team);
-}
+$person = getAthlete($_GET["id"]);
 
 if(!$person){
     throwError($ERROR_INVALID_ID);

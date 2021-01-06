@@ -204,7 +204,7 @@ class Dropdown{
      * @param {text} extraClasses extra classes to be appended useful for margin right / left
      */
     static getIcon(faClass, extraClasses){
-        return $(`<i class="${faClass} ${extraClasses != null ? extraClasses : ""}"><i>`);
+        return $(`<i class="${faClass} ${extraClasses != undefined ? extraClasses : ""}"><i>`);
     }
 
     getObjElem(obj){
@@ -553,6 +553,235 @@ class Table{
 }
 
 /**
+ * Class for parsing elements
+ * 
+ * dependencies:
+ *  JQuery.js
+ *  FontAwesome.js
+ * 
+ * an element can be a country, name, icon, image etc...
+ * 
+ * elements can be given in raw form of text, numbers, dom elements etc
+ * but can also be a js object containing the data itself and meta information about how to be displayed
+ * meta informations can contain:
+ *  data: //data to be displayed and interpreteed
+ *  type: //type to be interpreted as | default("text")
+ *  link: //link wich to where the parsed elem should navigate
+ *  onclick: //callback to be called on click
+ *  display: "inline" / "block" default("block")
+ *  icon: "fas fa-users" //Font awesome icon class
+ *  validate: () => true // callback to verify the data is correct. doesnt display if returned false
+ *  bounds: {left: 0, top: 0}
+ *  description: "description"
+ *  
+ *  
+ * types can be added manualy using addType(name, parser)
+ * 
+ * examples:
+ *  "hallo welt"
+ *  1
+ *  true
+ *  false
+ *  
+ *  {
+ *      data: "w"
+ *      type: ElemParser.GENDER
+ *  }
+ *  {
+ *      data: "/img/uploads/profile.jpg"
+ *      type: ElemParser.IMAGE
+ *  }
+ *  {
+ *      data: "GER" / "Germany"
+ *      type: ElemParser.COUNTRY
+ *      link: "/country/index?country=GERMANY"
+ *      onclick: () => {alert("test")}
+ *      icon: "fas fa-users"
+ *  }
+ */
+class ElemParser{
+
+    /**
+     * default types
+     */
+    static PRIMITIVE = "primitive";
+    static IMAGE = "image";
+    static COUNTYR_FLAG = "countryFlag";
+    static GENDER = "gender";
+    static TEXT = "text";
+    static DOM = "dom"
+
+    /**
+     * helpers
+     */
+    static MALE = 100;
+    static FEMALE = 101;
+    static DIVERSE = 102;
+
+    static parser = {
+        [ElemParser.PRIMITIVE]: (elem) => $(`<div>${elem.data}</div>`),
+        [ElemParser.IMAGE]: (elem) => $(`<img src="${elem.date}" alt="image">`),
+        [ElemParser.COUNTYR_FLAG]: (elem) => getCountryFlag(elem.data),
+        [ElemParser.GENDER]: (elem) => ElemParser.parseGender(elem.data),
+        [ElemParser.TEXT]: (elem) => $(`<div>${elem.data}</div>`),
+        [ElemParser.DOM]: (elem) => elem.data
+    };
+
+    static addType(type, parser){
+        ElemParser.parser[type] = parser;
+    }
+
+    static parse(elem){
+        if(typeof elem === 'object'){
+            return ElemParser.finishElem(ElemParser.parseMeta(elem), elem);
+        } else if(elem !== undefined && elem !== null){
+            return ElemParser.finishElem(ElemParser.parsePrimitive(elem));
+        } else{
+            return ElemParser.finishElem(ElemParser.getFreshElem());
+        }
+    }
+
+    static parseMeta(meta){
+        if(isDomElem(meta)){
+            return meta;
+        }
+        if(ElemParser.isValidMeta(meta)){
+            if(meta.data === null){
+                return false;
+            }
+            if(meta.hasOwnProperty("validate")){
+                if(!meta.validate(meta.data)){
+                    return false;
+                }
+            }
+            if(meta.hasOwnProperty("type")){
+                if(ElemParser.parser.hasOwnProperty(meta.type)){
+                    const parsedElem = ElemParser.parser[meta.type](meta);
+                    return parsedElem;
+                }
+            }
+            return ElemParser.parser[ElemParser.TEXT](meta);
+        } else{
+            return false;
+        }
+    }
+
+    static finishElem(elem, meta){
+        if(elem === false){
+            return $();
+        }
+        if(meta === undefined){
+            meta = {};
+        }
+        if(meta.hasOwnProperty("onclick")){
+            if(meta.hasOwnProperty("link")){
+                $(elem).click((e) => {
+                    meta.onclick(e);
+                    window.location = meta.link;
+                });
+            }
+        } else if(meta.hasOwnProperty("link")){
+            $(elem).click(() => {
+                window.location = meta.link;
+            });
+        }
+        const wrapper = ElemParser.getFreshElem(meta);
+        if(meta.hasOwnProperty("icon")){
+            wrapper.addClass("flex align-start justify-start");
+            wrapper.prepend(`<i class="${meta.icon} margin right"></i>`);
+        }
+        wrapper.append(elem);
+        if(meta.hasOwnProperty("bounds")){
+            wrapper.css("position", "absolute");
+            if(meta.bounds.hasOwnProperty("left")){
+                wrapper.css("left", meta.bounds.left);
+            }
+            if(meta.bounds.hasOwnProperty("top")){
+                wrapper.css("top", meta.bounds.top);
+            }
+            if(meta.bounds.hasOwnProperty("bottom")){
+                wrapper.css("bottom", meta.bounds.bottom);
+            }
+            if(meta.bounds.hasOwnProperty("right")){
+                wrapper.css("right", meta.bounds.right);
+            }
+        }
+        if(meta.hasOwnProperty("description")){
+            elem.prepend(`<span class="margin right">${meta.description}</span>`);
+        }
+        return wrapper;
+    }
+
+    /**
+     * meta data is valid if it has at least the data attribute
+     * 
+     * @param {{}} meta meta to be checked
+     */
+    static isValidMeta(meta){
+        if(typeof meta === 'object'){
+            return meta.hasOwnProperty("data");
+        }
+        return false;
+    }
+
+    static getFreshElem(data){
+        if(data !== undefined){
+            if(typeof data === 'object'){
+                if(data.hasOwnProperty("display")){
+                    if(data.display === "inline"){
+                        return $(`<span/>`);
+                    }
+                }
+            }
+        }
+        return $(`<div/>`);
+    }
+
+    static parsePrimitive(prim){
+        const elem = $(`<div>${prim}</div>`);
+        return elem;
+    }
+
+    static getGender(gender){
+        switch(gender.toLowerCase()){
+            case "w": return ElemParser.FEMALE;
+            case "women": return ElemParser.FEMALE;
+            case "female": return ElemParser.FEMALE;
+            case "m": return ElemParser.MALE;
+            case "man": return ElemParser.MALE;
+            case "men": return ElemParser.MALE;
+            case "male": return ElemParser.MALE;
+            case "d": return ElemParser.DIVERSE;
+            case "divers": return ElemParser.DIVERSE;
+            default: return ElemParser.MALE;
+        }
+    }
+
+    static parseGender(data){
+        switch(ElemParser.getGender(data)){
+            case ElemParser.MALE: return $(`<i class="fas fa-mars"></i>`);
+            case ElemParser.FEMALE: return $(`<i class="fas fa-venus"></i>`);
+            case ElemParser.DIVERSE: return $(`<img src="/img/diverse.png" alt="diverse">`);
+            default: return ElemParser.getFreshElem();
+        }
+    }
+
+    static isGender(element){
+        if(!ElemParser.isValidMeta(element)){
+            return false;
+        }
+        if(typeof element === 'object'){
+            if(element.hasOwnProperty("type")){
+                if(element.type == ElemParser.GENDER){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+}
+
+/**
  * Profile
  * Generic profile class to deal with all kinds of profiles
  * profiles can be displayed in three LODs(level of detail):
@@ -592,24 +821,31 @@ class Profile{
     static CARD = 1;//LOD card
     static MAX = 2;//LOD max
 
-    static MALE = 3;
-    static FEMALE = 4;
-    static DIVERSE = 5;
+    static profileCount = 0;
 
     /**
+     * storage
+     */
+    /**
+     * used to close all others when one is opened
+     */
+    static expanded = [];
+
+    /**
+     * All properties can be primitive date or element objects to bve parsed by ElemParser see ElemParser to see documentation
      * 
      * @param {{}} data data to fill this profile in the form of the name or as object like this:
      * {
      *  name: "",
      *  image: url,
+     *  left: elem //left and right refering to the stuff wich can be displayed left and right to the image in card view
+     *  right: elem
+     *  trophy1: elem//trophys to be displayed right next to the image
+     *  trophy2: elem
+     *  trophy3: elem
      * 
-     *  primary: {//those will be displayed in the card view. all dom elements or texts are supported but the following are predefined:
-     *      gender: "m" / "w" / "d" / "man" / "women" / "diverse" / "female" / "male"
-     *      category: "sen" / "jun"
-     *      country "germany" etc.
-     *      birthYear: number > 1800 //for detecting errors
-     *      club: text //if empty not displayed
-     *      team: text //if empty not displayed
+     *  primary: {
+     *      gender: "m"
      *  }
      * 
      *  secondary: { //those will only be displayed in the max view
@@ -620,7 +856,13 @@ class Profile{
      * @param {Number} score 
      */
     constructor(data, minLod = Profile.MIN, score = Profile.DEFAULT_SCORE){
-        console.log(data)
+
+        /**
+         * idprofile
+         */
+        this.idprofile = Profile.profileCount;
+        Profile.profileCount++;
+
         this.score = score;
         this.minLod = minLod;
         this.lod = minLod;
@@ -629,6 +871,8 @@ class Profile{
          */
         this.wrapper = undefined;
         this.elem = undefined; //jquery dom object
+        this.left = undefined;
+        this.right = undefined;
         this.name = "";
         this.image = undefined;
         this.primary = {};
@@ -642,6 +886,21 @@ class Profile{
             }
             if(data.hasOwnProperty("image")){
                 this.image = data.image;
+            }
+            if(data.hasOwnProperty("left")){
+                this.left = data.left;
+            }
+            if(data.hasOwnProperty("right")){
+                this.right = data.right;
+            }
+            if(data.hasOwnProperty("trophy1")){
+                this.trophy1 = data.trophy1;
+            }
+            if(data.hasOwnProperty("trophy2")){
+                this.trophy2 = data.trophy2;
+            }
+            if(data.hasOwnProperty("trophy3")){
+                this.trophy3 = data.trophy3;
             }
             if(data.hasOwnProperty("primary")){
                 this.primary = data.primary;
@@ -660,24 +919,59 @@ class Profile{
         if(this.elem !== undefined){
             this.elem.empty();
         }
-        this.elem = $(`<div class="profile ${this.lodClass}"></div>`);
+        this.elem = $(`<div class="profile ${this.lodClass}" id="${this.idprofile}"></div>`);
         this.elem.append(this.profileImg);
         this.elem.append(this.nameElem);
+        this.elem.append(this.leftElem);
+        this.elem.append(this.rightElem);
+        this.elem.append(this.getTrophy(0));
+        this.elem.append(this.getTrophy(1));
+        this.elem.append(this.getTrophy(2));
         this.elem.append(this.primaryElem);
         this.elem.append(this.minimizeElem);
-        if(this.lod >= Profile.CARD){
+        this.elem.append(this.maximizeElem);
+        if(this.lod === Profile.MAX){
             this.elem.append(this.secondaryElem);
+            this.initMax();
         }
         if(this.lod === Profile.MIN){
             this.elem.click(() => {if(this.lod == Profile.MIN) {this.incrementLod()}});
+        }
+        this.checkGet();
+    }
+
+    initMax(){
+        
+    }
+
+    /**
+     * check if get has parameter pointing to this profile and cardify it if so
+     */
+    checkGet(){
+        const idprofile = findGetParameter("idprofile");
+        if(idprofile !== null){
+            idprofile = parseInt(idprofile);
+            if(idprofile === this.idprofile){
+                this.cardify();
+                removeParams("idprofile");
+            }
         }
     }
 
     incrementLod(){
         if(this.lod < Profile.MAX){
+            this.closeAllOthers();
             this.elem.removeClass(this.lodClass);
             this.lod++;
             this.elem.addClass(this.lodClass);
+            if(this.lod === Profile.MAX){
+                window.setTimeout(() => {this.hideEverythingElse()}, 200);
+                this.elem.find(".profile__maximize button").text("Back");
+            }
+            if(Profile.expanded.indexOf(this) === -1){
+                Profile.expanded.push(this);//add to expanded
+            }
+            this.scollIntoView();
         }
     }
 
@@ -686,6 +980,41 @@ class Profile{
             this.elem.removeClass(this.lodClass);
             this.lod--;
             this.elem.addClass(this.lodClass);
+            if(this.lod === this.minLod){
+                Profile.expanded.splice(Profile.expanded.indexOf(this), 1);//remove from expanded
+            }
+            if(this.lod === Profile.CARD){
+                this.showEverythingElse();
+                this.scollIntoView();
+                this.elem.find(".profile__maximize button").text("Minimize");
+            }
+        }
+    }
+
+    hideEverythingElse(){
+        $(`main *:not(header, footer`).hide();
+        this.elem.parents().show();
+        this.elem.show();
+        this.elem.find("*:not(.profile__maximize)").show();
+    }
+
+    showEverythingElse(){
+        $(`main *`).show();
+        $(`main *`).css("display", "")
+    }
+
+    closeAllOthers(){
+        for (const profile of Profile.expanded) {
+            if(profile !== this){
+                profile.close();
+            }
+        }
+    }
+
+    close(){
+        console.log("closing")
+        while(this.lod > this.minLod){
+            this.decrementLod();
         }
     }
 
@@ -695,76 +1024,91 @@ class Profile{
         $(parent).append(this.wrapper);
     }
 
+    scollIntoView(){
+        var offset = $(this.elem).offset();
+        offset.left -= window.scrollX;
+        offset.top -= window.scrollY;
+        if(offset.top < 0 || offset.left < 0 || offset.top > window.innerHeight - 500 || offset.left > window.innerWidth - 300){
+            var offset = $(this.elem).offset();
+            $('html, body').animate({
+                scrollTop: offset.top - 70,
+                scrollLeft: offset.left - 20,
+                duration: 100
+            });
+        }
+    }
+
     get nameElem(){
         return $(`<div class="profile__name"><span>${this.name}</span></div>`);
     }
 
+    get leftElem(){
+        if(this.left !== undefined){
+            const elem = ElemParser.parse(this.left);
+            elem.addClass("profile__left");
+            return elem;
+        }
+        return $();
+    }
+
+    get rightElem(){
+        if(this.right !== undefined){
+            const elem = ElemParser.parse(this.right);
+            elem.addClass("profile__right");
+            return elem;
+        }
+        return $();
+    }
+
+    getTrophy(index){
+        index++;
+        const name = "trophy" + index;
+        if(this[name] !== undefined){
+            const elem = ElemParser.parse(this[name]);
+            elem.addClass("profile__trophy-" + index);
+            elem.addClass("profile__trophy");
+            return elem;
+        }
+        return $();
+    }
+
     get profileImg(){
-        if(this.image != null){
+        if(this.image != undefined){
             return $(`<div class="profile__image"><img src="${this.image}" alt="profile image"></div>`);
         } else {
             const gender = this.gender;
-            if(gender == Profile.FEMALE){
-                return $(`<div class="profile__image"><img src="/img/profile-female.jpg" alt="profile image"></div>`);
+            if(gender == ElemParser.FEMALE){
+                return $(`<div class="profile__image"><img src="/img/profile-female.png" alt="profile image"></div>`);
             } else{
                 return $(`<div class="profile__image"><img src="/img/profile-men.png" alt="profile image"></div>`);
             }
         }
     }
 
+    get gender(){
+        for (const key in this.primary) {
+            if (Object.hasOwnProperty.call(this.primary, key)) {
+                const element = this.primary[key];
+                if(ElemParser.isGender(element)){
+                    return ElemParser.getGender(element.data);
+                }
+            }
+        }
+        if(ElemParser.isGender(this.left)){
+            return ElemParser.getGender(this.left.data);
+        }
+        if(ElemParser.isGender(this.right)){
+            return ElemParser.getGender(this.right.data);
+        }
+    }
+
     get primaryElem(){
         const elem = $(`<div class="profile__primary"></div>`);
-        const prim = this.primary;
-        /**
-         * gender
-         */
-        if(prim.hasOwnProperty("gender")){
-            const gender = $(`<div class="profile__gender"></div>`);
-            gender.append(this.genderElem);
-            elem.append(gender);
-        }
-        /**
-         * category
-         */
-        if(prim.hasOwnProperty("category")){
-            elem.append(`<div class="profile__category">${this.categoryElem}</div>`);
-        }
-        /**
-         * country (flag)
-         */
-        if(prim.hasOwnProperty("country")){
-            const country = $(`<div class="profile__country"></div>`);
-            country.append(getCountryFlag(prim.country));
-            elem.append(country);
-        }
-        /**
-         * birthYear
-         */
-        if(prim.hasOwnProperty("birthYear")){
-            if(Number.isInteger(prim.birthYear) && prim.birthYear > 1800){
-                const birthYear = $(`<div></div>`);
-                birthYear.append(`<i class="far fa-calendar"></i>`);
-                birthYear.append(prim.birthYear);
-            }
-        }
-        /**
-         * club
-         */
-        if(prim.hasOwnProperty("club")){
-            if(typeof prim.club === "string" && prim.club.length > 0){
-                const club = $(`<div class="profile__club"><i class="fas fa-users"></i></div>`);
-                club.append(prim.club);
-                elem.append(club);
-            }
-        }
-        /**
-         * team
-         */
-        if(prim.hasOwnProperty("team")){
-            if(typeof prim.team === "string" && prim.team.length > 0){
-                const team = $(`<div class="profile__team"><i class="fas fa-users"></i></div>`);
-                team.append(prim.team);
-                elem.append(team);
+        for (const key in this.primary) {
+            if (Object.hasOwnProperty.call(this.primary, key)) {
+                const primElem = ElemParser.parse(this.primary[key]);
+                primElem.addClass(`profile__primary__${key}`);
+                elem.append(primElem);
             }
         }
         return elem;
@@ -783,9 +1127,15 @@ class Profile{
 
     get minimizeElem(){
         const elem = $(`<div class="profile__minimize"/>`);
-        const button = $(`<button>Minimize</button>`);
-        button.click((e) => {e.stopPropagation(); this.decrementLod()});
+        const button = $(`<button class="btn border-only">Minimize</button>`);
+        button.click((e) => {e.stopPropagation(); this.decrementLod(); console.log("dec clicked")});
         elem.append(button);
+        return elem;
+    }
+
+    get maximizeElem(){
+        const elem = $(`<button class="profile__maximize"/>`);
+        elem.click((e) => {e.stopPropagation(); this.incrementLod()});
         return elem;
     }
 
@@ -797,27 +1147,9 @@ class Profile{
         return obj;
     }
 
-    get gender(){
-        if(this.primary.hasOwnProperty("gender")){
-            if(this.primary.gender != null){
-                switch(this.primary.gender.toLowerCase()){
-                    case "w": return Profile.FEMALE;
-                    case "women": return Profile.FEMALE;
-                    case "female": return Profile.FEMALE;
-                    case "m": return Profile.MALE;
-                    case "man": return Profile.MALE;
-                    case "men": return Profile.MALE;
-                    case "male": return Profile.MALE;
-                    case "d": return Profile.DIVERSE;
-                    case "divers": return Profile.DIVERSE;
-                }
-            }
-        }
-    }
-
     get categoryElem(){
         if(this.primary.hasOwnProperty("category")){
-            if(this.primary.category != null){
+            if(this.primary.category != undefined){
                 let category;
                 switch(this.primary.category.toLowerCase()){
                     case "sen":
@@ -829,7 +1161,7 @@ class Profile{
                         category = "Junior";
                         break;
                 }
-                if(category != null){
+                if(category != undefined){
                     return $(`<div class="profile__category">${category}</div>`);
                 } else{
                     return $();
@@ -857,6 +1189,10 @@ class Profile{
     }
 }
 
+/**
+ * GET
+ */
+
 function removeParams(sParam) {
     var url = window.location.href.split('?')[0]+'?';
     var sPageURL = decodeURIComponent(window.location.search.substring(1)),
@@ -872,6 +1208,65 @@ function removeParams(sParam) {
     return url.substring(0,url.length-1);
 }
 
+function findGetParameter(parameterName) {
+    var result = null, tmp = [];
+    location.search
+        .substr(1)
+        .split("&")
+        .forEach(function (item) {
+          tmp = item.split("=");
+          if (tmp[0] === parameterName) result = decodeURIComponent(tmp[1]);
+        });
+    return result;
+}
+
+/**
+ * Medals
+ */
+
+function getMedal(color, amount){
+    let linkSimple = "/img/medals/" + color + "-medal-simple.svg";
+    let linkBig = "/img/medals/" + color + "-medal.svg";
+    const elem = $(`<div class="medal ${color}">
+        <img class="medal__big" width="40" src="${linkBig}" alt="${color} medal">
+        <img class="medal__simple" width="40" src="${linkSimple}" alt="${color} medal">
+        <span class="medal__amount">${amount}</span>
+    </div>`);
+    return elem;
+}
+
+/**
+ * dom
+ */
+function isDomElem(obj) {
+    if(obj instanceof HTMLCollection && obj.length) {
+        for(var a = 0, len = obj.length; a < len; a++) {
+            if(!checkInstance(obj[a])) {
+                return false;
+            }
+        }
+        return true;
+    } else {
+        return checkInstance(obj);
+    }
+
+    function checkInstance(elem) {
+        if((elem instanceof jQuery && elem.length) || elem instanceof HTMLElement) {
+            return true;
+        }
+        return false;
+    }
+}
+
+/**
+ * hide all exept the elem, the header and footer
+ */
+function hideAllExept(elem){
+    elem.siblings().each((e) => {
+        e.css("dispaly", "none");
+    })
+}
+
 /**
  * countries
  */
@@ -884,17 +1279,32 @@ function countryNameToCode(name){
     }
 }
 
+function countryCodeValid(code){
+    for (const country of countries) {
+        if(country.code === code){
+            return true;
+        }
+    }
+    return false;
+}
+
 function getCountryFlag(country){
     if(country === undefined){
         return $(`<div>-</div`);
     }
     const countryCode = countryNameToCode(country);
-    if(countryCode !== null){
+    if(countryCode !== undefined){
         return $(`<img src="https://www.countryflags.io/${countryCode}/shiny/32.png" alt="${country} flag">`);
     } else{
-        return $(`<div>${country}</div>`);
+        if(countryCodeValid(country)){
+            return $(`<img src="https://www.countryflags.io/${country}/shiny/32.png" alt="${country} flag">`);
+        } else{
+            return $(`<div>${country}</div>`);
+        }
     }
 }
+
+
 
 const countries = [ 
     {name: 'Afghanistan', code: 'AF'}, 

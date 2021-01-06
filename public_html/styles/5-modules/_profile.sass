@@ -2,6 +2,7 @@
 .profile__wrapper
     background: $c
     border-radius: 25px
+    margin: 5px
 
 .profile
     background: $c
@@ -12,7 +13,7 @@
     transform: scale(1)
 
     // initial visibility:
-    .profile__primary, .profile__secondary, .profile__minimize
+    & > *
         display: none
     
     //after
@@ -29,6 +30,7 @@
         height: 30px
         animation: go-up 1s infinite alternate
         filter: invert(1)
+        transition: all 0.1s
 
 
 // wrapper dimensions
@@ -57,18 +59,26 @@
 
     //layout
     .profile__image
-        width: 50px
-        height: 50px
+        width: 45px
+        height: 45px
     
     .profile__name
         position: absolute
-        left: 60px
-        right: 50px
+        left: 50px
+        right: 0
         top: 0
     
     // hover
     &:hover
         height: 80px
+        z-index: 2
+
+    &:active
+        height: 150px
+        
+        
+        &::after
+            height: 75px
 
 
 // card containing the image and all simple information 
@@ -78,13 +88,13 @@
     width: 300px
     height: 500px
     position: relative
-
+    z-index: 1
     background: linear-gradient(0deg,$b 0%, $e)
     color: white
 
     // visibility
-    .profile__primary, , .profile__minimize
-        display: block
+    .profile__name, .profile__image, .profile__special, .profile__left, .profile__right, .profile__minimize, .profile__trophy-1, .profile__trophy-2, .profile__trophy-3, .profile__maximize
+        display: blocK
     
     // top color
     &::before
@@ -93,8 +103,8 @@
         top: 0
         left: 0
         right: 0
-        height: 120px
-        background: radial-gradient(circle at bottom, $b 30%, #000 170%)
+        height: 150px
+        background: radial-gradient(circle at bottom, $b 40%, #000 170%)
         transform: skewY(-2deg)
         transform-origin: left
 
@@ -103,71 +113,197 @@
         left: 0
         right: 0
         top: 0
+        line-height: 40px
+        font-size: 1.3rem
+        text-align: center
 
     // img
     .profile__image
-        width: 150px
-        height: 150px
-        top: 40px
+        width: 120px
+        height: 120px
+        top: 70px
         left: 75px
         border-width: 10px
 
-    .profile__country
-        position: absolute
-        top: 70px
-        left: 20px
+        &:hover
+            width: 140px
+            height: 140px
+            border-width: 0
 
-    .profile__gender
+    .profile__left
         position: absolute
-        top: 65px
+        top: 100px
+        left: 20px
+        animation: go-right 0.3s 0s backwards
+
+    .profile__right
+        position: absolute
+        top: 95px
         right: 30px
         font-size: 1.57em
+        animation: go-left 0.3s 0s backwards
 
-    .profile__category
-        position: absolute
-        left: 20px
-        top: 200px
+    .profile__trophy-1
+        top: 50
+        left: 65
 
-    .profile__club
-        position: absolute
-        left: 20px
-        top: 240px
+    .profile__trophy-2
+        top: 40
+        left: 122
 
-    .profile__team
-        position: absolute
-        left: 20px
-        top: 280px
+    .profile__trophy-3
+        top: 50
+        right: 75
+    
 
     .profile__minimize
         position: absolute
-        top: 420px
+        top: 440px
         left: 20px
         right: 20px
-        color: white
         height: 40px
 
         button
-            border: 2px solid white
-            color: white
-            background: transparent
             width: 100%
             height: 100%
 
-    .profile__primary
-        top: 150px
+    .profile__maximize
+        position: absolute
+        width: 100%
+        bottom: 0
+        left: 0
+        right: 0
+        height: 50px
+        border: none
+        opacity: 0
+        background: linear-gradient(0deg, #CCC 0%, rgba(0,0,0,0) 100%)
+        transition: opacity 0.2s, height 0.2s
+        z-index: 2
+
+        &::after
+            content: ""
+            position: absolute
+            left: 130px
+            bottom: 10px
+            width: 40px
+            height: 40px
+            background: url("/img/full-screen.svg") no-repeat
+            transition: all 0.2s
+            opacity: 0.8
+            transform: rotate(90deg)
+
+        &:hover
+            opacity: 1 !important
+            height: 100px
+
+            &::after
+                left: 125px
+                width: 50px
+                height: 50px
+                transform: rotate(0)
 
     // arrow
     &::after
-        top: 500px
+        display: none
 
     &:hover
-        height: 530px
+        height: 560px
         transform: scale(1.02)
+
+        .profile__maximize
+            opacity: 0.3
 
 
 // maximized view of profile taking up the whole screen showinfg all infor mation and addidional extras like analysis
 .profile.max
+    // visibility
+    *
+        display: block
 
+    // bounds
+    width: 100vw
+    height: 100vh
+    
+    //outer
+    border-radius: 0
+    z-index: 1
+
+    background: linear-gradient(0deg,$b 0%, $e)
+
+    &::before
+        content: ""
+        position: absolute
+        top: 0
+        left: 0
+        right: 0
+        height: 250px
+        background: radial-gradient(circle at left 150px, $b 40%, #000 170%)
+        transform: skewY(-1deg)
+        transform-origin: left
+
+
+    // img
+    .profile__image
+        z-index: 1
+        width: 180px
+        height: 180px
+        top: 25px
+        left: 25px
+        border-width: 10px
+        box-shadow: 5px 5px 34px 2px rgba(0,0,0,0.51)
+
+        &:hover
+            width: 200px
+            height: 200px
+            border-width: 0
+
+        &:active
+            box-shadow: 5px 5px 50px 2px rgba(0,0,0,0.2)
+            width: 400px
+            height: 400px
+            border-width: 0
+            border-radius: 20%
+
+    .profile__trophy-1
+        top: 60
+        left: 220
+
+    .profile__trophy-2
+        top: 110
+        left: 230
+
+    .profile__trophy-3
+        top: 160
+        left: 220
+
+    .profile__trophy .medal
+        width: 3.5rem
+        font-size: 1.5rem
+
+    .profile__name
+        left: 0
+        right: 0
+        font-size: 1.7rem
+
+    .profile__minimize button
+        
+
+    &::after
+        display: none
+
+.profile__trophy
+    position: absolute
+    transition: all 0.2s
+
+.profile__primary
+    margin-top: 215px
+    padding-left: 30px
+    padding-right: 30px
+    display: grid
+    grid-template-columns: 1fr
+    grid-gap: 20px
+    z-index: 1
+    transition: all 0.2s
 
 .profile__image
     position: absolute
@@ -177,7 +313,8 @@
     height: 150px
     border: 3px solid $b
     transform: scale(1)
-    transition: transform 0.1s, filter 0.2s, border 0.1s, width 0.1s, height 0.1s
+    transition: all 0.1s
+    box-sizing: content-box
 
     img
         filter: grayscale(0.2) saturate(0.7)
@@ -187,22 +324,51 @@
         background: white
     
     &:hover
-        transform: scale(1.03)
         border-width: 0
 
         img
             filter: grayscale(0) saturate(1)
 
 .profile__name
+    position: absolute
+    text-overflow: ellipsis
+    transition: all 0.1s
+    text-shadow: 3px 3px 7px #222
     color: white
     font-weight: 500
-    font-size: 1.3rem
+    font-size: 1.2rem
     line-height: 50px
     text-align: center
+    overflow: hidden
     z-index: 1
+    white-space: nowrap
 
 @keyframes go-up
     from
-        transform: translateY(0)
-    to
+        opacity: 0
         transform: translateY(-10px)
+    to
+        opacity: 1
+        transform: translateY(0)
+
+@keyframes go-left
+    from
+        opacity: 0
+        transform: translateX(50px)
+    to
+        opacity: 1
+        transform: translateX(0)
+
+@keyframes go-right
+    from
+        opacity: 0
+        transform: translateX(-50px)
+    to
+        opacity: 1
+        transform: translateX(0)
+
+@keyframes show
+    from
+        opacity: 0
+    to
+        opacity: 1

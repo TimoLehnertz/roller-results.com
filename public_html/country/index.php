@@ -21,9 +21,18 @@ echo "<script>const persons = ". json_encode($persons) .";</script>";
 <main class="main">
     <h2>Country <?php echo $persons[0]["country"]?></h2>
     <div class="person-table"></div>
+    <div class="persons"></div>
     <script>
-        const table = new Table($(".person-table"), countrytableFrompersons(persons));
-        table.init();
+        console.log(persons)
+        let i = 0;
+        for (const person of persons) {
+            if(i > 100){
+                break;
+            }
+            const profile = new Profile(athleteToProfile(person));
+            profile.appendTo($(".persons"));
+            i++
+        }
     </script>
 </main>
 <?php

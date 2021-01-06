@@ -12,7 +12,7 @@
  *          id
  *      getresult
  *          id
- *      getperson
+ *      getAthlete
  *          id
  */
 
@@ -22,8 +22,8 @@ include_once "../../data/dbh.php";
  * Getters
  */
 if(!isset($NO_GET_API)){
-    if(isset($_GET["getperson"])){
-        echo json_encode(getPerson($_GET["getperson"]));
+    if(isset($_GET["getAthlete"])){
+        echo json_encode(getAthlete($_GET["getAthlete"]));
     }
     if(isset($_GET["getcompetition"])){
         echo json_encode(getCompetition($_GET["getcompetition"]));
@@ -46,10 +46,10 @@ if(!isset($NO_GET_API)){
 
 /**
  * example
- * {"sureName":"Abdelsamie","firstName":"Mokhtar","gender":"M","country":"Egypt","linkCollection":null,"id":5,"mail":null,"comment":null,"club":null,"team":null,"image":null}
+ * {"lastname":"Abdelsamie","firstname":"Mokhtar","gender":"M","country":"Egypt","linkCollection":null,"id":5,"mail":null,"comment":null,"club":null,"team":null,"image":null}
  */
-function getPerson($id){
-    $result = query("CALL sp_getPerson(?);", "i", intval($id));
+function getAthlete($id){
+    $result = query("CALL sp_getAthlete(?);", "i", intval($id));
     if(sizeof($result) > 0){
         return $result[0];
     } else{
@@ -73,7 +73,7 @@ function getCompetition($id){
 
 /**
  * example
- * {"id":4,"place":34,"resultLink":null,"idRace":349,"idPerson":4,"idPerson2":null,"idPerson3":null,"sureName":"Abdellatif","firstName":"Mariam","gender":"W","country":"Egypt","linkCollection":null,"club":null,"team":null,"image":null,"location":"Nanjing","raceYear":"2016","type":null,"relay":0,"distance":"15000 Elimination Track","raceLink":null,"category":"Jun","remark":null,"trackStreet":null,"idCompetition":null}
+ * {"id":4,"place":34,"resultLink":null,"idRace":349,"idPerson":4,"idPerson2":null,"idPerson3":null,"lastname":"Abdellatif","firstname":"Mariam","gender":"W","country":"Egypt","linkCollection":null,"club":null,"team":null,"image":null,"location":"Nanjing","raceYear":"2016","type":null,"relay":0,"distance":"15000 Elimination Track","raceLink":null,"category":"Jun","remark":null,"trackStreet":null,"idCompetition":null}
  */
 function getResult($id){
     $result = query("CALL sp_getResult(?);", "i", intval($id));
@@ -111,42 +111,42 @@ function getRacesFromCompetition($id){
     }
 }
 
-function parsePersonFromResult($result, $index){
-    $name = "p$index";
-    if($index == -1){
-        $name = "";
-    }
-    if(!isset($result[$name."id"])){
-        return null;
-    }
-    $person = [
-        "id" => NULL,
-        "sureName" => NULL,
-        "firstName" => NULL,
-        "gender" => NULL,
-        "country" => NULL,
-        "linkCollection" => NULL,
-        "club" => NULL,
-        "team" => NULL,
-        "image" => NULL
-    ];
-    foreach ($person as $key => $value) {
-        if(isset($result[$name.$key])){
-            $person[$key] = $result[$name.$key];
-        }
-    }
-    return $person;
-}
+// function parsePersonFromResult($result, $index){
+//     $name = "p$index";
+//     if($index == -1){
+//         $name = "";
+//     }
+//     if(!isset($result[$name."id"])){
+//         return null;
+//     }
+//     $person = [
+//         "id" => NULL,
+//         "lastname" => NULL,
+//         "firstname" => NULL,
+//         "gender" => NULL,
+//         "country" => NULL,
+//         "linkCollection" => NULL,
+//         "club" => NULL,
+//         "team" => NULL,
+//         "image" => NULL
+//     ];
+//     foreach ($person as $key => $value) {
+//         if(isset($result[$name.$key])){
+//             $person[$key] = $result[$name.$key];
+//         }
+//     }
+//     return $person;
+// }
 
 function getRaceResults($id){
     $results = query("CALL sp_getRaceResults(?);", "i", intval($id));
     $counter = 0;
-    foreach ($results as $key => $result) {
-        for ($person=1; $person < 4; $person++) { 
-            $results[$counter] ["person".$person] = parsePersonFromResult($result, $person);
-        }
-        $counter++;
-    }
+    // foreach ($results as $key => $result) {
+    //     for ($person=1; $person < 4; $person++) { 
+    //         $results[$counter] ["person".$person] = parsePersonFromResult($result, $person);
+    //     }
+    //     $counter++;
+    // }
     return $results;
 }
 
@@ -158,14 +158,15 @@ function getRaceResults($id){
 function getCountry($name){
     $result = query("CALL sp_getCountry(?);", "s", $name);
     $persons = [];
-    if(sizeof($result) > 0){
-        foreach ($result as $key => $person) {
-            $persons[] = parsePersonFromResult($person, -1);
-        }
-        return $persons;
-    } else{
-        return false;
-    }
+    return $result;
+    // if(sizeof($result) > 0){
+    //     foreach ($result as $key => $person) {
+    //         $persons[] = parsePersonFromResult($person, -1);
+    //     }
+    //     return $persons;
+    // } else{
+    //     return false;
+    // }
 }
 
 /**
@@ -246,7 +247,7 @@ function search($name){
             $countries = query("CALL sp_searchCountry(?)", "s", $value);
             foreach ($countries as $key => $country) {
                 $results[] = [
-                    "id" => -1,
+                    "id" => $country["country"],
                     "name" => $country["country"],
                     "priority" => 4,
                     "type" => "country"
@@ -274,7 +275,7 @@ function searchPersons($name){
                 $personIds[] = $person["id"];
                 $results[] = [
                     "id" => $person["id"],
-                    "name" => $person["firstName"]." ".$person["sureName"]." - ".$person["country"],
+                    "name" => $person["firstname"]." ".$person["lastname"]." - ".$person["country"],
                     "priority" => 1,
                     "type" => "person"
                 ];

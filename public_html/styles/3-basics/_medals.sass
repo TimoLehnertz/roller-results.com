@@ -1,0 +1,39 @@
+.medal
+    position: relative
+    width: 3rem
+    height: auto
+
+    img
+        position: absolute
+        height: inherit
+        width: inherit
+        opacity: 0.65
+        transition: opacity 0.2s, transform 0.2s 0.1s
+        transform: scale(1)
+
+    .medal__simple
+        opacity: 0.8
+
+    .medal__big
+        opacity: 0
+        transform: rotateX(-90deg)
+
+    &:hover
+        .medal__simple
+            opacity: 1
+
+        .medal__big
+            opacity: 1
+            transform: rotate(0)
+
+.medal__amount
+    font-family: 'Permanent Marker', cursive
+    color: white
+    position: absolute
+    font-size: 1.2rem
+    font-weight: 500
+    left: 0
+    right: 0
+    top: 0.4rem
+    text-align: center
+    text-shadow: 1px 1px 3px #0007

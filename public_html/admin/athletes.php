@@ -19,8 +19,8 @@ if(!empty($_GET["search-athlete"])){
 }
 
 $changeable = [
-    "sureName" => "text",
-    "firstName" => "text",
+    "lastname" => "text",
+    "firstname" => "text",
     "gender" => "text",
     "country" => "text",
     "linkCollection" => "text",
@@ -37,7 +37,7 @@ $changeable = [
 if(isset($_POST["submit-changes"])){
     if(isset($_GET["idperson"])){
         $idperson = intval($_GET["idperson"]);
-        $name = $_POST["firstName"]. "-" . $_POST["sureName"];
+        $name = $_POST["firstname"]. "-" . $_POST["lastname"];
         if(isset($_FILES["image"])){
             $_POST["image"] = uploadImg($_FILES["image"], "athlete-$name-");
         }
@@ -77,7 +77,7 @@ if(isset($_POST["submit-changes"])){
     }
     if(isset($_GET["idperson"])){
         $idperson = $_GET["idperson"];
-        $person = getPerson($idperson);
+        $person = getAthlete($idperson);
         echo "<form action='#' enctype='multipart/form-data' method='POST'><table>";
             foreach ($changeable as $prop => $type) {
                 $value = $person[$prop];
