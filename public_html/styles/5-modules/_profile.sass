@@ -57,6 +57,9 @@
     .profile__name, .profile__image, .profile__special
         display: blocK
 
+    .profile__primary
+        display: none
+
     //layout
     .profile__image
         width: 45px
@@ -155,6 +158,10 @@
         top: 50
         right: 75
     
+    .profile__primary
+        margin-top: 225px
+        padding-left: 30px
+        padding-right: 30px
 
     .profile__minimize
         position: absolute
@@ -217,12 +224,13 @@
 // maximized view of profile taking up the whole screen showinfg all infor mation and addidional extras like analysis
 .profile.max
     // visibility
-    *
+    & > *
         display: block
 
     // bounds
     width: 100vw
-    height: 100vh
+    height: 100vh//to be removed
+    padding-right: 20px //scollbar
     
     //outer
     border-radius: 0
@@ -244,7 +252,6 @@
 
     // img
     .profile__image
-        z-index: 1
         width: 180px
         height: 180px
         top: 25px
@@ -285,8 +292,18 @@
         right: 0
         font-size: 1.7rem
 
-    .profile__minimize button
-        
+    .profile__minimize
+        z-index: 1
+        position: absolute
+        top: 5px
+        right: 25px
+
+    .profile__primary
+        display: grid
+        margin-left: 350px
+        margin-top: 10px
+        margin-right: 20px
+        grid-template-columns: 1fr
 
     &::after
         display: none
@@ -296,17 +313,19 @@
     transition: all 0.2s
 
 .profile__primary
-    margin-top: 215px
-    padding-left: 30px
-    padding-right: 30px
+    position: relative
     display: grid
     grid-template-columns: 1fr
     grid-gap: 20px
     z-index: 1
+    color: white
     transition: all 0.2s
+    
+    & > *
 
 .profile__image
     position: absolute
+    z-index: 2
     border-radius: 50%
     overflow: hidden
     width: 150px
@@ -342,6 +361,9 @@
     overflow: hidden
     z-index: 1
     white-space: nowrap
+
+.profile__minimize
+    transition: top 0.1s, left 0.2s, right 0.2s
 
 @keyframes go-up
     from

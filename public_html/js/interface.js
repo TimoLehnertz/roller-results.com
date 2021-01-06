@@ -110,7 +110,10 @@ function athleteToProfile(athlete){
         right: {data: athlete.gender, type: "gender"},
         trophy1, trophy2, trophy3,
         primary: {
-            category: athlete.category,
+            category: {
+                date: athlete.category,
+                validate: (e) => athlete.category.length > 0
+            },
             topTen: {
                 data: athlete.topTen,
                 description: "Worlds top 10:",

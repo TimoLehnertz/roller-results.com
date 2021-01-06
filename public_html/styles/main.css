@@ -407,6 +407,11 @@ a::before {
   background: linear-gradient(130deg, #4047ce, #4d98dd);
 }
 
+.hidden {
+  display: none;
+  visibility: hidden;
+}
+
 .width.third {
   width: 33%;
 }
@@ -1362,6 +1367,10 @@ a::before {
   display: blocK;
 }
 
+.profile.min .profile__primary {
+  display: none;
+}
+
 .profile.min .profile__image {
   width: 45px;
   height: 45px;
@@ -1471,6 +1480,12 @@ a::before {
   right: 75;
 }
 
+.profile.card .profile__primary {
+  margin-top: 225px;
+  padding-left: 30px;
+  padding-right: 30px;
+}
+
 .profile.card .profile__minimize {
   position: absolute;
   top: 440px;
@@ -1545,13 +1560,14 @@ a::before {
 .profile.max {
   width: 100vw;
   height: 100vh;
+  padding-right: 20px;
   border-radius: 0;
   z-index: 1;
   background: -webkit-gradient(linear, left bottom, left top, from(#4047ce), to(#32e68c));
   background: linear-gradient(0deg, #4047ce 0%, #32e68c);
 }
 
-.profile.max * {
+.profile.max > * {
   display: block;
 }
 
@@ -1570,7 +1586,6 @@ a::before {
 }
 
 .profile.max .profile__image {
-  z-index: 1;
   width: 180px;
   height: 180px;
   top: 25px;
@@ -1621,6 +1636,23 @@ a::before {
   font-size: 1.7rem;
 }
 
+.profile.max .profile__minimize {
+  z-index: 1;
+  position: absolute;
+  top: 5px;
+  right: 25px;
+}
+
+.profile.max .profile__primary {
+  display: -ms-grid;
+  display: grid;
+  margin-left: 350px;
+  margin-top: 10px;
+  margin-right: 20px;
+  -ms-grid-columns: 1fr;
+      grid-template-columns: 1fr;
+}
+
 .profile.max::after {
   display: none;
 }
@@ -1632,21 +1664,21 @@ a::before {
 }
 
 .profile__primary {
-  margin-top: 215px;
-  padding-left: 30px;
-  padding-right: 30px;
+  position: relative;
   display: -ms-grid;
   display: grid;
   -ms-grid-columns: 1fr;
       grid-template-columns: 1fr;
   grid-gap: 20px;
   z-index: 1;
+  color: white;
   -webkit-transition: all 0.2s;
   transition: all 0.2s;
 }
 
 .profile__image {
   position: absolute;
+  z-index: 2;
   border-radius: 50%;
   overflow: hidden;
   width: 150px;
@@ -1693,6 +1725,11 @@ a::before {
   overflow: hidden;
   z-index: 1;
   white-space: nowrap;
+}
+
+.profile__minimize {
+  -webkit-transition: top 0.1s, left 0.2s, right 0.2s;
+  transition: top 0.1s, left 0.2s, right 0.2s;
 }
 
 @-webkit-keyframes go-up {

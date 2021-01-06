@@ -653,6 +653,10 @@ class ElemParser{
                 if(!meta.validate(meta.data)){
                     return false;
                 }
+            } else{
+                if(meta.data.length === 0){
+                    return false;
+                }
             }
             if(meta.hasOwnProperty("type")){
                 if(ElemParser.parser.hasOwnProperty(meta.type)){
@@ -668,7 +672,7 @@ class ElemParser{
 
     static finishElem(elem, meta){
         if(elem === false){
-            return $();
+            return false;
         }
         if(meta === undefined){
             meta = {};
@@ -707,7 +711,8 @@ class ElemParser{
             }
         }
         if(meta.hasOwnProperty("description")){
-            elem.prepend(`<span class="margin right">${meta.description}</span>`);
+            elem.prepend(`<div class="margin right">${meta.description}</div>`);
+            elem.addClass("flex justify-start");
         }
         return wrapper;
     }
@@ -966,7 +971,7 @@ class Profile{
             this.elem.addClass(this.lodClass);
             if(this.lod === Profile.MAX){
                 window.setTimeout(() => {this.hideEverythingElse()}, 200);
-                this.elem.find(".profile__maximize button").text("Back");
+                this.elem.find(".profile__minimize button").text("Back");
             }
             if(Profile.expanded.indexOf(this) === -1){
                 Profile.expanded.push(this);//add to expanded
@@ -986,21 +991,27 @@ class Profile{
             if(this.lod === Profile.CARD){
                 this.showEverythingElse();
                 this.scollIntoView();
-                this.elem.find(".profile__maximize button").text("Minimize");
+                this.elem.find(".profile__minimize button").text("Minimize");
             }
         }
     }
 
     hideEverythingElse(){
-        $(`main *:not(header, footer`).hide();
-        this.elem.parents().show();
-        this.elem.show();
-        this.elem.find("*:not(.profile__maximize)").show();
+        $(`main *:not(header, footer`).addClass("hidden");
+        this.elem.parents().removeClass("hidden");
+        this.elem.removeClass("hidden");
+        this.elem.find("*:not(.profile__maximize)").removeClass("hidden");
+
+        const bounds = this.elem.get(0).getBoundingClientRect();
+        console.log(bounds);
+        this.elem.css("left", -bounds.left);
+        // this.elem.css("top", -bounds.top);
     }
 
     showEverythingElse(){
-        $(`main *`).show();
-        $(`main *`).css("display", "")
+        $(`main *`).removeClass("hidden");
+        this.elem.css("left", 0);
+        // this.elem.css("top", 0);
     }
 
     closeAllOthers(){
@@ -1065,9 +1076,11 @@ class Profile{
         const name = "trophy" + index;
         if(this[name] !== undefined){
             const elem = ElemParser.parse(this[name]);
-            elem.addClass("profile__trophy-" + index);
-            elem.addClass("profile__trophy");
-            return elem;
+            if(elem !== false){
+                elem.addClass("profile__trophy-" + index);
+                elem.addClass("profile__trophy");
+                return elem;
+            }
         }
         return $();
     }
@@ -1107,8 +1120,10 @@ class Profile{
         for (const key in this.primary) {
             if (Object.hasOwnProperty.call(this.primary, key)) {
                 const primElem = ElemParser.parse(this.primary[key]);
-                primElem.addClass(`profile__primary__${key}`);
-                elem.append(primElem);
+                if(primElem !== false){
+                    primElem.addClass(`profile__primary__${key}`);
+                    elem.append(primElem);
+                }
             }
         }
         return elem;
@@ -1256,15 +1271,6 @@ function isDomElem(obj) {
         }
         return false;
     }
-}
-
-/**
- * hide all exept the elem, the header and footer
- */
-function hideAllExept(elem){
-    elem.siblings().each((e) => {
-        e.css("dispaly", "none");
-    })
 }
 
 /**

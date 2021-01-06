@@ -31,7 +31,9 @@ $changeable = [
     "image" => "file",
     "birthYear" => "number",
     "LVKuerzel" => "text",
-    "source" => "text"
+    "source" => "text",
+    "instagram" => "text",
+    "facebook" => "text"
 ];
 
 if(isset($_POST["submit-changes"])){

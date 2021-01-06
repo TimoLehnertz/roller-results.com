@@ -41,7 +41,7 @@ function updatePerson($idperson, $person){
         $delimiter = ", ";
     }
     $vals[] = $idperson;
-    $succsess = dbExecuteArr("UPDATE TbPerson SET $update WHERE id = ?;", $types."i", $vals);
+    $succsess = dbExecuteArr("UPDATE TbAthlete SET $update WHERE id = ?;", $types."i", $vals);
     if($oldPerson["image"] !== $person["image"]){
         deleteImg($oldPerson["image"]);
     }
