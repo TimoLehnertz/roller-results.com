@@ -610,6 +610,7 @@ class ElemParser{
     static GENDER = "gender";
     static TEXT = "text";
     static DOM = "dom"
+    static SLIDER = "slider"
 
     /**
      * helpers
@@ -624,7 +625,8 @@ class ElemParser{
         [ElemParser.COUNTYR_FLAG]: (elem) => getCountryFlag(elem.data),
         [ElemParser.GENDER]: (elem) => ElemParser.parseGender(elem.data),
         [ElemParser.TEXT]: (elem) => $(`<div>${elem.data}</div>`),
-        [ElemParser.DOM]: (elem) => elem.data
+        [ElemParser.DOM]: (elem) => elem.data,
+        [ElemParser.SLIDER]: (elem) => ElemParser.parseSlider(elem)
     };
 
     static addType(type, parser){
@@ -711,10 +713,20 @@ class ElemParser{
             }
         }
         if(meta.hasOwnProperty("description")){
-            elem.prepend(`<div class="margin right">${meta.description}</div>`);
-            elem.addClass("flex justify-start");
+            if(ElemParser.useDescriptionOn(meta)){
+                elem.prepend(`<div class="margin right">${meta.description}</div>`);
+                elem.addClass("flex justify-start");
+            }
         }
         return wrapper;
+    }
+
+    static useDescriptionOn(meta){
+        if(!meta.hasOwnProperty("type")){
+            return true;
+        } else{
+            return meta.type !== ElemParser.SLIDER;
+        }
     }
 
     /**
@@ -784,6 +796,42 @@ class ElemParser{
         }
         return false;
     }
+    
+    static parseSlider(meta){
+        const elem = $(`<div class="slider"></div>`);
+        let desc1 = "1";
+        let desc2 = "2";
+        let value = 0.5
+        let desc = "slider";
+        if(meta.hasOwnProperty("description1")){
+            desc1 = meta.description1;
+        }
+        if(meta.hasOwnProperty("description2")){
+            desc2 = meta.description2;
+        }
+        if(meta.hasOwnProperty("description")){
+            desc = meta.description;
+        }
+        if(meta.hasOwnProperty("data")){
+            // console.log(meta.data)
+            if(!isNaN(meta.data)){
+                value = Math.min(Math.max(meta.data, 0), 1);
+            }
+        }
+        // console.log(value)
+        elem.append(`<div class="slider__header">${desc}</div`);
+        const body = $(`<div class="slider__body"></div>`);
+        body.append(`<div class="slider__description text-align right margin">${desc1}</div>`);
+        const slider = $(`<div class="slider__slider"></div>`);
+        const circle = $(`<div class="slider__circle"></div>`);
+        console.log((value * 100) + '%')
+        circle.css("width", (value * 100) + '%');
+        slider.append(circle);
+        body.append(slider);
+        body.append(`<div class="slider__description margin left">${desc2}</div>`);
+        elem.append(body);
+        return elem;
+    }
 }
 
 /**
@@ -848,6 +896,7 @@ class Profile{
      *  trophy1: elem//trophys to be displayed right next to the image
      *  trophy2: elem
      *  trophy3: elem
+     *  special: special elem to be displayed right in min view
      * 
      *  primary: {
      *      gender: "m"
@@ -878,6 +927,7 @@ class Profile{
         this.elem = undefined; //jquery dom object
         this.left = undefined;
         this.right = undefined;
+        this.special = undefined;
         this.name = "";
         this.image = undefined;
         this.primary = {};
@@ -907,6 +957,9 @@ class Profile{
             if(data.hasOwnProperty("trophy3")){
                 this.trophy3 = data.trophy3;
             }
+            if(data.hasOwnProperty("special")){
+                this.special = data.special;
+            }
             if(data.hasOwnProperty("primary")){
                 this.primary = data.primary;
             }
@@ -927,6 +980,7 @@ class Profile{
         this.elem = $(`<div class="profile ${this.lodClass}" id="${this.idprofile}"></div>`);
         this.elem.append(this.profileImg);
         this.elem.append(this.nameElem);
+        this.elem.append(this.specialElem);
         this.elem.append(this.leftElem);
         this.elem.append(this.rightElem);
         this.elem.append(this.getTrophy(0));
@@ -997,21 +1051,18 @@ class Profile{
     }
 
     hideEverythingElse(){
-        $(`main *:not(header, footer`).addClass("hidden");
+        $(`main > *:not(header, footer)`).addClass("hidden");
+        this.wrapper.siblings().addClass("hidden");
         this.elem.parents().removeClass("hidden");
         this.elem.removeClass("hidden");
         this.elem.find("*:not(.profile__maximize)").removeClass("hidden");
-
         const bounds = this.elem.get(0).getBoundingClientRect();
-        console.log(bounds);
         this.elem.css("left", -bounds.left);
-        // this.elem.css("top", -bounds.top);
     }
 
     showEverythingElse(){
         $(`main *`).removeClass("hidden");
         this.elem.css("left", 0);
-        // this.elem.css("top", 0);
     }
 
     closeAllOthers(){
@@ -1051,6 +1102,10 @@ class Profile{
 
     get nameElem(){
         return $(`<div class="profile__name"><span>${this.name}</span></div>`);
+    }
+
+    get specialElem(){
+        return $(`<div class="profile__special">${this.special}</div>`);
     }
 
     get leftElem(){

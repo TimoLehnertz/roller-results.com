@@ -109,6 +109,7 @@ function athleteToProfile(athlete){
         left: {data: athlete.country, type: "countryFlag", link: `/country?id=${athlete.country}`},
         right: {data: athlete.gender, type: "gender"},
         trophy1, trophy2, trophy3,
+        special: Math.round(athlete.score),
         primary: {
             category: {
                 date: athlete.category,
@@ -118,6 +119,25 @@ function athleteToProfile(athlete){
                 data: athlete.topTen,
                 description: "Worlds top 10:",
                 validate: () => athlete.topTen > 0
+            },
+            score: {
+                data: Math.round(athlete.score * 100) / 100,
+                description: "Score:"
+            },
+            // scoreShort: {
+            //     data: Math.round(athlete.scoreShort * 100) / 100,
+            //     description: "Score short:"
+            // },
+            // scoreLong: {
+            //     data: Math.round(athlete.scoreLong * 100) / 100,
+            //     description: "Score long:"
+            // },
+            sprinter: {
+                data: (athlete.scoreLong / athlete.score),
+                description: "Best discipline",
+                description1: "Sprint",
+                description2: "Long",
+                type: "slider"
             },
             birthYear: {data: athlete.birthYear, icon: "far fa-calendar", validate: (data) => data > 1800},
             club: {data: athlete.club, description: "Club:"},

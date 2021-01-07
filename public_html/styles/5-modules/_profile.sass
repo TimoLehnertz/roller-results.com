@@ -67,9 +67,10 @@
     
     .profile__name
         position: absolute
-        left: 50px
-        right: 0
+        left: 55px
+        right: 35px
         top: 0
+        text-align: left
     
     // hover
     &:hover
@@ -83,7 +84,6 @@
         &::after
             height: 75px
 
-
 // card containing the image and all simple information 
 // dimensions 300px * 500px
 .profile.card
@@ -96,7 +96,7 @@
     color: white
 
     // visibility
-    .profile__name, .profile__image, .profile__special, .profile__left, .profile__right, .profile__minimize, .profile__trophy-1, .profile__trophy-2, .profile__trophy-3, .profile__maximize
+    .profile__name, .profile__image, .profile__special, .profile__left, .profile__right, .profile__minimize, .profile__trophy-1, .profile__trophy-2, .profile__trophy-3, .profile__maximize, .profile__special
         display: blocK
     
     // top color
@@ -292,6 +292,10 @@
         right: 0
         font-size: 1.7rem
 
+    .profile__special
+        left: 10px
+        top: 10px
+
     .profile__minimize
         z-index: 1
         position: absolute
@@ -303,7 +307,7 @@
         margin-left: 350px
         margin-top: 10px
         margin-right: 20px
-        grid-template-columns: 1fr
+        grid-template-columns: 1fr 1fr
 
     &::after
         display: none
@@ -311,6 +315,17 @@
 .profile__trophy
     position: absolute
     transition: all 0.2s
+
+.profile__special
+    position: absolute
+    right: 5px
+    top: 10px
+    width: 30px
+    text-align: center
+    color: white
+    line-height: 30px
+    border-radius: 50%
+    background: linear-gradient(90deg,$b 20%, $e 110%)
 
 .profile__primary
     position: relative
@@ -320,8 +335,6 @@
     z-index: 1
     color: white
     transition: all 0.2s
-    
-    & > *
 
 .profile__image
     position: absolute
@@ -361,6 +374,7 @@
     overflow: hidden
     z-index: 1
     white-space: nowrap
+
 
 .profile__minimize
     transition: top 0.1s, left 0.2s, right 0.2s
