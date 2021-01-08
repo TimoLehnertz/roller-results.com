@@ -67,6 +67,15 @@ function personToTd(person){
     return elem;
 }
 
+function sortAthletes(athletes){
+    athletes.sort((a, b) => {
+        if(a.score > b.score) return -1;
+        if(b.score > a.score) return 1;
+        return 0;
+    });
+    return athletes;
+}
+
 function athleteToProfile(athlete){
     let trophy1 = {
         data: getMedal("silver", athlete.silver),
@@ -124,14 +133,6 @@ function athleteToProfile(athlete){
                 data: Math.round(athlete.score * 100) / 100,
                 description: "Score:"
             },
-            // scoreShort: {
-            //     data: Math.round(athlete.scoreShort * 100) / 100,
-            //     description: "Score short:"
-            // },
-            // scoreLong: {
-            //     data: Math.round(athlete.scoreLong * 100) / 100,
-            //     description: "Score long:"
-            // },
             sprinter: {
                 data: (athlete.scoreLong / athlete.score),
                 description: "Best discipline",
@@ -143,9 +144,27 @@ function athleteToProfile(athlete){
             club: {data: athlete.club, description: "Club:"},
             team: {data: athlete.team, description: "Team:"}
         },
-        secondary:{
-            test1: $("<div>test123</div>"),
-            test2: $("<div>test123</div>")
-        }
+        secondary: profileInit,
+        secondaryData: athlete
+    };
+
+    /**
+     * ToDo:
+     * -best Times
+     * -competitions
+     *      -races(place, time etc)
+     * similar athletes after score and sprit / long distance (only for highly scored athletes)
+     * -carrear(future)
+     * contact
+     * follow(also card mode)
+     * 
+     * 
+     */
+    function profileInit(wrapper, athlete){
+        console.log(athlete)
+        console.log("test")
+        wrapper.append(`<h2>Best times</h2>`);
+
+        get("athlete", athlete.id).receive((succsess, data) => {console.log(data)});
     };
 }

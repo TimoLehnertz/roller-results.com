@@ -1,14 +1,14 @@
 //style for profiles for documentation go to lib.js - Profile class
 .profile__wrapper
     background: $c
-    border-radius: 25px
-    margin: 5px
+    border-radius: 1.5625rem
+    margin: 0.3125rem
 
 .profile
     background: $c
-    border-radius: 20px
+    border-radius: 1.25rem
     overflow: hidden
-    transition: all 0.1s
+    transition: all 0.2s
     position: relative
     transform: scale(1)
 
@@ -22,12 +22,12 @@
         background: url("/img/arrow-down.png") no-repeat
         position: absolute
         background-position: center
-        background-size: 30px auto
+        background-size: 1.875rem auto
         display: block
-        top: 50px
+        top: 3.125rem
         left: 0
         right: 0
-        height: 30px
+        height: 1.875rem
         animation: go-up 1s infinite alternate
         filter: invert(1)
         transition: all 0.1s
@@ -36,60 +36,60 @@
 // wrapper dimensions
 .profile__wrapper
     &.min
-        width: 300px
-        height: 50px
+        width: 18.75rem
+        height: 3.125rem
     &.card
-        width: 300px
-        height: 500px
+        width: 18.75rem
+        height: 31.25rem
     &.max
         width: 100vw
         height: 100vh
 
 // mini block only containing the image, name and one special information
-// dimensions 300px * 50px
+// dimensions 18.75rem * 3.125rem
 .profile.min
     // dimensions
-    width: 300px
-    height: 50px
+    width: 18.75rem
+    height: 3.125rem
 
     background: linear-gradient(90deg,$b 20%, $e 110%)
 
     .profile__name, .profile__image, .profile__special
         display: blocK
 
-    .profile__primary
+    .profile__primary, .profile__maximize
         display: none
 
     //layout
     .profile__image
-        width: 45px
-        height: 45px
+        width: 2.8125rem
+        height: 2.8125rem
     
     .profile__name
         position: absolute
-        left: 55px
-        right: 35px
+        left: 3.4375rem
+        right: 2.1875rem
         top: 0
         text-align: left
     
     // hover
     &:hover
-        height: 80px
+        height: 5rem
         z-index: 2
 
     &:active
-        height: 150px
+        height: 9.375rem
         
         
         &::after
-            height: 75px
+            height: 4.6875rem
 
 // card containing the image and all simple information 
-// dimensions 300px * 500px
+// dimensions 18.75rem * 31.25rem
 .profile.card
     // dimensions
-    width: 300px
-    height: 500px
+    width: 18.75rem
+    height: 31.25rem
     position: relative
     z-index: 1
     background: linear-gradient(0deg,$b 0%, $e)
@@ -106,7 +106,7 @@
         top: 0
         left: 0
         right: 0
-        height: 150px
+        height: 9.375rem
         background: radial-gradient(circle at bottom, $b 40%, #000 170%)
         transform: skewY(-2deg)
         transform-origin: left
@@ -116,59 +116,59 @@
         left: 0
         right: 0
         top: 0
-        line-height: 40px
+        line-height: 2.5rem
         font-size: 1.3rem
         text-align: center
 
     // img
     .profile__image
-        width: 120px
-        height: 120px
-        top: 70px
-        left: 75px
-        border-width: 10px
+        width: 7.5rem
+        height: 7.5rem
+        top: 4.375rem
+        left: 4.6875rem
+        border-width: 0.625rem
 
         &:hover
-            width: 140px
-            height: 140px
+            width: 8.75rem
+            height: 8.75rem
             border-width: 0
 
     .profile__left
         position: absolute
-        top: 100px
-        left: 20px
+        top: 6.25rem
+        left: 1.25rem
         animation: go-right 0.3s 0s backwards
 
     .profile__right
         position: absolute
-        top: 95px
-        right: 30px
+        top: 5.9375rem
+        right: 1.875rem
         font-size: 1.57em
         animation: go-left 0.3s 0s backwards
 
     .profile__trophy-1
-        top: 50
-        left: 65
+        top: 3.125rem
+        left: 4.0625rem
 
     .profile__trophy-2
-        top: 40
-        left: 122
+        top: 2.5rem
+        left: 7.625rem
 
     .profile__trophy-3
-        top: 50
-        right: 75
+        top: 3.125rem
+        right: 4.6875rem
     
     .profile__primary
-        margin-top: 225px
-        padding-left: 30px
-        padding-right: 30px
+        margin-top: 14.0625rem
+        padding-left: 1.875rem
+        padding-right: 1.875rem
 
     .profile__minimize
         position: absolute
-        top: 440px
-        left: 20px
-        right: 20px
-        height: 40px
+        top: 27.5rem
+        left: 1.25rem
+        right: 1.25rem
+        height: 2.5rem
 
         button
             width: 100%
@@ -180,7 +180,7 @@
         bottom: 0
         left: 0
         right: 0
-        height: 50px
+        height: 3.125rem
         border: none
         opacity: 0
         background: linear-gradient(0deg, #CCC 0%, rgba(0,0,0,0) 100%)
@@ -190,23 +190,22 @@
         &::after
             content: ""
             position: absolute
-            left: 130px
-            bottom: 10px
-            width: 40px
-            height: 40px
+            left: 8.125rem
+            bottom: 0.625rem
+            width: 2.5rem
+            height: 2.5rem
             background: url("/img/full-screen.svg") no-repeat
             transition: all 0.2s
             opacity: 0.8
             transform: rotate(90deg)
 
         &:hover
-            opacity: 1 !important
-            height: 100px
+            height: 5rem
 
             &::after
-                left: 125px
-                width: 50px
-                height: 50px
+                left: 7.8125rem
+                width: 3.125rem
+                height: 3.125rem
                 transform: rotate(0)
 
     // arrow
@@ -214,8 +213,9 @@
         display: none
 
     &:hover
-        height: 560px
+        height: 35rem
         transform: scale(1.02)
+        z-index: 2
 
         .profile__maximize
             opacity: 0.3
@@ -229,8 +229,9 @@
 
     // bounds
     width: 100vw
-    height: 100vh//to be removed
-    padding-right: 20px //scollbar
+    min-height: 100vh//to be removed
+    padding-right: 1.25rem //scollbar
+    margin-top: 4rem
     
     //outer
     border-radius: 0
@@ -244,44 +245,44 @@
         top: 0
         left: 0
         right: 0
-        height: 250px
-        background: radial-gradient(circle at left 150px, $b 40%, #000 170%)
+        height: 18.75rem
+        background: radial-gradient(circle at left 9.375rem, $b 40%, #000 170%)
         transform: skewY(-1deg)
         transform-origin: left
 
 
     // img
     .profile__image
-        width: 180px
-        height: 180px
-        top: 25px
-        left: 25px
-        border-width: 10px
-        box-shadow: 5px 5px 34px 2px rgba(0,0,0,0.51)
+        width: 11.25rem
+        height: 11.25rem
+        top: 3.125rem
+        left: 1.25rem
+        border-width: 0.625rem
+        box-shadow: 0.3125rem 0.3125rem 2.125rem 0.125rem rgba(0,0,0,0.51)
 
         &:hover
-            width: 200px
-            height: 200px
+            width: 12.5rem
+            height: 12.5rem
             border-width: 0
 
         &:active
-            box-shadow: 5px 5px 50px 2px rgba(0,0,0,0.2)
-            width: 400px
-            height: 400px
+            box-shadow: 0.3125rem 0.3125rem 3.125rem 0.125rem rgba(0,0,0,0.2)
+            width: 25rem
+            height: 25rem
             border-width: 0
             border-radius: 20%
 
     .profile__trophy-1
-        top: 60
-        left: 220
+        top: 5rem
+        left: 13.75rem
 
     .profile__trophy-2
-        top: 110
-        left: 230
+        top: 8.125rem
+        left: 14.375rem
 
     .profile__trophy-3
-        top: 160
-        left: 220
+        top: 11.25rem
+        left: 13.75rem
 
     .profile__trophy .medal
         width: 3.5rem
@@ -290,24 +291,32 @@
     .profile__name
         left: 0
         right: 0
-        font-size: 1.7rem
+        font-size: 2rem
 
     .profile__special
-        left: 10px
-        top: 10px
+        left: 0.625rem
+        top: 0.625rem
 
     .profile__minimize
-        z-index: 1
+        z-index: 2
         position: absolute
-        top: 5px
-        right: 25px
+        top: 0.3125rem
+        right: 1.5625rem
+
+    .profile__maximize
+        display: none
 
     .profile__primary
         display: grid
-        margin-left: 350px
-        margin-top: 10px
-        margin-right: 20px
-        grid-template-columns: 1fr 1fr
+        margin-left: 21.875rem
+        margin-top: 1.25rem
+        margin-right: 1.25rem
+        grid-template-columns: 1fr 1fr 1fr
+
+    .profile__secondary
+        margin-top: 18.75rem
+        width: 100%
+
 
     &::after
         display: none
@@ -315,23 +324,24 @@
 .profile__trophy
     position: absolute
     transition: all 0.2s
+    z-index: 3
 
 .profile__special
     position: absolute
-    right: 5px
-    top: 10px
-    width: 30px
+    right: 0.3125rem
+    top: 0.625rem
+    width: 1.875rem
     text-align: center
     color: white
-    line-height: 30px
+    line-height: 1.875rem
     border-radius: 50%
-    background: linear-gradient(90deg,$b 20%, $e 110%)
+    background: linear-gradient(180deg,$b, $a 100%)
 
 .profile__primary
-    position: relative
+    position: absolute
     display: grid
     grid-template-columns: 1fr
-    grid-gap: 20px
+    grid-gap: 1.25rem
     z-index: 1
     color: white
     transition: all 0.2s
@@ -341,9 +351,9 @@
     z-index: 2
     border-radius: 50%
     overflow: hidden
-    width: 150px
-    height: 150px
-    border: 3px solid $b
+    width: 9.375rem
+    height: 9.375rem
+    border: 0.1875rem solid $b
     transform: scale(1)
     transition: all 0.1s
     box-sizing: content-box
@@ -365,24 +375,56 @@
     position: absolute
     text-overflow: ellipsis
     transition: all 0.1s
-    text-shadow: 3px 3px 7px #222
+    text-shadow: 0.1875rem 0.1875rem 0.4375rem #222
     color: white
     font-weight: 500
     font-size: 1.2rem
-    line-height: 50px
+    line-height: 3.125rem
     text-align: center
     overflow: hidden
-    z-index: 1
+    z-index: 2
     white-space: nowrap
 
 
 .profile__minimize
     transition: top 0.1s, left 0.2s, right 0.2s
 
+@media only screen and (max-width: 62.5rem)
+    .profile.max 
+        .profile__primary
+            grid-template-columns: 1fr 1fr !important
+
+        .profile__special
+            top: 3.125rem
+
+@media only screen and (max-width: 43.75rem)
+
+    .profile
+        transition: none
+
+    .profile__primary
+        grid-template-columns: 1fr !important
+
+    .profile.max
+        .profile__name
+            font-size: 1.3rem !important
+            text-align: left
+            left: 0.625rem
+
+        &::before
+            height: 37.5rem
+
+        .profile__primary
+            margin-left: 1.25rem
+            margin-top: 15.625rem
+
+        .profile__secondary
+            margin-top: 37.5rem
+
 @keyframes go-up
     from
         opacity: 0
-        transform: translateY(-10px)
+        transform: translateY(-0.625rem)
     to
         opacity: 1
         transform: translateY(0)
@@ -390,7 +432,7 @@
 @keyframes go-left
     from
         opacity: 0
-        transform: translateX(50px)
+        transform: translateX(3.125rem)
     to
         opacity: 1
         transform: translateX(0)
@@ -398,7 +440,7 @@
 @keyframes go-right
     from
         opacity: 0
-        transform: translateX(-50px)
+        transform: translateX(-3.125rem)
     to
         opacity: 1
         transform: translateX(0)

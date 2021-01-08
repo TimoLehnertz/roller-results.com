@@ -7,18 +7,20 @@
     margin: 0
     z-index: 100
 
-    .left a
+    .header__left a
         display: flex
         align-items: center
         font-size: 1.3rem
         height: 50px
         text-decoration: none
         color: #333
+        &::before
+            background: none
 
         i
             margin-right: 10px
 
-    .right
+    .header__right
         display: flex
         align-items: center
 
@@ -84,7 +86,7 @@
         height: 1rem
         font-size: 0.8rem
 
-    .left
+    .header__left
         display: none
     
     .search-bar
@@ -92,7 +94,7 @@
         grid-column-start: 1
         grid-column-end: 3
 
-    .right
+    .header__right
         grid-column-start: 3
         grid-column-end: 4
         top: 0

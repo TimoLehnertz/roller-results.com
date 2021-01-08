@@ -15,23 +15,59 @@ if(!$persons){
 
 include_once "../header.php";
 
-echo "<script>const persons = ". json_encode($persons) .";</script>";
+echo "<script>let athletes = ". json_encode($persons) .";</script>";
 
 ?>
-<main class="main">
-    <h2>Country <?php echo $persons[0]["country"]?></h2>
-    <div class="person-table"></div>
-    <div class="persons"></div>
+<main class="main country">
+    <h2 class="countryName"><?php echo $persons[0]["country"]?></h2>
+    <div class="athletes">
+        <h2 class="top">Top 5 athletes</h2>
+        <div class="slideshow"></div>
+        <div class="rest"></div>
+    </div>
     <script>
-        console.log(persons)
-        let i = 0;
-        for (const person of persons) {
-            if(i > 100){
+        $(".countryName").prepend(getCountryFlag(findGetParameter("id"), 64));
+        let start = 0;
+        let max = 100;
+        const topAmount = 5
+        const increment = 300;
+
+        athletes = sortAthletes(athletes);
+
+        for (let i = 0; i < topAmount; i++) {
+            const athlete = athletes[i];
+            if(!(athlete.score > 0)){
+                if(i === 0){
+                    $(".top").remove();
+                }
                 break;
             }
-            const profile = new Profile(athleteToProfile(person));
-            profile.appendTo($(".persons"));
-            i++
+            const profile = new Profile(athleteToProfile(athlete), Profile.CARD);
+            profile.appendTo(".slideshow");
+            start++;
+        }
+
+        new Slideshow($(".slideshow"));
+
+        for (let i = start; i < Math.min(athletes.length, max); i++) {
+            const profile = new Profile(athleteToProfile(athletes[i]));
+            profile.appendTo($(".rest"));
+        }
+
+        if(max < athletes.length){
+            const btn = $(`<button class="btn default slide vertical">Load more</button>`);
+            btn.click(() => {
+                const start = max;
+                max += increment;
+                for (let i = start; i < Math.min(athletes.length, max); i++) {
+                    const profile = new Profile(athleteToProfile(athletes[i]));
+                    profile.insertBefore(btn);
+                }
+            });
+            if(max > athletes.length){
+                btn.remove();
+            }
+            $(".athletes").append(btn);
         }
     </script>
 </main>

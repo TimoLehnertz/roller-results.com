@@ -1,0 +1,61 @@
+.country
+    position: relative
+    padding-bottom: 5rem
+
+    .countryName
+        margin-top: 5rem
+        color: #dddddd
+        font-size: 7rem
+        text-align: center
+        margin: 32px
+
+    h2 .country-flag
+        position: absolute
+        left: 0
+        right: 0
+        top: -10%
+        width: 100vw
+        height: 100vh
+        opacity: 0.3
+        z-index: -1
+
+        img
+            width: 100vw
+            height: auto
+
+        &::after
+            content: ''
+            position: absolute
+            left: 0
+            top: 0
+            right: 0
+            bottom: 0
+            background: linear-gradient(0deg, #0000 0%,$bg 50%)
+
+
+    .top
+        margin: 3rem
+        font-size: 3rem
+        
+
+    .rest
+        display: grid
+        grid-template-columns: 1fr 1fr 1fr
+        grid-gap: 16px
+        margin: 0 10vw
+
+    .btn
+        width: 100%
+        padding: 32px
+
+@media screen and (max-width: 81.25rem)
+    .rest
+        grid-template-columns: 1fr 1fr !important
+
+@media screen and (max-width: 43.75rem)
+    .rest
+        grid-template-columns: 1fr !important
+        margin: 0 !important
+
+    .countryName
+        font-size: 3rem !important

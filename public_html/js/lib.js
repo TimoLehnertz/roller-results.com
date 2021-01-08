@@ -1,6 +1,145 @@
 "use strict";
 
 /**
+ * Slideshow
+ * Dependencies: 
+ *  JQuery.js
+ */
+class Slideshow{
+    /**
+     * @param {dom elem} elem dom element
+     */
+    constructor(elem){
+        this.elem = $(elem);
+        this.velX = 0;
+        this.velY = 0;
+        this.x = 0;
+        this.fps = 60;
+        this.pressed = false;
+        this.lastMoved = Date.now();
+        this.init();
+    }
+
+    init(){
+        this.elem.addClass("slideshow");
+        this.elem.get()[0].addEventListener('mousedown', (e) => this.down(e));
+        this.elem.get()[0].addEventListener('mouseup', (e) => this.up(e));
+        this.elem.get()[0].addEventListener('touchstart', (e) => this.down(e));
+        this.elem.get()[0].addEventListener('touchend', (e) => this.up(e));
+        this.elem.get()[0].addEventListener('mousemove', (e) => this.move(e));
+        this.elem.get()[0].addEventListener('touchmove', (e) => this.move(e));
+        this.elem.get()[0].addEventListener('mouseenter', (e) => this.enter(e));
+        this.elem.get()[0].addEventListener('mouseleave', (e) => this.leave(e));
+        this.elem.get()[0].addEventListener('touchenter', (e) => this.enter(e));
+        this.elem.get()[0].addEventListener('touchleave', (e) => this.leave(e));
+    }
+
+    update(){
+        if(!this.pressed){
+            console.log(this.velX)
+            anime({
+                targets: this.elem.get()[0],
+                scrollLeft: this.getClosest(this.x + this.velX * 1080),
+                duration: (1000 / this.fps) * 30,
+                easing: 'easeOutQuint'
+            });
+        } else{
+            this.elem.get()[0].scrollLeft = this.x;
+        }
+    }
+
+    getClosest(){
+        let closest = this.elem.width();
+        let closestIndex = -1;
+        let closestOffset = 0;
+        const scroll = this.elem.get()[0].scrollLeft;
+        this.elem.children().each(function(i) {
+            var childPos = $(this).offset();
+            var parentPos = $(this).parent().offset();
+            var childOffset = {
+                top: childPos.top - parentPos.top,
+                left: childPos.left - parentPos.left
+            }
+            if(Math.abs(childOffset.left) < closest){
+                closest = Math.abs(childOffset.left);
+                closestIndex = i;
+                closestOffset = childOffset.left;
+            }
+        });
+        if(closestIndex !== -1){
+            return closestOffset + scroll;
+        } else{
+            return x;
+        }
+    }
+
+    down(e){
+        this.pressed = true;
+        this.x = this.elem.get()[0].scrollLeft;
+        const page = Slideshow.getPageFromEvent(e);
+        this.isMobile = page.isMobile;
+        this.tapStartX = page.x;
+        this.scrollStartX = this.x;
+        this.velX = 0;
+        this.velY = 0;
+        this.lastMoveTime = Date.now();
+    }
+
+    up(e){
+        this.pressed = false;
+        this.x = this.elem.get()[0].scrollLeft;
+        this.update();
+    }
+
+    move(e){
+        if(!this.pressed){
+            return;
+        }
+        const now = Date.now();
+        const page = Slideshow.getPageFromEvent(e);
+        this.velX = (this.lastMoveX - page.x) / (now - this.lastMoveTime);
+        this.velY = (this.lastMoveY - page.y) / (now - this.lastMoveTime);
+        this.lastMoveX = page.x;
+        this.lastMoveY = page.y;
+        this.lastMoveTime = now;
+        this.x = this.scrollStartX + (this.tapStartX - page.x);
+        if(Math.abs(this.velY) * 1.5 > Math.abs(this.velX)){
+            this.velX = 0;
+        } else{
+            e.preventDefault();
+            this.update();
+        }
+    }
+
+    enter(e){
+        // const page = Slideshow.getPageFromEvent(e);
+    }
+
+    leave(e){
+        this.up(e);
+    }
+
+    static getPageFromEvent(e){
+        const mobileEventes = ["touchstart", "touchend", "touchleave", "touchenter", "touchmove"];
+        let x = 0;
+        let y = 0;
+        let isMobile = false;
+        if(mobileEventes.includes(e.type)){
+            isMobile = true;
+            if(e.touches[0] !== undefined){
+                x = e.touches[0].pageX;
+                y = e.touches[0].pageY;
+            }
+        } else{
+            // console.log(e)
+            x = e.pageX;
+            y = e.pageY;
+        }
+        return {x, y, isMobile};
+    }
+}
+
+/**
  * Tooltip
  * 
  * Dependencies:
@@ -813,18 +952,15 @@ class ElemParser{
             desc = meta.description;
         }
         if(meta.hasOwnProperty("data")){
-            // console.log(meta.data)
             if(!isNaN(meta.data)){
                 value = Math.min(Math.max(meta.data, 0), 1);
             }
         }
-        // console.log(value)
         elem.append(`<div class="slider__header">${desc}</div`);
         const body = $(`<div class="slider__body"></div>`);
         body.append(`<div class="slider__description text-align right margin">${desc1}</div>`);
         const slider = $(`<div class="slider__slider"></div>`);
         const circle = $(`<div class="slider__circle"></div>`);
-        console.log((value * 100) + '%')
         circle.css("width", (value * 100) + '%');
         slider.append(circle);
         body.append(slider);
@@ -900,12 +1036,10 @@ class Profile{
      * 
      *  primary: {
      *      gender: "m"
-     *  }
+     *  },
      * 
-     *  secondary: { //those will only be displayed in the max view
-     *      name1: dom elem1,
-     *      name2: dom elem2,
-     *  }
+     *  secondary: callback,callback to be called when max mode is reached callback receives a dom element to be filled
+     *  secondaryData: data to be passed to the callback
      * }
      * @param {Number} score 
      */
@@ -930,8 +1064,10 @@ class Profile{
         this.special = undefined;
         this.name = "";
         this.image = undefined;
+        this.secondaryData = undefined;
         this.primary = {};
         this.secondary = {};
+        this.secondaryElem = $(`<div class="profile__secondary"/>`);
         /**
          * initialization
          */
@@ -966,6 +1102,9 @@ class Profile{
             if(data.hasOwnProperty("secondary")){
                 this.secondary = data.secondary;
             }
+            if(data.hasOwnProperty("secondaryData")){
+                this.secondaryData = data.secondaryData;
+            }
         } else if(typeof data === 'string'){
             this.name = data;
         }
@@ -987,20 +1126,22 @@ class Profile{
         this.elem.append(this.getTrophy(1));
         this.elem.append(this.getTrophy(2));
         this.elem.append(this.primaryElem);
-        this.elem.append(this.minimizeElem);
-        this.elem.append(this.maximizeElem);
+        this.elem.append(this.secondaryElem);
+        if(this.lod < Profile.MAX){
+            this.elem.append(this.minimizeElem);
+            this.elem.append(this.maximizeElem);
+        }
+        if(this.lod === Profile.CARD){
+            this.elem.find(".profile__minimize").css("display", "none");
+        }
         if(this.lod === Profile.MAX){
-            this.elem.append(this.secondaryElem);
             this.initMax();
         }
         if(this.lod === Profile.MIN){
             this.elem.click(() => {if(this.lod == Profile.MIN) {this.incrementLod()}});
         }
-        this.checkGet();
-    }
 
-    initMax(){
-        
+        this.checkGet();
     }
 
     /**
@@ -1023,9 +1164,16 @@ class Profile{
             this.elem.removeClass(this.lodClass);
             this.lod++;
             this.elem.addClass(this.lodClass);
+            if(this.lod === Profile.CARD){
+                this.wrapper.removeClass("min");
+                this.wrapper.addClass(this.lodClass);
+            } else{
+                this.wrapper.removeClass("card");
+                this.wrapper.addClass(this.minLodClass);
+            }
             if(this.lod === Profile.MAX){
-                window.setTimeout(() => {this.hideEverythingElse()}, 200);
                 this.elem.find(".profile__minimize button").text("Back");
+                this.initMax();
             }
             if(Profile.expanded.indexOf(this) === -1){
                 Profile.expanded.push(this);//add to expanded
@@ -1039,6 +1187,8 @@ class Profile{
             this.elem.removeClass(this.lodClass);
             this.lod--;
             this.elem.addClass(this.lodClass);
+            this.wrapper.removeClass("card");
+            this.wrapper.addClass(this.minLodClass);
             if(this.lod === this.minLod){
                 Profile.expanded.splice(Profile.expanded.indexOf(this), 1);//remove from expanded
             }
@@ -1046,13 +1196,39 @@ class Profile{
                 this.showEverythingElse();
                 this.scollIntoView();
                 this.elem.find(".profile__minimize button").text("Minimize");
+                this.destroyMax();
             }
+            if(this.lod === Profile.MAX){
+                this.initMax();
+            }
+        }
+    }
+
+    initMax(){
+        this.elem.find(".profile__minimize").css("display", "");
+        if(this.secondary !== undefined){
+            this.secondary(this.secondaryElem, this.secondaryData);
+        }
+        window.setTimeout(() => {
+            $(`main > *:not(header, footer)`).addClass("hidden");
+        }, 200);
+        $("header").after(this.elem);
+    }
+
+    destroyMax(){
+        this.secondaryElem.empty();
+        this.wrapper.append(this.elem);
+        if(this.minLod === Profile.CARD){
+            this.elem.find(".profile__minimize").css("display", "none");
         }
     }
 
     hideEverythingElse(){
         $(`main > *:not(header, footer)`).addClass("hidden");
         this.wrapper.siblings().addClass("hidden");
+        this.elem.parents().each(function() {
+            $(this).children().addClass("hidden");
+        });
         this.elem.parents().removeClass("hidden");
         this.elem.removeClass("hidden");
         this.elem.find("*:not(.profile__maximize)").removeClass("hidden");
@@ -1074,7 +1250,6 @@ class Profile{
     }
 
     close(){
-        console.log("closing")
         while(this.lod > this.minLod){
             this.decrementLod();
         }
@@ -1084,6 +1259,12 @@ class Profile{
         this.wrapper = $(`<div class="profile__wrapper ${this.lodClass}"/>`);
         this.wrapper.append(this.elem);
         $(parent).append(this.wrapper);
+    }
+
+    insertBefore(before){
+        this.wrapper = $(`<div class="profile__wrapper ${this.lodClass}"/>`);
+        this.wrapper.append(this.elem);
+        $(this.wrapper).insertBefore(before);
     }
 
     scollIntoView(){
@@ -1184,21 +1365,10 @@ class Profile{
         return elem;
     }
 
-    get secondaryElem(){
-        const secondary = $(`<div class="profile__secondary"></div>`);
-        for (const key in this.secondary) {
-            if (Object.hasOwnProperty.call(this.secondary, key)) {
-                const element = this.secondary[key];
-                secondary.append(this.getSecondaryElem(element, key));
-            }
-        }
-        return secondary;
-    }
-
     get minimizeElem(){
         const elem = $(`<div class="profile__minimize"/>`);
         const button = $(`<button class="btn border-only">Minimize</button>`);
-        button.click((e) => {e.stopPropagation(); this.decrementLod(); console.log("dec clicked")});
+        button.click((e) => {e.stopPropagation(); this.decrementLod()});
         elem.append(button);
         return elem;
     }
@@ -1251,6 +1421,15 @@ class Profile{
 
     get lodClass(){
         switch(this.lod){
+            case Profile.MIN: return "min";
+            case Profile.CARD: return "card";
+            case Profile.MAX: return "max";
+            default: return "";
+        }
+    }
+
+    get minLodClass(){
+        switch(this.minLod){
             case Profile.MIN: return "min";
             case Profile.CARD: return "card";
             case Profile.MAX: return "max";
@@ -1349,16 +1528,16 @@ function countryCodeValid(code){
     return false;
 }
 
-function getCountryFlag(country){
+function getCountryFlag(country, res = 32){
     if(country === undefined){
         return $(`<div>-</div`);
     }
     const countryCode = countryNameToCode(country);
     if(countryCode !== undefined){
-        return $(`<img src="https://www.countryflags.io/${countryCode}/shiny/32.png" alt="${country} flag">`);
+        return $(`<div class="country-flag"><img src="https://www.countryflags.io/${countryCode}/shiny/${res}.png" alt="${country} flag"></div>`);
     } else{
         if(countryCodeValid(country)){
-            return $(`<img src="https://www.countryflags.io/${country}/shiny/32.png" alt="${country} flag">`);
+            return $(`<div class="country-flag"><img src="https://www.countryflags.io/${country}/shiny/${res}.png" alt="${country} flag"></div>`);
         } else{
             return $(`<div>${country}</div>`);
         }
@@ -1612,5 +1791,6 @@ const countries = [
     {name: 'Western Sahara', code: 'EH'}, 
     {name: 'Yemen', code: 'YE'}, 
     {name: 'Zambia', code: 'ZM'}, 
-    {name: 'Zimbabwe', code: 'ZW'} 
+    {name: 'Zimbabwe', code: 'ZW'},
+    {name: 'Great Britain', code: 'GB'}
   ]

@@ -22,7 +22,9 @@ if($loggedIn){
         <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,200;0,300;0,400;0,500;0,600;1,200;1,400;1,500;1,600&display=swap" rel="stylesheet">
         <link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&display=swap" rel="stylesheet">
 
+        <!-- Jquery -->
         <script src="/js/jquery-3.5.1.js"></script>
+        
         <script src="/js/anime.min.js"></script>
         <script src="/js/ajaxAPI.js"></script>
         <script src="/js/lib.js"></script>
@@ -34,7 +36,7 @@ if($loggedIn){
     </head>
     <body class="body">
     <header class="header">
-        <div class="left">
+        <div class="header__left">
             <a href="/index.php">
                 <i class="fas fa-clock margin left"></i>
                 <span class="title">Inline data</span>
@@ -55,7 +57,7 @@ if($loggedIn){
             <input class="search-bar__input" type="text" autocomplete="off" placeholder="Search" value="<?=$search?>">
             <div class="search-bar__options"></div>
         </div>
-        <div class="right">
+        <div class="header__right">
             <?php if($loggedIn){?>
                 <?php
                     if(canI("seeAdminPage")){

@@ -22,24 +22,21 @@ include_once "../../data/dbh.php";
  * Getters
  */
 if(!isset($NO_GET_API)){
-    if(isset($_GET["getAthlete"])){
-        echo json_encode(getAthlete($_GET["getAthlete"]));
-    }
-    if(isset($_GET["getcompetition"])){
+    if(isset($_GET["getathlete"])){
+        echo json_encode(getAthlete($_GET["getathlete"]));
+    } else if(isset($_GET["getcompetition"])){
         echo json_encode(getCompetition($_GET["getcompetition"]));
-    }
-    if(isset($_GET["getresult"])){
+    } else if(isset($_GET["getresult"])){
         echo json_encode(getResult($_GET["getresult"]));
-    }
-    if(isset($_GET["getrace"])){
+    } else if(isset($_GET["getrace"])){
         echo json_encode(getRace($_GET["getrace"]));
-    }
-    if(isset($_GET["getcountry"])){
+    } else if(isset($_GET["getcountry"])){
         echo json_encode(getCountry($_GET["getcountry"]));
-    }
-    
-    if(isset($_GET["search"])){
+    } else if(isset($_GET["search"])){
         echo json_encode(search($_GET["search"]));
+    } else if(isset($_GET["getbestTimes"])){
+        $id = intval($_GET["getbestTimes"]);
+        echo json_encode(getBestTimes($id));
     }
 }
 
@@ -110,6 +107,16 @@ function getRacesFromCompetition($id){
         return false;
     }
 }
+
+function getBestTimes($idathlete){
+    $result = query("CALL getBestTimes(?);", "i", $idathlete);
+    if(sizeof($result) > 0){
+        return $result;
+    } else{
+        return false;
+    }
+}
+
 
 // function parsePersonFromResult($result, $index){
 //     $name = "p$index";
