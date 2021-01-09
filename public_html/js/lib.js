@@ -1057,7 +1057,7 @@ class Profile{
         /**
          * default values
          */
-        this.wrapper = undefined;
+        this.wrapper = $(`<div class="profile__wrapper ${this.lodClass}"/>`);
         this.elem = undefined; //jquery dom object
         this.left = undefined;
         this.right = undefined;
@@ -1211,7 +1211,9 @@ class Profile{
         }
         window.setTimeout(() => {
             $(`main > *:not(header, footer)`).addClass("hidden");
+            this.wrapper.removeClass("hidden");
         }, 200);
+        this.wrapper.removeClass("hidden");
         $("header").after(this.elem);
     }
 
@@ -1256,7 +1258,6 @@ class Profile{
     }
 
     appendTo(parent){
-        this.wrapper = $(`<div class="profile__wrapper ${this.lodClass}"/>`);
         this.wrapper.append(this.elem);
         $(parent).append(this.wrapper);
     }
