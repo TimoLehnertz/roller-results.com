@@ -17,7 +17,7 @@ if(isLoggedIn()){
     <link rel="stylesheet" href="/styles/pages/signup.css">
 </head>
 <body>
-    <h1>Welcom back!</h1>
+    <h1>Welcome back!</h1>
     <form action="login.php" method="POST">
         <input type="text" placeholder="username / email" id="username" name="username" required>
         <br>
