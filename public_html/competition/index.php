@@ -18,9 +18,10 @@ include_once "../header.php";
 echo "<script>const comp = ". json_encode($comp) .";</script>";
 
 ?>
-<main class="main">
-    <h2><?= $comp["location"]." ".$comp["raceYear"]?></h2>
-    <div class="races-table"></div>
+<main class="main flex column">
+    <h1 class="align center margin top"><?= $comp["type"]." ".$comp["location"]." ".$comp["raceYear"]?></h1>
+    <h2 class="align center margin top bottom">See the races</h2>
+    <div class="races-table alignment center"></div>
     <script>
         console.log(comp)
         const table = new Table($(".races-table"), comp.races);

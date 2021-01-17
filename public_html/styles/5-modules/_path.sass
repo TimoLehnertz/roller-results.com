@@ -1,0 +1,29 @@
+.path
+    display: flex
+    background: $bg
+    font-size: 1.3rem
+    color: #CCC
+    padding-left: 2rem
+    padding-right: 2rem
+
+    & *
+        display: inline-block
+        animation: fromRight 0.2s both
+        line-height: 2.5rem
+        cursor: pointer
+
+    .delimiter
+        padding: 0 0.2rem
+        color: #888888
+        font-size: 1.5rem
+
+    & > *:last-child
+        color: white
+
+    @for $i from 1 through 15
+        & > *:nth-child(#{$i})
+            animation-delay: #{$i * 30}ms
+            animation-duration: #{100 + $i * 50}ms
+
+    @media only screen and (max-width: 50rem)
+        flex-direction: column

@@ -42,7 +42,7 @@ echo "<script>let athletes = ". json_encode($persons) .";</script>";
                 }
                 break;
             }
-            const profile = new Profile(athleteToProfile(athlete), Profile.CARD);
+            const profile = athleteToProfile(athlete, Profile.CARD);
             profile.appendTo(".slideshow");
             start++;
         }
@@ -50,7 +50,7 @@ echo "<script>let athletes = ". json_encode($persons) .";</script>";
         new Slideshow($(".slideshow"));
 
         for (let i = start; i < Math.min(athletes.length, max); i++) {
-            const profile = new Profile(athleteToProfile(athletes[i]));
+            const profile = athleteToProfile(athletes[i]);
             profile.appendTo($(".rest"));
         }
 
@@ -60,7 +60,7 @@ echo "<script>let athletes = ". json_encode($persons) .";</script>";
                 const start = max;
                 max += increment;
                 for (let i = start; i < Math.min(athletes.length, max); i++) {
-                    const profile = new Profile(athleteToProfile(athletes[i]));
+                    const profile = athleteToProfile(athletes[i]);
                     profile.insertBefore(btn);
                 }
             });

@@ -45,21 +45,26 @@ function isJson(text){
  * @param {text} property property to be called from the server
  * @param {text / number} data data to be send mostly ids
  */
-function get(property, data){
+function get(property, data1, data2){
     const promise = {
         receive: (callback) => {promise.callback = callback},
         callback: () => {console.log("no callback")}
     }
+    let url = `/api?get${property}=${data1}`;
+    if(data2 !== undefined){
+        url += `&data=${data2}`;
+    }
+    // console.log(url)
     $.ajax({
         type: "GET",
-        url: `/api?get${property}=${data}`,
+        url,
         dataType:  "text",
         success: (response) =>{
             if(isJson(response) && response.length > 0){
                 promise.callback(true, JSON.parse(response));
             } else{
+                console.log("Response from get" + property + " was empty");
                 promise.callback(false, null);
-                console.log(response)
             }
         },
         error: function(xhr, ajaxOptions, thrownError) {

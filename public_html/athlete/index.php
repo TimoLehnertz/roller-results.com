@@ -23,7 +23,7 @@ echo "<script>const person = ". json_encode($person) .";</script>";
     
 </main>
 <script>
-    const profile = new Profile(athleteToProfile(person), Profile.MAX);
+    const profile = athleteToProfile(person, Profile.MAX);
     profile.appendTo($("main"));
 </script>
 <?php

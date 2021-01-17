@@ -1,6 +1,107 @@
 "use strict";
 
 /**
+ * simple Accordion
+ */
+
+class Accordion{
+
+    // static registered = [];
+
+    constructor(head, body, setup){
+        this.extended = false;
+        this.elem = undefined;
+
+        this.status = {};
+
+        this.oncollapse = (head, body) => true;
+        this.onextend = (head, body) => true;
+
+        this.head = ElemParser.parse(head);
+        this.body = ElemParser.parse(body);
+        this.setup(setup);
+        this.init();
+    }
+
+    /**
+     * possible options:
+     * extended: true / false //initial state
+     * onextend: callback //callback to be called on extend with signature of (head, body) if returns false extend will be canceled
+     * oncolapse: callback //callback to be called on collapse with signature of (head, body) if returns false collapse will be canceled
+     * status: prop // a avriable that will only be stored and not modified. will be passed to the onextend and oncollapse callbacks to simplify ajax calls etc
+     * 
+     * 
+     * @param {{}} setup setup object
+     */
+    setup(setup){
+        if(setup === undefined){
+            return false;
+        }
+        const props = ["extended", "onextend", "oncollapse", "status"];//to be extended
+        for (const prop of props) {
+            if(setup.hasOwnProperty(prop)){
+                this[prop] = setup[prop];
+            }
+        }
+    }
+
+    init(){
+        this.elem = $(`<div class="accordion"><div class="accordion__head"></div><div class="accordion__body"></div></div>`);
+        this.elem.find(".accordion__head").append(this.head);
+        this.elem.find(".accordion__body").append(this.body);
+        this.head.click(() => {
+            this.toggle();
+        });
+        if(this.extended){
+            this.extend();
+        } else{
+            this.collapse();
+        }
+        // this.element.parents().each((i, e) => {
+        //     if(Accordion.registered.hasOwnProperty(e)){
+        //         Accordion.registered[e].
+        //         return;
+        //     }
+        // });
+        // register()
+    }
+
+    toggle(){
+        if(this.extended){
+            this.collapse();
+        } else{
+            this.extend();
+        }
+    }
+
+    extend(){
+        if(this.onextend(this.head, this.body, this.status) === false){
+            return false;
+        }
+        this.body.css("height", "");
+        this.body.css("display", "block");
+        this.extended = true;
+    }
+
+    collapse(){
+        if(this.oncollapse(this.head, this.body, this.status) === false){
+            return false;
+        }
+        this.body.css("height", "0");
+        this.body.css("display", "none");
+        this.extended = false;
+    }
+
+    // register(){
+    //     Accordion.registered[this.elem] = this;
+    // }
+
+    get element(){
+        return this.elem;
+    }
+}
+
+/**
  * Slideshow
  * Dependencies: 
  *  JQuery.js
@@ -36,10 +137,10 @@ class Slideshow{
 
     update(){
         if(!this.pressed){
-            console.log(this.velX)
+            // alert(this.x + this.velX * 10800);
             anime({
                 targets: this.elem.get()[0],
-                scrollLeft: this.getClosest(this.x + this.velX * 1080),
+                scrollLeft: this.getClosest(this.velX * 100),
                 duration: (1000 / this.fps) * 30,
                 easing: 'easeOutQuint'
             });
@@ -48,11 +149,11 @@ class Slideshow{
         }
     }
 
-    getClosest(){
+    getClosest(add){
         let closest = this.elem.width();
         let closestIndex = -1;
         let closestOffset = 0;
-        const scroll = this.elem.get()[0].scrollLeft;
+        const scroll = this.elem.get()[0].scrollLeft + add;
         this.elem.children().each(function(i) {
             var childPos = $(this).offset();
             var parentPos = $(this).parent().offset();
@@ -231,7 +332,7 @@ class Dropdown{
     }
 
     /**
-     * Setip function to be called before init()
+     * Setup function to be called before init()
      * @param {*} setup Object to be used as setup
      */
     setup(setup){
@@ -468,6 +569,7 @@ class Table{
          *          allowSort: true / false | default: true
          *          initialSort: "asc" / "dsec" //unset for no initial sort | default: unset
          *          displayName: "name" used to overwrite the column name on screen. No effect on data behind the scenes
+         *          callback: callback to be called on initialization to parse the column | form: callback(column, row)
          *      }
          *  }
          */
@@ -517,10 +619,10 @@ class Table{
             let initialSort = this.getInitialSort();
             if(initialSort !== false){
                 this.initiated = true;// to prevent recursion as sort calls this function
-                this.sort(initialSort.column, initialSort.up);
+                this.sort(initialSort.column, initialSort.up, true);
             }
         }
-        $(this.elem).empty();
+        $(this.elem).find(".data-table").remove();
         $(this.elem).append(this.getTable());
         anime({
             targets: `.${Table.class} tr`,
@@ -595,7 +697,7 @@ class Table{
         return table;
     }
 
-    sort(column, up){
+    sort(column, up, noInit){
         const mul = up ? 1 : -1
         this.data.sort(function(a, b){
             if(a[column] == undefined){
@@ -608,7 +710,9 @@ class Table{
             if(a[column] > b[column]) { return 1 * mul;}
             return 0;
         });
-        this.init();
+        if(noInit !== true){
+            this.init();
+        }
         const index = this.getLayoutIndex(column);
         this.getHeadElem(index).append(Dropdown.getIcon(`fas fa-sort-${up ? "up" : "down"}`, "margin left"));
     }
@@ -624,8 +728,8 @@ class Table{
             let use = true;
             let allowSort = true;
             if(this.layout != undefined){
-                if(this.layout.hasOwnProperty("allowSort")){
-                    allowSort = this.layout.allowSort;
+                if(this.layout[td].hasOwnProperty("allowSort")){
+                    allowSort = this.layout[td].allowSort;
                 }
                 if(this.layout.hasOwnProperty("use")){
                     use = this.layout.use;
@@ -664,7 +768,7 @@ class Table{
     getRow(row, zebra){
         const rowElem = $(`<tr class="${Table.bodyClass} ${zebra ? "zebra" : ""}"></tr>`);
         for (const column of this.usedColumns) {
-            if(row.hasOwnProperty(column)){
+            if(column in row){
                 $(rowElem).append(this.getColumn(row[column]));
             } else{
                 $(rowElem).append(this.getColumn(""));
@@ -678,16 +782,19 @@ class Table{
         return rowElem;
     }
     
-    getColumn(elem){
-        if (elem instanceof jQuery){
-            const e = $(`<td></td>`);
-            e.append(elem);
-            return e;
-        } else if(elem == undefined){
-            return $(`<td></td>`);
-        } else{
-            return $(`<td>${elem}</td>`);
-        }
+    getColumn(column){
+        const elem = $(`<td></td>`);
+        elem.append(ElemParser.parse(column));
+        return elem;
+        // if (elem instanceof jQuery){
+        //     const e = $(`<td></td>`);
+        //     e.append(elem);
+        //     return e;
+        // } else if(elem == undefined){
+        //     return $(`<td></td>`);
+        // } else{
+        //     return $(`<td>${elem}</td>`);
+        // }
     }
 }
 
@@ -750,6 +857,9 @@ class ElemParser{
     static TEXT = "text";
     static DOM = "dom"
     static SLIDER = "slider"
+    static PROFILE = "profile";
+    static CALLBACK = "callback";
+    static LIST = "list";
 
     /**
      * helpers
@@ -757,15 +867,19 @@ class ElemParser{
     static MALE = 100;
     static FEMALE = 101;
     static DIVERSE = 102;
+    
 
     static parser = {
         [ElemParser.PRIMITIVE]: (elem) => $(`<div>${elem.data}</div>`),
-        [ElemParser.IMAGE]: (elem) => $(`<img src="${elem.date}" alt="image">`),
+        [ElemParser.IMAGE]: (elem) => $(`<img src="${elem.data}" alt="image">`),
         [ElemParser.COUNTYR_FLAG]: (elem) => getCountryFlag(elem.data),
         [ElemParser.GENDER]: (elem) => ElemParser.parseGender(elem.data),
         [ElemParser.TEXT]: (elem) => $(`<div>${elem.data}</div>`),
         [ElemParser.DOM]: (elem) => elem.data,
-        [ElemParser.SLIDER]: (elem) => ElemParser.parseSlider(elem)
+        [ElemParser.SLIDER]: (elem) => ElemParser.parseSlider(elem),
+        [ElemParser.PROFILE]: (elem) => ElemParser.parseProfile(elem),
+        [ElemParser.CALLBACK]: (elem) => ElemParser.parse(elem.data.callback(elem)),
+        [ElemParser.LIST]: (elem) => ElemParser.parseList(elem)
     };
 
     static addType(type, parser){
@@ -874,7 +988,7 @@ class ElemParser{
      * @param {{}} meta meta to be checked
      */
     static isValidMeta(meta){
-        if(typeof meta === 'object'){
+        if(typeof meta === 'object' && meta !== null){
             return meta.hasOwnProperty("data");
         }
         return false;
@@ -966,6 +1080,24 @@ class ElemParser{
         body.append(slider);
         body.append(`<div class="slider__description margin left">${desc2}</div>`);
         elem.append(body);
+        return elem;
+    }
+
+    static parseProfile(meta){
+        const elem = $(`<div class="elem-parser__profile"></div>`);
+        meta.data.appendTo(elem);
+        return elem;
+    }
+
+    static parseList(meta){
+        let direction = "row";
+        if("direction" in meta){
+            direction = meta.direction;
+        }
+        const elem = $(`<div class="flex ${direction}"></div>`);
+        for (const elem1 of meta.data) {
+            elem.append(ElemParser.parse(elem1));
+        }
         return elem;
     }
 }
@@ -1068,39 +1200,71 @@ class Profile{
         this.primary = {};
         this.secondary = {};
         this.secondaryElem = $(`<div class="profile__secondary"/>`);
+
         /**
          * initialization
+         * callback needs to be set first to allow maximized profiles to load imideatly
          */
+        if(data.hasOwnProperty("secondary")){
+            this.secondary = data.secondary;
+        } if(data.hasOwnProperty("secondaryData")){
+            this.secondaryData = data.secondaryData;
+        }
+        this.init();
+        this.updateData(data);
+    }
+
+    updateData(data){
         if(typeof data === 'object'){
             if(data.hasOwnProperty("name")){
                 this.name = data.name;
+                this.elem.find(".profile__name").remove();
+                this.elem.append(this.nameElem);
             }
             if(data.hasOwnProperty("image")){
                 this.image = data.image;
+                this.elem.find(".profile__image").remove();
+                this.elem.append(this.profileImg);
             }
             if(data.hasOwnProperty("left")){
                 this.left = data.left;
+                this.elem.find(".profile__left").remove();
+                this.elem.append(this.leftElem);
             }
             if(data.hasOwnProperty("right")){
                 this.right = data.right;
+                this.elem.find(".profile__right").remove();
+                this.elem.append(this.rightElem);
             }
             if(data.hasOwnProperty("trophy1")){
                 this.trophy1 = data.trophy1;
+                this.elem.find(".profile__trophy-1").remove();
+                this.elem.append(this.getTrophy(0));
             }
             if(data.hasOwnProperty("trophy2")){
                 this.trophy2 = data.trophy2;
+                this.elem.find(".profile__trophy-2").remove();
+                this.elem.append(this.getTrophy(1));
             }
             if(data.hasOwnProperty("trophy3")){
                 this.trophy3 = data.trophy3;
+                this.elem.find(".profile__trophy-3").remove();
+                this.elem.append(this.getTrophy(2));
             }
             if(data.hasOwnProperty("special")){
                 this.special = data.special;
+                this.elem.find(".profile__special").remove();
+                this.elem.append(this.specialElem);
             }
             if(data.hasOwnProperty("primary")){
                 this.primary = data.primary;
+                this.elem.find(".profile__primary").remove();
+                this.elem.append(this.primaryElem);
             }
             if(data.hasOwnProperty("secondary")){
                 this.secondary = data.secondary;
+                this.elem.find(".profile__secondary").remove();
+                this.elem.append(this.secondaryElem);
             }
             if(data.hasOwnProperty("secondaryData")){
                 this.secondaryData = data.secondaryData;
@@ -1108,25 +1272,16 @@ class Profile{
         } else if(typeof data === 'string'){
             this.name = data;
         }
-
-        this.init();
     }
+
+
 
     init(){
         if(this.elem !== undefined){
             this.elem.empty();
         }
         this.elem = $(`<div class="profile ${this.lodClass}" id="${this.idprofile}"></div>`);
-        this.elem.append(this.profileImg);
-        this.elem.append(this.nameElem);
-        this.elem.append(this.specialElem);
-        this.elem.append(this.leftElem);
-        this.elem.append(this.rightElem);
-        this.elem.append(this.getTrophy(0));
-        this.elem.append(this.getTrophy(1));
-        this.elem.append(this.getTrophy(2));
-        this.elem.append(this.primaryElem);
-        this.elem.append(this.secondaryElem);
+        this.wrapper.append(this.elem);
         if(this.lod < Profile.MAX){
             this.elem.append(this.minimizeElem);
             this.elem.append(this.maximizeElem);
@@ -1138,9 +1293,8 @@ class Profile{
             this.initMax();
         }
         if(this.lod === Profile.MIN){
-            this.elem.click(() => {if(this.lod == Profile.MIN) {this.incrementLod()}});
+            $(this.wrapper).on("click", '.profile', {}, () => {if(this.lod == Profile.MIN) {this.incrementLod()}});
         }
-
         this.checkGet();
     }
 
@@ -1209,15 +1363,12 @@ class Profile{
         if(this.secondary !== undefined){
             this.secondary(this.secondaryElem, this.secondaryData);
         }
-        window.setTimeout(() => {
-            $(`main > *:not(header, footer)`).addClass("hidden");
-            this.wrapper.removeClass("hidden");
-        }, 200);
-        this.wrapper.removeClass("hidden");
+        $(`body > *:not(header, footer)`).addClass("hidden");
         $("header").after(this.elem);
     }
 
     destroyMax(){
+        $(`body > *`).removeClass("hidden");
         this.secondaryElem.empty();
         this.wrapper.append(this.elem);
         if(this.minLod === Profile.CARD){
@@ -1245,7 +1396,7 @@ class Profile{
 
     closeAllOthers(){
         for (const profile of Profile.expanded) {
-            if(profile !== this){
+            if(profile !== this && profile.lod !== Profile.MAX){
                 profile.close();
             }
         }
@@ -1258,14 +1409,11 @@ class Profile{
     }
 
     appendTo(parent){
-        this.wrapper.append(this.elem);
         $(parent).append(this.wrapper);
     }
 
     insertBefore(before){
-        this.wrapper = $(`<div class="profile__wrapper ${this.lodClass}"/>`);
-        this.wrapper.append(this.elem);
-        $(this.wrapper).insertBefore(before);
+        this.wrapper.insertBefore($(before));
     }
 
     scollIntoView(){
@@ -1285,6 +1433,8 @@ class Profile{
     get nameElem(){
         return $(`<div class="profile__name"><span>${this.name}</span></div>`);
     }
+
+
 
     get specialElem(){
         return $(`<div class="profile__special">${this.special}</div>`);
@@ -1473,7 +1623,6 @@ function findGetParameter(parameterName) {
 /**
  * Medals
  */
-
 function getMedal(color, amount){
     let linkSimple = "/img/medals/" + color + "-medal-simple.svg";
     let linkBig = "/img/medals/" + color + "-medal.svg";
@@ -1482,6 +1631,20 @@ function getMedal(color, amount){
         <img class="medal__simple" width="40" src="${linkSimple}" alt="${color} medal">
         <span class="medal__amount">${amount}</span>
     </div>`);
+    return elem;
+}
+
+function getPlaceElem(place){
+    const elem = $(`<div class="place"/>`);
+    if(place < 4){
+        switch(place){
+            case 1: elem.append(getMedal("gold", 1)); break;
+            case 2: elem.append(getMedal("silver", 2)); break;
+            case 3: elem.append(getMedal("bronze", 3)); break;
+        }
+    } else{
+        elem.append($(`<div>${place}</div>`));
+    }
     return elem;
 }
 

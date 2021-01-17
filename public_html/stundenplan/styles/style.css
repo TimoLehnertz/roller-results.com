@@ -1,0 +1,21 @@
+.day * {
+    transition: all 0.2s;
+}
+
+.day{
+    width: 100%;
+    border: 1px solid #444;
+}
+
+.drag-over{
+    border-color: red;
+}
+
+.hour{
+    width: 100%;
+    border: 1px solid #444;
+}
+
+.subject{
+    text-align: center;
+}

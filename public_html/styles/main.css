@@ -715,7 +715,7 @@ a::before {
   width: 50px;
   -webkit-animation: rotate infinite 1s linear;
           animation: rotate infinite 1s linear;
-  border-right: 3px solid #391;
+  border-right: 3px solid #4ec0c2;
   border-radius: 50%;
   margin-left: auto;
   margin-right: auto;
@@ -791,16 +791,17 @@ a::before {
   font-size: 2rem;
 }
 
-.alignment.center {
+.align.center {
   margin-left: auto;
   margin-right: auto;
+  text-align: center;
 }
 
-.alignment.left {
+.align.left {
   mergin-right: auto;
 }
 
-.alignment.right {
+.align.right {
   mergin-right: auto;
 }
 
@@ -824,16 +825,80 @@ a::before {
   margin-left: 1rem;
 }
 
+.margin.left.double {
+  margin-left: 2rem;
+}
+
+.margin.left.triple {
+  margin-left: 3rem;
+}
+
+.margin.left.quadruple {
+  margin-left: 4rem;
+}
+
+.margin.left.quintuple {
+  margin-left: 5rem;
+}
+
 .margin.top {
   margin-top: 1rem;
+}
+
+.margin.top.double {
+  margin-top: 2rem;
+}
+
+.margin.top.triple {
+  margin-top: 3rem;
+}
+
+.margin.top.quadruple {
+  margin-top: 4rem;
+}
+
+.margin.top.quintuple {
+  margin-top: 5rem;
 }
 
 .margin.right {
   margin-right: 1rem;
 }
 
+.margin.right.double {
+  margin-right: 2rem;
+}
+
+.margin.right.triple {
+  margin-right: 3rem;
+}
+
+.margin.right.quadruple {
+  margin-right: 4rem;
+}
+
+.margin.right.quintuple {
+  margin-right: 5rem;
+}
+
 .margin.bottom {
   margin-bottom: 1rem;
+}
+
+.margin.bottom.double {
+  margin-bottom: 2rem;
+}
+
+.margin.bottom.triple {
+  margin-bottom: 3rem;
+}
+
+.margin.bottom.quadruple {
+  margin-bottom: 4rem;
+}
+
+.margin.bottom.quintuple {
+  margin-bottom: 5rem;
 }
 
 .padding.left {
@@ -954,6 +1019,10 @@ a::before {
   text-shadow: 1px 1px 3px #0007;
 }
 
+.place {
+  display: inline-block;
+}
+
 .slider {
   display: -webkit-box;
   display: -ms-flexbox;
@@ -1024,6 +1093,32 @@ a::before {
      -moz-user-select: none;
       -ms-user-select: none;
           user-select: none;
+}
+
+@-webkit-keyframes fromRight {
+  from {
+    opacity: 0;
+    -webkit-transform: translateX(20px);
+            transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    -webkit-transform: translateX(0);
+            transform: translateX(0);
+  }
+}
+
+@keyframes fromRight {
+  from {
+    opacity: 0;
+    -webkit-transform: translateX(20px);
+            transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    -webkit-transform: translateX(0);
+            transform: translateX(0);
+  }
 }
 
 .header {
@@ -1394,8 +1489,10 @@ a::before {
 }
 
 .data-table {
+  color: #222;
   border-collapse: collapse;
   background-color: #FFF;
+  overflow: auto;
 }
 
 .data-table td + td {
@@ -1685,8 +1782,8 @@ a::before {
   margin-top: 4rem;
   border-radius: 0;
   z-index: 1;
-  background: -webkit-gradient(linear, left bottom, left top, from(#4047ce), to(#32e68c));
-  background: linear-gradient(0deg, #4047ce 0%, #32e68c);
+  background: -webkit-gradient(linear, left top, right top, color-stop(-20%, #4047ce), color-stop(180%, #32e68c));
+  background: linear-gradient(90deg, #4047ce -20%, #32e68c 180%);
 }
 
 .profile.max > * {
@@ -1707,7 +1804,7 @@ a::before {
           transform-origin: left;
 }
 
-.profile.max .profile__image {
+.profile.max > .profile__image {
   width: 11.25rem;
   height: 11.25rem;
   top: 3.125rem;
@@ -1717,13 +1814,13 @@ a::before {
           box-shadow: 0.3125rem 0.3125rem 2.125rem 0.125rem rgba(0, 0, 0, 0.51);
 }
 
-.profile.max .profile__image:hover {
+.profile.max > .profile__image:hover {
   width: 12.5rem;
   height: 12.5rem;
   border-width: 0;
 }
 
-.profile.max .profile__image:active {
+.profile.max > .profile__image:active {
   -webkit-box-shadow: 0.3125rem 0.3125rem 3.125rem 0.125rem rgba(0, 0, 0, 0.2);
           box-shadow: 0.3125rem 0.3125rem 3.125rem 0.125rem rgba(0, 0, 0, 0.2);
   width: 25rem;
@@ -1732,49 +1829,49 @@ a::before {
   border-radius: 20%;
 }
 
-.profile.max .profile__trophy-1 {
+.profile.max > .profile__trophy-1 {
   top: 5rem;
   left: 13.75rem;
 }
 
-.profile.max .profile__trophy-2 {
+.profile.max > .profile__trophy-2 {
   top: 8.125rem;
   left: 14.375rem;
 }
 
-.profile.max .profile__trophy-3 {
+.profile.max > .profile__trophy-3 {
   top: 11.25rem;
   left: 13.75rem;
 }
 
-.profile.max .profile__trophy .medal {
+.profile.max > .profile__trophy .medal {
   width: 3.5rem;
   font-size: 1.5rem;
 }
 
-.profile.max .profile__name {
+.profile.max > .profile__name {
   left: 0;
   right: 0;
   font-size: 2rem;
 }
 
-.profile.max .profile__special {
+.profile.max > .profile__special {
   left: 0.625rem;
   top: 0.625rem;
 }
 
-.profile.max .profile__minimize {
-  z-index: 2;
+.profile.max > .profile__minimize {
+  z-index: 3;
   position: absolute;
   top: 0.3125rem;
   right: 1.5625rem;
 }
 
-.profile.max .profile__maximize {
+.profile.max > .profile__maximize {
   display: none;
 }
 
-.profile.max .profile__primary {
+.profile.max > .profile__primary {
   display: -ms-grid;
   display: grid;
   margin-left: 21.875rem;
@@ -1784,7 +1881,7 @@ a::before {
       grid-template-columns: 1fr 1fr 1fr;
 }
 
-.profile.max .profile__secondary {
+.profile.max > .profile__secondary {
   margin-top: 18.75rem;
   width: 100%;
 }
@@ -1797,7 +1894,7 @@ a::before {
   position: absolute;
   -webkit-transition: all 0.2s;
   transition: all 0.2s;
-  z-index: 3;
+  z-index: 1;
 }
 
 .profile__special {
@@ -1819,7 +1916,7 @@ a::before {
   display: grid;
   -ms-grid-columns: 1fr;
       grid-template-columns: 1fr;
-  grid-gap: 1.25rem;
+  grid-gap: 0.7rem;
   z-index: 1;
   color: white;
   -webkit-transition: all 0.2s;
@@ -1880,28 +1977,25 @@ a::before {
 .profile__minimize {
   -webkit-transition: top 0.1s, left 0.2s, right 0.2s;
   transition: top 0.1s, left 0.2s, right 0.2s;
+  z-index: 3;
 }
 
 @media only screen and (max-width: 62.5rem) {
-  .profile.max .profile__primary {
+  .profile.max > .profile__primary {
     -ms-grid-columns: 1fr 1fr !important;
         grid-template-columns: 1fr 1fr !important;
   }
-  .profile.max .profile__special {
+  .profile.max > .profile__special {
     top: 3.125rem;
   }
 }
 
 @media only screen and (max-width: 43.75rem) {
-  .profile {
-    -webkit-transition: none;
-    transition: none;
-  }
   .profile__primary {
     -ms-grid-columns: 1fr !important;
         grid-template-columns: 1fr !important;
   }
-  .profile.max .profile__name {
+  .profile.max > .profile__name {
     font-size: 1.3rem !important;
     text-align: left;
     left: 0.625rem;
@@ -1909,11 +2003,11 @@ a::before {
   .profile.max::before {
     height: 37.5rem;
   }
-  .profile.max .profile__primary {
+  .profile.max > .profile__primary {
     margin-left: 1.25rem;
     margin-top: 15.625rem;
   }
-  .profile.max .profile__secondary {
+  .profile.max > .profile__secondary {
     margin-top: 37.5rem;
   }
 }
@@ -2012,6 +2106,169 @@ a::before {
   to {
     opacity: 1;
   }
+}
+
+.path {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  background: #333;
+  font-size: 1.3rem;
+  color: #CCC;
+  padding-left: 2rem;
+  padding-right: 2rem;
+}
+
+.path * {
+  display: inline-block;
+  -webkit-animation: fromRight 0.2s both;
+          animation: fromRight 0.2s both;
+  line-height: 2.5rem;
+  cursor: pointer;
+}
+
+.path .delimiter {
+  padding: 0 0.2rem;
+  color: #888888;
+  font-size: 1.5rem;
+}
+
+.path > *:last-child {
+  color: white;
+}
+
+.path > *:nth-child(1) {
+  -webkit-animation-delay: 30ms;
+          animation-delay: 30ms;
+  -webkit-animation-duration: 150ms;
+          animation-duration: 150ms;
+}
+
+.path > *:nth-child(2) {
+  -webkit-animation-delay: 60ms;
+          animation-delay: 60ms;
+  -webkit-animation-duration: 200ms;
+          animation-duration: 200ms;
+}
+
+.path > *:nth-child(3) {
+  -webkit-animation-delay: 90ms;
+          animation-delay: 90ms;
+  -webkit-animation-duration: 250ms;
+          animation-duration: 250ms;
+}
+
+.path > *:nth-child(4) {
+  -webkit-animation-delay: 120ms;
+          animation-delay: 120ms;
+  -webkit-animation-duration: 300ms;
+          animation-duration: 300ms;
+}
+
+.path > *:nth-child(5) {
+  -webkit-animation-delay: 150ms;
+          animation-delay: 150ms;
+  -webkit-animation-duration: 350ms;
+          animation-duration: 350ms;
+}
+
+.path > *:nth-child(6) {
+  -webkit-animation-delay: 180ms;
+          animation-delay: 180ms;
+  -webkit-animation-duration: 400ms;
+          animation-duration: 400ms;
+}
+
+.path > *:nth-child(7) {
+  -webkit-animation-delay: 210ms;
+          animation-delay: 210ms;
+  -webkit-animation-duration: 450ms;
+          animation-duration: 450ms;
+}
+
+.path > *:nth-child(8) {
+  -webkit-animation-delay: 240ms;
+          animation-delay: 240ms;
+  -webkit-animation-duration: 500ms;
+          animation-duration: 500ms;
+}
+
+.path > *:nth-child(9) {
+  -webkit-animation-delay: 270ms;
+          animation-delay: 270ms;
+  -webkit-animation-duration: 550ms;
+          animation-duration: 550ms;
+}
+
+.path > *:nth-child(10) {
+  -webkit-animation-delay: 300ms;
+          animation-delay: 300ms;
+  -webkit-animation-duration: 600ms;
+          animation-duration: 600ms;
+}
+
+.path > *:nth-child(11) {
+  -webkit-animation-delay: 330ms;
+          animation-delay: 330ms;
+  -webkit-animation-duration: 650ms;
+          animation-duration: 650ms;
+}
+
+.path > *:nth-child(12) {
+  -webkit-animation-delay: 360ms;
+          animation-delay: 360ms;
+  -webkit-animation-duration: 700ms;
+          animation-duration: 700ms;
+}
+
+.path > *:nth-child(13) {
+  -webkit-animation-delay: 390ms;
+          animation-delay: 390ms;
+  -webkit-animation-duration: 750ms;
+          animation-duration: 750ms;
+}
+
+.path > *:nth-child(14) {
+  -webkit-animation-delay: 420ms;
+          animation-delay: 420ms;
+  -webkit-animation-duration: 800ms;
+          animation-duration: 800ms;
+}
+
+.path > *:nth-child(15) {
+  -webkit-animation-delay: 450ms;
+          animation-delay: 450ms;
+  -webkit-animation-duration: 850ms;
+          animation-duration: 850ms;
+}
+
+@media only screen and (max-width: 50rem) {
+  .path {
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+            flex-direction: column;
+  }
+}
+
+.race.min {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  font-size: 1.2rem;
+  padding: 0.5rem;
+}
+
+.race .place {
+  margin-left: 1rem;
+}
+
+.race .place .medal {
+  width: 1.8rem;
+}
+
+.race .place .medal__amount {
+  top: 0;
 }
 
 .athlete {

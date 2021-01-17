@@ -19,15 +19,9 @@ echo "<script>const race = ". json_encode($race) .";</script>";
 
 ?>
 <main class="main">
-    <h2>Race <?php echo $race["location"]." ".$race["raceyear"]." ".$race["distance"]." ".$race["gender"]?></h2>
-    <div class="person-table"></div>
+    <!-- <div class="loading circle"></div> -->
     <script>
-        const table = new Table($(".person-table"), resultsTotable(race.results));
-        console.log(resultsTotable(race.results));
-        table.setup({
-            orderBy: {column: "place", up: true}
-        });
-        table.init();
+        getRaceTable($("main"), race);
     </script>
 </main>
 <?php

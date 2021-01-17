@@ -223,6 +223,7 @@
 
 // maximized view of profile taking up the whole screen showinfg all infor mation and addidional extras like analysis
 .profile.max
+   
     // visibility
     & > *
         display: block
@@ -237,7 +238,8 @@
     border-radius: 0
     z-index: 1
 
-    background: linear-gradient(0deg,$b 0%, $e)
+    background: linear-gradient(90deg,$b -20%, $e 180%)
+    // background: linear-gradient(0deg,$b 0%, $e)
 
     &::before
         content: ""
@@ -252,7 +254,7 @@
 
 
     // img
-    .profile__image
+    & > .profile__image
         width: 11.25rem
         height: 11.25rem
         top: 3.125rem
@@ -272,59 +274,59 @@
             border-width: 0
             border-radius: 20%
 
-    .profile__trophy-1
+    & > .profile__trophy-1
         top: 5rem
         left: 13.75rem
 
-    .profile__trophy-2
+    & > .profile__trophy-2
         top: 8.125rem
         left: 14.375rem
 
-    .profile__trophy-3
+    & > .profile__trophy-3
         top: 11.25rem
         left: 13.75rem
 
-    .profile__trophy .medal
+    & > .profile__trophy .medal
         width: 3.5rem
         font-size: 1.5rem
 
-    .profile__name
+    & > .profile__name
         left: 0
         right: 0
         font-size: 2rem
 
-    .profile__special
+    & > .profile__special
         left: 0.625rem
         top: 0.625rem
 
-    .profile__minimize
-        z-index: 2
+    & > .profile__minimize
+        z-index: 3
         position: absolute
         top: 0.3125rem
         right: 1.5625rem
 
-    .profile__maximize
+    & > .profile__maximize
         display: none
 
-    .profile__primary
+    & > .profile__primary
         display: grid
         margin-left: 21.875rem
         margin-top: 1.25rem
         margin-right: 1.25rem
         grid-template-columns: 1fr 1fr 1fr
 
-    .profile__secondary
+    & > .profile__secondary
         margin-top: 18.75rem
         width: 100%
-
 
     &::after
         display: none
 
+
 .profile__trophy
     position: absolute
     transition: all 0.2s
-    z-index: 3
+    z-index: 1
 
 .profile__special
     position: absolute
@@ -341,7 +343,7 @@
     position: absolute
     display: grid
     grid-template-columns: 1fr
-    grid-gap: 1.25rem
+    grid-gap: 0.7rem
     z-index: 1
     color: white
     transition: all 0.2s
@@ -388,25 +390,24 @@
 
 .profile__minimize
     transition: top 0.1s, left 0.2s, right 0.2s
+    z-index: 3
 
 @media only screen and (max-width: 62.5rem)
     .profile.max 
-        .profile__primary
+        & > .profile__primary
             grid-template-columns: 1fr 1fr !important
 
-        .profile__special
+        & > .profile__special
             top: 3.125rem
 
 @media only screen and (max-width: 43.75rem)
-
-    .profile
-        transition: none
-
+    // .profile
+    //     transition: none
     .profile__primary
         grid-template-columns: 1fr !important
 
     .profile.max
-        .profile__name
+        & > .profile__name
             font-size: 1.3rem !important
             text-align: left
             left: 0.625rem
@@ -414,11 +415,11 @@
         &::before
             height: 37.5rem
 
-        .profile__primary
+        & > .profile__primary
             margin-left: 1.25rem
             margin-top: 15.625rem
 
-        .profile__secondary
+        & > .profile__secondary
             margin-top: 37.5rem
 
 @keyframes go-up

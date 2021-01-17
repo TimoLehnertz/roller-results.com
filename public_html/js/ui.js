@@ -1,9 +1,24 @@
+"use strict";
+
 $(() => {
     $(".search-bar__input").on("input", searchChange);
-    $("body").click(updateSearchBar);
+    initSearchBar();
 });
 
 let lastSearch = "";
+
+function initSearchBar(){
+    $("body").click(closeSearchBar);
+    $(".search-bar__input").keyup((e) => {
+        if(e.keyCode === 13){
+            if(options.length > 0){
+                window.location = linkFromOption(options[0]);
+            }
+        }
+    })
+}
+
+let options = [];
 
 function searchChange(e){
     e.stopPropagation();
@@ -15,6 +30,7 @@ function searchChange(e){
     lastSearch = text;
     search(text, (succsess, data) => {
         if(succsess){
+            options = data;
             updateSearchBar(data);
         } else{
             //Todo
@@ -26,10 +42,14 @@ function closeSearchOptions(){
     updateSearchBar([]);
 }
 
+function closeSearchBar(){
+    updateSearchBar();
+}
+
 function updateSearchBar(data){
     const optionsElem = $(".search-bar__options");
     optionsElem.empty();
-    if(data.length > 0){
+    if(data !== undefined){
         data = sortSearch(data);
     } else{
         return;
