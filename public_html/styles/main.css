@@ -363,6 +363,10 @@ template {
   overflow-x: hidden;
 }
 
+.html {
+  background: black;
+}
+
 .main {
   margin-top: 60px;
   width: 100%;
@@ -1121,6 +1125,51 @@ a::before {
   }
 }
 
+.scaleAway {
+  -webkit-animation: scaleAway 0.3s forwards;
+          animation: scaleAway 0.3s forwards;
+}
+
+@-webkit-keyframes scaleAway {
+  0% {
+    opacity: 1;
+    -webkit-transform: scale(1);
+            transform: scale(1);
+  }
+  99% {
+    opacity: 0;
+    -webkit-transform: scale(0);
+            transform: scale(0);
+  }
+  100% {
+    height: 0;
+    display: none;
+    opacity: 0;
+    -webkit-transform: scale(0);
+            transform: scale(0);
+  }
+}
+
+@keyframes scaleAway {
+  0% {
+    opacity: 1;
+    -webkit-transform: scale(1);
+            transform: scale(1);
+  }
+  99% {
+    opacity: 0;
+    -webkit-transform: scale(0);
+            transform: scale(0);
+  }
+  100% {
+    height: 0;
+    display: none;
+    opacity: 0;
+    -webkit-transform: scale(0);
+            transform: scale(0);
+  }
+}
+
 .header {
   display: -ms-grid;
   display: grid;
@@ -1782,8 +1831,8 @@ a::before {
   margin-top: 4rem;
   border-radius: 0;
   z-index: 1;
-  background: -webkit-gradient(linear, left top, right top, color-stop(-20%, #4047ce), color-stop(180%, #32e68c));
-  background: linear-gradient(90deg, #4047ce -20%, #32e68c 180%);
+  background: -webkit-gradient(linear, right top, left top, color-stop(-70%, #4047ce), color-stop(180%, #32e68c));
+  background: linear-gradient(-90deg, #4047ce -70%, #32e68c 180%);
 }
 
 .profile.max > * {
@@ -2259,16 +2308,25 @@ a::before {
   padding: 0.5rem;
 }
 
-.race .place {
+.race.min .place {
   margin-left: 1rem;
 }
 
-.race .place .medal {
+.race.min .medal {
   width: 1.8rem;
 }
 
-.race .place .medal__amount {
+.race.min .medal__amount {
   top: 0;
+}
+
+.race .medal__big, .race .medal__simple {
+  left: 0;
+  top: 0;
+}
+
+.race .place {
+  height: 2rem;
 }
 
 .athlete {

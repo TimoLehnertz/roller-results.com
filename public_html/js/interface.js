@@ -188,7 +188,7 @@ function athleteDataToProfileData(athlete){
 
 function athleteToProfile(athlete, minLod = Profile.MIN){
     const profile = new Profile(athleteDataToProfileData(athlete), minLod);
-    if("score" in athlete === false){//athlete not complete needs ajax
+    if("score" in athlete === false || "scoreLong" in athlete === false || "scoreShort" in athlete === false){//athlete not complete needs ajax
         get("athlete", athlete.id).receive((succsess, newAthlete) => {
             profile.updateData(athleteDataToProfileData(newAthlete));
         });
@@ -209,13 +209,13 @@ function pathFromRace(r){
 }
 
 function getRaceTable(parent, race){
-    console.log(race)
     const elem = $(`<div class="race"></div>`);
     elem.append(pathFromRace(race));
     for (const result of race.results) {
         result.athletes = profilesElemFromResult(result);
         result.place = {
-            data: result.place
+            data: result.place,
+            type: "place"
         };
     }
     const table = new Table(elem, race.results);

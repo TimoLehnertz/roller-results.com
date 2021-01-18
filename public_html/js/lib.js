@@ -860,7 +860,7 @@ class ElemParser{
     static PROFILE = "profile";
     static CALLBACK = "callback";
     static LIST = "list";
-
+    static PLACE = "place";
     /**
      * helpers
      */
@@ -879,7 +879,8 @@ class ElemParser{
         [ElemParser.SLIDER]: (elem) => ElemParser.parseSlider(elem),
         [ElemParser.PROFILE]: (elem) => ElemParser.parseProfile(elem),
         [ElemParser.CALLBACK]: (elem) => ElemParser.parse(elem.data.callback(elem)),
-        [ElemParser.LIST]: (elem) => ElemParser.parseList(elem)
+        [ElemParser.LIST]: (elem) => ElemParser.parseList(elem),
+        [ElemParser.PLACE]: (elem) => getPlaceElem(elem.data),
     };
 
     static addType(type, parser){
@@ -902,15 +903,15 @@ class ElemParser{
         }
         if(ElemParser.isValidMeta(meta)){
             if(meta.data === null){
-                return false;
+                return $();
             }
             if(meta.hasOwnProperty("validate")){
                 if(!meta.validate(meta.data)){
-                    return false;
+                    return $();
                 }
             } else{
                 if(meta.data.length === 0){
-                    return false;
+                    return $();
                 }
             }
             if(meta.hasOwnProperty("type")){
@@ -921,18 +922,18 @@ class ElemParser{
             }
             return ElemParser.parser[ElemParser.TEXT](meta);
         } else{
-            return false;
+            return $();
         }
     }
 
     static finishElem(elem, meta){
         if(elem === false){
-            return false;
+            return $();
         }
-        if(meta === undefined){
+        if(meta === undefined || meta === null){
             meta = {};
         }
-        if(meta.hasOwnProperty("onclick")){
+        if("onclick" in meta){
             if(meta.hasOwnProperty("link")){
                 $(elem).click((e) => {
                     meta.onclick(e);
@@ -1013,18 +1014,20 @@ class ElemParser{
     }
 
     static getGender(gender){
-        switch(gender.toLowerCase()){
-            case "w": return ElemParser.FEMALE;
-            case "women": return ElemParser.FEMALE;
-            case "female": return ElemParser.FEMALE;
-            case "m": return ElemParser.MALE;
-            case "man": return ElemParser.MALE;
-            case "men": return ElemParser.MALE;
-            case "male": return ElemParser.MALE;
-            case "d": return ElemParser.DIVERSE;
-            case "divers": return ElemParser.DIVERSE;
-            default: return ElemParser.MALE;
+        if(typeof gender === 'string'){
+            switch(gender.toLowerCase()){
+                case "w": return ElemParser.FEMALE;
+                case "women": return ElemParser.FEMALE;
+                case "female": return ElemParser.FEMALE;
+                case "m": return ElemParser.MALE;
+                case "man": return ElemParser.MALE;
+                case "men": return ElemParser.MALE;
+                case "male": return ElemParser.MALE;
+                case "d": return ElemParser.DIVERSE;
+                case "divers": return ElemParser.DIVERSE;
+            }
         }
+        return ElemParser.MALE;
     }
 
     static parseGender(data){
@@ -1635,6 +1638,7 @@ function getMedal(color, amount){
 }
 
 function getPlaceElem(place){
+    console.log("place")
     const elem = $(`<div class="place"/>`);
     if(place < 4){
         switch(place){
@@ -1685,7 +1689,10 @@ function countryNameToCode(name){
 
 function countryCodeValid(code){
     for (const country of countries) {
-        if(country.code === code){
+        if(country["alpha-2"] === code){
+            return true;
+        }
+        if(country["alpha-3"] === code){
             return true;
         }
     }
@@ -1957,4 +1964,4 @@ const countries = [
     {name: 'Zambia', code: 'ZM'}, 
     {name: 'Zimbabwe', code: 'ZW'},
     {name: 'Great Britain', code: 'GB'}
-  ]
+];

@@ -40,6 +40,8 @@ if(!isset($NO_GET_API)){
     } else if(isset($_GET["getathleteCompetitions"])){
         $id = intval($_GET["getathleteCompetitions"]);
         echo json_encode(getAthleteCompetitions($id));
+    }else if(isset($_GET["getbestAthletes"])){
+        echo json_encode(getBestSkaters());
     } else if(isset($_GET["getathleteRacesFromCompetition"])){
         $id = intval($_GET["getathleteRacesFromCompetition"]);
         if(isset($_GET["data"])){
@@ -48,6 +50,15 @@ if(!isset($NO_GET_API)){
         } else{
             echo "provide data";
         }
+    }
+}
+
+function getAthletesAmount(){
+    $res = query("CALL sp_getAthletesAmount();");
+    if(sizeof($res) > 0){
+        return $res[0]["count(*)"];
+    } else{
+        return 0;
     }
 }
 
