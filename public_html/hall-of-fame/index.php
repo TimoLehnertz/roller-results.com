@@ -9,7 +9,7 @@ include_once "../api/index.php";
 
 include_once "../header.php";
 
-echo "<script>let athletesAmount = ". getAthletesAmount() .";</script>";
+echo "<script>let athletesAmount = ". getAthleteAmount() .";</script>";
 
 ?>
 <main class="main country">
@@ -37,7 +37,6 @@ echo "<script>let athletesAmount = ". getAthletesAmount() .";</script>";
             duration: 1500,
             update: function(a) {
                 const value = a.animations[0].currentValue;
-                // const formattedNumber= numeral(value).format("0,000,000");
                 document.querySelectorAll(".amount").innerHTML = value;
             }
         });

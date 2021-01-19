@@ -1,0 +1,187 @@
+$bg: $a
+$secondary: $b
+
+svg
+    &.filter
+        display: none
+
+.logo
+    position: relative
+    margin-top: 0.8rem
+    width: 5rem
+    height: 2.5rem
+    filter: url('#gooey')
+    animation: random-translate 20s alternate infinite
+
+    .circle
+        position: absolute
+        top: 0
+        right: 0
+        width: 50%
+        height: 100%
+        border-radius: 50%
+        background: $bg
+
+        *
+            background: $bg
+            position: absolute
+
+    .magic
+        top: 0
+        left: 0
+        bottom: 0
+        right: 0
+        poaition: absolute
+
+    .rotate
+        top: 0
+        left: 0
+        bottom: 0
+        right: 0
+        poaition: absolute
+        background: transparent
+        animation: random-rotate 10s alternate infinite
+
+    .half-circle
+        top: 10%
+        bottom: 10%
+        right: 10%
+        left: 10%
+        border-radius: 50%
+        background: conic-gradient($bg, white 50%)
+    
+    .hider-1
+        background: $bg
+        top: 20%
+        bottom: 20%
+        right: 20%
+        left: 20%
+        border-radius: 50%
+
+    .hider-2
+        background: $bg
+        top: 0
+        bottom: 0
+        right: 0
+        left: 0
+        border-radius: 50%
+        clip-path: polygon(0 0, 50% 0, 50% 50%, 0 200%)
+
+    .cap-2
+        bottom: 11.5%
+        left: 35%
+        width: 10%
+        height: 10%
+        border-radius: 50%
+        background: white
+
+    .top-1
+        top: -10%
+        left: 45%
+        width: 10%
+        height: 12%
+        background: $bg
+
+    .top-2
+        top: -20%
+        left: 35%
+        width: 10%
+        height: 10%
+        background: $bg
+        border-radius: 50%
+
+    .top-3
+        top: -20%
+        right: 35%
+        width: 10%
+        height: 10%
+        background: $bg
+        border-radius: 50%
+
+    .top-4
+        top: -20%
+        left: 40%
+        width: 20%
+        height: 10%
+        background: $bg
+    
+    .center
+        border-radius: 50%
+        top: 40%
+        left: 40%
+        width: 20%
+        height: 20%
+        background: white
+
+    .speed
+        background: white
+        top: 45%
+        left: 50%
+        width: 40%
+        height: 10%
+        transform: rotate(130deg)
+        transform-origin: left
+
+    .bubbles
+        position: absolute
+        left: 0
+        right: 37%
+        top: 10%
+        bottom: 15%
+        display: flex
+        flex-direction: column
+
+    .bubble__row
+        // background: red
+        position: relative
+        height: 100%
+
+    .bubble
+        background: $bg
+        border-radius: 50%
+        position: absolute
+        right: 0
+        // top: 0
+        bottom: 0
+        width: 15%
+        z-index: -1
+        height: 15%
+        transform-origin: left
+
+        @for $bubble from 1 through 20
+            $top: (($bubble % 4) * 25) + 10
+            &:nth-of-type(#{$bubble})
+                top: $top+%
+                animation: move-#{$bubble} infinite
+                animation-duration: (random(2000) + 3000) + ms
+                animation-delay: #{$bubble * 400 + random(10)}ms
+
+
+@for $bubble from 1 through 20
+    $width: (random(4))
+    $translate: -(random(300) + 200) + %
+    @keyframes move-#{$bubble}
+        0%
+            opacity: 1
+            
+            transform: translateX(0) scaleX($width)
+        30%
+            background: $bg
+
+        50%
+            transform: translateX($translate / 2) scaleX($width)
+        70%
+            background: $secondary
+        100%
+            transform: translateX($translate) scaleX(0)
+
+
+@keyframes random-rotate
+    @for $i from 1 through 10
+        #{($i * 10)}%
+            transform: rotate((random(20) - 10) + deg)
+
+@keyframes random-translate
+    @for $i from 1 through 10
+        #{($i * 10)}%
+            transform: translateX((random(10) - 5) + %)

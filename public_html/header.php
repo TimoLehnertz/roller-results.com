@@ -38,8 +38,10 @@ if($loggedIn){
     <header class="header">
         <div class="header__left">
             <a href="/index.php">
-                <i class="fas fa-clock margin left"></i>
-                <span class="title">Inline data</span>
+                <?php
+                    include "logo.html";
+                ?>
+                <div class="site-name"><span class="inline">Inline </span><span class="data">data</span><span class="org"></span></div>
             </a>
         </div>
         <div class="search-bar">

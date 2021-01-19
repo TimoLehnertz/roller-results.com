@@ -903,15 +903,15 @@ class ElemParser{
         }
         if(ElemParser.isValidMeta(meta)){
             if(meta.data === null){
-                return $();
+                return false;
             }
             if(meta.hasOwnProperty("validate")){
                 if(!meta.validate(meta.data)){
-                    return $();
+                    return false;
                 }
             } else{
                 if(meta.data.length === 0){
-                    return $();
+                    return false;
                 }
             }
             if(meta.hasOwnProperty("type")){
@@ -1674,6 +1674,31 @@ function isDomElem(obj) {
         return false;
     }
 }
+
+function numberAnimate(setup){
+    const targets = setup.targets ?? "";//needed
+    const from = setup.from ?? 0;
+    const to = setup.to ?? 100
+    const duration = setup.duration ?? 1000;
+    const easing = setup.easing ?? 'easeOutExpo';
+    const delay = setup.delay ?? 0;
+    const round = setup.round ?? true;
+    let wrapper = {data: 0};
+    anime({
+        targets: wrapper,
+        data: [from, to],
+        easing,
+        delay,
+        round,
+        duration,
+        update: function(anim) {
+            // console.log(wrapper.data)
+            // const value = a.animations[0].currentValue;
+            $(targets).text(wrapper.data);
+        }
+    });
+}
+
 
 /**
  * countries

@@ -1,4 +1,8 @@
 //style for profiles for documentation go to lib.js - Profile class
+$head: $b
+$body-1: $d
+$body-2: $b
+
 .profile__wrapper
     background: $c
     border-radius: 1.5625rem
@@ -52,7 +56,7 @@
     width: 18.75rem
     height: 3.125rem
 
-    background: linear-gradient(90deg,$b 20%, $e 110%)
+    background: linear-gradient(90deg,$body-1 20%, $body-2 110%)
 
     .profile__name, .profile__image, .profile__special
         display: blocK
@@ -92,7 +96,7 @@
     height: 31.25rem
     position: relative
     z-index: 1
-    background: linear-gradient(0deg,$b 0%, $e)
+    background: linear-gradient(0deg,$body-1 0%, $body-2)
     color: white
 
     // visibility
@@ -107,7 +111,7 @@
         left: 0
         right: 0
         height: 9.375rem
-        background: radial-gradient(circle at bottom, $b 40%, #000 170%)
+        background: radial-gradient(circle at bottom, $head 40%, #000 170%)
         transform: skewY(-2deg)
         transform-origin: left
 
@@ -238,7 +242,7 @@
     border-radius: 0
     z-index: 1
 
-    background: linear-gradient(-90deg,$b -70%, $e 180%)
+    background: linear-gradient(-90deg,$body-1 -70%, $body-2 180%)
     // background: linear-gradient(0deg,$b 0%, $e)
 
     &::before
@@ -248,7 +252,7 @@
         left: 0
         right: 0
         height: 18.75rem
-        background: radial-gradient(circle at left 9.375rem, $b 40%, #000 170%)
+        background: radial-gradient(circle at left 9.375rem, $head 40%, #000 170%)
         transform: skewY(-1deg)
         transform-origin: left
 
@@ -355,7 +359,7 @@
     overflow: hidden
     width: 9.375rem
     height: 9.375rem
-    border: 0.1875rem solid $b
+    border: 0.1875rem solid $head
     transform: scale(1)
     transition: all 0.1s
     box-sizing: content-box

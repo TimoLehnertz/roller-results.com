@@ -111,7 +111,7 @@ function athleteDataToProfileData(athlete){
             case "bronze": trophy2 = trophy3; trophy3 = tmp; break;
         }
     }
-
+    // console.log(athlete.birthYear);
     return {
         name: athlete.firstname + " " +athlete.lastname,
         image: athlete.image != null ? "/img/uploads/" + athlete.image : null,
@@ -136,13 +136,14 @@ function athleteDataToProfileData(athlete){
                 description: "WM top 10 places:",
                 validate: () => athlete.topTen > 0
             },
-            birthYear: {data: athlete.birthYear, icon: "far fa-calendar", validate: (data) => data > 1800},
+            birthYear: {data: athlete.birthYear, icon: "far fa-calendar", validate: (data) => {return data !== null && data > 1800}},
             club: {data: athlete.club, description: "Club:"},
             team: {data: athlete.team, description: "Team:"}
         },
         secondary: profileInit,
         secondaryData: athlete
     };
+    
         /**
      * ToDo:
      * -best Times

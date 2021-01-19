@@ -16,7 +16,7 @@
  *          id
  */
 
-include_once "../../data/dbh.php";
+include_once $_SERVER["DOCUMENT_ROOT"]."/../data/dbh.php";
 
 /**
  * Getters
@@ -53,14 +53,51 @@ if(!isset($NO_GET_API)){
     }
 }
 
-function getAthletesAmount(){
+function getAthleteAmount(){
     $res = query("CALL sp_getAthletesAmount();");
     if(sizeof($res) > 0){
-        return $res[0]["count(*)"];
+        return $res[0]["amount"];
     } else{
         return 0;
     }
 }
+
+function getCountryAmount(){
+    $res = query("CALL sp_getCountryAmount();");
+    if(sizeof($res) > 0){
+        return $res[0]["amount"];
+    } else{
+        return 0;
+    }
+}
+
+function getResultAmount(){
+    $res = query("CALL sp_geResultAmount();");
+    if(sizeof($res) > 0){
+        return $res[0]["amount"];
+    } else{
+        return 0;
+    }
+}
+
+function getRaceAmount(){
+    $res = query("CALL sp_getRaceAmount();");
+    if(sizeof($res) > 0){
+        return $res[0]["amount"];
+    } else{
+        return 0;
+    }
+}
+
+function getCompetitionAmount(){
+    $res = query("CALL sp_getCompetitionAmount();");
+    if(sizeof($res) > 0){
+        return $res[0]["amount"];
+    } else{
+        return 0;
+    }
+}
+
 
 function getBestSkaters(){
     $skaters = query("CALL sp_getBestAthletes();");
