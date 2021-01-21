@@ -233,6 +233,7 @@ function add(type, name, callback){
     $.ajax('api.php?add' + type + "=1&name=" + name,
     {
         success: function (data,status,xhr) {   // success callback function
+            console.log(data)
             callback(!data.includes("error"));
         },
         error: function (jqXhr, textStatus, errorMessage) { // error callback
