@@ -2,7 +2,7 @@
 
 include_once "utils.php";
 
-define("FILE", "files/plans.json");
+define("FILE",  $_SERVER["DOCUMENT_ROOT"]."/stundenplan/files/plans.json");
 
 if(isset($_GET["getteachers"])){
     echo json_encode(getTeachers());
