@@ -159,6 +159,7 @@ function addPlan($name){
         return false;
     }
     $data = getStundenplanFromFile();
+    print_r($data);
     $data["plans"][] = getNewStundenplan($name, 4);
     setStundenplan($data);
     return true;
