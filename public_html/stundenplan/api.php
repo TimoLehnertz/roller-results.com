@@ -114,8 +114,10 @@ function getPlanNames(){
 }
 
 function planNameExist($name){
+    echo "planNameExist($name)";
     $names = getPlanNames();
     foreach ($names as $i => $name1) {
+        echo "<br>$name1";
         if($name1 == $name){
             return true;
         }
