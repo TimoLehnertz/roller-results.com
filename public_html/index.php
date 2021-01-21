@@ -18,31 +18,37 @@ echo "<script>
 
 ?>
 <main class="main index">
-    <div class="amounts">
-        <div class="amounts__country">
-        <div class="amount"><?=$amountCountry?></div>
-            <div class="type">Countries</div>
+    <div class="stationary">
+        <h1>Inline Data</h1>
+        <div class="amounts">
+            <div class="amounts__competition">
+                <div class="amount"><?=$amountCompetition?></div>
+                <div class="type">Competitions</div>
+            </div>
+        
+            <div class="amounts__athlete">
+                <div class="amount"><?=$amountAthlete?></div>
+                <div class="type">Athletes</div>
+            </div>
+            <div class="amounts__result">
+                <div class="amount"><?=$amountResult?></div>
+                <div class="type">Results</div>
+            </div>
+            <div class="amounts__race">
+                <div class="amount"><?=$amountRace?></div>
+                <div class="type">Races</div>
+            </div>
+            <div class="amounts__country">
+                <div class="amount"><?=$amountCountry?></div>
+                <div class="type">Countries</div>
+            </div>
         </div>
-        <div class="amounts__athlete">
-            <div class="amount"><?=$amountAthlete?></div>
-            <div class="type">Athletes</div>
-        </div>
-        <div class="amounts__results">
-        <div class="amount"><?=$amountResult?></div>
-            <div class="type">Results</div>
-        </div>
-        <div class="amounts__race">
-        <div class="amount"><?=$amountRace?></div>
-            <div class="type">Races</div>
-        </div>
-        <div class="amounts__competition">
-        <div class="amount"><?=$amountCompetition?></div>
-            <div class="type">Competitions</div>
-        </div>
+        <h2 class="subtitle">Yours, to explore, forever</h2>
     </div>
-    <h2>Yours, to explore, forever</h2>
-    <a href="/hall-of-fame/"><h2>Hall of fame</h2></a>
-    <div class="table-test"></div>
+    <div class="content">
+        <a href="/hall-of-fame/"><h2>Hall of fame</h2></a>
+        <div class="table-test"></div>
+    </div>
 </main>
 <script>
 $(initIndex);
@@ -50,22 +56,25 @@ $(initIndex);
  * index page
  */
 function initIndex(){
-    const drop = 0.6;
+    const drop = 0.8;
     const data = [
-        {class: 'amounts__country', val: amountCountry},
-        {class: 'amounts__athlete', val: amountAthlete},
-        {class: 'amounts__results', val: amountResult},
-        {class: 'amounts__race', val: amountRace},
         {class: 'amounts__competition', val: amountCompetition},
+        {class: 'amounts__result', val: amountResult},
+        {class: 'amounts__athlete', val: amountAthlete},
+        {class: 'amounts__race', val: amountRace},
+        {class: 'amounts__country', val: amountCountry},
+        
     ]
+    let i = 0;
     for (const obj of data) {
         numberAnimate({
             targets: "." + obj.class + " .amount",
             from: obj.val  * drop,
             to: obj.val,
-            duration: 4000,
+            duration: 1000 + i * 1700,
             easing: "easeOutExpo"
         });
+        i++;
     }
 }
 </script>

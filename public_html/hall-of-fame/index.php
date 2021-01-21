@@ -18,13 +18,13 @@ echo "<script>let athletesAmount = ". getAthleteAmount() .";</script>";
         <h4 class="loading-message align center margin top triple">Selecting the best between <span class="amount"></span> skaters</h4>
         <div class="loading circle"></div>
         <div class="rest1 hidden">
-            <h2 class="top">Top 10 skaters</h2>
+            <h3 class="top">Top 10 skaters</h3>
             <div class="slideshow best"></div>
 
-            <h2 class="top">Top 10 sprinters</h2>
+            <h3 class="top">Top 10 sprinters</h3>
             <div class="slideshow sprinters"></div>
 
-            <h2 class="top">Top 10 longdistance skaters</h2>
+            <h3 class="top">Top 10 longdistance skaters</h3>
             <div class="slideshow long"></div>
         </div>
     </div>

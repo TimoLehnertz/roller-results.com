@@ -227,16 +227,18 @@ $body-2: $b
 
 // maximized view of profile taking up the whole screen showinfg all infor mation and addidional extras like analysis
 .profile.max
-   
     // visibility
     & > *
         display: block
 
     // bounds
-    width: 100vw
+    position: absolute
+    padding-top: 5rem
+    width: 100%
     min-height: 100vh//to be removed
     padding-right: 1.25rem //scollbar
-    margin-top: 4rem
+    top: 0
+    // margin-top: 4rem
     
     //outer
     border-radius: 0

@@ -24,15 +24,18 @@ if($loggedIn){
 
         <!-- Jquery -->
         <script src="/js/jquery-3.5.1.js"></script>
-        
+
+        <!-- Anime -->
         <script src="/js/anime.min.js"></script>
+
+        <!-- Font Awesome -->
+        <script src="https://kit.fontawesome.com/bb5d468397.js" crossorigin="anonymous"></script>
+
         <script src="/js/ajaxAPI.js"></script>
         <script src="/js/lib.js"></script>
         <script src="/js/ui.js"></script>
         <script src="/js/interface.js"></script>
-
-        <!-- Font Awesome -->
-        <script src="https://kit.fontawesome.com/bb5d468397.js" crossorigin="anonymous"></script>
+        
     </head>
     <body class="body">
     <header class="header">

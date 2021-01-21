@@ -1692,8 +1692,6 @@ function numberAnimate(setup){
         round,
         duration,
         update: function(anim) {
-            // console.log(wrapper.data)
-            // const value = a.animations[0].currentValue;
             $(targets).text(wrapper.data);
         }
     });

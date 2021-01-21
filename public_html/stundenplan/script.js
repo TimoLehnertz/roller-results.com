@@ -112,6 +112,7 @@ function addPlan(name){
             if(!succsess){
                 alert("Der name existiert bereits");
             } else{
+                window.location.reload();
                 loadPlan(name);
             }
         });

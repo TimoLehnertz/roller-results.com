@@ -1,0 +1,79 @@
+.index
+    .stationary
+        position: sticky
+        top: 5rem
+        background: linear-gradient(0deg, #0000 0%, #{$c}33 100%)
+
+    h1
+        text-align: center
+        color: white
+        border-top-left-radius: 1rem
+        border-top-right-radius: 1rem
+        padding: 1rem 0
+        // margin: 0 10%
+        background: linear-gradient(90deg, rgba(42,134,198,1) 0%, rgba(29,45,186,1) 100%)
+        position: relative
+
+        &::after
+            content: ""
+            position: absolute
+            left: 0
+            top: 100%
+            right: 0
+            height: 1rem
+            background: linear-gradient(90deg, rgba(42,134,198,1) 0%, rgba(29,45,186,1) 100%)
+            clip-path: polygon(0% 0%, 100% 0%, 50% 100%)
+
+    .amounts
+        display: grid
+        grid-template-columns: 1fr 1fr
+        grid-template-areas: "competition competition" "result athlete"
+        padding: 3rem 10%rem
+        font-size: 1.5rem
+       
+
+        & > div
+            display: flex
+            flex-direction: column
+            align-items: center
+            padding: 3rem 1rem
+            background: radial-gradient(circle, #{$b}33 0%, #0000 60%)
+            overflow: visible
+
+    .amounts__country, .amounts__race
+        display: none !important
+    
+    .amounts__country
+        grid-area: country
+    .amounts__race
+        grid-area: race
+    .amounts__result
+        grid-area: result
+        animation: fromLeft 1.25s forwards
+    .amounts__athlete
+        grid-area: athlete
+        animation: fromRight 1.5s forwards
+    .amounts__competition
+        grid-area: competition
+        animation: fromTop 1s forwards
+
+    .subtitle
+        font-size: 1.2rem
+        padding-bottom: 1.5rem
+        text-align: center
+
+    .content
+        background: $bg
+        min-height: 20rem
+        position: relative //to be in front of sticky
+        padding-top: 1rem
+
+        &::before
+            content: ""
+            position: absolute
+            top: 0
+            left: 0
+            right: 0
+            height: 2px
+            background: linear-gradient(90deg, #0000 0%, $d 50%, #0000 100%)
+
