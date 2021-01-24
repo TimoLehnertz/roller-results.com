@@ -3,7 +3,13 @@
 $(() => {
     $(".search-bar__input").on("input", searchChange);
     initSearchBar();
+    initIndexLogo();
+    // alert(isMobile());
 });
+
+function isMobile(){
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+}
 
 let lastSearch = "";
 
@@ -97,4 +103,43 @@ function iconFromSearch(option){
         case "person": return  $(`<i class="fas fa-user result__left"></i>`);
         case "country": const code = countryNameToCode(option.name); if(code !== null) {return $(`<img class="result__left" src="https://www.countryflags.io/${code}/shiny/32.png">`);} else{return $()};
     }
+}
+
+
+function initIndexLogo(){
+    const logo = $(".index .logo");
+    if(logo.length === 0){
+        return; // not indexpage
+    }
+    window.onscroll = update;
+    window.onresize = update;
+
+    function update(){
+        const max = (window.innerWidth / 2) - (logo.width() / 1.25);
+        let offset = Math.min((logo.offset().top - window.scrollY - 50) * 5 / Math.min(window.scrollY / 100, 1), max);
+        const progress = (max - offset) / max;
+        if(isMobile()){
+            offset = max;
+            // console.log("mobile")
+        }
+        $("#logo-filter").attr("stdDeviation", 4 - progress * 2);
+        if(progress < 0.9 && !isMobile()){
+            logo.css("width", `${(1 - progress) * 8 + 4}rem`);
+            logo.css("height", `${(1 - progress) * 4 + 2}rem`);
+        } else if(!isMobile()){
+            logo.css("width", ``);
+            logo.css("height", ``);
+        }
+        logo.offset({left: offset});
+    }
+    // window.setTimeout(update, 2000)
+    if(isMobile()){
+        logo.css("position", "relative");
+        console.log(logo.css("position"))
+        logo.css("width", `12rem`);
+        logo.css("height", `6rem`);
+        console.log(logo.css("width"));
+    }
+    update();
+    update();
 }

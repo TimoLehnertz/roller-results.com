@@ -1,5 +1,6 @@
 <?php
 include_once "api/index.php";
+$indexPage = 1;
 include_once "header.php";
 
 $amountCountry = getCountryAmount();
@@ -17,33 +18,44 @@ echo "<script>
 </script>";
 
 ?>
+<div class="title-img">
+    
+</div>
 <main class="main index">
-    <div class="stationary">
-        <h1>Inline Data</h1>
-        <div class="amounts">
-            <div class="amounts__competition">
-                <div class="amount"><?=$amountCompetition?></div>
-                <div class="type">Competitions</div>
-            </div>
-        
-            <div class="amounts__athlete">
-                <div class="amount"><?=$amountAthlete?></div>
-                <div class="type">Athletes</div>
-            </div>
-            <div class="amounts__result">
-                <div class="amount"><?=$amountResult?></div>
-                <div class="type">Results</div>
-            </div>
-            <div class="amounts__race">
-                <div class="amount"><?=$amountRace?></div>
-                <div class="type">Races</div>
-            </div>
-            <div class="amounts__country">
-                <div class="amount"><?=$amountCountry?></div>
-                <div class="type">Countries</div>
-            </div>
+    <div class="amounts">
+        <div class="amounts__competition">
+            <div class="amount"><?=$amountCompetition?></div>
+            <div class="type">Events</div>
         </div>
-        <h2 class="subtitle">Yours, to explore, forever</h2>
+    
+        <div class="amounts__athlete">
+            <div class="amount"><?=$amountAthlete?></div>
+            <div class="type">Athletes</div>
+        </div>
+        <div class="amounts__result">
+            <div class="amount"><?=$amountResult?></div>
+            <div class="type">Results</div>
+        </div>
+        <div class="amounts__race">
+            <div class="amount"><?=$amountRace?></div>
+            <div class="type">Races</div>
+        </div>
+        <div class="amounts__country">
+            <div class="amount"><?=$amountCountry?></div>
+            <div class="type">Countries</div>
+        </div>
+    </div>
+    <div class="headline">
+        <div>Inline Data</div>
+    </div>
+    <?php
+        include "logo.html";
+    ?>
+    
+    <div class="subtitle">
+        <span class="text">
+            Yours, to explore, forever
+        </span>
     </div>
     <div class="content">
         <a href="/hall-of-fame/"><h2>Hall of fame</h2></a>

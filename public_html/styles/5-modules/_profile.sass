@@ -1,7 +1,7 @@
 //style for profiles for documentation go to lib.js - Profile class
-$head: $b
-$body-1: $d
-$body-2: $b
+$head: $c
+$body-1: $c
+$body-2: $bg
 
 .profile__wrapper
     background: $c
@@ -96,7 +96,7 @@ $body-2: $b
     height: 31.25rem
     position: relative
     z-index: 1
-    background: linear-gradient(0deg,$body-1 0%, $body-2)
+    background: linear-gradient(0deg,$body-1 0%, $body-2 100%)
     color: white
 
     // visibility
@@ -153,14 +153,17 @@ $body-2: $b
     .profile__trophy-1
         top: 3.125rem
         left: 4.0625rem
+        z-index: 10
 
     .profile__trophy-2
         top: 2.5rem
         left: 7.625rem
+        z-index: 10
 
     .profile__trophy-3
         top: 3.125rem
         right: 4.6875rem
+        z-index: 10
     
     .profile__primary
         margin-top: 14.0625rem
@@ -236,9 +239,8 @@ $body-2: $b
     padding-top: 5rem
     width: 100%
     min-height: 100vh//to be removed
-    padding-right: 1.25rem //scollbar
     top: 0
-    // margin-top: 4rem
+    // padding-top: 4rem
     
     //outer
     border-radius: 0
@@ -263,7 +265,7 @@ $body-2: $b
     & > .profile__image
         width: 11.25rem
         height: 11.25rem
-        top: 3.125rem
+        top: 5rem
         left: 1.25rem
         border-width: 0.625rem
         box-shadow: 0.3125rem 0.3125rem 2.125rem 0.125rem rgba(0,0,0,0.51)
@@ -280,16 +282,29 @@ $body-2: $b
             border-width: 0
             border-radius: 20%
 
-    & > .profile__trophy-1
-        top: 5rem
-        left: 13.75rem
+    // & > .profile__left
+    //     top: 12rem
+    //     left: 0rem
+    //     animation: go-right 0.3s 0s backwards
+
+    & > .profile__right
+        position: absolute
+        top: 5.9375rem
+        right: 3rem
+        font-size: 1.57em
+        animation: go-left 0.3s 0s backwards
+        z-index: 100
 
     & > .profile__trophy-2
-        top: 8.125rem
+        top: 7rem
+        left: 13.75rem
+
+    & > .profile__trophy-1
+        top: 10rem
         left: 14.375rem
 
     & > .profile__trophy-3
-        top: 11.25rem
+        top: 13rem
         left: 13.75rem
 
     & > .profile__trophy .medal
@@ -297,18 +312,19 @@ $body-2: $b
         font-size: 1.5rem
 
     & > .profile__name
-        left: 0
+        text-align: center
+        left: 15rem
         right: 0
         font-size: 2rem
 
     & > .profile__special
         left: 0.625rem
-        top: 0.625rem
+        top: 17.5rem
 
     & > .profile__minimize
-        z-index: 3
+        // z-index: 200
         position: absolute
-        top: 0.3125rem
+        top: 4rem
         right: 1.5625rem
 
     & > .profile__maximize
@@ -323,6 +339,7 @@ $body-2: $b
 
     & > .profile__secondary
         margin-top: 18.75rem
+        padding-bottom: 10rem
         width: 100%
 
     &::after
@@ -401,10 +418,11 @@ $body-2: $b
 @media only screen and (max-width: 62.5rem)
     .profile.max 
         & > .profile__primary
-            grid-template-columns: 1fr 1fr !important
+            grid-template-columns: 1fr !important
 
-        & > .profile__special
-            top: 3.125rem
+        & > .profile__right
+            top: 17rem
+            right: 0.5rem
 
 @media only screen and (max-width: 43.75rem)
     // .profile
@@ -414,9 +432,11 @@ $body-2: $b
 
     .profile.max
         & > .profile__name
-            font-size: 1.3rem !important
-            text-align: left
-            left: 0.625rem
+            font-size: 1.4rem !important
+            margin-top: 13rem !important
+            left: 0
+            // text-align: left
+            // left: 0.625rem
 
         &::before
             height: 37.5rem

@@ -164,7 +164,7 @@ function athleteDataToProfileData(athlete){
         get("athleteCompetitions", athlete.id).receive((succsess, competitions) => {
             compElem.find(".loading").remove();
             for (const comp of competitions) {
-                const body = $(`<div class="margin left"></div>`);
+                const body = $(`<div class=""></div>`);
                 for (const race of comp.races) {
                     const acRace = new Accordion(`<div class="race min"><span>${race.distance} ${race.category} ${race.gender}</span>${getPlaceElem(race.placeNumeric).get()[0].outerHTML}</div>`, $("<div class='loading circle'></div>"), {onextend: (head, body1, status) => {
                         if(!status.fetched){
@@ -211,6 +211,8 @@ function pathFromRace(r){
 
 function getRaceTable(parent, race){
     const elem = $(`<div class="race"></div>`);
+    const raceTable = $(`<div class="race-table">`);
+    elem.append(raceTable);
     elem.append(pathFromRace(race));
     for (const result of race.results) {
         result.athletes = profilesElemFromResult(result);
@@ -218,8 +220,11 @@ function getRaceTable(parent, race){
             data: result.place,
             type: "place"
         };
+        if(result.time !== null){
+            result.time = result.time.substring(3, 100)
+        }
     }
-    const table = new Table(elem, race.results);
+    const table = new Table(raceTable, race.results);
     table.setup({
         layout: {
             place: {allowSort: false},

@@ -1,0 +1,29 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "A:\\web\\sandbox"
+		}
+	],
+	"settings": {
+		"liveServer.settings.multiRootWorkspaceName": "sandbox",
+		"sqltools.connections": [
+			{
+				"mysqlOptions": {
+					"authProtocol": "xprotocol"
+				},
+				"previewLimit": 50,
+				"server": "inline-data.ddns.net",
+				"port": 3306,
+				"driver": "MySQL",
+				"name": "ubuntu local",
+				"database": "results",
+				"username": "timo",
+				"password": "PredictIT",
+				"connectionTimeout": 100
+			}
+		]
+	}
+}

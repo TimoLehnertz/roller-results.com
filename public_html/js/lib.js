@@ -1638,7 +1638,6 @@ function getMedal(color, amount){
 }
 
 function getPlaceElem(place){
-    console.log("place")
     const elem = $(`<div class="place"/>`);
     if(place < 4){
         switch(place){

@@ -18,7 +18,7 @@ include_once "../api/userAPI.php";
 
 $result = query("SELECT iduser, username, email, pwdHash, registerCountry FROM TbUser WHERE username = ? OR email = ?;", "ss", $username, $username);
 if(sizeof($result) == 0){
-    throwError($ERROR_WRONG_CREDENTIALS, "/login/index.php");
+    throwError($ERROR_WRONG_CREDENTIALS, "/login/index.php?user=$username");
 }
 
 /**
@@ -26,7 +26,7 @@ if(sizeof($result) == 0){
  */
 $passwordHash = $result[0]["pwdHash"];
 if(!password_verify($password, $passwordHash)){
-    throwError($ERROR_WRONG_PASSWORD, "/login/index.php");
+    throwError($ERROR_WRONG_PASSWORD, "/login/index.php?user=$username");
 }
 
 $email = $result[0]["email"];
@@ -40,6 +40,6 @@ $registerCountry = $result[0]["registerCountry"];
  * -> login
  */
 if(!login($iduser, !empty($_POST["rememberMe"]))){
-    throwError($ERROR_SERVER_ERROR, "/login/index.php");
+    throwError($ERROR_SERVER_ERROR, "/login/index.php?user=$username");
 }
 returnHome();

@@ -2,7 +2,7 @@
 
 include_once "utils.php";
 // include  $_SERVER["DOCUMENT_ROOT"]."/stundenplan/files/plans.json";
-define("FILE",  $_SERVER["DOCUMENT_ROOT"]."/stundenplan/files/plans.json");
+define("FILE", dirname(__FILE__)."/files/plans.json");
 
 if(isset($_GET["getteachers"])){
     echo json_encode(getTeachers());
@@ -114,10 +114,8 @@ function getPlanNames(){
 }
 
 function planNameExist($name){
-    echo "planNameExist($name)";
     $names = getPlanNames();
     foreach ($names as $i => $name1) {
-        echo "<br>$name1";
         if($name1 == $name){
             return true;
         }
@@ -161,7 +159,6 @@ function addPlan($name){
         return false;
     }
     $data = getStundenplanFromFile();
-    print_r($data);
     $data["plans"][] = getNewStundenplan($name, 4);
     setStundenplan($data);
     return true;

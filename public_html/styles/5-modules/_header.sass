@@ -10,19 +10,16 @@
 
     .header__left
         display: flex
-        flex-direction: column
         align-items: center
+        justify-content: center
         font-size: 1.3rem
         height: 100%
         text-decoration: none
 
         a
             line-height: 3rem
-            display: flex
-            flex-direction: row
-            align-items: center
-            margin-right: 2rem
-            margin-left: 0.5rem
+            // margin-right: 0.5rem
+            margin-left: 2rem
 
             &::before
                 background: none
@@ -30,7 +27,7 @@
     .site-name
         font-size: 1.6rem
         white-space: nowrap
-        background-image: linear-gradient(90deg, $a, $c)
+        background-image: linear-gradient(90deg, $a, $b)
         -webkit-background-clip: text
         -webkit-text-fill-color: transparent
 
@@ -110,6 +107,7 @@
     border: none
     background: transparent
     outline: none
+
 
 @media only screen and (max-width: 800px)
     .header

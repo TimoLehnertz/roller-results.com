@@ -3,9 +3,9 @@
         <defs>
             <filter id="gooey">
                 <!-- in="sourceGraphic" -->
-                <feGaussianBlur in="SourceGraphic" stdDeviation="2" result="blur" />
-                <feColorMatrix in="blur" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 19 -9" result="highContrastGraphic" />
-                <feComposite in="SourceGraphic" in2="highContrastGraphic" operator="atop" />
+                <feGaussianBlur id="logo-filter" in="SourceGraphic" stdDeviation="2" result="blur" out="SourceGraphic" />
+                <feColorMatrix in="blur" out ="blur" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 19 -9" result="highContrastGraphic"/>
+                <feComposite in="SourceGraphic" in2="highContrastGraphic" out="SourceGraphic" out="highContrastGraphic" operator="atop" />
             </filter>
         </defs>
     </svg>

@@ -1,0 +1,57 @@
+$form-a: $c
+$form-b: $d
+
+.form
+    animation: fromBottom 1s both
+    display: inline-block
+    border-radius: 1rem
+    padding: 3rem
+    font-size: 1.3rem
+    transition: box-shadow 0.2s
+
+    &:focus-within
+        box-shadow: 10px 10px 44px 0px rgba(0,0,0,0.3)
+
+    div + div
+        border-top: 1px solid #{$form-b}55
+        margin-top: 1rem
+        padding-top: 1rem
+
+    label
+        // display: block
+        color: #AAA
+
+    input
+        color: #FFF
+        background: none
+        border: none
+        outline: none
+        border-bottom-left-radius: 0.2rem
+        border-bottom-right-radius: 0.2rem
+        border-bottom: 0.2rem solid
+        border-color: $bg
+        transition: border-color 0.2s
+        width: 100%
+        // max-width: 10vw
+        
+    input[type="checkbox"]
+        width: auto
+        margin-left: 1rem
+
+        &:focus
+            border-color: #{$form-a}FF
+
+    br + input
+        margin-top: 0.5rem
+    
+    button
+        display: block
+        margin-left: auto
+        margin-right: auto
+        padding: 0.5rem
+
+    @media only screen and (max-width: 600px)
+        font-size: 1.3rem
+        padding: 1rem
+        border-radius: 0rem
+        // width: 100%

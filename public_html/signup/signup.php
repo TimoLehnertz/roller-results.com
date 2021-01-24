@@ -18,19 +18,19 @@ if(isset($_POST["cookies"])){
  */
 
 if(!isset($_POST["email"])){
-    header("location: /signup/index.php?message=$ERROR_NO_EMAIL");
+    header("location: /signup/index.php?message=$ERROR_NO_EMAIL&user=$username&email=$email");
     exit(0);
 }
 if(!isset($_POST["username"])){
-    header("location: /signup/index.php?message=$ERROR_NO_USERNAME");
+    header("location: /signup/index.php?message=$ERROR_NO_USERNAME&user=$username&email=$email");
     exit(0);
 }
 if(!isset($_POST["password1"])){
-    header("location: /signup/index.php?message=$ERROR_NO_PWD1");
+    header("location: /signup/index.php?message=$ERROR_NO_PWD1&user=$username&email=$email");
     exit(0);
 }
 if(!isset($_POST["password2"])){
-    header("location: /signup/index.php?message=$ERROR_NO_PWD2");
+    header("location: /signup/index.php?message=$ERROR_NO_PWD2&user=$username&email=$email");
     exit(0);
 }
 
@@ -49,44 +49,44 @@ $pwd2 = $_POST["password2"];
 
 // Email
 if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-    header("location: /signup/index.php?message=$ERROR_INVALID_EMAIL");
+    header("location: /signup/index.php?message=$ERROR_INVALID_EMAIL&user=$username&email=$email");
     exit(0);
 }
 // username
 if(strlen($email) > 300){
-    header("location: /signup/index.php?message=$ERROR_INVALID_EMAIL");
+    header("location: /signup/index.php?message=$ERROR_INVALID_EMAIL&user=$username&email=$email");
     exit(0);
 }
 // username
 if(!checkUsername($username)){
-    header("location: /signup/index.php?message=$ERROR_INVALID_USERNAME");
+    header("location: /signup/index.php?message=$ERROR_INVALID_USERNAME&user=$username&email=$email");
     exit(0);
 }
 // pw1
 if(strlen($pwd1) < 1){
-    header("location: /signup/index.php?message=$ERROR_INVALID_PWD1");
+    header("location: /signup/index.php?message=$ERROR_INVALID_PWD1&user=$username&email=$email");
     exit(0);
 }
 //pwd match
 if($pwd1 !== $pwd2){
-    header("location: /signup/index.php?message=$ERROR_NO_PWD_MATCH");
+    header("location: /signup/index.php?message=$ERROR_NO_PWD_MATCH&user=$username&email=$email");
     exit(0);
 }
 
 /**
  * Check database if all information is valid
  */
-$result = query("SELECT username from TbUser WHERE username = ? OR email = ?;", "ss", $username, $email);
+$result = query("SELECT username, email from TbUser WHERE username = ? OR email = ?;", "ss", $username, $email);
 if(sizeof($result) > 0){
     if($result[0]["username"] == $username){
-        header("location: /signup/index.php?message=$ERROR_USERNAME_TAKEN");
+        header("location: /signup/index.php?message=$ERROR_USERNAME_TAKEN&user=$username&email=$email");
         exit(0);
     }
     if($result[0]["email"] == $email){
-        header("location: /signup/index.php?message=$ERROR_EMAIL_TAKEN");
+        header("location: /signup/index.php?message=$ERROR_EMAIL_TAKEN&user=$username&email=$email");
         exit(0);
     }
-    header("location: /signup/index.php?message=$ERROR_USERNAME_TAKEN");
+    header("location: /signup/index.php?message=$ERROR_USERNAME_TAKEN&user=$username&email=$email");
     exit(0);
 }
 
@@ -101,6 +101,6 @@ if(($iduser = dbInsert("INSERT INTO TbUser(username, email, pwdHash, registerCou
     login($iduser, $username, $email, $registerCountry);
     header("location: succsess.php?r=3.1415");
 } else{
-    header("location: /signup/index.php?message=$ERROR_SERVER_ERROR");
+    header("location: /signup/index.php?message=$ERROR_SERVER_ERROR&user=$username&email=$email");
     exit(0);
 }
