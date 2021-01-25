@@ -1203,6 +1203,7 @@ class Profile{
         this.primary = {};
         this.secondary = {};
         this.secondaryElem = $(`<div class="profile__secondary"/>`);
+        
 
         /**
          * initialization
@@ -1703,7 +1704,10 @@ function numberAnimate(setup){
 function countryNameToCode(name){
     name = name.toLowerCase();
     for (const country of countries) {
-        if(country.name.toLowerCase() === name){
+        if(country.name === undefined || country.name === null){
+            // console.log(country)
+        }
+        else if(country.name.toLowerCase() === name){
             return country.code;
         }
     }
@@ -1739,7 +1743,7 @@ function getCountryFlag(country, res = 32){
 
 
 
-const countries = [ 
+const countries = [
     {name: 'Afghanistan', code: 'AF'}, 
     {name: 'Åland Islands', code: 'AX'}, 
     {name: 'Albania', code: 'AL'}, 

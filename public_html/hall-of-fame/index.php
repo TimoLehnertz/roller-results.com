@@ -53,15 +53,20 @@ echo "<script>let athletesAmount = ". getAthleteAmount() .";</script>";
             }
             new Slideshow($(".slideshow.best"));
 
-            bestSkaters.sort((a, b) => {
-                if(a.scoreShort < b.scoreShort){
-                    return 1;
-                } else if(a.scoreShort > b.scoreShort){
-                    return -1;
-                } else{
-                    return 0
-                }
-            })
+            // bestSkaters = bestSkaters.sort((a, b) => {
+            //     if(b.scoreShort === null && b.scoreShort === null){
+            //         return 0;
+            //     }
+            //     if(a.scoreShort < b.scoreShort || b.scoreShort === null){
+            //         return 1;
+            //     } else if(a.scoreShort > b.scoreShort || a.scoreShort === null){
+            //         return -1;
+            //     } else{
+            //         return 0
+            //     }
+            // });
+            sortArray(bestSkaters, "scoreShort");
+            console.log(JSON.parse(JSON.stringify(bestSkaters)));
 
             for (let i = 0; i < topAmount; i++) {
                 const athlete = bestSkaters[i];
@@ -70,15 +75,19 @@ echo "<script>let athletesAmount = ". getAthleteAmount() .";</script>";
             }
             new Slideshow($(".slideshow.sprinters"));
 
-            bestSkaters.sort((a, b) => {
-                if(a.scoreShort < b.scoreShort){
-                    return -1;
-                } else if(a.scoreShort > b.scoreShort){
-                    return 1;
-                } else{
-                    return 0
-                }
-            })
+            sortArray(bestSkaters, "scoreLong");
+
+            // bestSkaters = bestSkaters.sort((a, b) => {
+            //     if(a.scoreLong < b.scoreLong){
+            //         return -1;
+            //     } else if(a.scoreLong > b.scoreLong){
+            //         return 1;
+            //     } else{
+            //         return 0
+            //     }
+            // })
+
+            console.log(JSON.parse(JSON.stringify(bestSkaters)));
 
             for (let i = 0; i < topAmount; i++) {
                 const athlete = bestSkaters[i];
@@ -87,6 +96,34 @@ echo "<script>let athletesAmount = ". getAthleteAmount() .";</script>";
             }
             new Slideshow($(".slideshow.long"));
         });
+
+        function sortArray(array, field, asc = true){
+            const mul = asc ? -1 : 1;
+            array.sort((a, b) => {
+                if(a[field] === undefined || b[field] === undefined){
+                    // console.log("undefined")
+                    return 0;
+                }
+                if(b[field] === null && b[field] === null){
+                    console.log("both")
+                    return 0;
+                }
+                if(b[field] === null){
+                    return -mul;
+                }
+                if(a[field] === null){
+                    return mul;
+                }
+                if(a[field] < b[field]){
+                    return -mul;
+                } else if(a[field] > b[field]){
+                    return mul;
+                } else{
+                    return 0
+                }
+            });
+            return array;
+        }
     </script>
 </main>
 <?php

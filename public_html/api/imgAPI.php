@@ -60,3 +60,9 @@ function defaultProfileImgPath($gender){
         return "/img/profile-female.jpg";
     }
 }
+
+function echoRandWallpaper(){
+    $files = glob($_SERVER["DOCUMENT_ROOT"]."/img/rand-wallpaper/" . '/*.*');
+    $file = $files[array_rand($files)];
+    echo("<div class='rand-wallpaper'><img alt='random wallpaper' src='/img/rand-wallpaper/".basename($file)."'></div>");
+}

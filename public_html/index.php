@@ -2,6 +2,7 @@
 include_once "api/index.php";
 $indexPage = 1;
 include_once "header.php";
+include_once "api/imgAPI.php";
 
 $amountCountry = getCountryAmount();
 $amountAthlete = getAthleteAmount();
@@ -16,11 +17,8 @@ echo "<script>
     const amountRace = $amountRace;
     const amountCompetition = $amountCompetition;
 </script>";
-
+echoRandWallpaper();
 ?>
-<div class="title-img">
-    
-</div>
 <main class="main index">
     <div class="amounts">
         <div class="amounts__competition">

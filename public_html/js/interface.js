@@ -212,8 +212,8 @@ function pathFromRace(r){
 function getRaceTable(parent, race){
     const elem = $(`<div class="race"></div>`);
     const raceTable = $(`<div class="race-table">`);
-    elem.append(raceTable);
     elem.append(pathFromRace(race));
+    elem.append(raceTable);
     for (const result of race.results) {
         result.athletes = profilesElemFromResult(result);
         result.place = {

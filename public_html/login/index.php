@@ -52,7 +52,7 @@ if(isset($_GET["user"])){
 </body>
 <?php
 if(isset($_GET["error"])){
-    $msg = getErrormessage($_GET["error"]); 
+    $msg = getErrormessage($_GET["error"]);
     echo "<script>$(() => {window.setTimeout(() => {alert('$msg');removeParams('message');}, 1000)});</script>";
 }
 ?>
