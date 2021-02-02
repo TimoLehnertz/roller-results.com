@@ -8,7 +8,7 @@ class Accordion{
 
     // static registered = [];
 
-    constructor(head, body, setup){
+    constructor(head, body, setup = {}){
         this.extended = false;
         this.elem = undefined;
 
@@ -786,15 +786,6 @@ class Table{
         const elem = $(`<td></td>`);
         elem.append(ElemParser.parse(column));
         return elem;
-        // if (elem instanceof jQuery){
-        //     const e = $(`<td></td>`);
-        //     e.append(elem);
-        //     return e;
-        // } else if(elem == undefined){
-        //     return $(`<td></td>`);
-        // } else{
-        //     return $(`<td>${elem}</td>`);
-        // }
     }
 }
 
@@ -872,8 +863,8 @@ class ElemParser{
     static parser = {
         [ElemParser.PRIMITIVE]: (elem) => $(`<div>${elem.data}</div>`),
         [ElemParser.IMAGE]: (elem) => $(`<img src="${elem.data}" alt="image">`),
-        [ElemParser.COUNTYR_FLAG]: (elem) => getCountryFlag(elem.data),
-        [ElemParser.GENDER]: (elem) => ElemParser.parseGender(elem.data),
+        [ElemParser.COUNTYR_FLAG]: (elem) => getCountryFlag(elem.data, elem.size),
+        [ElemParser.GENDER]: (elem) => {return ElemParser.parseGender(elem.data)},
         [ElemParser.TEXT]: (elem) => $(`<div>${elem.data}</div>`),
         [ElemParser.DOM]: (elem) => elem.data,
         [ElemParser.SLIDER]: (elem) => ElemParser.parseSlider(elem),
@@ -902,17 +893,11 @@ class ElemParser{
             return meta;
         }
         if(ElemParser.isValidMeta(meta)){
-            if(meta.data === null){
-                return false;
+            if(meta.data === null || meta.data === undefined){
+                return $();
             }
-            if(meta.hasOwnProperty("validate")){
-                if(!meta.validate(meta.data)){
-                    return false;
-                }
-            } else{
-                if(meta.data.length === 0){
-                    return false;
-                }
+            if(meta.data.length === 0){
+                return $();
             }
             if(meta.hasOwnProperty("type")){
                 if(ElemParser.parser.hasOwnProperty(meta.type)){
@@ -927,11 +912,16 @@ class ElemParser{
     }
 
     static finishElem(elem, meta){
-        if(elem === false){
-            return $();
-        }
         if(meta === undefined || meta === null){
             meta = {};
+        }
+        if(meta.hasOwnProperty("validate")){
+            if(!meta.validate(meta.data)){
+                return $();
+            }
+        }
+        if(elem === false){
+            return $();
         }
         if("onclick" in meta){
             if(meta.hasOwnProperty("link")){
@@ -940,7 +930,8 @@ class ElemParser{
                     window.location = meta.link;
                 });
             }
-        } else if(meta.hasOwnProperty("link")){
+        }
+        if(meta.hasOwnProperty("link")){
             $(elem).click(() => {
                 window.location = meta.link;
             });
@@ -966,6 +957,9 @@ class ElemParser{
                 wrapper.css("right", meta.bounds.right);
             }
         }
+        if("class" in meta){
+            elem.addClass(meta.class);
+        }
         if(meta.hasOwnProperty("description")){
             if(ElemParser.useDescriptionOn(meta)){
                 elem.prepend(`<div class="margin right">${meta.description}</div>`);
@@ -990,7 +984,10 @@ class ElemParser{
      */
     static isValidMeta(meta){
         if(typeof meta === 'object' && meta !== null){
-            return meta.hasOwnProperty("data");
+            if("data" in meta){
+                return meta.data !== undefined && meta.data !== null;
+            }
+            return false;
         }
         return false;
     }
@@ -1179,7 +1176,7 @@ class Profile{
      * @param {Number} score 
      */
     constructor(data, minLod = Profile.MIN, score = Profile.DEFAULT_SCORE){
-
+        // console.log(data)
         /**
          * idprofile
          */
@@ -1219,6 +1216,7 @@ class Profile{
     }
 
     updateData(data){
+        // console.log(data)
         if(typeof data === 'object'){
             if(data.hasOwnProperty("name")){
                 this.name = data.name;
@@ -1478,7 +1476,13 @@ class Profile{
 
     get profileImg(){
         if(this.image != undefined){
-            return $(`<div class="profile__image"><img src="${this.image}" alt="profile image"></div>`);
+            if(typeof this.image === "string"){
+                return $(`<div class="profile__image"><img src="${this.image}" alt="profile image"></div>`);
+            } else{
+                const elem = $(`<div class="profile__image"></div>`);
+                elem.append(ElemParser.parse(this.image));
+                return elem;
+            }
         } else {
             const gender = this.gender;
             if(gender == ElemParser.FEMALE){
@@ -1635,21 +1639,66 @@ function getMedal(color, amount){
         <img class="medal__simple" width="40" src="${linkSimple}" alt="${color} medal">
         <span class="medal__amount">${amount}</span>
     </div>`);
+    elem.click(() => {window.location = "/hall-of-fame"});
     return elem;
 }
 
 function getPlaceElem(place){
-    const elem = $(`<div class="place"/>`);
+    const elem = $(`<div class=""/>`);
     if(place < 4){
         switch(place){
-            case 1: elem.append(getMedal("gold", 1)); break;
-            case 2: elem.append(getMedal("silver", 2)); break;
-            case 3: elem.append(getMedal("bronze", 3)); break;
+            case 1: elem.append(getMedal("gold", "#1")); break;
+            case 2: elem.append(getMedal("silver", "#2")); break;
+            case 3: elem.append(getMedal("bronze", "#3")); break;
         }
     } else{
-        elem.append($(`<div>${place}</div>`));
+        elem.append($(`<div>#${place}</div>`));
     }
     return elem;
+}
+
+/**
+ * Utils
+ */
+function isMobile(){
+    let check = false;
+    (function(a){if(/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows ce|xda|xiino/i.test(a)||/1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s\-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|\-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw\-(n|u)|c55\/|capi|ccwa|cdm\-|cell|chtm|cldc|cmd\-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc\-s|devi|dica|dmob|do(c|p)o|ds(12|\-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly(\-|_)|g1 u|g560|gene|gf\-5|g\-mo|go(\.w|od)|gr(ad|un)|haie|hcit|hd\-(m|p|t)|hei\-|hi(pt|ta)|hp( i|ip)|hs\-c|ht(c(\-| |_|a|g|p|s|t)|tp)|hu(aw|tc)|i\-(20|go|ma)|i230|iac( |\-|\/)|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja(t|v)a|jbro|jemu|jigs|kddi|keji|kgt( |\/)|klon|kpt |kwc\-|kyo(c|k)|le(no|xi)|lg( g|\/(k|l|u)|50|54|\-[a-w])|libw|lynx|m1\-w|m3ga|m50\/|ma(te|ui|xo)|mc(01|21|ca)|m\-cr|me(rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t(\-| |o|v)|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30(0|2)|n50(0|2|5)|n7(0(0|1)|10)|ne((c|m)\-|on|tf|wf|wg|wt)|nok(6|i)|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|\-([1-8]|c))|phil|pire|pl(ay|uc)|pn\-2|po(ck|rt|se)|prox|psio|pt\-g|qa\-a|qc(07|12|21|32|60|\-[2-7]|i\-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55\/|sa(ge|ma|mm|ms|ny|va)|sc(01|h\-|oo|p\-)|sdk\/|se(c(\-|0|1)|47|mc|nd|ri)|sgh\-|shar|sie(\-|m)|sk\-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h\-|v\-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl\-|tdg\-|tel(i|m)|tim\-|t\-mo|to(pl|sh)|ts(70|m\-|m3|m5)|tx\-9|up(\.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|\-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(\-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|yas\-|your|zeto|zte\-/i.test(a.substr(0,4))) check = true;})(navigator.userAgent||navigator.vendor||window.opera);
+    return check;
+};
+
+function sortArray(array, field, asc = true){
+    const mul = asc ? -1 : 1;
+    array.sort((a, b) => {
+        if(a[field] === undefined || b[field] === undefined){
+            // console.log("undefined")
+            return 0;
+        }
+        if(b[field] === null && b[field] === null){
+            console.log("both")
+            return 0;
+        }
+        if(b[field] === null){
+            return -mul;
+        }
+        if(a[field] === null){
+            return mul;
+        }
+        if(a[field] < b[field]){
+            return -mul;
+        } else if(a[field] > b[field]){
+            return mul;
+        } else{
+            return 0
+        }
+    });
+    return array;
+}
+
+function profileSlideShowIn(elem, profiles){
+    const slideshow = new Slideshow(elem);
+    for (const profile of profiles) {
+        profile.appendTo(elem);
+    }
 }
 
 /**
@@ -1704,21 +1753,16 @@ function numberAnimate(setup){
 function countryNameToCode(name){
     name = name.toLowerCase();
     for (const country of countries) {
-        if(country.name === undefined || country.name === null){
-            // console.log(country)
-        }
-        else if(country.name.toLowerCase() === name){
+        if(country.name.toLowerCase() === name){
             return country.code;
         }
     }
 }
 
-function countryCodeValid(code){
+function countryCodeValid(name){
+    name = name.toLowerCase();
     for (const country of countries) {
-        if(country["alpha-2"] === code){
-            return true;
-        }
-        if(country["alpha-3"] === code){
+        if(country.code.toLowerCase() === name){
             return true;
         }
     }
@@ -1726,15 +1770,23 @@ function countryCodeValid(code){
 }
 
 function getCountryFlag(country, res = 32){
+    if(res == undefined){
+        res = 32;
+    }
+    let style = "";
+    if(res !== 32 && res !== 64){
+        style = `width="${res}" height="${res}"`;
+        res = 64;
+    }
     if(country === undefined){
         return $(`<div>-</div`);
     }
     const countryCode = countryNameToCode(country);
     if(countryCode !== undefined){
-        return $(`<div class="country-flag"><img src="https://www.countryflags.io/${countryCode}/shiny/${res}.png" alt="${country} flag"></div>`);
+        return $(`<div class="country-flag"><img src="https://www.countryflags.io/${countryCode}/flat/${res}.png" alt="${country} flag" ${style}"></div>`);
     } else{
         if(countryCodeValid(country)){
-            return $(`<div class="country-flag"><img src="https://www.countryflags.io/${country}/shiny/${res}.png" alt="${country} flag"></div>`);
+            return $(`<div class="country-flag"><img src="https://www.countryflags.io/${country}/flat/${res}.png" alt="${country} flag" ${style}"></div>`);
         } else{
             return $(`<div>${country}</div>`);
         }
@@ -1976,6 +2028,8 @@ const countries = [
     {name: 'United Arab Emirates', code: 'AE'}, 
     {name: 'United Kingdom', code: 'GB'}, 
     {name: 'United States', code: 'US'}, 
+    {name: 'United States of America', code: 'US'},
+    {name: 'America', code: 'US'},
     {name: 'United States Minor Outlying Islands', code: 'UM'}, 
     {name: 'Uruguay', code: 'UY'}, 
     {name: 'Uzbekistan', code: 'UZ'}, 

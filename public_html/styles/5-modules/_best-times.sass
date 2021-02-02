@@ -1,0 +1,39 @@
+.best-times
+    display: flex
+    align-items: start
+    flex-direction: row
+
+    h2
+        text-align: center
+        color: #aaa
+        margin-bottom: 1rem
+
+    .long
+        padding-left: 2rem
+        border-left: 1px solid #333
+
+    .time
+        min-height: 2rem
+        line-height: 2rem
+        
+        &:not(.time:last-child)
+            border-bottom: 1px solid #333
+
+        div:last-child
+            min-width: 8rem
+            text-align: right
+    
+@media screen and (max-width: 50rem)
+    .best-times
+        flex-direction: column
+        width: 100%
+
+        .time
+            padding: 0 1rem
+
+        & > div
+            width: 100%
+        
+        .long
+            padding-left: 0
+            border-left: none

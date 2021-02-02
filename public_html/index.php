@@ -18,6 +18,12 @@ echo "<script>
     const amountCompetition = $amountCompetition;
 </script>";
 echoRandWallpaper();
+
+include_once "../data/dbh.php";
+
+// echo getAthleteAmount();
+// echo "hello world"
+
 ?>
 <main class="main index">
     <div class="amounts">

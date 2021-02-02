@@ -60,9 +60,10 @@ function get(property, data1, data2){
         url,
         dataType:  "text",
         success: (response) =>{
-            if(isJson(response) && response.length > 0){
+            if(isJson(response) && response.length > 0 && !response.includes("error")){
                 promise.callback(true, JSON.parse(response));
             } else{
+                console.log(response)
                 console.log("Response from get" + property + " was empty");
                 promise.callback(false, null);
             }

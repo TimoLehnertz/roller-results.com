@@ -38,6 +38,9 @@ if($loggedIn){
         <!-- Font Awesome -->
         <script src="https://kit.fontawesome.com/bb5d468397.js" crossorigin="anonymous"></script>
 
+        <!-- chart.js -->
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.bundle.js"></script>
+
         <script src="/js/ajaxAPI.js"></script>
         <script src="/js/lib.js"></script>
         <script src="/js/ui.js"></script>

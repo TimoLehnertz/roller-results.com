@@ -1,15 +1,23 @@
 .race
+    border-top: 1px solid #777
+    padding-left: 1rem
+    background: #111
+    padding: 10px
+
     &.min
         display: flex
+        align-items: center
         font-size: 1.2rem
-        padding: 0.5rem
+        height: 2rem
+
+        &::before
+            content: "->"
 
         .place
             margin-left: 1rem
 
         .medal
-            
-            width: 1.8rem
+            // width: 1.8rem
         
         .medal__amount
             top: 0
@@ -24,3 +32,21 @@
 
     .race-table
         overflow: auto
+
+.race--max
+    background: #000
+
+
+.competition-list
+    // max-height: 75vh
+    overflow: auto
+    position: relative
+    padding: 20px
+    background: $bg
+
+    & > div
+        min-height: 3.5rem
+        line-height: 3.5rem
+        font-size: 1.3rem
+
+        border-bottom: 1px solid #777

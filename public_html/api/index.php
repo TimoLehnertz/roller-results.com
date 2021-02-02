@@ -21,25 +21,107 @@ include_once $_SERVER["DOCUMENT_ROOT"]."/../data/dbh.php";
 /**
  * Getters
  */
+
 if(!isset($NO_GET_API)){
     if(isset($_GET["getathlete"])){
-        echo json_encode(getAthlete($_GET["getathlete"]));
+        $res = getAthlete($_GET["getathlete"]);
+        if($res !== false){
+            echo json_encode($res);
+        } else{
+            echo "error in api";
+        }
     } else if(isset($_GET["getcompetition"])){
-        echo json_encode(getCompetition($_GET["getcompetition"]));
+        $res = getCompetition($_GET["getcompetition"]);
+        if($res !== false){
+            echo json_encode($res);
+        } else{
+            echo "error in api";
+        }
     } else if(isset($_GET["getresult"])){
-        echo json_encode(getResult($_GET["getresult"]));
+        $res = getResult($_GET["getresult"]);
+        if($res !== false){
+            echo json_encode($res);
+        } else{
+            echo "error in api";
+        }
     } else if(isset($_GET["getrace"])){
-        echo json_encode(getRace($_GET["getrace"]));
+        $res = getRace($_GET["getrace"]);
+        if($res !== false){
+            echo json_encode($res);
+        } else{
+            echo "error in api";
+        }
     } else if(isset($_GET["getcountry"])){
-        echo json_encode(getCountry($_GET["getcountry"]));
+        $res = getCountry($_GET["getcountry"]);
+        if($res !== false){
+            echo json_encode($res);
+        } else{
+            echo "error in api";
+        }
     } else if(isset($_GET["search"])){
-        echo json_encode(search($_GET["search"]));
-    } else if(isset($_GET["getbestTimes"])){
-        $id = intval($_GET["getbestTimes"]);
-        echo json_encode(getBestTimes($id));
+        $res = search($_GET["search"]);
+        if($res !== false){
+            echo json_encode($res);
+        } else{
+            echo "error in api";
+        }
     } else if(isset($_GET["getathleteCompetitions"])){
-        $id = intval($_GET["getathleteCompetitions"]);
-        echo json_encode(getAthleteCompetitions($id));
+        $res = getAthleteCompetitions($_GET["getathleteCompetitions"]);
+        if($res !== false){
+            echo json_encode($res);
+        } else{
+            echo "error in api";
+        }
+    } else if(isset($_GET["getcountryCompetitions"])){
+        $res = getCountryCompetitions($_GET["getcountryCompetitions"]);
+        if($res !== false){
+            echo json_encode($res);
+        } else{
+            echo "error in api";
+        }
+    }else if(isset($_GET["getcountryAthletes"])){
+        $limit = 10;
+        if(isset($_GET["data"])){
+            $limit = $_GET["data"];
+        }
+        $res = getCountryAthletes($_GET["getcountryAthletes"], $limit);
+        if($res !== false){
+            echo json_encode($res);
+        } else{
+            echo "error in api";
+        }
+    }
+    else if(isset($_GET["getathleteBestTimes"])){
+        $res = getAthleteBestTimes($_GET["getathleteBestTimes"]);
+        if($res !== false){
+            echo json_encode($res);
+        } else{
+            echo "error in api";
+        }
+    }
+    else if(isset($_GET["getcountryBestTimes"])){
+        $res = getCountryBestTimes($_GET["getcountryBestTimes"]);
+        if($res !== false){
+            echo json_encode($res);
+        } else{
+            echo "error in api";
+        }
+    }
+    else if(isset($_GET["getcountryCareer"])){
+        $res = getCountryCareer($_GET["getcountryCareer"]);
+        if($res !== false){
+            echo json_encode($res);
+        } else{
+            echo "error in api";
+        }
+    }
+    else if(isset($_GET["getathleteCareer"])){
+        $res = getAthleteCareer($_GET["getathleteCareer"]);
+        if($res !== false){
+            echo json_encode($res);
+        } else{
+            echo "error in api";
+        }
     }else if(isset($_GET["getbestAthletes"])){
         echo json_encode(getBestSkaters());
     } else if(isset($_GET["getathleteRacesFromCompetition"])){
@@ -48,59 +130,124 @@ if(!isset($NO_GET_API)){
             $data = $_GET["data"];
             echo json_encode(getAthleteRacesFromCompetition($id, $data));
         } else{
-            echo "provide data";
+            echo "error provide data";
         }
     }
 }
 
+function getCountryCareer($country){
+    $res = query("CALL sp_countryCareer(?);", "s", $country);
+    if(sizeof($res) > 0){
+        return $res;
+    } else{
+        return [];
+    }
+}
+
+function getAthleteCareer($idAthlete){
+    $res = query("CALL sp_athleteCareer(?);", "i", $idAthlete);
+    if(sizeof($res) > 0){
+        return $res;
+    } else{
+        return [];
+    }
+}
+
+function getCountryBestTimes($country){
+    $times = query("CALL sp_getCountryBestTimes(?);", "s", $country);
+    if(sizeof($times) > 0){
+        return $times;
+    } else{
+        return [];
+    }
+}
+
+function getAthleteBestTimes($idAthlete){
+    $times = query("CALL sp_getAthleteBestTimes(?);", "i", $idAthlete);
+    if(sizeof($times) > 0){
+        return $times;
+    } else{
+        return [];
+    }
+}
+
+function getCountryAthletes($country, $limit){
+    $res = query("SELECT * FROM vAthlete WHERE country = ? ORDER BY score DESC LIMIT ?;", "si", $country, $limit);
+    if(sizeof($res) > 0){
+        return $res;
+    } else{
+        return [];
+    }
+}
+
 function getAthleteAmount(){
-    $res = query("CALL sp_getAthletesAmount();");
+    $res = query("SELECT count(*) as amount FROM vAthletePublic;");
     if(sizeof($res) > 0){
         return $res[0]["amount"];
     } else{
-        return 0;
+        return [];
     }
 }
 
 function getCountryAmount(){
-    $res = query("CALL sp_getCountryAmount();");
+    $res = query("SELECT count(*) as amount FROM vCountry;");
     if(sizeof($res) > 0){
         return $res[0]["amount"];
     } else{
-        return 0;
+        return [];
     }
 }
 
 function getResultAmount(){
-    $res = query("CALL sp_geResultAmount();");
+    $res = query("SELECT count(*) as amount FROM vResult;");
     if(sizeof($res) > 0){
         return $res[0]["amount"];
     } else{
-        return 0;
+        return [];
     }
 }
 
 function getRaceAmount(){
-    $res = query("CALL sp_getRaceAmount();");
+    $res = query("SELECT count(*) as amount FROM vRace;");
     if(sizeof($res) > 0){
         return $res[0]["amount"];
     } else{
-        return 0;
+        return [];
     }
 }
 
 function getCompetitionAmount(){
-    $res = query("CALL sp_getCompetitionAmount();");
+    $res = query("SELECT count(*) as amount FROM vCompetitionSmall;");
     if(sizeof($res) > 0){
         return $res[0]["amount"];
     } else{
-        return 0;
+        return [];
     }
 }
 
+function getCountryCompetitions($country){
+    $competitions = query("CALL sp_getCountryCompetitions(?);", "s", $country);
+    if(sizeof($competitions) > 0){
+        foreach ($competitions as $key => &$competition) {
+            $competition["races"] = getCountryRacesFromCompetition($country, $competition["idCompetition"]);
+        }
+        return $competitions;
+    } else{
+        return [];
+    }
+}
+
+function getCountryRacesFromCompetition($country, $idcompetition){
+    $races = query("CALL sp_getCountryRacesFromCompetition(?, ?);", "si", $country, intval($idcompetition));
+    if(sizeof($races) > 0){
+        return $races;
+    } else {
+        return [];
+    }
+}
 
 function getBestSkaters(){
-    $skaters = query("CALL sp_getBestAthletes();");
+    $skaters = query("SELECT * FROM vAthletePublic ORDER BY score DESC LIMIT 100;");
     if(sizeof($skaters) > 0){
         return $skaters;
     } else{
@@ -109,23 +256,20 @@ function getBestSkaters(){
 }
 
 function getYearCompetitions($year){
-    $comps = query("CALL sp_getYearsCompetition(?);", "i", $year);
+    $comps = query("SELECT * FROM vCompetition WHERE raceYear = ?;", "i", $year);
     if(sizeof($comps) > 0){
         return $comps;
     } else{
-        return false;
+        return [];
     }
 }
 
 function getAthleteRacesFromCompetition($idathlete, $idcompetition){
     $races = query("CALL sp_getAthleteRacesFromCompetition(?, ?);", "ii", intval($idathlete), intval($idcompetition));
     if(sizeof($races) > 0){
-        // foreach ($races as $key => $race) {
-        //     $races[$key] ["results"] = getRaceResults($race["id"]);
-        // }
         return $races;
     } else {
-        return false;
+        return [];
     }
 }
 
@@ -137,68 +281,57 @@ function getAthleteCompetitions($idathlete){
         }
         return $competitions;
     } else{
-        return false;
+        return [];
     }
 }
 
-/**
- * example
- * {"lastname":"Abdelsamie","firstname":"Mokhtar","gender":"M","country":"Egypt","linkCollection":null,"id":5,"mail":null,"comment":null,"club":null,"team":null,"image":null}
- */
 function getAthlete($id){
-    $result = query("CALL sp_getAthlete(?);", "i", intval($id));
+    $result = query("SELECT * FROM vAthletePublic WHERE idAthlete = ?;", "i", intval($id));
     if(sizeof($result) > 0){
         return $result[0];
     } else{
-        return false;
+        return [];
     }
 }
 
-/**
- * example
- * {"idCompetition":4,"startDate":null,"endDate":null,"location":"Wroclaw Wg","description":null,"type":"World Games","bild":null,"gpx":null,"raceyear":"2017"}
- */
 function getCompetition($id){
-    $result = query("CALL sp_getCompetition(?);", "i", intval($id));
+    $result = query("SELECT * FROM vCompetition WHERE idCompetition = ?;", "i", intval($id));
     if(sizeof($result) > 0){
         $result[0] ["races"] = getRacesFromCompetition($id);
         return $result[0];
     } else{
-        return false;
+        return [];
     }
 }
 
-/**
- * example
- * {"id":4,"place":34,"resultLink":null,"idRace":349,"idPerson":4,"idPerson2":null,"idPerson3":null,"lastname":"Abdellatif","firstname":"Mariam","gender":"W","country":"Egypt","linkCollection":null,"club":null,"team":null,"image":null,"location":"Nanjing","raceYear":"2016","type":null,"relay":0,"distance":"15000 Elimination Track","raceLink":null,"category":"Jun","remark":null,"trackStreet":null,"idCompetition":null}
- */
+function getCountry($name){
+    $country = query("SELECT * FROM vCountry WHERE country = ?;", "s", $name);
+    if(sizeof($country) > 0){
+        return $country[0];
+    } else{
+        return [];
+    }
+}
+
 function getResult($id){
-    $result = query("CALL sp_getResult(?);", "i", intval($id));
+    $result = query("SELECT * FROM vResult WHERE idResult = ?;", "i", intval($id));
     if(sizeof($result) > 0){
         return $result[0];
     } else{
-        return false;
+        return [];
     }
 }
 
-/**
- * example
- * {"id":349,"raceType":null,"relay":0,"distance":"15000 Elimination Track","raceLink":null,"category":"Jun","gender":"W","remark":null,"trackStreet":null,"idCompetition":null,"startDate":null,"endDate":null,"location":null,"competitionType":null,"gpx":null,"raceyear":null}
- */
 function getRace($id){
-    $result = query("CALL sp_getRace(?);", "i", intval($id));
+    $result = query("SELECT * FROM vRace WHERE idRace = ?;", "i", intval($id));
     if(sizeof($result) > 0){
         $result[0]["results"] = getRaceResults($id);
         return $result[0];
     } else{
-        return false;
+        return [];
     }
 }
 
-/**
- * example
- * {"id":349,"raceType":null,"relay":0,"distance":"15000 Elimination Track","raceLink":null,"category":"Jun","gender":"W","remark":null,"trackStreet":null,"idCompetition":null,"startDate":null,"endDate":null,"location":null,"competitionType":null,"gpx":null,"raceyear":null}
- */
 function getRacesFromCompetition($id){
     $result = query("CALL sp_getRacesFromCompetition(?);", "i", intval($id));
     if(sizeof($result) > 0){
@@ -208,72 +341,57 @@ function getRacesFromCompetition($id){
     }
 }
 
-function getBestTimes($idathlete){
-    $result = query("CALL getBestTimes(?);", "i", $idathlete);
-    if(sizeof($result) > 0){
-        return $result;
-    } else{
-        return false;
-    }
-}
-
-
-function parseAthletesFromResults($results){
-    $parsed = [];
-    foreach ($results as $key => $result) {
-        $parsed[] = parseAthletesFromResult($result);
-    }
-    return $parsed;
-}
-
-function parseAthletesFromResult($result){
-    for ($index = 1; $index < 4; $index++) {
-        $name = "p$index";
-        $athlete = [
-            "id" => NULL,
-            "lastname" => NULL,
-            "firstname" => NULL,
-            "gender" => NULL,
-            "country" => NULL,
-            "linkCollection" => NULL,
-            "club" => NULL,
-            "team" => NULL,
-            "image" => NULL
-        ];
-        if(isset($result[$name."id"])){
-            if(!empty($result[$name."id"])){
-                foreach ($athlete as $key => $value) {
-                    if(isset($result[$name.$key])){
-                        $athlete[$key] = $result[$name.$key];
-                    }
-                }
-                $result["athlete". $index] = $athlete;
-            }
-        }
-        foreach ($athlete as $key => $value) {
-            unset($result[$name.$key]);
-        }
-    }
-    // print_r($result);
-    // exit();
-    return $result;
-}
-
 function getRaceResults($id){
     $results = query("CALL sp_getRaceResults(?);", "i", intval($id));
-    $results = parseAthletesFromResults($results);
-    return $results;
+    // print_r($results);
+    $parsed = [];
+    foreach ($results as $key => &$result) {
+        $place = $result["place"];
+        if(!array_key_exists($place, $parsed)){
+            $parsed[$place] = $result;
+        }
+        $parsed[$place]["athletes"][] = athleteFromResult($result);
+    }
+    $filtered = [];
+    foreach ($parsed as $key => $value) {
+        if(isset($value)){
+            $filtered[] = $value;
+        }
+    }
+    return $filtered;
 }
 
-/**
- * Get all athletes from a country
- * Example:
- * [{"surname":"Albrecht","firstname":"Simon","gender":"M","country":"Germany","linkCollection":null,"id":40,"club":null,"team":null,"image":null,"birthYear":null,"LVKuerzel":null}}
- */
-function getCountry($name){
-    $result = query("CALL sp_getCountry(?);", "s", $name);
-    $persons = [];
-    return $result;
+function athleteFromResult($result){
+    $athlete = [
+        "idAthlete" => NULL,
+        "firstname" => NULL,
+        "lastname" => NULL,
+        "gender" => NULL,
+        "country" => NULL,
+        "club" => NULL,
+        "team" => NULL,
+        "image" => NULL,
+        "birthYear" => NULL,
+        "facebook" => NULL,
+        "instagram" => NULL,
+        "rank" => NULL,
+        "score" => NULL,
+        "scoreShort" => NULL,
+        "scoreLong" => NULL,
+        "bronze" => NULL,
+        "silver" => NULL,
+        "gold" => NULL,
+        "topTen" => NULL,
+        "medalScore" => NULL,
+        "raceCount" => NULL,
+        "minAge" => NULL,
+    ];
+    foreach ($athlete as $key => $val) {
+        if(array_key_exists($key, $result)){
+            $athlete[$key] = $result[$key];
+        }
+    }
+    return $athlete;
 }
 
 /**
@@ -378,10 +496,10 @@ function searchPersons($name){
     foreach ($names as $key => $value) {
         $persons = query("CALL sp_searchPerson(?)", "s", $value);
         foreach ($persons as $key => $person) {
-            if(!in_array($person["id"], $personIds)){
-                $personIds[] = $person["id"];
+            if(!in_array($person["idAthlete"], $personIds)){
+                $personIds[] = $person["idAthlete"];
                 $results[] = [
-                    "id" => $person["id"],
+                    "id" => $person["idAthlete"],
                     "name" => $person["firstname"]." ".$person["lastname"]." - ".$person["country"],
                     "priority" => 1,
                     "type" => "person"
