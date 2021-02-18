@@ -17,7 +17,8 @@
  */
 
 include_once $_SERVER["DOCUMENT_ROOT"]."/../data/dbh.php";
-
+include_once $_SERVER["DOCUMENT_ROOT"]."/includes/roles.php";
+canI("managePermissions");
 /**
  * Getters
  */
@@ -46,6 +47,13 @@ if(!isset($NO_GET_API)){
         }
     } else if(isset($_GET["getrace"])){
         $res = getRace($_GET["getrace"]);
+        if($res !== false){
+            echo json_encode($res);
+        } else{
+            echo "error in api";
+        }
+    }else if(isset($_GET["getraces"])){
+        $res = getRaces();
         if($res !== false){
             echo json_encode($res);
         } else{
@@ -122,6 +130,27 @@ if(!isset($NO_GET_API)){
         } else{
             echo "error in api";
         }
+    }else if(isset($_GET["getallAthletes"])){
+        $res = getAllAthletes();
+        if($res !== false){
+            echo json_encode($res);
+        } else{
+            echo "error in api";
+        }
+    }else if(isset($_GET["getcountryCodes"])){
+        $res = getCountryCodes();
+        if($res !== false){
+            echo json_encode($res);
+        } else{
+            echo "error in api";
+        }
+    }else if(isset($_GET["getallCompetitions"])){
+        $res = getAllCompetitions();
+        if($res !== false){
+            echo json_encode($res);
+        } else{
+            echo "error in api";
+        }
     }else if(isset($_GET["getbestAthletes"])){
         echo json_encode(getBestSkaters());
     } else if(isset($_GET["getathleteRacesFromCompetition"])){
@@ -132,6 +161,110 @@ if(!isset($NO_GET_API)){
         } else{
             echo "error provide data";
         }
+    }
+    /**
+     * set api
+     */
+    /**
+     * takes an array of objects each {idRace: ?, link: "?"}
+     * link beeing a ; seperated string of youtube links
+     */
+    if(canI("managePermissions")){
+        if(isset($_GET["setraceLinks"])){
+            $data = json_decode(file_get_contents('php://input'), true);
+            if($data === null){
+                echo "Data could not be parsed :(";
+                exit();
+            }
+            setRaceLinks($data);
+        }
+    }
+}
+
+function setRaceLinks($races){
+    // var_dump($races);
+    $oldRaces = getRaces();
+
+    $new = [];
+
+    foreach ($oldRaces as $key => &$oldRace) {
+        foreach ($races as $newRace) {
+            if($newRace["idRace"] === $oldRace["idRace"]){
+                $oldLinks = [];
+                if($oldRace["link"]){
+                    $oldLinks = explode(";", $oldRace["link"]);
+                }
+                $newLinks = [];
+                if($newRace["link"]){
+                    var_dump($newRace["link"]);
+                    $newLinks = explode(";", $newRace["link"]);
+                    // $newLinks = $newRace["link"];
+                }
+                if($newLinks === false){
+                    continue;
+                }
+                if(sizeof($newLinks) === 0){
+                    continue;
+                }
+
+                var_dump($newLinks);
+
+                $insertLink = $oldRace["link"];
+                $changed = false;
+
+                $delimiter = "";
+                if(strlen($oldRace["link"]) > 0){
+                    $delimiter = ";";
+                }
+                
+                foreach ($newLinks as $key => $link) {
+                    if(!in_array($link, $oldLinks)){
+                        $insertLink .= $delimiter.$link;
+                        $delimiter = ";";
+                        $changed = true;
+                    }
+                }
+                if($changed){
+                    $new[$oldRace["idRace"]] = $insertLink;
+                }
+                break;//next
+            }
+        }
+    }
+    var_dump($new);
+    foreach ($new as $idRace => $link) {
+        dbExecute("UPDATE TbRace SET link = ? WHERE id = ?;", "si", $link, $idRace);
+    }
+    // $delimiter = "";
+    // $sql = "UPDATE TbRace SET link";
+}
+
+
+
+function getAllCompetitions(){
+    $res = query("SELECT * FROM vCompetition;");
+    if(sizeof($res) > 0){
+        return $res;
+    } else{
+        return [];
+    }
+}
+
+function getCountryCodes(){
+    $res = query("SELECT * FROM TbCountry;");
+    if(sizeof($res) > 0){
+        return $res;
+    } else{
+        return [];
+    }
+}
+
+function getAllAthletes(){
+    $res = query("SELECT * FROM vAthletePublic;");
+    if(sizeof($res) > 0){
+        return $res;
+    } else{
+        return [];
     }
 }
 
@@ -286,7 +419,7 @@ function getAthleteCompetitions($idathlete){
 }
 
 function getAthlete($id){
-    $result = query("SELECT * FROM vAthletePublic WHERE idAthlete = ?;", "i", intval($id));
+    $result = query("SELECT * FROM vAthlete WHERE idAthlete = ?;", "i", intval($id));
     if(sizeof($result) > 0){
         return $result[0];
     } else{
@@ -327,6 +460,15 @@ function getRace($id){
     if(sizeof($result) > 0){
         $result[0]["results"] = getRaceResults($id);
         return $result[0];
+    } else{
+        return [];
+    }
+}
+
+function getRaces(){
+    $result = query("SELECT * FROM vRace;");
+    if(sizeof($result) > 0){
+        return $result;
     } else{
         return [];
     }

@@ -25,12 +25,18 @@ echo "<script>const comp = ". json_encode($comp) .";</script>";
     <script>
         console.log(comp)
         const table = new Table($(".races-table"), comp.races);
+        let orderBy = {column: "distance", up: true};
+        if(findGetParameter("trackStreet") !== null){
+            orderBy = {column: "trackStreet", up: findGetParameter("trackStreet") === "Road"};
+        }
+        
+
         table.setup({
-            rowLink: row => `/race?id=${row.id}`,
-            orderBy: {column: "distance", up: true},
+            rowLink: row => `/race?id=${row.idRace}`,
+            orderBy,
             layout: {
                 distance: {
-                    allowSort: false
+                    // allowSort: false
                 },
                 category: {},
                 gender: {},

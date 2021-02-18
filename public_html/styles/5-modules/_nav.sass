@@ -1,0 +1,73 @@
+.hider
+    content: ""
+    position: absolute
+    top: 0
+    left: 0
+    right: 0
+    height: 100vh
+    background: #0008
+    opacity: 0
+    transition: opacity 0.2s
+    visibility: hidden
+    z-index: -2
+
+.nav
+    visibility: hidden
+    position: absolute
+    top: 0rem
+    padding: 3rem
+    padding-top: 7rem
+    left: 0
+    transition: transform 0.3s cubic-bezier(0.075, 0.820, 0.165, 1.000), opacity 0.1s
+    background: $bg
+    z-index: -1
+    transform: rotate3d(0, 1, 0, 40deg)
+    opacity: 0
+    transform-origin: left
+    box-shadow: 50px 50px 100px 0px #0006
+
+    &.extended
+        visibility: visible
+        opacity: 1
+        transform: rotate3d(0, 1, 0, 0deg)
+
+        // .hider
+        //     opacity: 1
+        //     visibility: visible
+
+        @for $link from 0 through 7
+            li:nth-of-type(#{$link})
+                animation: fromLeft $link * 200ms both
+
+        & ~ .hider
+            opacity: 1
+            visibility: visible
+
+    li
+        list-style: none
+        font-size: 2rem
+        min-height: 2rem
+        // margin-bottom: 1rem
+        overflow: visible
+
+        a
+            display: inline-block
+            color: white
+            overflow: visible
+            padding-top: 1.5rem
+
+
+        a::before
+            opacity: 0
+            height: 0.4rem
+            transform: translateX(-50%)
+            background: linear-gradient(130deg, $a, $c)
+            transition: transform 0.2s, opacity 0.3s
+
+    li:hover, li.active
+        a::before
+            transform: translateX(0)
+            opacity: 1
+
+        a
+            color: #CCC

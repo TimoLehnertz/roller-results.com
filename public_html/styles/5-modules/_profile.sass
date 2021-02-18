@@ -54,6 +54,7 @@ $body-2: $bg
 .profile.min
     // dimensions
     width: 18rem
+    max-width: 18.75rem
     height: 3rem
 
     background: linear-gradient(90deg,$body-1 20%, $body-2 110%)
@@ -93,7 +94,8 @@ $body-2: $bg
 // dimensions 18.75rem * 31.25rem
 .profile.card
     // dimensions
-    width: 18.75rem
+    width: 18rem
+    max-width: 18rem
     height: 31.25rem
     position: relative
     z-index: 1
@@ -119,7 +121,7 @@ $body-2: $bg
     .profile__name
         position: absolute
         left: 0
-        right: 0
+        right: 2rem
         top: 0
         line-height: 2.5rem
         font-size: 1.3rem
@@ -284,8 +286,8 @@ $body-2: $bg
             border-radius: 20%
 
     & > .profile__left
-        left: 4.3rem
-        top: 17.5rem
+        left: 6rem
+        top: 17.6rem
         animation: go-right 0.3s 0s backwards
         position: absolute
 
@@ -293,11 +295,10 @@ $body-2: $bg
         position: absolute
         // top: 5.9375rem
         // right: 3rem
-        left: 8rem
+        left: 11rem
         top: 17.5rem
         font-size: 1.57em
         animation: go-left 0.3s 0s backwards
-        z-index: 100
 
     & > .profile__trophy-2
         top: 7rem
@@ -423,7 +424,7 @@ $body-2: $bg
     z-index: 3
 
 @media only screen and (max-width: 62.5rem)
-    .profile.max 
+    .profile.max
         & > .profile__primary
             grid-template-columns: 1fr !important
 
@@ -441,19 +442,25 @@ $body-2: $bg
     .profile.max
         & > .profile__name
             font-size: 1.4rem !important
-            margin-top: 13rem !important
-            text-align: right
-            left: 10rem
+            margin-top: 0rem !important
+            text-align: center
+            left: 1rem
             right: 1rem
             // text-align: left
             // left: 0.625rem
+        
+        & > .profile__image
+            top: 8rem
+        
+        & > .profile__special
+            top: 19rem
 
         &::before
             height: 37.5rem
 
         & > .profile__primary
             margin-left: 1.25rem
-            margin-top: 15.625rem
+            margin-top: 17.5rem
 
         & > .profile__secondary
             margin-top: 37.5rem

@@ -19,11 +19,11 @@ include_once "../header.php";
 // echo "<script>const person = ". json_encode($person) .";</script>";
 ?>
 <main class="main">
-    <h1 class="align center margin top quintuple"><?=$year?></h1>
+    <h1 class="align center margin top double font size bigger">Competitions in <?=$year?></h1>
     <div class="display flex column">
     <?php
         foreach ($comps as $key => $comp) {
-            echo "<a href='/competition?id=".$comp["idCompetition"]."'>";
+            echo "<a class='font size big margin top double' href='/competition?id=".$comp["idCompetition"]."'>";
             echo  $comp["type"] . " " . $comp["location"] . " ". $comp["raceYear"];
             echo "</a>";
         }

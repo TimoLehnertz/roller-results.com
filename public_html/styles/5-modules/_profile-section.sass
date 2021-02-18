@@ -1,0 +1,75 @@
+.profile-section
+    position: absolute
+    top: 4rem
+    right: 0
+    transform: translate(100%)
+    transition: all 0.1s
+    padding: 3rem
+    background: $bg
+    z-index: 100
+
+    .hider
+        content: ""
+        position: absolute
+        top: 0
+        right: 100%
+        background: #0008
+        width: 200vw
+        height: 100vh
+        opacity: 0
+        transition: opacity 0.2s
+        visibility: hidden
+        z-index: -1
+
+    .hider2
+        left: 0
+        width: 100%
+        top: 100%
+
+    &.extended
+        transform: translateX(0)
+        box-shadow: -35px 35px 50px -14px #0006
+
+
+        .hider
+            opacity: 1
+            visibility: visible
+
+        @for $link from 0 through 20
+            & > div:nth-of-type(#{$link}):not(.hider)
+                animation: fromRight $link * 100ms 100ms both
+
+.toggle-profile-section
+    display: flex
+    align-items: center
+    justify-content: space-around
+    border-radius: 2rem
+    border-top-left-radius: 0
+    border-top-right-radius: 0
+    border: 2px solid $header-color
+    border-top: none
+    height: 4rem
+    background: #555
+    color: #CCC
+    overflow: hidden
+    padding-right: 1rem
+    font-size: 1.3rem
+    text-shadow: 2px 2px 3px #0007
+    transition: all 0.1s
+    cursor: pointer
+
+    &:hover
+        border-bottom-right-radius: 1rem
+        border-bottom-left-radius: 1rem
+        background: #333
+        color: #FFF
+        padding-top: 0.3rem
+
+    .profile-img
+        height: 4rem
+        width: 4rem
+        object-fit: cover
+        margin-right: 1rem
+        // border: 2px solid $b
+        // border-radius: 50%
+

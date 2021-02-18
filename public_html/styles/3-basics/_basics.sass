@@ -8,12 +8,14 @@
     box-sizing: border-box
 
 .body
+    perspective: 1500px
     background-color: $bg
     color: $font-color
     position: absolute
     top: 0
     width: 100%
-    // overflow-x: hidden
+    overflow-x: hidden
+    min-height: 80vh
 
 i
     color: $a
@@ -59,12 +61,12 @@ a
 a::before
     content: ""
     position: absolute
-    top: 95%
+    bottom: 0
     width: 100%
     left: 0
     height: 3px
     border-radius: 2px
-    background: linear-gradient(130deg, $b, $c)
+    background: linear-gradient(130deg, $a, $c)
 
 .hidden
     display: none !important

@@ -3,7 +3,7 @@ include_once $_SERVER["DOCUMENT_ROOT"]."/api/userAPI.php";
 /**
  * File for dealing with roles wich are stored as numbers for each user
  * 0 is the default role with the least permissions
- * with idrole set to 0 all permissions are set to false
+ * with idRole set to 0 all permissions are set to false
  */
 
 $defaultPermissions = [
@@ -25,9 +25,9 @@ function permissionsForUser($user){
         }
         return $permissions;
     }
-    $idrole = $user["idrole"];
+    $idRole = $user["idRole"];
     foreach ($defaultPermissions as $key => $value) {
-        $permissions[$value] = $idrole >= $key;
+        $permissions[$value] = $idRole >= $key;
     }
     return $permissions;
 }

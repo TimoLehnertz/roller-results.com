@@ -2,6 +2,24 @@
     display: flex
     align-items: start
     flex-direction: row
+    // max-height: 20rem
+    overflow: hidden
+    position: relative
+
+    // &::after
+    //     content: ""
+    //     position: absolute
+    //     bottom: -1rem
+    //     left: 0rem
+    //     right: 0rem
+    //     height: 5rem
+    //     background: linear-gradient(180deg, #0000, #c7c7c7 90%, #0000 100%)
+
+    &.max
+        max-height: none
+        
+        &::after
+            display: none
 
     h2
         text-align: center
@@ -13,8 +31,8 @@
         border-left: 1px solid #333
 
     .time
-        min-height: 2rem
-        line-height: 2rem
+        min-height: 1.5rem
+        line-height: 1.5rem
         
         &:not(.time:last-child)
             border-bottom: 1px solid #333
@@ -22,8 +40,8 @@
         div:last-child
             min-width: 8rem
             text-align: right
-    
-@media screen and (max-width: 50rem)
+
+@media screen and (max-width: 60rem)
     .best-times
         flex-direction: column
         width: 100%

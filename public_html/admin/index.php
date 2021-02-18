@@ -11,6 +11,18 @@ include_once "../header.php";
     <a href="/admin/users.php">Manage Users</a>
     <br>
     <a href="/admin/athletes.php">Manage Athletes</a>
+    <br>
+    <h2>Dev</h2>
+    <hr>
+    <a href="/admin/dev/country.php">country staff</a>
+    <br>
+    <a href="/admin/dev/extractor.php">extractor</a>
+    <br>
+    <a href="/admin/dev/fbFinder.php">fb stuff</a>
+    <br>
+    <a href="/admin/dev/import.php">import helper</a>
+    <br>
+    <a href="/admin/dev/ytSearch.php">ytSearch</a>
 </main>
 <?php
 include_once "../footer.php";

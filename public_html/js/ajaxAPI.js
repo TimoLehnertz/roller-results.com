@@ -60,12 +60,63 @@ function get(property, data1, data2){
         url,
         dataType:  "text",
         success: (response) =>{
-            if(isJson(response) && response.length > 0 && !response.includes("error")){
+            if(!isJson(response)){
+                console.log("no json")
+            }
+            if(isJson(response) && response.length > 0/* && !response.includes("error")*/){
                 promise.callback(true, JSON.parse(response));
             } else{
                 console.log(response)
                 console.log("Response from get" + property + " was empty");
                 promise.callback(false, null);
+            }
+        },
+        error: function(xhr, ajaxOptions, thrownError) {
+            promise.callback(false, null);
+            ajaxError(xhr + " " + ajaxOptions + " " + thrownError);
+        }
+    });
+    return promise;
+}
+
+function set(property, data){
+    const promise = {
+        receive: (callback) => {promise.callback = callback},
+        callback: () => {}
+    }
+    console.log("data: ");
+    console.log(data);
+    $.ajax(`/api/?set${property}=1`, {
+        method: "POST",
+        // data: data,
+        data: JSON.stringify(data),
+        success: (response) => {
+            console.log(response);
+            promise.callback(response);
+        },
+        error: function(xhr, ajaxOptions, thrownError) {
+            promise.callback(null);
+            ajaxError(xhr + " " + ajaxOptions + " " + thrownError);
+        },
+        // dataType: "text"
+      });
+      return promise;
+}
+
+function getFile(path){
+    const promise = {
+        receive: (callback) => {promise.callback = callback},
+        callback: () => {}
+    }
+    $.ajax({
+        type: "GET",
+        url : path,
+        dataType:  "text",
+        success: (response) =>{
+            if(isJson(response) && response.length > 0){
+                promise.callback(true, JSON.parse(response));
+            } else{
+                promise.callback(true, response);
             }
         },
         error: function(xhr, ajaxOptions, thrownError) {

@@ -165,13 +165,29 @@ function athleteDataToProfileData(athlete){
      */
     function profileInit(wrapper, athlete){
         /**
+         * Career
+         */
+        const careerElem = $(`<div><h2 class="section__header">Career</h2><div class="loading"></div></div>`);
+        wrapper.append(careerElem);
+        get("athleteCareer", athlete.idAthlete).receive((succsess, career) => {
+            careerElem.find(".loading").remove();
+            if(succsess && career.length !== 0){
+                careerGraphAt(careerElem, career);
+            } else{
+                careerElem.append(`<p class="margin left double">${athlete.fullname} didnt competed in wolrd championships yet</p>`);
+            }
+        });
+
+        /**
          * best times
          */
         const bestTimesElem = $(`<div><h2 class="section__header">Personal best times</h2><div class="loading circle"></div></div>`);
         get("athleteBestTimes", athlete.idAthlete).receive((succsess, times) => {
             bestTimesElem.find(".loading").remove();
-            if(succsess){
+            if(succsess && times.length !== 0){
                 bestTimesAt(bestTimesElem, times)
+            } else{
+                bestTimesElem.append(`<p class="margin left double">There are no records for ${athlete.fullname} in the database yet :(</p>`)
             }
         });
         wrapper.append(bestTimesElem);
@@ -182,8 +198,10 @@ function athleteDataToProfileData(athlete){
         wrapper.append(compElem);
         get("athleteCompetitions", athlete.idAthlete).receive((succsess, competitions) => {
             compElem.find(".loading").remove();
-            if(succsess){
+            if(succsess && competitions.length !== 0){
                 compElem.append(getCompetitionListElem(competitions));
+            } else{
+                compElem.append(`<p class="margin left double">${athlete.fullname} didn't compete in any of our listed races yet :(</p>`)
             }
         });
     };
@@ -213,6 +231,7 @@ function bestTimesAt(elem, bestTimes){
         wrapper.append(longElem)
     }
     elem.append(wrapper);
+    console.log(wrapper.height())
 }
 
 
@@ -237,21 +256,40 @@ function pathFromRace(r){
         <a href="/year?id=${r.raceYear}" class="elem">${r.raceYear}<span class="delimiter"> > </span></a>
         <a href="/competition?id=${r.idCompetition}" class="elem"> ${r.location}<span class="delimiter"> > </span></a>
         <a href="/competition?id=${r.idCompetition}&trackStreet=${r.trackStreet}" class="elem">${r.trackStreet}<span class="delimiter"> > </span></a>
-        <a class="elem">${r.category}<span class="delimiter"> > </span></a>
-        <a class="elem">${r.gender}<span class="delimiter"> > </span></a>
-        <a class="elem">${r.distance}</a>
+        <div class="elem">${r.category}<span class="delimiter"> > </span></div>
+        <div class="elem">${r.gender}<span class="delimiter"> > </span></div>
+        <div class="elem">${r.distance}</div>
     </div>`);
 }
 
+function getYtVideo(link){
+    if(link === null || link === undefined){
+        return $();
+    }
+    if(link.length === 0){
+        return $();
+    }
+    const head = $(`<div>Youtube</div>`);
+    const body = $(`<div>
+        <iframe width="949" height="534" src="https://www.youtube.com/embed/${link.split("?v=").pop()}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    </div>`);
+    const ac = new Accordion(head, body)
+    return ac.element;
+}
+// <iframe width="949" height="534" src="https://www.youtube.com/embed/YcXbt0iVu0A" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
 function getRaceTable(parent, race){
+    console.log(race)
     const elem = $(`<div class="race"></div>`);
     const raceTable = $(`<div class="race-table">`);
     elem.append(pathFromRace(race));
+    elem.append(getYtVideo(race.link));
     elem.append(raceTable);
     for (const result of race.results) {
         result.athletes = profilesElemFromResult(result);
         result.place = {
             data: result.place,
+            alignment: "center",
             type: "place"
         };
         if(result.time !== null){
@@ -265,7 +303,8 @@ function getRaceTable(parent, race){
             place: {allowSort: false},
             time: {
                 displayName: "Time",
-                allowSort: true
+                allowSort: true,
+                use: race.results[0].time !== null
             },
             athletes: {
                 displayName: "Athlete/s",
@@ -425,8 +464,10 @@ function countryToProfileData(country){
         wrapper.append(careerElem);
         get("countryCareer", country.country).receive((succsess, career) => {
             careerElem.find(".loading").remove();
-            if(succsess){
+            if(succsess && career.length !== 0){
                 careerGraphAt(careerElem, career);
+            } else{
+                careerElem.append(`<p class="margin left double">${athlete.fullname} didnt competed in wolrd championships yet</p>`);
             }
         });
 
@@ -509,7 +550,7 @@ function getCompetitionListElem(competitions){
 }
 
 function careerGraphAt(parent, career){
-    let height = 500;
+    let height = 400;
     let padding = 20;
     if(isMobile()){
         height = 1000;
@@ -544,28 +585,28 @@ function careerGraphAt(parent, career){
     }
     Chart.defaults.global.defaultFontColor = 'white';
     Chart.defaults.global.defaultFontSize = 16;
-    const careerChart = new Chart(ctx,
+    new Chart(ctx,
         {
             type: 'line',
             data: {
                 labels,
                 datasets: [{
-                    label: 'Overall long distance score',
-                    data: dataArrays[1],
-                    backgroundColor: "#62BEFC88",
-                    borderColor: "#166aa1",
-                    borderWidth: 1
-                }, {
-                    label: 'Overall sprint score',
+                    label: 'sprint score',
                     data: dataArrays[2],
                     backgroundColor: "#26f86588",
                     borderColor: "#00aa33",
                     borderWidth: 1
                 }, {
+                    label: 'long distance score',
+                    data: dataArrays[1],
+                    backgroundColor: "#22AEAC",
+                    borderColor: "#166aa1",
+                    borderWidth: 1
+                }, {
                     label: 'Overall score',
                     data: dataArrays[0],
-                    backgroundColor: "#FA48EAAA",
-                    borderColor: "#FA48EA",
+                    backgroundColor: "#FA48EA",
+                    borderColor: "#8A286A",
                     borderWidth: 1
                 }]
             },
@@ -581,25 +622,18 @@ function careerGraphAt(parent, career){
                 },
                 scales: {
                     yAxes: [{
-                        ticks: {
-                            beginAtZero: true
-                        },
                         color: "#FFF"
                     }]
                 }
             }
         });
-    // $(window).resize(() => {
-    //     if(isMobile()){
-    //         console.log("before: " + ctx.canvas.height)
-    //         ctx.canvas.height = $(window).height();
-    //         console.log("after: " + ctx.canvas.height)
-    //     }
-    // })
     parent.append(elem);
 }
 
 function preprocessCareer(career){
+    if(career.length === 0){
+        return career;
+    }
     let last = career[0].raceYear;
     const parsed = [];
     for (const year of career) {
@@ -617,6 +651,9 @@ function preprocessCareer(career){
         }
         last = year.raceYear;
         parsed.push(year);
+    }
+    if(parsed.length === 1){
+        parsed.push(parsed[0]);
     }
     return parsed;
 }

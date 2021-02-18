@@ -3,14 +3,23 @@ include_once "head.php";
 ?>
     <body class="body">
     <header class="header">
-        <a href="/index.php" class="header__left">
-            <?php
-                if(!isset($indexPage)){
-                    include "logo.html";
-                }
-            ?>
-            <div class="site-name"><span class="inline">Inline </span><span class="data">data</span><span class="org"></span></div>
-        </a>
+        <div class="header__left">
+            <div class="wrapper">
+                <div class="burger toggle-nav">
+                    <div class="line1"></div>
+                    <div class="line2"></div>
+                    <div class="line3"></div>
+                </div>
+                <a href="/index.php">
+                    <?php
+                        if(!isset($indexPage)){
+                            include "logo.html";
+                        }
+                    ?>
+                <!-- <div class="site-name"><span class="inline">Inline </span><span class="data">data</span><span class="org"></span></div> -->
+                </a>
+            </div>
+        </div>
         <div class="search-bar">
             <svg class="search-bar__icon" focusable="false" height="24px" viewBox="0 0 24 24" width="24px"><path d="M20.49,19l-5.73-5.73C15.53,12.2,16,10.91,16,9.5C16,5.91,13.09,3,9.5,3S3,5.91,3,9.5C3,13.09,5.91,16,9.5,16 c1.41,0,2.7-0.47,3.77-1.24L19,20.49L20.49,19z M5,9.5C5,7.01,7.01,5,9.5,5S14,7.01,14,9.5S11.99,14,9.5,14S5,11.99,5,9.5z"></path><path d="M0,0h24v24H0V0z" fill="none"></path></svg>
             <?php
@@ -27,22 +36,42 @@ include_once "head.php";
             <div class="search-bar__options"></div>
         </div>
         <div class="header__right">
-            <?php if($loggedIn){?>
-                <?php
-                    if(canI("seeAdminPage")){
-                        echo "<a href='/admin/index1.php'>Admin</a>";
-                    }
-                ?>
-                <form action='/logout/index.php' method='POST'>
-                    <button class="btn slide vertical signup-btn default" name="logout-submit" value="1" type="submit">Log out</button>
-                </form>
-            <?php } else {?>
-                <div class="btn slide vertical signup-btn default">
-                    <a href="/signup">Sign up</a>
+            <?php if($loggedIn){ ?>
+                <div class="toggle-profile-section">
+                    <img class="profile-img" src="<?php echo $user["image"];?>" alt="profile image">
+                    <div class="profile-name"><?php echo $user["username"]; ?></div>
                 </div>
-                <div class="btn slide vertical signup-btn default">
-                    <a href="/login">log in</a>
-                </div>
+            <?php } else{?>
+                <a class="btn default" href="/signup">Sign up</a>
+                <a class="btn default" href="/login">log in</a>
             <?php }?>
         </div>
+        <nav class="nav">
+            <!-- <div class="hider"></div>
+            <div class="hider hider2"></div> -->
+            <ul>
+                <li>
+                    <a href="/index.php">Home</a>
+                </li>
+                <li>
+                    <a href="/hall-of-fame">Hall of fame</a>
+                </li>
+                <?php
+                    if(canI("seeAdminPage")){
+                        echo "<li><a href='/admin/index.php'>Admin</a></li>";
+                    }
+                ?>
+            </ul>
+        </nav>
+        <div class="profile-section">
+            <!-- <div class="hider hider2"></div> -->
+            <?php if($loggedIn){
+                echo "<p>".$user["username"]."</p>";
+                ?>
+                <form action='/logout/index.php' method='POST'>
+                    <button class="btn slide signup-btn default" name="logout-submit" value="1" type="submit"><i class="fas fa-sign-out-alt margin right"></i>Log out</button>
+                </form>
+            <?php } ?>
+        </div>
+        <div class="hider"></div>
     </header>

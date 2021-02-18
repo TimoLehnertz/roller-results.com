@@ -4,11 +4,14 @@
 			"path": "."
 		},
 		{
-			"path": "A:\\web\\sandbox"
+			"path": "A:\\web\\react\\react-test"
+		},
+		{
+			"path": "A:\\Schule\\Fächer\\md\\bestell-seite"
 		}
 	],
 	"settings": {
-		"liveServer.settings.multiRootWorkspaceName": "sandbox",
+		"liveServer.settings.multiRootWorkspaceName": "bestell-seite",
 		"sqltools.connections": [
 			{
 				"mysqlOptions": {

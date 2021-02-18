@@ -47,7 +47,7 @@ include_once "../header.php";
                             "email" => $user["email"],
                             "registerCountry" => $user["registerCountry"]
                         ];
-                        $userRole = $user["idrole"];
+                        $userRole = $user["idRole"];
                         $iduser = $user["iduser"];
                         echo "<tr>";
                             echo "<td>$iduser</td>";
@@ -55,13 +55,13 @@ include_once "../header.php";
                                 echo "<td><input name='$iduser-$key' placeholder='$key' value='$value' maxlength='200'></td>";
                             }
                             echo "<td>";
-                                echo "<select name='$iduser-idrole'>";
-                                foreach ($defaultPermissions as $idrole => $permission) {
+                                echo "<select name='$iduser-idRole'>";
+                                foreach ($defaultPermissions as $idRole => $permission) {
                                     $selected = "";
-                                    if($idrole == $userRole){
+                                    if($idRole == $userRole){
                                         $selected = " selected";
                                     }
-                                    echo "<option$selected value='$idrole'>$idrole => $permission</option>";
+                                    echo "<option$selected value='$idRole'>$idRole => $permission</option>";
                                 }
                                 echo "</select>";
                             echo "</td>";

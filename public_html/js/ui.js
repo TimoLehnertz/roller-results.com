@@ -4,12 +4,54 @@ $(() => {
     $(".search-bar__input").on("input", searchChange);
     initSearchBar();
     initIndexLogo();
-    // alert(isMobile());
+    initHeader();
+    initNav();
 });
 
-function isMobile(){
-    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+function initNav(){
+    $(".nav a").each(function() {
+        if(window.location.pathname.includes($(this).attr("href"))){
+            $(this).parent().addClass("active");
+            return false;
+        }
+    });
 }
+
+function initHeader(){
+    /**
+     * nav
+     */
+    $(".toggle-nav").click((e) => {
+        $(".nav").toggleClass("extended");
+        $(".toggle-nav").toggleClass("toggle");
+        $(".profile-section").removeClass("extended");
+        e.stopPropagation();
+    });
+    $("body, .hider").click(() => {
+        $(".nav").removeClass("extended");
+        $(".toggle-nav").removeClass("toggle");
+    });
+    $(".nav").click((e) => {
+        e.stopPropagation();
+    });
+
+    /**
+     * profile-section
+     */
+    $(".toggle-profile-section").click((e) => {
+        $(".profile-section").toggleClass("extended");
+        $(".nav").removeClass("extended");
+        $(".toggle-nav").removeClass("toggle");
+        e.stopPropagation();
+    });
+    $("body, .hider").click(() => {
+        $(".profile-section").removeClass("extended");
+    });
+    $(".profile-section").click((e) => {
+        e.stopPropagation();
+    });
+}
+
 
 let lastSearch = "";
 

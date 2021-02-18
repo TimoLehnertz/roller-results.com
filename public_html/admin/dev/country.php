@@ -1,4 +1,12 @@
 <?php
+
+include_once "../../includes/roles.php";
+
+if(!canI("managePermissions")){
+    header("location: /index.php");
+    exit();
+}
+
 // include_once "../../data/dbh.php";
 
 // $file = file_get_contents("https://raw.githubusercontent.com/lukes/ISO-3166-Countries-with-Regional-Codes/f3d559220372d99a2d5c13a213cf9c2bceb8c6d9/all/all.json");

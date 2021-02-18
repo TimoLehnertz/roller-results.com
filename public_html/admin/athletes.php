@@ -23,7 +23,6 @@ $changeable = [
     "firstname" => "text",
     "gender" => "text",
     "country" => "text",
-    "linkCollection" => "text",
     "mail" => "text",
     "comment" => "text",
     "club" => "text",

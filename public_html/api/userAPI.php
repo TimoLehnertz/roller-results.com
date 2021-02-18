@@ -2,6 +2,7 @@
 
 include_once $_SERVER["DOCUMENT_ROOT"]."/../data/dbh.php";
 include_once $_SERVER["DOCUMENT_ROOT"]."/includes/cookies.php";
+include_once "imgAPI.php";
 
 function isLoggedIn(){
     if(isset($_COOKIE["cookie_accepted"])){
@@ -17,13 +18,13 @@ function isLoggedIn(){
     return false;
 }
 
-function setUserRole($iduser, $idrole){
-    return dbExecute("UPDATE TbUser SET idrole = ? WHERE iduser = ?;", "ii", $idrole, $iduser);
+function setUserRole($iduser, $idRole){
+    return dbExecute("UPDATE TbUser SET idRole = ? WHERE iduser = ?;", "ii", $idRole, $iduser);
 }
 
 function getAllUsers(){
     $users = [];
-    foreach (query("SELECT username, email, registerCountry, iduser, idrole FROM TbUser") as $key => $value) {
+    foreach (query("SELECT username, email, registerCountry, iduser, idRole FROM TbUser") as $key => $value) {
         $users[$value["iduser"]] = $value;
     }
     return $users;
@@ -76,7 +77,7 @@ function columnToType($column){
         case "iduser": return "i";
         case "username": return "s";
         case "email": return "s";
-        case "idrole": return "i";
+        case "idRole": return "i";
         case "registerCountry": return "s";
     }
 }
@@ -87,7 +88,7 @@ function getDummyUser(){
         "email" => "musterman@gmail.com",
         "registerCountry" => "Germany",
         "iduser" => 1,
-        "idrole" => 0
+        "idRole" => 0
     ];
 }
 
@@ -116,9 +117,12 @@ function logout(){
 }
 
 function getUser($iduser){
-    $result = query("SELECT username, email, registerCountry, iduser, idrole FROM TbUser WHERE iduser = ?;", "i", $iduser);
+    $result = query("SELECT * FROM vUser WHERE idUser = ?;", "i", $iduser);
     if(sizeof($result) == 0){
         return false;
+    }
+    if($result[0]["image"] === NULL){
+        $result[0]["image"] = defaultProfileImgPath("m");
     }
     return $result[0];
 }
@@ -131,7 +135,7 @@ function login($iduser, $rememberMe){
     setCocieAccepted();
     logout();
     session_start();
-    $_SESSION["iduser"] = $user["iduser"];
+    $_SESSION["iduser"] = $user["idUser"];
     $_SESSION["username"] = $user["username"];
     $_SESSION["email"] = $user["email"];
     $_SESSION["country"] = $user["registerCountry"];
