@@ -1798,7 +1798,7 @@ function getCountryFlag(country, width = "2rem", height = "1.5rem"){
     if(country === undefined){
         return $(`<div>-</div`);
     }
-    const countryCode = countryNameToCode(country);
+    const countryCode = countryNameToCode(country); 
     if(countryCode !== undefined){
         return $(`<div class="country-flag"><img src="/img/countries/${countryCode.toLowerCase()}.svg" alt="${country} flag" ${style}"></div>`);
         // return $(`<div class="country-flag"><img src="https://www.countryflags.io/${countryCode}/flat/${res}.png" alt="${country} flag" ${style}"></div>`);
