@@ -1800,11 +1800,11 @@ function getCountryFlag(country, width = "2rem", height = "1.5rem"){
     }
     const countryCode = countryNameToCode(country);
     if(countryCode !== undefined){
-        return $(`<div class="country-flag"><img src="/img/countries/${countryCode}.svg" alt="${country.toLowerCase()} flag" ${style}"></div>`);
+        return $(`<div class="country-flag"><img src="/img/countries/${countryCode.toLowerCase()}.svg" alt="${country} flag" ${style}"></div>`);
         // return $(`<div class="country-flag"><img src="https://www.countryflags.io/${countryCode}/flat/${res}.png" alt="${country} flag" ${style}"></div>`);
     } else{
         if(countryCodeValid(country)){
-            return $(`<div class="country-flag"><img src="/img/countries/${countryCode}.svg" alt="${country.toLowerCase()} flag" ${style}"></div>`);
+            return $(`<div class="country-flag"><img src="/img/countries/${countryCode.toLowerCase()}.svg" alt="${country} flag" ${style}"></div>`);
             // return $(`<div class="country-flag"><img src="https://www.countryflags.io/${country}/flat/${res}.png" alt="${country} flag" ${style}"></div>`);
         } else{
             return $(`<div>${country}</div>`);
