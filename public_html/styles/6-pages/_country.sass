@@ -59,15 +59,28 @@
     .btn
         width: 100%
         padding: 32px
+.countries .all-list
+    // padding: 5rem
+    display: grid
+    grid-template-columns: auto auto auto auto
+    padding-left: 2rem
+    gap: 1rem
 
 @media screen and (max-width: 81.25rem)
     .rest
         grid-template-columns: 1fr 1fr !important
+    
+    .countries .all-list
+        grid-template-columns: 1fr 1fr
 
 @media screen and (max-width: 43.75rem)
     .rest
         grid-template-columns: 1fr !important
         margin: 0 !important
+
+    .countries .all-list
+        grid-template-columns: 1fr
+        padding-left: 0rem
 
     .countryName
         font-size: 3rem !important

@@ -46,11 +46,11 @@ function getErrormessage($errorCode){
  * Redirects the user to the index page with the givven error
  */
 function throwError($errorCode, $location = "/index.php"){
-    if(strpos($location, "?") != -1){
-        header("location: $location&error=$errorCode");
-    } else{
+    // if(strpos($location, "?") != -1){
+    //     header("location: $location&error=$errorCode");
+    // } else{
         header("location: $location?error=$errorCode");
-    }
+    // }
     exit(0);
 }
 

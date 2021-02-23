@@ -190,6 +190,8 @@ class Slideshow{
         this.pressed = false;
         this.x = this.elem.get()[0].scrollLeft;
         this.update();
+        // e.stopPropagation();
+        // e.preventDefault();
     }
 
     move(e){
@@ -206,7 +208,7 @@ class Slideshow{
         this.x = this.scrollStartX + (this.tapStartX - page.x);
         if(Math.abs(this.velY) * 1.5 > Math.abs(this.velX)){
             this.velX = 0;
-        } else{
+        } else {
             e.preventDefault();
             this.update();
         }
@@ -1281,8 +1283,6 @@ class Profile{
         }
     }
 
-
-
     init(){
         if(this.elem !== undefined){
             this.elem.empty();
@@ -1292,6 +1292,7 @@ class Profile{
         if(this.lod < Profile.MAX){
             this.elem.append(this.minimizeElem);
             this.elem.append(this.maximizeElem);
+            $(this.wrapper).on("dblclick", '.profile', {}, (e) => {console.log(e); this.incrementLod()});
         }
         if(this.lod === Profile.CARD){
             this.elem.find(".profile__minimize").css("display", "none");
@@ -1441,7 +1442,12 @@ class Profile{
         return $(`<div class="profile__name"><span>${this.name}</span></div>`);
     }
 
-
+    set colorScheme(id){
+        switch(id){
+            case 0: this.elem.removeClass("alternative-color"); return;
+            case 1: this.elem.addClass("alternative-color"); return;
+        }
+    }
 
     get specialElem(){
         return $(`<div class="profile__special">${this.special}</div>`);
@@ -1645,6 +1651,7 @@ function getMedal(color, amount){
         <span class="medal__amount">${amount}</span>
     </div>`);
     // elem.click(() => {window.location = "/hall-of-fame"});
+    new Tooltip(elem, color);
     return elem;
 }
 

@@ -77,6 +77,7 @@ function sortAthletes(athletes){
 }
 
 function athleteDataToProfileData(athlete){
+    console.log(athlete);
     let trophy1 = {
         data: getMedal("silver", athlete.silver),
         type: ElemParser.DOM,
@@ -119,14 +120,14 @@ function athleteDataToProfileData(athlete){
         trophy1, trophy2, trophy3,
         special: Math.round(athlete.score),
         primary: {
-            scoreShort: {
-                description: "score short",
-                data: Math.round(athlete.scoreShort)
-            },
-            scoreLong: {
-                description: "score long",
-                data: Math.round(athlete.scoreLong)
-            },
+            // scoreShort: {
+            //     description: "score short",
+            //     data: Math.round(athlete.scoreShort)
+            // },
+            // scoreLong: {
+            //     description: "score long",
+            //     data: Math.round(athlete.scoreLong)
+            // },
             sprinter: {
                 data: (athlete.scoreLong / (athlete.scoreLong + athlete.scoreShort)),
                 description: "Best discipline",
@@ -143,6 +144,22 @@ function athleteDataToProfileData(athlete){
                 data: athlete.birthYear,
                 icon: "far fa-calendar",
                 validate: (data) => {return data !== null && data > 1800}
+            },
+            bestDistance: {
+                data: athlete.bestDistance,
+                description: "Best discipline",
+            },
+            rank: {
+                data: athlete.rank,
+                description: "Rank",
+            },
+            rankShort: {
+                data: athlete.rankShort,
+                description: "Rank Short",
+            },
+            rankLong: {
+                data: athlete.rankLong,
+                description: "Rank long",
             },
             club: {data: athlete.club, description: "Club:"},
             team: {data: athlete.team, description: "Team:"}
@@ -208,6 +225,7 @@ function athleteDataToProfileData(athlete){
 }
 
 function bestTimesAt(elem, bestTimes){
+    console.log(bestTimes);
     const wrapper = $(`<div class="best-times flex"></div>`);
     const shortElem = $(`<div class="sprint"><h2>Short</h2></div>`);
     const longElem = $(`<div class="long"><h2>Long</h2></div>`);
@@ -215,7 +233,7 @@ function bestTimesAt(elem, bestTimes){
     let long = false;
     for (const time of bestTimes) {
         const timeElem = $(`<div class="time flex justify-space-between"/>`);
-        timeElem.append(`<div>${time.distance}</div><div>${time.bestTime}</div>`);
+        timeElem.append(`<a href="/race/index.php?id=${time.idRace}"><div>${time.distance}</div><div>${time.bestTime}</div><div>${time.athleteName !== undefined ? time.athleteName : ""}</div></a>`);
         if(time.isSprint == 1){
             shortElem.append(timeElem);
             short = true;
@@ -262,17 +280,40 @@ function pathFromRace(r){
     </div>`);
 }
 
+function linksFromLinkString(string){
+    if(string === undefined){
+        return [];
+    }
+    if(string === null){
+        return [];
+    }
+    if(string.length === 0){
+        return [];
+    }
+    let links = string.split("https://www.youtube.com/watch?v=");
+    for (let i = 0; i < links.length; i++) {
+        links[i] = links[i].replace(";", "");
+    }
+    links.splice(0,1);
+    return links;
+}
+
 function getYtVideo(link){
-    if(link === null || link === undefined){
+    const ids = linksFromLinkString(link);
+    if(ids.length === 0){
         return $();
     }
-    if(link.length === 0){
-        return $();
+    let text = "videos";
+    if(ids.length === 1){
+        text = "video";
     }
-    const head = $(`<div>Youtube</div>`);
-    const body = $(`<div>
-        <iframe width="949" height="534" src="https://www.youtube.com/embed/${link.split("?v=").pop()}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-    </div>`);
+    const head = $(`<div class="youtube-head"><i class="fab fa-youtube"></i><div class="margin left">${ids.length} ${text}</div></div>`);
+    const body = $(`<div class="youtube-body"></div>`);
+    for (const id of ids) {
+        body.append(
+            `<iframe style="width: 100%;"src="https://www.youtube.com/embed/${id}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`
+        );
+    }
     const ac = new Accordion(head, body)
     return ac.element;
 }
@@ -350,6 +391,7 @@ function countryToProfile(country, minLod = Profile.MIN){
             }
         });
     }
+    profile.colorScheme = 1;
     return profile;
 }
 
@@ -502,6 +544,12 @@ function getCompetitionListElem(competitions){
         const compElem = $(`<div class="competition"></div>`);
         for (const race of comp.races) {
             const head = $(`<div class="race flex align-center justify-space-between padding right"><span>${race.distance} ${race.category} ${race.gender}</span></div>`)
+            const links = linksFromLinkString(race.link).length;
+            if(links > 0){
+                for (let i = 0; i < links; i++) {
+                    head.find("span").append(`<i class="fab fa-youtube margin left"></i>`);
+                }
+            }
             if(race.sportlers !== undefined){
                 head.append(`<div class="margin left double">${race.sportlers} sportlers, best place: ${race.bestPlace} </div>`);
             }

@@ -33,13 +33,33 @@
     .race-table
         overflow: auto
 
+    .youtube-head
+        padding: 0.5rem
+        display: flex
+        align-items: center
+        justify-content: left
+
+        i
+            transition: color 0.2s
+            font-size: 3rem
+        
+        &:hover i
+            color: white
+
+    .youtube-body
+        display: flex
+
+        iframe
+            margin: 1rem
+            height: 20vw
+
 .race--max
     background: #000
 
 
 .competition-list
     // max-height: 75vh
-    overflow: auto
+    overflow: visible
     position: relative
     padding: 20px
     background: $bg

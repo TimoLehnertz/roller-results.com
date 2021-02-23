@@ -66,6 +66,13 @@ if(!isset($NO_GET_API)){
         } else{
             echo "error in api";
         }
+    } else if(isset($_GET["getcountries"])){
+        $res = getCountries();
+        if($res !== false){
+            echo json_encode($res);
+        } else{
+            echo "error in api";
+        }
     } else if(isset($_GET["search"])){
         $res = search($_GET["search"]);
         if($res !== false){
@@ -441,6 +448,15 @@ function getCountry($name){
     $country = query("SELECT * FROM vCountry WHERE country = ?;", "s", $name);
     if(sizeof($country) > 0){
         return $country[0];
+    } else{
+        return [];
+    }
+}
+
+function getCountries(){
+    $countries = query("SELECT * FROM vCountry ORDER BY score DESC");
+    if(sizeof($countries) > 0){
+        return $countries;
     } else{
         return [];
     }

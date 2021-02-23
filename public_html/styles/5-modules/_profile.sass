@@ -1,7 +1,54 @@
 //style for profiles for documentation go to lib.js - Profile class
-$head: $c
-$body-1: $c
-$body-2: $bg
+
+
+// Colors
+
+// Alternative A
+$head-a: $c
+$body-2-a: $bg
+$body-1-a: $c
+// Alternative B
+$head-b: $b
+$body-1-b: $b
+$body-2-b: $bg
+
+
+.profile
+    background: $c
+
+    &.min
+        background: linear-gradient(90deg,$body-1-a 20%, $body-2-a 110%)
+
+    &.card
+        background: linear-gradient(0deg,$body-1-a 0%, $body-2-a 100%)
+        &:before
+            background: radial-gradient(circle at bottom, $head-a 40%, #000 170%)
+
+    &.max
+        background: linear-gradient(-90deg,$body-1-a -70%, $body-2-a 180%)
+        &:before
+            background: radial-gradient(circle at left 9.375rem, $head-a 40%, #000 170%)
+
+
+.profile.alternative-color
+    &.min
+        background: linear-gradient(90deg,$body-1-b 20%, $body-2-b 110%)
+
+    &.card
+        background: linear-gradient(0deg,$body-1-b 0%, $body-2-b 100%)
+        &:before
+            background: radial-gradient(circle at bottom, $head-b 40%, #000 170%)
+
+    &.max
+        background: linear-gradient(-90deg,$body-1-b -70%, $body-2-b 180%)
+        &:before
+            background: radial-gradient(circle at left 9.375rem, $head-b 40%, #000 170%)
+
+.profile-image
+    border: 0.1875rem solid $head-a
+
+.profile-image.alternative-color
+    border-color: $head-b
 
 .profile__wrapper
     // background: $c
@@ -9,7 +56,6 @@ $body-2: $bg
     margin: 0.3125rem
 
 .profile
-    background: $c
     border-radius: 1.5rem
     overflow: hidden
     transition: all 0.2s
@@ -57,8 +103,6 @@ $body-2: $bg
     max-width: 18.75rem
     height: 3rem
 
-    background: linear-gradient(90deg,$body-1 20%, $body-2 110%)
-
     .profile__name, .profile__image, .profile__special
         display: block
 
@@ -99,7 +143,6 @@ $body-2: $bg
     height: 31.25rem
     position: relative
     z-index: 1
-    background: linear-gradient(0deg,$body-1 0%, $body-2 100%)
     color: white
 
     // visibility
@@ -114,7 +157,6 @@ $body-2: $bg
         left: 0
         right: 0
         height: 9.375rem
-        background: radial-gradient(circle at bottom, $head 40%, #000 170%)
         transform: skewY(-2deg)
         transform-origin: left
 
@@ -249,7 +291,6 @@ $body-2: $bg
     border-radius: 0
     z-index: 1
 
-    background: linear-gradient(-90deg,$body-1 -70%, $body-2 180%)
     // background: linear-gradient(0deg,$b 0%, $e)
 
     &::before
@@ -259,7 +300,6 @@ $body-2: $bg
         left: 0
         right: 0
         height: 18.75rem
-        background: radial-gradient(circle at left 9.375rem, $head 40%, #000 170%)
         transform: skewY(-1deg)
         transform-origin: left
 
@@ -367,7 +407,7 @@ $body-2: $bg
     color: white
     line-height: 3rem
     border-radius: 50%
-    background: linear-gradient(180deg,$b, $a 100%)
+    background: linear-gradient(180deg, $b, $a 100%)
 
 
 .profile__primary
@@ -386,7 +426,6 @@ $body-2: $bg
     overflow: hidden
     width: 9.375rem
     height: 9.375rem
-    border: 0.1875rem solid $head
     transform: scale(1)
     transition: all 0.1s
     box-sizing: content-box

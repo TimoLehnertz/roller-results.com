@@ -1,25 +1,28 @@
 /* Tooltip container */
 .tooltip 
     position: relative  
+    z-index: 100
+    max-height: 2rem
+
     // display: inline-block  
     // border-bottom: 1px dotted black   // If you want dots under the hoverable text
- 
 
 /* Tooltip text */
 .tooltip .tooltiptext 
+    font-size: 1rem
     visibility: hidden  
-    background-color: #555  
+    background-color: #555C
     color: #fff  
     text-align: center  
-    padding: 5px 10px
-    border-radius: 6px  
+    padding: 10px 2px
+    border-radius: 4px
 
     /* Position the tooltip text */
     position: absolute  
     z-index: 1  
     bottom: 125%  
     left: 50%  
-    margin-left: -60px  
+    margin-left: -10px
 
     /* Fade in tooltip */
     opacity: 0  
@@ -30,7 +33,7 @@
 .tooltip .tooltiptext::after 
     content: ""  
     position: absolute  
-    top: 100%  
+    top: 100%
     left: 50%  
     margin-left: -5px  
     border-width: 5px  

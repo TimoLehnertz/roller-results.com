@@ -54,7 +54,13 @@ include_once "head.php";
                     <a href="/index.php">Home</a>
                 </li>
                 <li>
+                    <a href="/countries">Countries</a>
+                </li>
+                <li>
                     <a href="/hall-of-fame">Hall of fame</a>
+                </li>
+                <li>
+                    <a href="/analytics">Analytics</a>
                 </li>
                 <?php
                     if(canI("seeAdminPage")){
