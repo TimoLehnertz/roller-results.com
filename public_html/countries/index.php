@@ -18,6 +18,8 @@ echo "<script> let skateCountries = ".json_encode(getCountries())."</script>";
             <h3 class="top">Top 10 countries overall</h3>
             <div class="slideshow best"></div>
 
+            <div class="country-compare"><div class="loading"></div></div>
+
             <h3 class="top">Top 10 sprint countries</h3>
             <div class="slideshow sprinters"></div>
 
@@ -56,6 +58,11 @@ echo "<script> let skateCountries = ".json_encode(getCountries())."</script>";
             }
             new Slideshow($(".slideshow.long"));
             // window.setTimeout(function() {
+                for (const country of skateCountries) {
+                    if(country.score == undefined){
+                        country.score = 0;
+                    }
+                }
                 sortArray(skateCountries, "score");
                 for (const country of skateCountries) {
                     const profile = countryToProfile(country, Profile.MIN);
@@ -63,6 +70,12 @@ echo "<script> let skateCountries = ".json_encode(getCountries())."</script>";
                 }
             // }, 200);
             
+        });
+        get("countryScores").receive((succsess, countries) => {
+            console.log("countries:")
+            console.log(countries);
+            $(".country-compare").find(".loading").remove();
+            countryCompareElemAt($(".country-compare"), countries);
         });
     </script>
 </main>

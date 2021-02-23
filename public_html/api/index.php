@@ -158,6 +158,13 @@ if(!isset($NO_GET_API)){
         } else{
             echo "error in api";
         }
+    } else if(isset($_GET["getcountryScores"])){
+        $res = getCountryScores();
+        if($res !== false){
+            echo json_encode($res);
+        } else{
+            echo "error in api";
+        }
     }else if(isset($_GET["getbestAthletes"])){
         echo json_encode(getBestSkaters());
     } else if(isset($_GET["getathleteRacesFromCompetition"])){
@@ -186,6 +193,18 @@ if(!isset($NO_GET_API)){
             setRaceLinks($data);
         }
     }
+}
+
+function getCountryScores(){
+    $countries = query("SELECT * FROM vCountry;");
+    foreach($countries as &$country){
+        $country["scores"] = [];
+        if($country["score"] > 10){
+            $scores = query("CALL sp_countryCareerSimple(?);", "s", $country["country"]);
+            $country["scores"] = $scores;
+        }
+    }
+    return $countries;
 }
 
 function setRaceLinks($races){

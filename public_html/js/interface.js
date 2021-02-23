@@ -432,7 +432,7 @@ function countryToProfileData(country){
     }
     return {
         name: country.country,
-        image: {data: country.country, type: "countryFlag", link: `/country?id=${country.country}`, size: 64, class: "countryBig"},
+        image: {data: country.country, type: "countryFlag", link: `/country?id=${country.country}`, width: "100%", height: "100%", class: "countryBig"},
         // right: country.country,
         trophy1, trophy2, trophy3,
         special: Math.round(country.score),
@@ -704,4 +704,109 @@ function preprocessCareer(career){
         parsed.push(parsed[0]);
     }
     return parsed;
+}
+
+function minMaxYearFromCountries(countries){
+    let min = 200000;
+    let max = 0;
+    for (const country of countries) {
+        for (const year of country.scores) {
+            min = Math.min(year.raceYear, min);
+            max = Math.max(year.raceYear, max);
+        }
+    }
+    return {min, max};
+}
+
+function countryCompareElemAt(parent, countries){
+    countries = sortArray(countries, "score", true);
+    countries.splice(10, 1000);
+    console.log(countries);
+    let height = 400;
+    let padding = 20;
+    if(isMobile()){
+        height = 1000;
+        padding = 0;
+    }
+    const elem = $(`<div class="country-compare"></div>`);
+    const canvas = $(`<canvas class="country-compare__canvas" width="1000px" height="${height}"/>`);
+    elem.append(canvas);
+    const ctx = canvas.get()[0].getContext('2d');
+
+    /**
+     * processing data
+     */
+    const labels = [];
+    const minmax = minMaxYearFromCountries(countries);
+    for (let i = minmax.min; i < minmax.max; i++) {
+        labels.push(i);
+    }
+    const datasets = [];
+    for (const country of countries) {
+        const data = [];
+        for (let i = 0; i < minmax.max - minmax.min; i++) {
+            data.push(0);
+        }
+        for (const year of country.scores) {
+            if("score" in year){
+                data[year.raceYear - minmax.min] = Math.round(year.score * 100) / 100;
+            }
+        }
+        datasets.push({
+            label: country.country,
+            data,
+            backgroundColor: getRandomColor() + "44",
+            borderColor: "#62BEFC77",
+            borderWidth: 1
+        });
+    }
+
+    Chart.defaults.global.defaultFontColor = 'white';
+    Chart.defaults.global.defaultFontSize = 16;
+    const chart = new Chart(ctx,
+        {
+            type: 'line',
+            data: {
+                labels,
+                datasets
+            },
+            options: {
+                defaultFontColor: "#FFF",
+                layout: {
+                    padding: {
+                        left: padding,
+                        right: 0,
+                        top: 0,
+                        bottom: 0
+                    }
+                },
+                scales: {
+                    yAxes: [{
+                        color: "#FFF"
+                    }]
+                },
+                legend: {
+
+                }
+            }
+        });
+    const hideBtn = $(`<button class="btn border-only">Hide all</button>`);
+    const showBtn = $(`<button class="btn border-only">Show all</button>`);
+    hideBtn.click(() => {
+        console.log(chart.data);
+        for (const set of chart.data.datasets) {
+            set.hidden = true;
+        }
+        chart.update();
+    });
+    showBtn.click(() => {
+        console.log(chart);
+        for (const set of chart.data.datasets) {
+            set.hidden = false;
+        }
+        chart.update();
+    });
+    parent.append(hideBtn);
+    parent.append(showBtn);
+    parent.append(elem);
 }

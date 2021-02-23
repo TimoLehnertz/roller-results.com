@@ -865,7 +865,7 @@ class ElemParser{
     static parser = {
         [ElemParser.PRIMITIVE]: (elem) => $(`<div>${elem.data}</div>`),
         [ElemParser.IMAGE]: (elem) => $(`<img src="${elem.data}" alt="image">`),
-        [ElemParser.COUNTYR_FLAG]: (elem) => getCountryFlag(elem.data, elem.size),
+        [ElemParser.COUNTYR_FLAG]: (elem) => getCountryFlag(elem.data, elem.width, elem.height),
         [ElemParser.GENDER]: (elem) => {return ElemParser.parseGender(elem.data)},
         [ElemParser.TEXT]: (elem) => $(`<div>${elem.data}</div>`),
         [ElemParser.DOM]: (elem) => elem.data,
@@ -1678,6 +1678,15 @@ function isMobile(){
     return check;
 };
 
+function getRandomColor() {
+    var letters = '0123456789ABCDEF';
+    var color = '#';
+    for (var i = 0; i < 6; i++) {
+      color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
+  }
+
 function sortArray(array, field, asc = true){
     const mul = asc ? -1 : 1;
     array.sort((a, b) => {
@@ -1686,14 +1695,13 @@ function sortArray(array, field, asc = true){
             return 0;
         }
         if(b[field] === null && b[field] === null){
-            console.log("both")
             return 0;
         }
         if(b[field] === null){
-            return -mul;
+            return mul;
         }
         if(a[field] === null){
-            return mul;
+            return -mul;
         }
         if(a[field] < b[field]){
             return -mul;
@@ -1781,24 +1789,23 @@ function countryCodeValid(name){
     return false;
 }
 
-function getCountryFlag(country, res = 32){
-    if(res == undefined){
-        res = 32;
-    }
-    let style = "";
-    if(res !== 32 && res !== 64){
-        style = `width="${res}" height="${res}"`;
-        res = 64;
-    }
+function getCountryFlag(country, width = "2rem", height = "1.5rem"){
+    let style = `style="width: ${width}; height: ${height}"`;
+    // if(res !== 32 && res !== 64){
+    //     style = `width="${res}" height="${res}"`;
+    //     res = 64;
+    // }
     if(country === undefined){
         return $(`<div>-</div`);
     }
     const countryCode = countryNameToCode(country);
     if(countryCode !== undefined){
-        return $(`<div class="country-flag"><img src="https://www.countryflags.io/${countryCode}/flat/${res}.png" alt="${country} flag" ${style}"></div>`);
+        return $(`<div class="country-flag"><img src="/img/countries/${countryCode}.svg" alt="${country.toLowerCase()} flag" ${style}"></div>`);
+        // return $(`<div class="country-flag"><img src="https://www.countryflags.io/${countryCode}/flat/${res}.png" alt="${country} flag" ${style}"></div>`);
     } else{
         if(countryCodeValid(country)){
-            return $(`<div class="country-flag"><img src="https://www.countryflags.io/${country}/flat/${res}.png" alt="${country} flag" ${style}"></div>`);
+            return $(`<div class="country-flag"><img src="/img/countries/${countryCode}.svg" alt="${country.toLowerCase()} flag" ${style}"></div>`);
+            // return $(`<div class="country-flag"><img src="https://www.countryflags.io/${country}/flat/${res}.png" alt="${country} flag" ${style}"></div>`);
         } else{
             return $(`<div>${country}</div>`);
         }
@@ -1853,6 +1860,7 @@ const countries = [
     {name: 'Chad', code: 'TD'}, 
     {name: 'Chile', code: 'CL'}, 
     {name: 'China', code: 'CN'}, 
+    {name: 'Chinese Taipei', code: 'CN'}, 
     {name: 'Christmas Island', code: 'CX'}, 
     {name: 'Cocos (Keeling) Islands', code: 'CC'}, 
     {name: 'Colombia', code: 'CO'}, 
@@ -1861,7 +1869,8 @@ const countries = [
     {name: 'Congo, The Democratic Republic of the', code: 'CD'}, 
     {name: 'Cook Islands', code: 'CK'}, 
     {name: 'Costa Rica', code: 'CR'}, 
-    {name: 'Cote D\'Ivoire', code: 'CI'}, 
+    {name: 'Cote D\'Ivoire', code: 'CI'},
+    {name: "Côte d'Ivoire", code: 'CI'},
     {name: 'Croatia', code: 'HR'}, 
     {name: 'Cuba', code: 'CU'}, 
     {name: 'Cyprus', code: 'CY'}, 
@@ -1913,6 +1922,7 @@ const countries = [
     {name: 'Indonesia', code: 'ID'}, 
     {name: 'Iran, Islamic Republic Of', code: 'IR'}, 
     {name: 'Iraq', code: 'IQ'}, 
+    {name: 'Iran', code: 'IR'}, 
     {name: 'Ireland', code: 'IE'}, 
     {name: 'Isle of Man', code: 'IM'}, 
     {name: 'Israel', code: 'IL'}, 
@@ -1927,6 +1937,8 @@ const countries = [
     {name: 'Kiribati', code: 'KI'}, 
     {name: 'Korea, Democratic People\'S Republic of', code: 'KP'}, 
     {name: 'Korea, Republic of', code: 'KR'}, 
+    {name: 'Kor', code: 'KR'}, 
+    {name: 'South Korea', code: 'KR'}, 
     {name: 'Kuwait', code: 'KW'}, 
     {name: 'Kyrgyzstan', code: 'KG'}, 
     {name: 'Lao People\'S Democratic Republic', code: 'LA'}, 
@@ -1992,6 +2004,7 @@ const countries = [
     {name: 'Reunion', code: 'RE'}, 
     {name: 'Romania', code: 'RO'}, 
     {name: 'Russian Federation', code: 'RU'}, 
+    {name: 'Russia', code: 'RU'}, 
     {name: 'RWANDA', code: 'RW'}, 
     {name: 'Saint Helena', code: 'SH'}, 
     {name: 'Saint Kitts and Nevis', code: 'KN'}, 
@@ -2004,6 +2017,7 @@ const countries = [
     {name: 'Saudi Arabia', code: 'SA'}, 
     {name: 'Senegal', code: 'SN'}, 
     {name: 'Serbia and Montenegro', code: 'CS'}, 
+    {name: 'Serbia', code: 'CS'}, 
     {name: 'Seychelles', code: 'SC'}, 
     {name: 'Sierra Leone', code: 'SL'}, 
     {name: 'Singapore', code: 'SG'}, 
