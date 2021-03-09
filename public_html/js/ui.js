@@ -1,11 +1,14 @@
 "use strict";
 
+const scoreCallbacks = [];
+
 $(() => {
     $(".search-bar__input").on("input", searchChange);
     initSearchBar();
     initIndexLogo();
     initHeader();
     initNav();
+    initSettings();
 });
 
 function initNav(){
@@ -52,6 +55,155 @@ function initHeader(){
     });
 }
 
+const settingCompetitions = {
+    worlds: {dbName: "WM",                          displayName: "World championships",     influence: 1,   useMedals: true},
+    worldGames: {dbName: "World Games",             displayName: "World games",             influence: 1,   useMedals: true},
+    yog: {dbName: "Youth Olympic Games",            displayName: "Youth Olympic Games",     influence: 0.5, useMedals: false},
+    euros: {dbName: "EM",                           displayName: "European championships",  influence: 0.3, useMedals: false},
+    combined: {dbName: "Combined",                  displayName: "WM / EM Combined",        influence: 0.3, useMedals: false},
+    universade: {dbName: "Universade",              displayName: "Universade",              influence: 0.1, useMedals: false},
+    cadetsChallenge: {dbName: "Cadets Challenge",   displayName: "Cadets Challenge",        influence: 0.05,useMedals: false}
+}
+
+function initSettings(){
+    /**
+     * header
+     */
+    const list = [{
+        element: "How are the scores calculated?",
+        children: [
+            "1 / POW(place, 1.2) * 30"
+        ],
+        icon: "fas fa-question",
+        style: {
+            padding: "1rem",
+            backgroundColor: "#333",
+            color: "white"
+        }
+    }];
+    /**
+     * rest
+     */
+    for (const type in settingCompetitions) {
+        if (Object.hasOwnProperty.call(settingCompetitions, type)) {
+            const comp = settingCompetitions[type];
+            list.push({
+                element: {
+                    type: "list",
+                    data: [
+                        comp.displayName,
+                        {
+                            type: "input",
+                            inputType: "number",
+                            data: 1,
+                            attributes: {
+                                min: 0,
+                                max: 10,
+                                value: () => comp.influence,
+                                step: 0.02,
+                            },
+                            change: function(e, val){
+                                comp.influence = Math.max(val, 0);
+                                console.log(settingCompetitions);
+                            },
+                            style: {marginLeft: "1rem"}
+                        },
+                        {
+                            type: "input",
+                            inputType: "checkbox",
+                            data: 1,
+                            attributes: {
+                                // checked: () => comp.useMedals,
+                                checked: () => comp.useMedals ? true : undefined,
+                            },
+                            change: function(e, val){
+                                comp.useMedals = val;
+                                applyMedals(true);
+                                console.log(settingCompetitions);
+                            },
+                            style: {marginLeft: "1rem"}
+                        }
+                    ],
+                    justify: "flex-end"
+                }
+            });
+        }
+    }
+    /**
+     * aply btn
+     */
+    list.push({
+        element: {
+            type:"input",
+            inputType: "button",
+            data: 1,
+            attributes: {
+                value: "Apply"
+            },
+            style: {
+                padding: "1rem",
+                background: "transparent"
+            },
+            onclick: () => {
+                applyScores(true);
+            }
+        }
+    });
+    /**
+     * init
+     */
+    new Dropdown($(".settings-toggle"), list, {customClass: "settings-dropdown"});
+}
+
+applyMedals(false);
+function applyMedals(updateAthletes){
+    let dbUsedMedals = "";
+    let del = "";
+    for (const compName in settingCompetitions) {
+        if (Object.hasOwnProperty.call(settingCompetitions, compName)) {
+            const comp = settingCompetitions[compName];
+            if(comp.useMedals){
+                dbUsedMedals += del + comp.dbName;
+                del = ",";
+            }
+        }
+    }
+    ajaxState["usedMedals"] = dbUsedMedals;
+    if(updateAthletes){
+        // updateAllAthleteProfiles();
+        // updateAllCountryProfiles();
+        for (const profile of Profile.allProfiles) {
+            profile.update();
+        }
+    }
+}
+
+applyScores(false);//scores for ajax state
+function applyScores(callCallbacks){
+    console.log("applying scores: ");
+    console.log(settingCompetitions);
+    let dbArgument = ""; 
+    let del = "";
+    for (const compName in settingCompetitions) {
+        if (Object.hasOwnProperty.call(settingCompetitions, compName)) {
+            const comp = settingCompetitions[compName];
+            dbArgument += `${del}${comp.dbName},${comp.influence}`;
+            del = ",";
+        }
+    }
+    ajaxState["scoreInfluences"] = dbArgument;
+    if(callCallbacks){
+        Profile.grayOutAll();
+        for (const callback of scoreCallbacks) {
+            callback();
+        }
+    }
+    for (const profile of Profile.allProfiles) {
+        if(profile.type == "athlete"){
+            // profile.update();
+        }
+    }
+}
 
 let lastSearch = "";
 
