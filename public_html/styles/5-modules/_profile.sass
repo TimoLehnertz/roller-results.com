@@ -29,6 +29,34 @@ $body-2-b: $bg
         &:before
             background: radial-gradient(circle at left 9.375rem, $head-a 40%, #000 170%)
 
+.profile.gray
+    // &::after
+    //     content: ""
+    //     position: absolute
+    //     top: 0
+    //     left: 0
+    //     right: 0
+    //     background: #3336
+    //     background: red !important
+
+    background: #333
+
+    *
+        color: #777 !important
+
+    &.min
+        background: linear-gradient(90deg,#555 20%, #333 110%)
+
+    &.card
+        background: linear-gradient(0deg,#555 0%, #333 100%)
+        &:before
+            background: radial-gradient(circle at bottom, #444 40%, #333 170%)
+
+    &.max
+        background: linear-gradient(-90deg,#666 -70%, #222 180%)
+        &:before
+            background: radial-gradient(circle at left 9.375rem, #333 40%, #444 170%)
+
 
 .profile.alternative-color
     &.min
@@ -57,7 +85,6 @@ $body-2-b: $bg
 
 .profile
     border-radius: 1.5rem
-    overflow: hidden
     transition: all 0.2s
     position: relative
     transform: scale(1)
@@ -103,6 +130,8 @@ $body-2-b: $bg
     max-width: 18.75rem
     height: 3rem
 
+    overflow: hidden
+
     .profile__name, .profile__image, .profile__special
         display: block
 
@@ -145,8 +174,10 @@ $body-2-b: $bg
     z-index: 1
     color: white
 
+    overflow: hidden
+
     // visibility
-    .profile__name, .profile__image, .profile__special, .profile__left, .profile__right, .profile__minimize, .profile__trophy-1, .profile__trophy-2, .profile__trophy-3, .profile__maximize, .profile__special
+    .profile__name, .profile__image, .profile__special, .profile__left, .profile__right, .profile__minimize, .profile__trophy-1, .profile__trophy-2, .profile__trophy-3, .profile__maximize, .profile__special, & > .profile__rank
         display: blocK
     
     // top color
@@ -278,6 +309,9 @@ $body-2-b: $bg
     // visibility
     & > *
         display: block
+    
+    & > .profile__rank
+        display: none
 
     // bounds
     position: absolute
@@ -306,6 +340,7 @@ $body-2-b: $bg
 
     // img
     & > .profile__image
+        z-index: 15
         width: 11.25rem
         height: 11.25rem
         top: 5rem
@@ -399,6 +434,7 @@ $body-2-b: $bg
 
 .profile__special
     position: absolute
+    z-index: 12
     text-shadow: 0.1875rem 0.1875rem 0.4375rem #222
     right: 0rem
     top: 0rem
@@ -409,6 +445,25 @@ $body-2-b: $bg
     border-radius: 50%
     background: linear-gradient(180deg, $b, $a 100%)
 
+.profile:hover > .profile__rank
+    opacity: 0
+    transform: translateX(100%)
+
+.profile__rank
+    display: none // only in card view
+    position: absolute
+    right: 0
+    top: 0
+    bottom: 0
+    left: 60%
+    background: linear-gradient(100deg, #3337 0%, #333 100%)
+    transform-origin: top center
+    transform: skewX(5deg)
+    z-index: 11
+    font-size: 5rem
+    padding: 7rem 0rem
+    text-align: center
+    transition: all 0.2s
 
 .profile__primary
     position: absolute
@@ -421,7 +476,6 @@ $body-2-b: $bg
 
 .profile__image
     position: absolute
-    z-index: 2
     border-radius: 50%
     overflow: hidden
     width: 9.375rem
@@ -454,23 +508,23 @@ $body-2-b: $bg
     line-height: 3.125rem
     text-align: center
     overflow: hidden
-    z-index: 2
+    z-index: 12
     white-space: nowrap
 
 
 .profile__minimize
     transition: top 0.1s, left 0.2s, right 0.2s
-    z-index: 3
+    z-index: 14
 
 @media only screen and (max-width: 62.5rem)
     .profile.max
         & > .profile__primary
-            grid-template-columns: 1fr !important
+            grid-template-columns: 1fr 1fr !important
 
         & > .profile__right
             top: 17.5rem
 
-@media only screen and (max-width: 43.75rem)
+@media only screen and (max-width: 47rem)
 
     .profile.min, .profile.card,
         width: 90vw !important

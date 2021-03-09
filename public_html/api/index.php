@@ -19,11 +19,23 @@
 include_once $_SERVER["DOCUMENT_ROOT"]."/../data/dbh.php";
 include_once $_SERVER["DOCUMENT_ROOT"]."/includes/roles.php";
 canI("managePermissions");
+
+/**
+ * setup
+ */
+$scoreInfluences = "WM,1"; // @todo
+$usedMedals = "WMl,World Games";
+
 /**
  * Getters
  */
-
 if(!isset($NO_GET_API)){
+    if(isset($_GET["scoreInfluences"])){
+        $scoreInfluences = $_GET["scoreInfluences"];
+    }
+    if(isset($_GET["usedMedals"])){
+        $usedMedals = $_GET["usedMedals"];
+    }
     if(isset($_GET["getathlete"])){
         $res = getAthlete($_GET["getathlete"]);
         if($res !== false){
@@ -138,7 +150,7 @@ if(!isset($NO_GET_API)){
             echo "error in api";
         }
     }else if(isset($_GET["getallAthletes"])){
-        $res = getAllAthletes();
+        $res = getAllAthletes($scoreInfluences);
         if($res !== false){
             echo json_encode($res);
         } else{
@@ -165,8 +177,10 @@ if(!isset($NO_GET_API)){
         } else{
             echo "error in api";
         }
-    }else if(isset($_GET["getbestAthletes"])){
-        echo json_encode(getBestSkaters());
+    }else if(isset($_GET["gethallOfFame"])){
+        if(strlen($_GET["gethallOfFame"]) > 0){
+            echo json_encode(getBestSkaters());
+        }
     } else if(isset($_GET["getathleteRacesFromCompetition"])){
         $id = intval($_GET["getathleteRacesFromCompetition"]);
         if(isset($_GET["data"])){
@@ -285,8 +299,11 @@ function getCountryCodes(){
     }
 }
 
-function getAllAthletes(){
-    $res = query("SELECT * FROM vAthletePublic;");
+function getAllAthletes($influences){
+    global $scoreInfluences;
+    global $usedMedals;
+    $res = query("CALL sp_athleteFull('%', ?´, ?);", "ss", $scoreInfluences, $usedMedals);
+    // $res = query("SELECT * FROM vAthletePublic;");
     if(sizeof($res) > 0){
         return $res;
     } else{
@@ -295,7 +312,8 @@ function getAllAthletes(){
 }
 
 function getCountryCareer($country){
-    $res = query("CALL sp_countryCareer(?);", "s", $country);
+    global $scoreInfluences;
+    $res = query("CALL sp_countryCareer(?, ?);", "ss", $country, $scoreInfluences);
     if(sizeof($res) > 0){
         return $res;
     } else{
@@ -406,7 +424,8 @@ function getCountryRacesFromCompetition($country, $idcompetition){
 }
 
 function getBestSkaters(){
-    $skaters = query("SELECT * FROM vAthletePublic ORDER BY score DESC LIMIT 100;");
+    global $scoreInfluences;
+    $skaters = query("CALL sp_hallOfFame(?);", "s", $scoreInfluences);
     if(sizeof($skaters) > 0){
         return $skaters;
     } else{
@@ -445,7 +464,9 @@ function getAthleteCompetitions($idathlete){
 }
 
 function getAthlete($id){
-    $result = query("SELECT * FROM vAthlete WHERE idAthlete = ?;", "i", intval($id));
+    global $scoreInfluences;
+    global $usedMedals;
+    $result = query("CALL sp_athleteFull(?, ?, ?)", "iss", intval($id), $scoreInfluences, $usedMedals);
     if(sizeof($result) > 0){
         return $result[0];
     } else{
@@ -458,13 +479,16 @@ function getCompetition($id){
     if(sizeof($result) > 0){
         $result[0] ["races"] = getRacesFromCompetition($id);
         return $result[0];
-    } else{
+    } else {
         return [];
     }
 }
 
 function getCountry($name){
-    $country = query("SELECT * FROM vCountry WHERE country = ?;", "s", $name);
+    global $scoreInfluences;
+    global $usedMedals;
+    // $country = query("SELECT * FROM vCountry WHERE country = ?;", "ss", $country, $scoreInfluences);
+    $country = query("CALL sp_getCountries(?, ?, ?)", "sss", $name, $scoreInfluences, $usedMedals);
     if(sizeof($country) > 0){
         return $country[0];
     } else{
@@ -473,7 +497,10 @@ function getCountry($name){
 }
 
 function getCountries(){
-    $countries = query("SELECT * FROM vCountry ORDER BY score DESC");
+    global $scoreInfluences;
+    global $usedMedals;
+    // $countries = query("SELECT * FROM vCountry ORDER BY score DESC");
+    $countries = query("CALL sp_getCountries('%', ?, ?)", "ss", $scoreInfluences, $usedMedals);
     if(sizeof($countries) > 0){
         return $countries;
     } else{

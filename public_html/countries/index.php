@@ -6,9 +6,9 @@ include_once "../api/index.php";
 
 include_once "../header.php";
 
-echo "<script> let skateCountries = ".json_encode(getCountries())."</script>";
+// echo "<script> let skateCountries = ".json_encode(getCountries())."</script>";
 
-// echo json_encode(getCountries());
+echoRandWallpaper();
 
 ?>
 <main class="main country">
@@ -30,53 +30,91 @@ echo "<script> let skateCountries = ".json_encode(getCountries())."</script>";
         </div>
     </div>
     <script>
-        console.log(skateCountries);
-        $(() => {
+        // $(() => {init(skateCountries);});// got echoed from php
+        scoreCallbacks.push(update);
+        
+        initGet();
+        function initGet(){
+            get("countries").receive((succsess, bestCountries) => {
+                console.log(bestCountries);
+                if(succsess){
+                    clear();
+                    init(bestCountries);
+                } else{
+                    alert("An error occoured :/");
+                }
+            });
+        }
+
+        let slideshows = [];
+        function clear(){
+            for (const slideshow of slideshows) {
+                slideshow.remove();
+            }
+            slideshows = [];
+            $(".country-compare").empty();
+        }
+
+        function update(){
+            initGet();
+        }
+
+        function init(skateCountries){
+            /**
+             * country graph
+             */
+            get("countryScores").receive((succsess, countries) => {
+                $(() => {
+                    $(".country-compare").find(".loading").remove();
+                    countryCompareElemAt($(".country-compare"), countries);
+                })
+            });
+
+            /**
+             * setup
+             */
             $(".loading-message").addClass("scaleAway");
             $(".loading").remove();
             $(".rest1").removeClass("hidden");
             const topAmount = 10
 
+            /**
+             * slideshows
+             */
             for (let i = 0; i < Math.min(topAmount, skateCountries.length); i++) {
-                const profile = countryToProfile(skateCountries[i], Profile.CARD);
+                const profile = countryToProfile(skateCountries[i], Profile.CARD, true, i + 1);
                 profile.appendTo(".slideshow.best");
             }
-            new Slideshow($(".slideshow.best"));
+            slideshows.push(new Slideshow($(".slideshow.best")));
             sortArray(skateCountries, "scoreShort");
 
             for (let i = 0; i < Math.min(topAmount, skateCountries.length); i++) {
-                const profile = countryToProfile(skateCountries[i], Profile.CARD);
+                const profile = countryToProfile(skateCountries[i], Profile.CARD, true, i + 1);
                 profile.appendTo(".slideshow.sprinters");
             }
-            new Slideshow($(".slideshow.sprinters"));
+            slideshows.push(new Slideshow($(".slideshow.sprinters")));
 
             sortArray(skateCountries, "scoreLong");
 
             for (let i = 0; i < Math.min(topAmount, skateCountries.length); i++) {
-                const profile = countryToProfile(skateCountries[i], Profile.CARD);
+                const profile = countryToProfile(skateCountries[i], Profile.CARD, true, i + 1);
                 profile.appendTo(".slideshow.long");
             }
-            new Slideshow($(".slideshow.long"));
+            slideshows.push(new Slideshow($(".slideshow.long")));
             // window.setTimeout(function() {
-                for (const country of skateCountries) {
-                    if(country.score == undefined){
-                        country.score = 0;
-                    }
+            for (const country of skateCountries) {
+                if(country.score == undefined){
+                    country.score = 0;
                 }
-                sortArray(skateCountries, "score");
-                for (const country of skateCountries) {
-                    const profile = countryToProfile(country, Profile.MIN);
-                    profile.appendTo($(".all-list"));
-                }
-            // }, 200);
-            
-        });
-        get("countryScores").receive((succsess, countries) => {
-            console.log("countries:")
-            console.log(countries);
-            $(".country-compare").find(".loading").remove();
-            countryCompareElemAt($(".country-compare"), countries);
-        });
+            }
+            sortArray(skateCountries, "score");
+            let i = 0;
+            for (const country of skateCountries) {
+                const profile = countryToProfile(country, Profile.MIN, true, i + 1);
+                profile.appendTo($(".all-list"));
+                i++;
+            }
+        }
     </script>
 </main>
 <?php

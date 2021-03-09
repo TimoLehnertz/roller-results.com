@@ -57,7 +57,7 @@ function get(property, data1, data2){
     // console.log(url)
     $.ajax({
         type: "GET",
-        url,
+        url: url + getAjaxStateString(),
         dataType:  "text",
         success: (response) =>{
             if(!isJson(response)){
@@ -126,3 +126,16 @@ function getFile(path){
     });
     return promise;
 }
+
+function getAjaxStateString(){
+    let string = "";
+    for (const state in ajaxState) {
+        if (Object.hasOwnProperty.call(ajaxState, state)) {
+            const val = ajaxState[state];
+            string += `&${state}=${val}`
+        }
+    }
+    return string;
+}
+
+const ajaxState = {}

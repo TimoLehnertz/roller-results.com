@@ -71,3 +71,33 @@
 
         a
             color: #CCC
+
+.profile-navigation
+    position: sticky
+    top: 0rem
+    display: flex
+    justify-content: space-around
+    padding: 1rem
+    z-index: 14
+    background: linear-gradient(0deg, #0000 0%, #{$a}55 50%, #0000 100%)
+
+    a
+        color: white
+
+    & > *
+        margin: 0.5rem
+        padding: 0.5rem
+        display: block
+        width: 100%
+
+        margin-left: 1rem
+
+        // &:first-child
+        //     border: none
+        
+        // border-left: 1px solid #333
+
+@media screen and (max-width: 40rem)
+    .profile-navigation
+        flex-direction: column
+        position: static

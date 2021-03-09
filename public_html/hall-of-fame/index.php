@@ -11,6 +11,8 @@ include_once "../header.php";
 
 echo "<script>let athletesAmount = ". getAthleteAmount() .";</script>";
 
+echoRandWallpaper();
+
 ?>
 <main class="main country">
     <div class="athletes">
@@ -29,6 +31,23 @@ echo "<script>let athletesAmount = ". getAthleteAmount() .";</script>";
         </div>
     </div>
     <script>
+        scoreCallbacks.push(update);
+
+
+        initGet();
+
+        function initGet(){
+            get("hallOfFame").receive((succsess, bestSkaters) => {
+                console.log(bestSkaters);
+                if(succsess){
+                    clear();
+                    init(bestSkaters);
+                } else{
+                    alert("An error occoured :/");
+                }
+            });
+        }
+
         anime({
             targets: ".amount",
             innerText: [athletesAmount - 40, athletesAmount],
@@ -40,37 +59,51 @@ echo "<script>let athletesAmount = ". getAthleteAmount() .";</script>";
                 document.querySelectorAll(".amount").innerHTML = value;
             }
         });
-        get("bestAthletes").receive((succsess, bestSkaters) => {
+
+        function update(){
+            initGet();
+        }
+
+        let slideshows = [];
+        
+        function clear(){
+            for (const slideshow of slideshows) {
+                slideshow.remove();
+            }
+            slideshows = [];
+        }
+
+        function init(bestSkaters){
             $(".loading-message").addClass("scaleAway");
             $(".loading").remove();
             $(".rest1").removeClass("hidden");
             const topAmount = 10
 
+            sortArray(bestSkaters, "score");
             for (let i = 0; i < topAmount; i++) {
                 const athlete = bestSkaters[i];
-                const profile = athleteToProfile(athlete, Profile.CARD);
+                const profile = athleteToProfile(athlete, Profile.CARD, true, i + 1);
                 profile.appendTo(".slideshow.best");
             }
-            new Slideshow($(".slideshow.best"));
+            slideshows.push(new Slideshow($(".slideshow.best")));
             sortArray(bestSkaters, "scoreShort");
-            console.log(JSON.parse(JSON.stringify(bestSkaters)));
 
             for (let i = 0; i < topAmount; i++) {
                 const athlete = bestSkaters[i];
-                const profile = athleteToProfile(athlete, Profile.CARD);
+                const profile = athleteToProfile(athlete, Profile.CARD, true, i + 1);
                 profile.appendTo(".slideshow.sprinters");
             }
-            new Slideshow($(".slideshow.sprinters"));
+            slideshows.push(new Slideshow($(".slideshow.sprinters")));
 
             sortArray(bestSkaters, "scoreLong");
 
             for (let i = 0; i < topAmount; i++) {
                 const athlete = bestSkaters[i];
-                const profile = athleteToProfile(athlete, Profile.CARD);
+                const profile = athleteToProfile(athlete, Profile.CARD, true, i + 1);
                 profile.appendTo(".slideshow.long");
             }
-            new Slideshow($(".slideshow.long"));
-        });
+            slideshows.push(new Slideshow($(".slideshow.long")));
+        }
     </script>
 </main>
 <?php

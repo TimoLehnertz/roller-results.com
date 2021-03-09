@@ -76,8 +76,19 @@ function sortAthletes(athletes){
     return athletes;
 }
 
-function athleteDataToProfileData(athlete){
-    console.log(athlete);
+function updateAllAthleteProfiles(){
+    for (const profile of allAthleteProfiles) {
+        profile.update();
+    }
+}
+
+function updateAllCountryProfiles(){
+    for (const profile of allCountryProfiles) {
+        profile.update();
+    }
+}
+
+function athleteDataToProfileData(athlete, useRank = false, alternativeRank = undefined){
     let trophy1 = {
         data: getMedal("silver", athlete.silver),
         type: ElemParser.DOM,
@@ -112,10 +123,11 @@ function athleteDataToProfileData(athlete){
             case "bronze": trophy2 = trophy3; trophy3 = tmp; break;
         }
     }
-    return {
+    const data = {
+        type: "athlete",
         name: athlete.firstname + " " +athlete.lastname,
         image: athlete.image != null ? "/img/uploads/" + athlete.image : null,
-        left: {data: athlete.country, type: "countryFlag", link: `/country?id=${athlete.country}`},
+        left: {data: athlete.country, type: "countryFlag", link: `/country?id=${athlete.country}`, tooltip: true},
         right: {data: athlete.gender, type: "gender"},
         trophy1, trophy2, trophy3,
         special: Math.round(athlete.score),
@@ -165,8 +177,28 @@ function athleteDataToProfileData(athlete){
             team: {data: athlete.team, description: "Team:"}
         },
         secondary: profileInit,
-        secondaryData: athlete
+        secondaryData: athlete,
+        update: function() {
+            this.grayOut = true;
+            get("athlete", athlete.idAthlete).receive((succsess, newAthlete) => {
+                if(succsess){
+                    console.log("athlete done");
+                    this.grayOut = false;
+                    this.updateData(athleteDataToProfileData(newAthlete, useRank));
+                } else{
+                    console.log("failed loading profile")
+                }
+            });
+        }
     };
+    if(useRank){
+        if(alternativeRank !== undefined){
+            data.rank = alternativeRank;
+        } else if("rank" in athlete) {
+            data.rank = athlete.rank;
+        }
+    }
+    return data;
     
         /**
      * ToDo:
@@ -182,9 +214,22 @@ function athleteDataToProfileData(athlete){
      */
     function profileInit(wrapper, athlete){
         /**
+         * Navigation
+         */
+        const idCareer = getUid();
+        const idBestTimes = getUid();
+        const idCompetitions = getUid();
+
+        const nav = $(`<div class="profile-navigation">
+            <a href="#${idCareer}">Career</a>
+            <a href="#${idBestTimes}">Best times</a>
+            <a href="#${idCompetitions}">Competitions</a>
+        </div>`);
+        wrapper.append(nav);
+        /**
          * Career
          */
-        const careerElem = $(`<div><h2 class="section__header">Career</h2><div class="loading"></div></div>`);
+        const careerElem = $(`<div id="${idCareer}"><h2 class="section__header">Career</h2><div class="loading"></div></div>`);
         wrapper.append(careerElem);
         get("athleteCareer", athlete.idAthlete).receive((succsess, career) => {
             careerElem.find(".loading").remove();
@@ -198,7 +243,7 @@ function athleteDataToProfileData(athlete){
         /**
          * best times
          */
-        const bestTimesElem = $(`<div><h2 class="section__header">Personal best times</h2><div class="loading circle"></div></div>`);
+        const bestTimesElem = $(`<div id="${idBestTimes}"><h2 class="section__header">Personal best times</h2><div class="loading circle"></div></div>`);
         get("athleteBestTimes", athlete.idAthlete).receive((succsess, times) => {
             bestTimesElem.find(".loading").remove();
             if(succsess && times.length !== 0){
@@ -211,7 +256,7 @@ function athleteDataToProfileData(athlete){
         /**
          * competitions
          */
-        const compElem = $(`<div><h2 class="section__header">Competitions</h2><div class="loading circle"></div></div>`);
+        const compElem = $(`<div id="${idCompetitions}"><h2 class="section__header">Competitions</h2><div class="loading circle"></div></div>`);
         wrapper.append(compElem);
         get("athleteCompetitions", athlete.idAthlete).receive((succsess, competitions) => {
             compElem.find(".loading").remove();
@@ -224,8 +269,22 @@ function athleteDataToProfileData(athlete){
     };
 }
 
+function preprocessTime(time){
+    const list = time.split(/[.:]+/);
+    let timeString = "";
+    let delimiter = "";
+    for (let i = 0; i < list.length - 1; i++) {
+        if(parseInt(list[i]) > 0){
+            timeString += delimiter + parseInt(list[i]);
+            delimiter = ":";
+        }
+    }
+
+    timeString += ("" + parseFloat("0." + list.pop())).substring(1, 100); //last 3 digits
+    return timeString;
+}
+
 function bestTimesAt(elem, bestTimes){
-    console.log(bestTimes);
     const wrapper = $(`<div class="best-times flex"></div>`);
     const shortElem = $(`<div class="sprint"><h2>Short</h2></div>`);
     const longElem = $(`<div class="long"><h2>Long</h2></div>`);
@@ -233,7 +292,7 @@ function bestTimesAt(elem, bestTimes){
     let long = false;
     for (const time of bestTimes) {
         const timeElem = $(`<div class="time flex justify-space-between"/>`);
-        timeElem.append(`<a href="/race/index.php?id=${time.idRace}"><div>${time.distance}</div><div>${time.bestTime}</div><div>${time.athleteName !== undefined ? time.athleteName : ""}</div></a>`);
+        timeElem.append(`<a href="/race/index.php?id=${time.idRace}"><div>${time.distance}</div><div>${preprocessTime(time.bestTime)}</div><div>${time.athleteName !== undefined ? time.athleteName : ""}</div></a>`);
         if(time.isSprint == 1){
             shortElem.append(timeElem);
             short = true;
@@ -249,22 +308,23 @@ function bestTimesAt(elem, bestTimes){
         wrapper.append(longElem)
     }
     elem.append(wrapper);
-    console.log(wrapper.height())
 }
 
-
-function athleteToProfile(athlete, minLod = Profile.MIN){
-    const profile = new Profile(athleteDataToProfileData(athlete), minLod);
+const allAthleteProfiles = [];
+function athleteToProfile(athlete, minLod = Profile.MIN, useRank = false, alternativeRank = undefined){
+    const profile = new Profile(athleteDataToProfileData(athlete, useRank, alternativeRank), minLod);
     if("score" in athlete === false || "scoreLong" in athlete === false || "scoreShort" in athlete === false || "gold" in athlete === false || "silver" in athlete === false || "bronze" in athlete === false){//athlete not complete needs ajax
-        console.log("loading incomplete profile")
-        get("athlete", athlete.id).receive((succsess, newAthlete) => {
-            if(succsess){
-                profile.updateData(athleteDataToProfileData(newAthlete));
-            } else{
-                console.log("failed loading profile")
-            }
-        });
+        profile.update();
+        // console.log("loading incomplete profile");
+        // get("athlete", athlete.idAthlete).receive((succsess, newAthlete) => {
+        //     if(succsess){
+        //         profile.updateData(athleteDataToProfileData(newAthlete, useRank));
+        //     } else{
+        //         console.log("failed loading profile")
+        //     }
+        // });
     }
+    allAthleteProfiles.push(profile);
     return profile;
 }
 
@@ -274,9 +334,7 @@ function pathFromRace(r){
         <a href="/year?id=${r.raceYear}" class="elem">${r.raceYear}<span class="delimiter"> > </span></a>
         <a href="/competition?id=${r.idCompetition}" class="elem"> ${r.location}<span class="delimiter"> > </span></a>
         <a href="/competition?id=${r.idCompetition}&trackStreet=${r.trackStreet}" class="elem">${r.trackStreet}<span class="delimiter"> > </span></a>
-        <div class="elem">${r.category}<span class="delimiter"> > </span></div>
-        <div class="elem">${r.gender}<span class="delimiter"> > </span></div>
-        <div class="elem">${r.distance}</div>
+        <div class="elem">${r.category} ${r.gender} ${r.distance}<span class="delimiter"></span></div>
     </div>`);
 }
 
@@ -320,21 +378,26 @@ function getYtVideo(link){
 // <iframe width="949" height="534" src="https://www.youtube.com/embed/YcXbt0iVu0A" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 function getRaceTable(parent, race){
-    console.log(race)
     const elem = $(`<div class="race"></div>`);
     const raceTable = $(`<div class="race-table">`);
     elem.append(pathFromRace(race));
     elem.append(getYtVideo(race.link));
     elem.append(raceTable);
     for (const result of race.results) {
-        result.athletes = profilesElemFromResult(result);
+        if(result.time !== null) {
+            result.time = preprocessTime(result.time);
+        }
+        result.profiles = profilesElemFromResult(result);
         result.place = {
             data: result.place,
             alignment: "center",
             type: "place"
         };
-        if(result.time !== null){
-            // result.time = result.time.substring(3, 100)
+        result.country = {
+            data: result.athletes[0].country,
+            type: "countryFlag",
+            link: "/country?id=" + result.athletes[0].country,
+            tooltip: result.athletes[0].country
         }
     }
     
@@ -347,7 +410,11 @@ function getRaceTable(parent, race){
                 allowSort: true,
                 use: race.results[0].time !== null
             },
-            athletes: {
+            country: {
+                displayName: "Country",
+                allowSort: false
+            },
+            profiles: {
                 displayName: "Athlete/s",
                 allowSort: false
             },
@@ -379,23 +446,26 @@ function profilesElemFromResult(result){
 /**
  * Country
  */
-function countryToProfile(country, minLod = Profile.MIN){
-    const profile = new Profile(countryToProfileData(country), minLod);
+const allCountryProfiles = [];
+function countryToProfile(country, minLod = Profile.MIN, useRank = false, alternativeRank = undefined){
+    const profile = new Profile(countryToProfileData(country, useRank, alternativeRank), minLod);
     if("score" in country === false || "scoreLong" in country === false || "scoreShort" in country === false || "gold" in country === false || "silver" in country === false || "bronze" in country === false){//athlete not complete needs ajax
-        console.log("loading incomplete profile")
-        get("country", country.country).receive((succsess, newCountry) => {
-            if(succsess){
-                profile.updateData(athleteDataToProfileData(newCountry));
-            } else{
-                console.log("failed loading country " + country.country);
-            }
-        });
+        profile.update();
+        // console.log("loading incomplete profile")
+        // get("country", country.country).receive((succsess, newCountry) => {
+        //     if(succsess){
+        //         profile.updateData(athleteDataToProfileData(newCountry));
+        //     } else{
+        //         console.log("failed loading country " + country.country);
+        //     }
+        // });
     }
     profile.colorScheme = 1;
+    allCountryProfiles.push(profile);
     return profile;
 }
 
-function countryToProfileData(country){
+function countryToProfileData(country, useRank = false, alternativeRank = undefined){
     let trophy1 = {
         data: getMedal("silver", country.silver),
         type: ElemParser.DOM,
@@ -430,7 +500,8 @@ function countryToProfileData(country){
             case "bronze": trophy2 = trophy3; trophy3 = tmp; break;
         }
     }
-    return {
+    const data = {
+        type: "country",
         name: country.country,
         image: {data: country.country, type: "countryFlag", link: `/country?id=${country.country}`, width: "100%", height: "100%", class: "countryBig"},
         // right: country.country,
@@ -459,8 +530,27 @@ function countryToProfileData(country){
             },
         },
         secondary: profileInit,
-        secondaryData: country
+        secondaryData: country,
+        update: function(){
+            // console.log("loading incomplete profile")
+            get("country", country.country).receive((succsess, newCountry) => {
+                if(succsess){
+                    this.grayOut = false;
+                    this.updateData(countryToProfileData(newCountry));
+                } else{
+                    console.log("failed loading country " + country.country);
+                }
+            });
+        }
     };
+    if(useRank){
+        if(alternativeRank !== undefined){
+            data.rank = alternativeRank;
+        } else if("rank" in country) {
+            data.rank = country.rank;
+        }
+    }
+    return data;
     
         /**
      * ToDo:
@@ -475,10 +565,26 @@ function countryToProfileData(country){
      * 
      */
     function profileInit(wrapper, country){
+        console.log(wrapper)
+        /**
+         * Navigation
+         */
+        const idAthletes = getUid();
+        const idCareer = getUid();
+        const idBestTimes = getUid();
+        const idCompetitions = getUid();
+
+        const nav = $(`<div class="profile-navigation">
+            <a href="#${idAthletes}">Athletes</a>
+            <a href="#${idCareer}">Career</a>
+            <a href="#${idBestTimes}">Best times</a>
+            <a href="#${idCompetitions}">Competitions</a>
+        </div>`);
+        wrapper.append(nav);
         /**
          * Athletes
          */
-        const athletesElem = $(`<div><h2 class="section__header">Top ${Math.min(country.members, 10)} athletes</h2><div class="loading circle"></div></div>`)
+        const athletesElem = $(`<div id="${idAthletes}"><h2 class="section__header">Top ${Math.min(country.members, 10)} athletes</h2><div class="loading circle"></div></div>`)
         wrapper.append(athletesElem);
         get("countryAthletes", country.country).receive((succsess, athletes) => {
             const profiles = [];
@@ -488,7 +594,7 @@ function countryToProfileData(country){
                 if(i == max){
                     break;
                 }
-                profiles.push(athleteToProfile(athlete, Profile.CARD));
+                profiles.push(athleteToProfile(athlete, Profile.CARD, true, i + 1));
                 i++;
             }
             athletesElem.find(".loading").remove();
@@ -502,21 +608,21 @@ function countryToProfileData(country){
         /**
          * Career
          */
-        const careerElem = $(`<div><h2 class="section__header">Career</h2><div class="loading"></div></div>`);
+        const careerElem = $(`<div id="${idCareer}"><h2 class="section__header">Career</h2><div class="loading"></div></div>`);
         wrapper.append(careerElem);
         get("countryCareer", country.country).receive((succsess, career) => {
             careerElem.find(".loading").remove();
             if(succsess && career.length !== 0){
                 careerGraphAt(careerElem, career);
             } else{
-                careerElem.append(`<p class="margin left double">${athlete.fullname} didnt competed in wolrd championships yet</p>`);
+                // careerElem.append(`<p class="margin left double">${athlete.fullname} didnt competed in wolrd championships yet</p>`);
             }
         });
 
          /**
          * best times
          */
-        const bestTimesElem = $(`<div><h2 class="section__header">Countrywide best times</h2><div class="loading circle"></div></div>`);
+        const bestTimesElem = $(`<div id="${idBestTimes}"><h2 class="section__header">Countrywide best times</h2><div class="loading circle"></div></div>`);
         get("countryBestTimes", country.country).receive((succsess, times) => {
             bestTimesElem.find(".loading").remove();
             if(succsess){
@@ -527,7 +633,7 @@ function countryToProfileData(country){
         /**
          * competitions
          */
-        const compElem = $(`<div><h2 class="section__header">Competitions</h2><div class="loading circle"></div></div>`);
+        const compElem = $(`<div id="${idCompetitions}"><h2 class="section__header">Competitions</h2><div class="loading circle"></div></div>`);
         wrapper.append(compElem);
         get("countryCompetitions", country.country).receive((succsess, competitions) => {
             compElem.find(".loading").remove();
@@ -591,6 +697,9 @@ function getCompetitionListElem(competitions){
                 head.append(getMedal("gold", comp.goldMedals));
             }
         }
+        if(comp.hasLink !== null){
+            head.append(`<div class="flex justify-end flex-grow"><i class="fab fa-youtube font size bigger"></i></div>`);
+        }
         const acComp = new Accordion(head, compElem);
         elem.append(acComp.element);
     }
@@ -605,7 +714,6 @@ function careerGraphAt(parent, career){
         padding = 0;
     }
     career = preprocessCareer(career);
-    console.log(career);
     const elem = $(`<div class="career"></div>`);
     const canvas = $(`<canvas class="career__canvas" width="1000px" height="${height}"/>`);
     elem.append(canvas);
@@ -641,13 +749,13 @@ function careerGraphAt(parent, career){
                 datasets: [{
                     label: 'sprint score',
                     data: dataArrays[2],
-                    backgroundColor: "#26f86588",
+                    backgroundColor: "#77f81577",
                     borderColor: "#00aa33",
                     borderWidth: 1
                 }, {
                     label: 'long distance score',
                     data: dataArrays[1],
-                    backgroundColor: "#22AEAC",
+                    backgroundColor: "#42CECC",
                     borderColor: "#166aa1",
                     borderWidth: 1
                 }, {
@@ -721,7 +829,7 @@ function minMaxYearFromCountries(countries){
 function countryCompareElemAt(parent, countries){
     countries = sortArray(countries, "score", true);
     countries.splice(10, 1000);
-    console.log(countries);
+
     let height = 400;
     let padding = 20;
     if(isMobile()){
@@ -793,14 +901,12 @@ function countryCompareElemAt(parent, countries){
     const hideBtn = $(`<button class="btn border-only">Hide all</button>`);
     const showBtn = $(`<button class="btn border-only">Show all</button>`);
     hideBtn.click(() => {
-        console.log(chart.data);
         for (const set of chart.data.datasets) {
             set.hidden = true;
         }
         chart.update();
     });
     showBtn.click(() => {
-        console.log(chart);
         for (const set of chart.data.datasets) {
             set.hidden = false;
         }

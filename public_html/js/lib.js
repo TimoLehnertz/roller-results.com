@@ -135,6 +135,10 @@ class Slideshow{
         this.elem.get()[0].addEventListener('touchleave', (e) => this.leave(e));
     }
 
+    remove(){
+        this.elem.empty();
+    }
+
     update(){
         if(!this.pressed){
             // alert(this.x + this.velX * 10800);
@@ -234,7 +238,6 @@ class Slideshow{
                 y = e.touches[0].pageY;
             }
         } else{
-            // console.log(e)
             x = e.pageX;
             y = e.pageY;
         }
@@ -283,6 +286,7 @@ class Tooltip{
  *                              children: [] //children to move to if clicked(in the same form as parent),
  *                              icon: //icon to be showed at the left in form of class name from font awesome,
  *                              onclick: //onclick event return true to close dropdown,
+ *                              style: //style object example: {padding: "1rem", etc},
  *                       }
  *                  ]
  */
@@ -294,7 +298,7 @@ class Dropdown{
     static entryClass = "data-dropdown__entry";
     static nameClass = "data-dropdown__name";
 
-    constructor(elem, content){
+    constructor(elem, content = "Dropdown", setupObj = {}){
         this.elem = elem;
         this.content = content;
         this.unfolded = false;
@@ -327,6 +331,8 @@ class Dropdown{
                 easing: "easeOutCubic"
             }
         }
+        this.setup(setupObj);
+        this.init();
     }
 
     getDropDownElem(){
@@ -334,7 +340,7 @@ class Dropdown{
     }
 
     /**
-     * Setup function to be called before init()
+     * Setup function
      * @param {*} setup Object to be used as setup
      */
     setup(setup){
@@ -356,12 +362,12 @@ class Dropdown{
     }
 
     /**
-     * setup should be called before if it is used default setup is sufficient
-     * Init to be called after constructor
+     * init (caled last by constructor)
      */
     init(){
         this.dropDownElem = $(`<div class="${Dropdown.dropdownClass} ${this.customClass != undefined ? this.customClass : ""}"></div>`);
-        this.dropDownElem.append(this.content);
+        console.log(this.content);
+        // this.dropDownElem.append(this.content);
         /**
          * Css beeing defined in _dropdown.sass
          */
@@ -450,11 +456,12 @@ class Dropdown{
     }
 
     getObjElem(obj){
-        const elem = $(`<div class="${Dropdown.entryClass}"></div>`);
+        console.log(obj);
+        const elem = $(`<div class="${Dropdown.entryClass} flex"></div>`);
         if(obj.hasOwnProperty("element")){
-            elem.append(obj.element);
+            elem.append(ElemParser.parse(obj.element));
         } else {
-            elem.append(`<div>-- empty --</div>`);
+            elem.append(ElemParser.parse(obj));
         }
         if(obj.children != undefined){
             elem.click(() => {
@@ -484,6 +491,18 @@ class Dropdown{
         if(obj.hasOwnProperty("icon")){
             elem.prepend(Dropdown.getIcon(obj.icon, "margin right"));
         }
+        /**
+         * padding
+         */
+        // if("style" in obj){
+        if(obj.hasOwnProperty("style")){
+            for (const key in obj.style) {
+                if (Object.hasOwnProperty.call(obj.style, key)) {
+                    const element = obj.style[key];
+                    elem.css(key, element);
+                }
+            }
+        }
         return elem;
     }
 
@@ -512,7 +531,9 @@ class Dropdown{
         elemCpy.css("height", "");
         elemCpy.css("position", "absolute");
         $("body").append(elemCpy);
-        return {width: elemCpy.width(), height: elemCpy.height()};
+        const bounds = {width: elemCpy.width(), height: elemCpy.height()}
+        elemCpy.remove();
+        return bounds;
     }
 }
 
@@ -841,19 +862,67 @@ class Table{
 class ElemParser{
 
     /**
-     * default types
+     * as text
      */
     static PRIMITIVE = "primitive";
+    /**
+     * "www.some-url.com"
+     */
     static IMAGE = "image";
+    /**
+     * GER
+     */
     static COUNTYR_FLAG = "countryFlag";
+    /**
+     * "m" | "w"
+     */
     static GENDER = "gender";
+    /**
+     * "hallo welt"
+     */
     static TEXT = "text";
+    /**
+     * dom element
+     */
     static DOM = "dom"
+    /**
+     * {
+     *  description: "Best discipline",
+     *  description1: "sprint",
+     *  description2: "long",
+     *  data: 0.5
+     * }
+     */
     static SLIDER = "slider"
+    /**
+     * profile
+     */
     static PROFILE = "profile";
+    /**
+     * function(elem){return $(`<div>${elem.data}</div>`)}
+     */
     static CALLBACK = "callback";
+    /**
+     * {
+     *  direction: "row",
+     *  data: [elem1, elem2]
+     * }
+     */
     static LIST = "list";
+    /**
+     * 1 | 2 | 100
+     */
     static PLACE = "place";
+    /**
+     * {
+     *  inputType: "text",
+     *  label: "hallo welt"
+     *  attributes: {
+     *      value: "123"
+     *  }
+     * }
+     */
+    static INPUT = "input";
     /**
      * helpers
      */
@@ -865,15 +934,16 @@ class ElemParser{
     static parser = {
         [ElemParser.PRIMITIVE]: (elem) => $(`<div>${elem.data}</div>`),
         [ElemParser.IMAGE]: (elem) => $(`<img src="${elem.data}" alt="image">`),
-        [ElemParser.COUNTYR_FLAG]: (elem) => getCountryFlag(elem.data, elem.width, elem.height),
+        [ElemParser.COUNTYR_FLAG]: (elem) => getCountryFlag(elem.data, elem.width, elem.height, elem.tooltip),
         [ElemParser.GENDER]: (elem) => {return ElemParser.parseGender(elem.data)},
         [ElemParser.TEXT]: (elem) => $(`<div>${elem.data}</div>`),
-        [ElemParser.DOM]: (elem) => elem.data,
+        [ElemParser.DOM]: (elem) => $(elem.data),
         [ElemParser.SLIDER]: (elem) => ElemParser.parseSlider(elem),
         [ElemParser.PROFILE]: (elem) => ElemParser.parseProfile(elem),
         [ElemParser.CALLBACK]: (elem) => ElemParser.parse(elem.data.callback(elem)),
         [ElemParser.LIST]: (elem) => ElemParser.parseList(elem),
         [ElemParser.PLACE]: (elem) => getPlaceElem(elem.data),
+        [ElemParser.INPUT]: (elem) => ElemParser.parseInput(elem),
     };
 
     static addType(type, parser){
@@ -926,12 +996,27 @@ class ElemParser{
             return $();
         }
         if("onclick" in meta){
+            console.log("onclick")
             if(meta.hasOwnProperty("link")){
                 $(elem).click((e) => {
                     meta.onclick(e);
                     window.location = meta.link;
                 });
+            } else{
+                $(elem).click((e) => {
+                    meta.onclick(e);
+                    // window.location = meta.link;
+                });
             }
+        }
+        if("change" in meta){
+            $(elem).change(function(e) {
+                if($(this).find("input[type='checkbox']").length !== 0){
+                    meta.change(e, $(this).find("input").is(":checked"));
+                } else {
+                    meta.change(e, $(this).find("input").val());
+                }
+            });
         }
         if(meta.hasOwnProperty("link")){
             $(elem).click(() => {
@@ -971,6 +1056,14 @@ class ElemParser{
             if(ElemParser.useDescriptionOn(meta)){
                 elem.prepend(`<div class="margin right">${meta.description}</div>`);
                 elem.addClass("flex justify-start");
+            }
+        }
+        if("style" in meta){
+            for (const style in meta.style) {
+                if (Object.hasOwnProperty.call(meta.style, style)) {
+                    const value = meta.style[style];
+                    wrapper.css(style, value);
+                }
             }
         }
         return wrapper;
@@ -1096,12 +1189,64 @@ class ElemParser{
         return elem;
     }
 
+    static valueFrom(variable){
+        if(ElemParser.isFunction(variable)){
+           return variable();
+        } else{
+            return variable;
+        }
+    }
+
+    static isFunction(functionToCheck) {
+        return functionToCheck && {}.toString.call(functionToCheck) === '[object Function]';
+    }
+
+    /**
+     * {
+     *  type: "text",
+     *  label: "hallo welt"
+     *  attributes: {
+     *      value: "123"
+     *  }
+     * }
+     */
+    static parseInput(meta){
+        const id = getUid();
+        let type = "text";
+        if("inputType" in meta){
+            type = meta.inputType;
+        }
+        let attrs = "";
+        if("attributes" in meta){
+            for (const attr in meta.attributes) {
+                if (Object.hasOwnProperty.call(meta.attributes, attr)) {
+                    const value = ElemParser.valueFrom(meta.attributes[attr]);
+                    if(value !== undefined && value !== null) {
+                        attrs += ` ${attr}="${value}"`;
+                    }
+                }
+            }
+        }
+
+        const elem = $(`<div><input id="${id}" type="${type}" ${attrs}></div>`);
+        
+        if("label" in meta){
+            elem.prepend($(`<label for="${id}">${meta.label}</label>`));
+        }
+        return elem;
+    }
+
     static parseList(meta){
         let direction = "row";
+        let justify = "";
+        console.log(meta)
+        if("justify" in meta) {
+            justify = meta.justify;
+        }
         if("direction" in meta){
             direction = meta.direction;
         }
-        const elem = $(`<div class="flex ${direction}"></div>`);
+        const elem = $(`<div class="flex ${direction} ${justify}"></div>`);
         for (const elem1 of meta.data) {
             elem.append(ElemParser.parse(elem1));
         }
@@ -1158,6 +1303,7 @@ class Profile{
      * used to close all others when one is opened
      */
     static expanded = [];
+    static allProfiles = [];
 
     /**
      * All properties can be primitive date or element objects to bve parsed by ElemParser see ElemParser to see documentation
@@ -1183,13 +1329,11 @@ class Profile{
      * @param {Number} score 
      */
     constructor(data, minLod = Profile.MIN, score = Profile.DEFAULT_SCORE){
-        // console.log(data)
         /**
          * idprofile
          */
         this.idprofile = Profile.profileCount;
         Profile.profileCount++;
-
         this.score = score;
         this.minLod = minLod;
         this.lod = minLod;
@@ -1202,6 +1346,7 @@ class Profile{
         this.right = undefined;
         this.special = undefined;
         this.name = "";
+        this.grayedOut = false;
         this.image = undefined;
         this.secondaryData = undefined;
         this.primary = {};
@@ -1220,20 +1365,15 @@ class Profile{
         }
         this.init();
         this.updateData(data);
+        Profile.allProfiles.push(this);
     }
 
     updateData(data){
-        // console.log(data)
         if(typeof data === 'object'){
             if(data.hasOwnProperty("name")){
                 this.name = data.name;
                 this.elem.find(".profile__name").remove();
                 this.elem.append(this.nameElem);
-            }
-            if(data.hasOwnProperty("image")){
-                this.image = data.image;
-                this.elem.find(".profile__image").remove();
-                this.elem.append(this.profileImg);
             }
             if(data.hasOwnProperty("left")){
                 this.left = data.left;
@@ -1275,8 +1415,23 @@ class Profile{
                 this.elem.find(".profile__secondary").remove();
                 this.elem.append(this.secondaryElem);
             }
+            if("rank" in data){
+                this.elem.find(".profile__rank").remove();
+                this.elem.append(`<div class="profile__rank">${data.rank}</div>`);
+            }
             if(data.hasOwnProperty("secondaryData")){
                 this.secondaryData = data.secondaryData;
+            }
+            if(data.hasOwnProperty("image")){
+                this.image = data.image;
+                this.elem.find(".profile__image").remove();
+                this.elem.append(this.profileImg);
+            }
+            if("update" in data){
+                this.update = data.update;
+            }
+            if("type" in data){
+                this.type = data.type;
             }
         } else if(typeof data === 'string'){
             this.name = data;
@@ -1292,7 +1447,7 @@ class Profile{
         if(this.lod < Profile.MAX){
             this.elem.append(this.minimizeElem);
             this.elem.append(this.maximizeElem);
-            $(this.wrapper).on("dblclick", '.profile', {}, (e) => {console.log(e); this.incrementLod()});
+            $(this.wrapper).on("dblclick", '.profile', {}, (e) => {this.incrementLod()});
         }
         if(this.lod === Profile.CARD){
             this.elem.find(".profile__minimize").css("display", "none");
@@ -1321,7 +1476,7 @@ class Profile{
     }
 
     incrementLod(){
-        if(this.lod < Profile.MAX){
+        if(this.lod < Profile.MAX && !this.grayedOut){
             this.closeAllOthers();
             this.elem.removeClass(this.lodClass);
             this.lod++;
@@ -1345,7 +1500,7 @@ class Profile{
     }
 
     decrementLod(){
-        if(this.lod > this.minLod){
+        if(this.lod > this.minLod && !this.grayedOut){
             this.elem.removeClass(this.lodClass);
             this.lod--;
             this.elem.addClass(this.lodClass);
@@ -1471,6 +1626,15 @@ class Profile{
         return $();
     }
 
+    set grayOut(gray) {
+        this.grayedOut = gray;
+        if(gray){
+            this.elem.addClass("gray")
+        } else{
+            this.elem.removeClass("gray");
+        }
+    }
+
     getTrophy(index){
         index++;
         const name = "trophy" + index;
@@ -1519,6 +1683,7 @@ class Profile{
         if(ElemParser.isGender(this.right)){
             return ElemParser.getGender(this.right.data);
         }
+        return ElemParser.MALE;
     }
 
     get primaryElem(){
@@ -1606,6 +1771,12 @@ class Profile{
             default: return "";
         }
     }
+
+    static grayOutAll(gray = true){
+        for (const profile of Profile.allProfiles) {
+            profile.grayOut = gray;
+        }
+    }
 }
 
 /**
@@ -1678,6 +1849,12 @@ function isMobile(){
     return check;
 };
 
+let uidCounter = 0;
+function getUid(){
+    uidCounter++;
+    return "a" + (uidCounter - 1);
+}
+
 function getRandomColor() {
     var letters = '0123456789ABCDEF';
     var color = '#';
@@ -1691,7 +1868,6 @@ function sortArray(array, field, asc = true){
     const mul = asc ? -1 : 1;
     array.sort((a, b) => {
         if(a[field] === undefined || b[field] === undefined){
-            // console.log("undefined")
             return 0;
         }
         if(b[field] === null && b[field] === null){
@@ -1789,7 +1965,7 @@ function countryCodeValid(name){
     return false;
 }
 
-function getCountryFlag(country, width = "2rem", height = "1.5rem"){
+function getCountryFlag(country, width = "2rem", height = "1.5rem", tooltip = false){
     let style = `style="width: ${width}; height: ${height}"`;
     // if(res !== 32 && res !== 64){
     //     style = `width="${res}" height="${res}"`;
@@ -1798,11 +1974,15 @@ function getCountryFlag(country, width = "2rem", height = "1.5rem"){
     if(country === undefined){
         return $(`<div>-</div`);
     }
-    const countryCode = countryNameToCode(country); 
+    const countryCode = countryNameToCode(country);
     if(countryCode !== undefined){
-        return $(`<div class="country-flag"><img src="/img/countries/${countryCode.toLowerCase()}.svg" alt="${country} flag" ${style}"></div>`);
+        const elem = $(`<div class="country-flag"><img src="/img/countries/${countryCode.toLowerCase()}.svg" alt="${country} flag" ${style}"></div>`);
+        if(tooltip){
+            new Tooltip(elem, country);
+        }
+        return elem;
         // return $(`<div class="country-flag"><img src="https://www.countryflags.io/${countryCode}/flat/${res}.png" alt="${country} flag" ${style}"></div>`);
-    } else{
+    } else {
         if(countryCodeValid(country)){
             return $(`<div class="country-flag"><img src="/img/countries/${countryCode.toLowerCase()}.svg" alt="${country} flag" ${style}"></div>`);
             // return $(`<div class="country-flag"><img src="https://www.countryflags.io/${country}/flat/${res}.png" alt="${country} flag" ${style}"></div>`);
