@@ -8,10 +8,13 @@
 		},
 		{
 			"path": "A:\\Schule\\Fächer\\md\\bestell-seite"
+		},
+		{
+			"path": "A:\\web\\minecraft"
 		}
 	],
 	"settings": {
-		"liveServer.settings.multiRootWorkspaceName": "bestell-seite",
+		"liveServer.settings.multiRootWorkspaceName": "minecraft",
 		"sqltools.connections": [
 			{
 				"mysqlOptions": {
