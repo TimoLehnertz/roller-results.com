@@ -55,7 +55,7 @@ function initHeader(){
     });
 }
 
-const settingCompetitions = {
+let settingCompetitions = {
     worlds: {dbName: "WM",                          displayName: "World championships",     influence: 1,   useMedals: true},
     worldGames: {dbName: "World Games",             displayName: "World games",             influence: 1,   useMedals: true},
     yog: {dbName: "Youth Olympic Games",            displayName: "Youth Olympic Games",     influence: 0.5, useMedals: false},
@@ -64,6 +64,19 @@ const settingCompetitions = {
     universade: {dbName: "Universade",              displayName: "Universade",              influence: 0.1, useMedals: false},
     cadetsChallenge: {dbName: "Cadets Challenge",   displayName: "Cadets Challenge",        influence: 0.05,useMedals: false}
 }
+loadStorage();
+
+function loadStorage() {
+    const storedSettings = localStorage.getItem("settingCompetitions");
+    if(storedSettings) {
+        settingCompetitions = JSON.parse(storedSettings);
+    }
+}
+
+function updateStorage() {
+    localStorage.setItem("settingCompetitions", JSON.stringify(settingCompetitions));
+}
+
 
 function initSettings(){
     /**
@@ -72,7 +85,7 @@ function initSettings(){
     const list = [{
         element: "How are the scores calculated?",
         children: [
-            "1 / POW(place, 1.2) * 30"
+            "1 / (place^1.2 * 30)"
         ],
         icon: "fas fa-question",
         style: {
@@ -81,6 +94,7 @@ function initSettings(){
             color: "white"
         }
     }];
+
     /**
      * rest
      */
@@ -104,7 +118,6 @@ function initSettings(){
                             },
                             change: function(e, val){
                                 comp.influence = Math.max(val, 0);
-                                console.log(settingCompetitions);
                             },
                             style: {marginLeft: "1rem"}
                         },
@@ -113,18 +126,19 @@ function initSettings(){
                             inputType: "checkbox",
                             data: 1,
                             attributes: {
-                                // checked: () => comp.useMedals,
                                 checked: () => comp.useMedals ? true : undefined,
                             },
                             change: function(e, val){
                                 comp.useMedals = val;
                                 applyMedals(true);
-                                console.log(settingCompetitions);
                             },
-                            style: {marginLeft: "1rem"}
+                            style: {
+                                marginLeft: "1rem",
+                                marginRight: "1rem"
+                            }
                         }
                     ],
-                    justify: "flex-end"
+                    justify: "justify-end"
                 }
             });
         }
@@ -146,6 +160,7 @@ function initSettings(){
             },
             onclick: () => {
                 applyScores(true);
+                return true;
             }
         }
     });
@@ -170,19 +185,20 @@ function applyMedals(updateAthletes){
     }
     ajaxState["usedMedals"] = dbUsedMedals;
     if(updateAthletes){
-        // updateAllAthleteProfiles();
-        // updateAllCountryProfiles();
-        for (const profile of Profile.allProfiles) {
-            profile.update();
-        }
+        updateAllAthleteProfiles();
+        updateAllCountryProfiles();
+        // for (const profile of Profile.allProfiles) {
+        //     profile.update();
+        // }
     }
+    updateStorage();
 }
 
 applyScores(false);//scores for ajax state
 function applyScores(callCallbacks){
-    console.log("applying scores: ");
-    console.log(settingCompetitions);
-    let dbArgument = ""; 
+    // console.log("applying scores: ");
+    // console.log(settingCompetitions);
+    let dbArgument = "";
     let del = "";
     for (const compName in settingCompetitions) {
         if (Object.hasOwnProperty.call(settingCompetitions, compName)) {
@@ -200,9 +216,10 @@ function applyScores(callCallbacks){
     }
     for (const profile of Profile.allProfiles) {
         if(profile.type == "athlete"){
-            // profile.update();
+            profile.update();
         }
     }
+    updateStorage();
 }
 
 let lastSearch = "";

@@ -211,10 +211,11 @@ if(!isset($NO_GET_API)){
 
 function getCountryScores(){
     $countries = query("SELECT * FROM vCountry;");
+    global $scoreInfluences;
     foreach($countries as &$country){
         $country["scores"] = [];
         if($country["score"] > 10){
-            $scores = query("CALL sp_countryCareerSimple(?);", "s", $country["country"]);
+            $scores = query("CALL sp_countryCareerSimple(?, ?);", "ss", $country["country"], $scoreInfluences);
             $country["scores"] = $scores;
         }
     }
@@ -322,7 +323,8 @@ function getCountryCareer($country){
 }
 
 function getAthleteCareer($idAthlete){
-    $res = query("CALL sp_athleteCareer(?);", "i", $idAthlete);
+    global $scoreInfluences;
+    $res = query("CALL sp_athleteCareer(?, ?);", "is", $idAthlete, $scoreInfluences);
     if(sizeof($res) > 0){
         return $res;
     } else{

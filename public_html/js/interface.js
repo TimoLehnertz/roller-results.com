@@ -77,14 +77,18 @@ function sortAthletes(athletes){
 }
 
 function updateAllAthleteProfiles(){
-    for (const profile of allAthleteProfiles) {
-        profile.update();
+    for (const profile of Profile.allProfiles) {
+        if(profile.type === "athlete"){
+            profile.update();
+        }
     }
 }
 
 function updateAllCountryProfiles(){
-    for (const profile of allCountryProfiles) {
-        profile.update();
+    for (const profile of Profile.allProfiles) {
+        if(profile.type === "country"){
+            profile.update();
+        }
     }
 }
 
@@ -103,6 +107,14 @@ function athleteDataToProfileData(athlete, useRank = false, alternativeRank = un
         data: getMedal("bronze", athlete.bronze),
         type: ElemParser.DOM,
         validate: () => athlete.bronze > 0
+    }
+
+    let searchParam = findGetParameter("search1");
+
+    if(searchParam) {
+        searchParam = "&search1=" + searchParam;
+    } else {
+        searchParam = "";
     }
 
     let amount = 0;
@@ -125,6 +137,7 @@ function athleteDataToProfileData(athlete, useRank = false, alternativeRank = un
     }
     const data = {
         type: "athlete",
+        maximizePage: `/athlete?id=${athlete.idAthlete}${searchParam}`,
         name: athlete.firstname + " " +athlete.lastname,
         image: athlete.image != null ? "/img/uploads/" + athlete.image : null,
         left: {data: athlete.country, type: "countryFlag", link: `/country?id=${athlete.country}`, tooltip: true},
@@ -182,7 +195,6 @@ function athleteDataToProfileData(athlete, useRank = false, alternativeRank = un
             this.grayOut = true;
             get("athlete", athlete.idAthlete).receive((succsess, newAthlete) => {
                 if(succsess){
-                    console.log("athlete done");
                     this.grayOut = false;
                     this.updateData(athleteDataToProfileData(newAthlete, useRank));
                 } else{
@@ -313,7 +325,7 @@ function bestTimesAt(elem, bestTimes){
 const allAthleteProfiles = [];
 function athleteToProfile(athlete, minLod = Profile.MIN, useRank = false, alternativeRank = undefined){
     const profile = new Profile(athleteDataToProfileData(athlete, useRank, alternativeRank), minLod);
-    if("score" in athlete === false || "scoreLong" in athlete === false || "scoreShort" in athlete === false || "gold" in athlete === false || "silver" in athlete === false || "bronze" in athlete === false){//athlete not complete needs ajax
+    if(athlete?.score || "scoreLong" in athlete || "scoreShort" in athlete || "gold" in athlete || "silver" in athlete || "bronze" in athlete){//athlete not complete needs ajax
         profile.update();
         // console.log("loading incomplete profile");
         // get("athlete", athlete.idAthlete).receive((succsess, newAthlete) => {
@@ -482,6 +494,14 @@ function countryToProfileData(country, useRank = false, alternativeRank = undefi
         validate: () => country.bronze > 0
     }
 
+    let searchParam = findGetParameter("search1");
+
+    if(searchParam) {
+        searchParam = "&search1=" + searchParam;
+    } else {
+        searchParam = "";
+    }
+
     let amount = 0;
     let color;
     if(country.bronze > 0){
@@ -502,6 +522,7 @@ function countryToProfileData(country, useRank = false, alternativeRank = undefi
     }
     const data = {
         type: "country",
+        maximizePage: `/country?id=${country.country}${searchParam}`,
         name: country.country,
         image: {data: country.country, type: "countryFlag", link: `/country?id=${country.country}`, width: "100%", height: "100%", class: "countryBig"},
         // right: country.country,
@@ -533,6 +554,7 @@ function countryToProfileData(country, useRank = false, alternativeRank = undefi
         secondaryData: country,
         update: function(){
             // console.log("loading incomplete profile")
+            this.grayOut = true;
             get("country", country.country).receive((succsess, newCountry) => {
                 if(succsess){
                     this.grayOut = false;
@@ -565,7 +587,6 @@ function countryToProfileData(country, useRank = false, alternativeRank = undefi
      * 
      */
     function profileInit(wrapper, country){
-        console.log(wrapper)
         /**
          * Navigation
          */

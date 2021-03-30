@@ -25,6 +25,11 @@ echo "<script>const person = ". json_encode($person) .";</script>";
 <script>
     const profile = athleteToProfile(person, Profile.MAX);
     profile.appendTo($("main"));
+
+    // scoreCallbacks.push(() => {
+    //     profile.grayOut = true;
+        
+    // });
 </script>
 <?php
 include_once "../footer.php";

@@ -65,6 +65,9 @@ include_once "head.php";
                 <li>
                     <a href="/analytics">Analytics</a>
                 </li>
+                <li>
+                    <a href="/impressum">Impressum</a>
+                </li>
                 <?php
                     if(canI("seeAdminPage")){
                         echo "<li><a href='/admin/index.php'>Admin</a></li>";

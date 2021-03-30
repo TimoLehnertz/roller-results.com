@@ -36,7 +36,7 @@ echoRandWallpaper();
         initGet();
         function initGet(){
             get("countries").receive((succsess, bestCountries) => {
-                console.log(bestCountries);
+                // console.log(bestCountries);
                 if(succsess){
                     clear();
                     init(bestCountries);
@@ -76,7 +76,7 @@ echoRandWallpaper();
             $(".loading-message").addClass("scaleAway");
             $(".loading").remove();
             $(".rest1").removeClass("hidden");
-            const topAmount = 10
+            const topAmount = 10;
 
             /**
              * slideshows
@@ -107,13 +107,13 @@ echoRandWallpaper();
                     country.score = 0;
                 }
             }
-            sortArray(skateCountries, "score");
-            let i = 0;
-            for (const country of skateCountries) {
-                const profile = countryToProfile(country, Profile.MIN, true, i + 1);
-                profile.appendTo($(".all-list"));
-                i++;
-            }
+            // sortArray(skateCountries, "score");
+            // let i = 0;
+            // for (const country of skateCountries) {
+            //     const profile = countryToProfile(country, Profile.MIN, true, i + 1);
+            //     profile.appendTo($(".all-list"));
+            //     i++;
+            // }
         }
     </script>
 </main>
