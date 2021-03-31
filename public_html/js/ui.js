@@ -56,13 +56,13 @@ function initHeader(){
 }
 
 const defaultCompSettings =  {
-    worlds: {dbName: "WM",                          displayName: "Worlds",     influence: 1,   useMedals: true},
-    worldGames: {dbName: "World Games",             displayName: "World games",             influence: 1,   useMedals: true},
-    yog: {dbName: "Youth Olympic Games",            displayName: "Youth Olympic Games",     influence: 0.5, useMedals: false},
-    euros: {dbName: "EM",                           displayName: "Euros",  influence: 0.3, useMedals: false},
-    combined: {dbName: "Combined",                  displayName: "Worlds / Euros Combined",        influence: 0.3, useMedals: false},
-    universade: {dbName: "Universade",              displayName: "Universade",              influence: 0.1, useMedals: false},
-    cadetsChallenge: {dbName: "Cadets Challenge",   displayName: "Cadets Challenge",        influence: 0.05,useMedals: false}
+    worlds: {dbName: "WM",                          displayName: "Worlds",                  influence: 1,   useMedals: true, icon: "fas fa-globe"},
+    worldGames: {dbName: "World Games",             displayName: "World games",             influence: 1,   useMedals: true, icon: "fas fa-globe"},
+    yog: {dbName: "Youth Olympic Games",            displayName: "Youth Olympic Games",     influence: 0.5, useMedals: false, icon: "fas fa-globe"},
+    euros: {dbName: "EM",                           displayName: "Euros",                   influence: 0.3, useMedals: false, icon: "fas fa-globe-europe"},
+    combined: {dbName: "Combined",                  displayName: "Worlds / Euros Combined", influence: 0.3, useMedals: false, icon: "fas fa-globe-europe"},
+    universade: {dbName: "Universade",              displayName: "Universade",              influence: 0.1, useMedals: false, icon: "fas fa-graduation-cap"},
+    cadetsChallenge: {dbName: "Cadets Challenge",   displayName: "Cadets Challenge",        influence: 0.05,useMedals: false, icon: "fas fa-award"}
 }
 
 let settingCompetitions = defaultCompSettings;
@@ -104,14 +104,23 @@ function initSettings(){
     for (const type in settingCompetitions) {
         if (Object.hasOwnProperty.call(settingCompetitions, type)) {
             const comp = settingCompetitions[type];
+            let icon = undefined;
+            if(comp.icon) {
+                icon = $(`<i class="fas ${comp.icon}"></i>`)
+            }
             list.push({
                 element: {
                     type: "list",
                     style: {
-                        padding: "0.5rem"
+                        padding: "0.5rem",
+                        width: "100%"
                     },
                     data: [
-                        comp.displayName,
+                        icon,
+                        {
+                            data: comp.displayName,
+                            style: {width: "8rem", marginLeft: "1rem"}
+                        },
                         {
                             type: "input",
                             inputType: "number",
@@ -150,7 +159,8 @@ function initSettings(){
                             }
                         }
                     ],
-                    justify: "justify-end"
+                    justify: "justify-space-between"
+                    // justify: "justify-end"
                 }
             });
         }

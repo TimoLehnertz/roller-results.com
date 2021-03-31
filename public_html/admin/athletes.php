@@ -78,7 +78,7 @@ if(isset($_POST["submit-changes"])){
     }
     if(isset($_GET["idperson"])){
         $idperson = $_GET["idperson"];
-        $person = getAthlete($idperson);
+        $person = getAthleteFull($idperson);
         echo "<form action='#' enctype='multipart/form-data' method='POST'><table>";
             foreach ($changeable as $prop => $type) {
                 $value = $person[$prop];

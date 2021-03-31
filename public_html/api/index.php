@@ -476,6 +476,17 @@ function getAthlete($id){
     }
 }
 
+function getAthleteFull($id){
+    global $scoreInfluences;
+    global $usedMedals;
+    $result = query("CALL sp_athletePrivateFull(?, ?, ?)", "iss", intval($id), $scoreInfluences, $usedMedals);
+    if(sizeof($result) > 0){
+        return $result[0];
+    } else{
+        return [];
+    }
+}
+
 function getCompetition($id){
     $result = query("SELECT * FROM vCompetition WHERE idCompetition = ?;", "i", intval($id));
     if(sizeof($result) > 0){

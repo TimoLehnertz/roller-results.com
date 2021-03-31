@@ -54,23 +54,23 @@ include_once "head.php";
             <div class="hider hider2"></div> -->
             <ul>
                 <li>
-                    <a href="/index.php">Home</a>
+                    <a href="/index.php"><i class="fas fa-home margin right"></i>Home</a>
                 </li>
                 <li>
-                    <a href="/countries">Countries</a>
+                    <a href="/countries"><i class="fas fa-globe-americas margin right"></i>Countries</a>
                 </li>
                 <li>
-                    <a href="/hall-of-fame">Hall of fame</a>
+                    <a href="/hall-of-fame"><i class="fas fa-medal margin right"></i>Hall of fame</a>
                 </li>
                 <li>
-                    <a href="/analytics">Analytics</a>
+                    <a href="/analytics"><i class="fas fa-binoculars margin right"></i>Analytics</a>
                 </li>
                 <li>
-                    <a href="/impressum">Impressum</a>
+                    <a href="/impressum"><i class="fas fa-book margin right"></i>Impressum</a>
                 </li>
                 <?php
                     if(canI("seeAdminPage")){
-                        echo "<li><a href='/admin/index.php'>Admin</a></li>";
+                        echo "<li><a href='/admin/index.php'><i class='fas fa-shield-alt margin right'></i>Admin</a></li>";
                     }
                 ?>
             </ul>

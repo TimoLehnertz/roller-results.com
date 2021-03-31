@@ -22,7 +22,7 @@ if($loggedIn){
         <meta charset="UTF-8">
         <meta name="viewport" content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0'>
         <title>Inline data</title>
-        <link rel="icon" type="image/gif" href="/img/rolle2.gif">
+        <link rel="icon" type="image/png" href="/img/logo.png">
         <link rel="stylesheet" href="/styles/main.css">
         <!-- GOOGLE fonts -->
         <link rel="preconnect" href="https://fonts.gstatic.com">

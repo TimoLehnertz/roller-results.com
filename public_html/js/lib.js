@@ -499,6 +499,7 @@ class Dropdown{
                 }
             }
         }
+        // elem.css("width", "100%")
         return elem;
     }
 
