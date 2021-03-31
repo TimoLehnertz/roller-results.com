@@ -16,8 +16,8 @@ echoRandWallpaper();
 ?>
 <main class="main country">
     <div class="athletes">
-        <h1 class="align center margin top triple">Hall of fame</h1>
-        <h4 class="loading-message align center margin top triple">Selecting the best between <span class="amount"></span> skaters</h4>
+        <h1 class="title">Hall of fame</h1>
+        <h4 class="loading-message align center margin top triple">Selecting the best between <div class="amount"></div> skaters</h4>
         <div class="loading circle"></div>
         <div class="rest1 hidden">
             <h3 class="top">Top 10 skaters</h3>
@@ -50,10 +50,10 @@ echoRandWallpaper();
 
         anime({
             targets: ".amount",
-            innerText: [athletesAmount - 40, athletesAmount],
+            innerText: [athletesAmount - 100, athletesAmount],
             easing: "easeOutQuad",
             round: true,
-            duration: 1500,
+            duration: 2500,
             update: function(a) {
                 const value = a.animations[0].currentValue;
                 document.querySelectorAll(".amount").innerHTML = value;

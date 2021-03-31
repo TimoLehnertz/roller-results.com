@@ -13,7 +13,9 @@ echoRandWallpaper();
 ?>
 <main class="main country">
     <div class="countries">
-        <h1 class="align center margin top triple">Countries</h1>
+        <h1 class="title">Countries</h1>
+        <h4 class="loading-message align center margin top triple">Selecting the best between <div class="amount"></div> countries</h4>
+        <div class="loading circle"></div>
         <div class="rest1 hidden">
             <h3 class="top">Top 10 countries overall</h3>
             <div class="slideshow best"></div>
@@ -25,19 +27,23 @@ echoRandWallpaper();
 
             <h3 class="top">Top 10 longdistance countries</h3>
             <div class="slideshow long"></div>
-            <h3 class="top">All Countries</h3>
-            <div class="all-list"></div>
+            <!-- <h3 class="top">All Countries</h3>
+            <div class="all-list"></div> -->
         </div>
     </div>
     <script>
         // $(() => {init(skateCountries);});// got echoed from php
         scoreCallbacks.push(update);
         
+        let countryAmount = 99;
+
         initGet();
+
         function initGet(){
             get("countries").receive((succsess, bestCountries) => {
                 // console.log(bestCountries);
                 if(succsess){
+                    countryAmount = bestCountries.length;
                     clear();
                     init(bestCountries);
                 } else{
@@ -45,6 +51,18 @@ echoRandWallpaper();
                 }
             });
         }
+
+        anime({
+            targets: ".amount",
+            innerText: [countryAmount * 0.75, countryAmount],
+            easing: "easeOutQuad",
+            round: true,
+            duration: 2500,
+            update: function(a) {
+                const value = a.animations[0].currentValue;
+                document.querySelectorAll(".amount").innerHTML = value;
+            }
+        });
 
         let slideshows = [];
         function clear(){
@@ -60,6 +78,8 @@ echoRandWallpaper();
         }
 
         function init(skateCountries){
+            $(".loading-message").addClass("scaleAway");
+            $(".loading").remove();
             /**
              * country graph
              */

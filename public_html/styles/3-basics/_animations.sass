@@ -30,9 +30,18 @@
         opacity: 1
         transform: translateX(0)
 
+@keyframes highlight
+    0%
+        outline: 2px solid transparent
+    50%
+        outline: 2px solid $a
+    60%
+        outline: 2px solid #{$c}77
+    100%
+        outline: 2px solid transparent
+
 .scaleAway
     animation: scaleAway 0.3s forwards
-    // animation-fill-mode: forwards
 
 @keyframes scaleAway
     0%

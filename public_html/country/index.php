@@ -19,9 +19,6 @@ echo "<script>let country = ". json_encode($country) .";</script>";
 
 ?>
 <main class="main country">
-    <h2 class="countryName"><?php echo $country["country"]?></h2>
-    <div class="athletes">
-    </div>
     <script>
         $(".countryName").prepend(getCountryFlag(findGetParameter("id"), 64));
         const profile = countryToProfile(country, Profile.MAX);

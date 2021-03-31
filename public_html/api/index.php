@@ -638,17 +638,13 @@ function search($name){
         /**
          * Competition location
          */
-        $delimiter = strpos($name, ":");
         $competitionName = $name;
-        if($delimiter != -1){
-            $competitionName = substr($name, $delimiter + 1);
-        }
         $competitions = query("CALL sp_searchCompetitionLocation(?)", "s", $competitionName);
         foreach ($competitions as $key => $competition) {
             $results[] = [
                 "id" => $competition["idCompetition"],
                 "name" => $competition["type"]." ".$competition["location"]." ".$competition["raceYear"],
-                "priority" => (intval($year) == $competition["raceYear"]) ? 2 : 1,
+                "priority" => 2,
                 "type" => "competition"
             ];
         }
@@ -666,7 +662,7 @@ function search($name){
                 $results[] = [
                     "id" => $competition["idCompetition"],
                     "name" => $competition["type"]." ".$competition["location"]." ".$competition["raceYear"],
-                    "priority" => 2,
+                    "priority" => 1,
                     "type" => "competition"
                 ];
             }
@@ -680,7 +676,7 @@ function search($name){
                 $results[] = [
                     "id" => $country["country"],
                     "name" => $country["country"],
-                    "priority" => 4,
+                    "priority" => 3,
                     "type" => "country"
                 ];
             }

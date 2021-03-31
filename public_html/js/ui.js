@@ -5,7 +5,7 @@ const scoreCallbacks = [];
 $(() => {
     $(".search-bar__input").on("input", searchChange);
     initSearchBar();
-    initIndexLogo();
+    // initIndexLogo();
     initHeader();
     initNav();
     initSettings();
@@ -55,28 +55,31 @@ function initHeader(){
     });
 }
 
-let settingCompetitions = {
-    worlds: {dbName: "WM",                          displayName: "World championships",     influence: 1,   useMedals: true},
+const defaultCompSettings =  {
+    worlds: {dbName: "WM",                          displayName: "Worlds",     influence: 1,   useMedals: true},
     worldGames: {dbName: "World Games",             displayName: "World games",             influence: 1,   useMedals: true},
     yog: {dbName: "Youth Olympic Games",            displayName: "Youth Olympic Games",     influence: 0.5, useMedals: false},
-    euros: {dbName: "EM",                           displayName: "European championships",  influence: 0.3, useMedals: false},
-    combined: {dbName: "Combined",                  displayName: "WM / EM Combined",        influence: 0.3, useMedals: false},
+    euros: {dbName: "EM",                           displayName: "Euros",  influence: 0.3, useMedals: false},
+    combined: {dbName: "Combined",                  displayName: "Worlds / Euros Combined",        influence: 0.3, useMedals: false},
     universade: {dbName: "Universade",              displayName: "Universade",              influence: 0.1, useMedals: false},
     cadetsChallenge: {dbName: "Cadets Challenge",   displayName: "Cadets Challenge",        influence: 0.05,useMedals: false}
 }
+
+let settingCompetitions = defaultCompSettings;
 loadStorage();
 
 function loadStorage() {
-    const storedSettings = localStorage.getItem("settingCompetitions");
+    const storedSettings = sessionStorage.getItem("settingCompetitions");
     if(storedSettings) {
         settingCompetitions = JSON.parse(storedSettings);
     }
 }
 
 function updateStorage() {
-    localStorage.setItem("settingCompetitions", JSON.stringify(settingCompetitions));
+    sessionStorage.setItem("settingCompetitions", JSON.stringify(settingCompetitions));
 }
 
+let settingsDropdown;
 
 function initSettings(){
     /**
@@ -85,7 +88,7 @@ function initSettings(){
     const list = [{
         element: "How are the scores calculated?",
         children: [
-            "1 / (place^1.2 * 30)"
+            "1 / place^1.2 * 30"
         ],
         icon: "fas fa-question",
         style: {
@@ -104,6 +107,9 @@ function initSettings(){
             list.push({
                 element: {
                     type: "list",
+                    style: {
+                        padding: "0.5rem"
+                    },
                     data: [
                         comp.displayName,
                         {
@@ -116,18 +122,24 @@ function initSettings(){
                                 value: () => comp.influence,
                                 step: 0.02,
                             },
+                            // reset: (me) => {
+                            //     me.attr("value", defaultCompSettings[type].influence);
+                            // },
                             change: function(e, val){
                                 comp.influence = Math.max(val, 0);
                             },
                             style: {marginLeft: "1rem"}
-                        },
-                        {
+                        }, {
                             type: "input",
                             inputType: "checkbox",
                             data: 1,
                             attributes: {
                                 checked: () => comp.useMedals ? true : undefined,
                             },
+                            // reset: (me) => {
+                            //     console.log("resetting");
+                            //     me.attr("checked", defaultCompSettings[type].useMedals);
+                            // },
                             change: function(e, val){
                                 comp.useMedals = val;
                                 applyMedals(true);
@@ -148,26 +160,55 @@ function initSettings(){
      */
     list.push({
         element: {
-            type:"input",
-            inputType: "button",
-            data: 1,
-            attributes: {
-                value: "Apply"
-            },
-            style: {
-                padding: "1rem",
-                background: "transparent"
-            },
-            onclick: () => {
-                applyScores(true);
-                return true;
-            }
+            type: "list",
+            data: [{
+                type:"input",
+                inputType: "button",
+                data: 1,
+                attributes: {
+                    value: "Apply"
+                },
+                style: {
+                    padding: "1rem",
+                    background: "transparent"
+                },
+                onclick: () => {
+                    applyScores(true);
+                    settingsDropdown.close();
+                    return true;
+                }
+            }, {
+                type:"input",
+                inputType: "button",
+                data: 1,
+                attributes: {
+                    value: "Reset"
+                },
+                style: {
+                    padding: "1rem",
+                    background: "transparent"
+                },
+                onclick: () => {
+                    settingCompetitions = defaultCompSettings;
+                    updateStorage();
+                    settingsDropdown.close();
+                    window.location.reload();
+                    return true;
+                }
+            }]
         }
     });
     /**
      * init
      */
-    new Dropdown($(".settings-toggle"), list, {customClass: "settings-dropdown"});
+    settingsDropdown = new Dropdown($(".settings-toggle"), list, {customClass: "settings-dropdown"});
+}
+
+function resetSettings() {
+    settingCompetitions = defaultCompSettings;
+    settingsDropdown
+    applyMedals();
+    applyScores();
 }
 
 applyMedals(false);
@@ -317,40 +358,40 @@ function iconFromSearch(option){
 }
 
 
-function initIndexLogo(){
-    const logo = $(".index .logo");
-    if(logo.length === 0){
-        return; // not indexpage
-    }
-    window.onscroll = update;
-    window.onresize = update;
+// function initIndexLogo(){
+//     const logo = $(".index .logo");
+//     if(logo.length === 0){
+//         return; // not indexpage
+//     }
+//     window.onscroll = update;
+//     window.onresize = update;
 
-    function update(){
-        const max = (window.innerWidth / 2) - (logo.width() / 1.25);
-        let offset = Math.min((logo.offset().top - window.scrollY - 50) * 5 / Math.min(window.scrollY / 100, 1), max);
-        const progress = (max - offset) / max;
-        if(isMobile()){
-            offset = max;
-            // console.log("mobile")
-        }
-        $("#logo-filter").attr("stdDeviation", 4 - progress * 2);
-        if(progress < 0.9 && !isMobile()){
-            logo.css("width", `${(1 - progress) * 8 + 4}rem`);
-            logo.css("height", `${(1 - progress) * 4 + 2}rem`);
-        } else if(!isMobile()){
-            logo.css("width", ``);
-            logo.css("height", ``);
-        }
-        logo.offset({left: offset});
-    }
-    // window.setTimeout(update, 2000)
-    if(isMobile()){
-        logo.css("position", "relative");
-        console.log(logo.css("position"))
-        logo.css("width", `12rem`);
-        logo.css("height", `6rem`);
-        console.log(logo.css("width"));
-    }
-    update();
-    update();
-}
+//     function update(){
+//         const max = (window.innerWidth / 2) - (logo.width() / 1.25);
+//         let offset = Math.min((logo.offset().top - window.scrollY - 50) * 5 / Math.min(window.scrollY / 100, 1), max);
+//         const progress = (max - offset) / max;
+//         if(isMobile()){
+//             offset = max;
+//             // console.log("mobile")
+//         }
+//         $("#logo-filter").attr("stdDeviation", 4 - progress * 2);
+//         if(progress < 0.9 && !isMobile()){
+//             logo.css("width", `${(1 - progress) * 8 + 4}rem`);
+//             logo.css("height", `${(1 - progress) * 4 + 2}rem`);
+//         } else if(!isMobile()){
+//             logo.css("width", ``);
+//             logo.css("height", ``);
+//         }
+//         logo.offset({left: offset});
+//     }
+//     // window.setTimeout(update, 2000)
+//     if(isMobile()){
+//         logo.css("position", "relative");
+//         console.log(logo.css("position"))
+//         logo.css("width", `12rem`);
+//         logo.css("height", `6rem`);
+//         console.log(logo.css("width"));
+//     }
+//     update();
+//     update();
+// }

@@ -1,0 +1,25 @@
+.accordion
+    perspective: 1000px;
+
+.accordion__body
+    animation: closeAccordion 0.1s both
+    transform-origin: top
+
+    &.extended
+        animation: openAccordion 0.2s both, highlight 2s both
+
+@keyframes openAccordion
+    from
+        opacity: 0
+        transform: rotateX(-25deg)
+    to
+        opacity: 1
+        transform: rotateX(0)
+
+@keyframes closeAccordion
+    from
+        opacity: 1
+        transform: translateY(0)
+    to
+        opacity: 0
+        transform: translateY(-30px)

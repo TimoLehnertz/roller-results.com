@@ -78,8 +78,9 @@ class Accordion{
         if(this.onextend(this.head, this.body, this.status) === false){
             return false;
         }
-        this.body.css("height", "");
+        // this.body.css("height", "");
         this.body.css("display", "block");
+        this.body.parent().addClass("extended");
         this.extended = true;
     }
 
@@ -87,8 +88,9 @@ class Accordion{
         if(this.oncollapse(this.head, this.body, this.status) === false){
             return false;
         }
-        this.body.css("height", "0");
-        this.body.css("display", "none");
+        // this.body.css("height", "0");
+        window.setTimeout(() => {this.body.css("display", "none")}, 90);
+        this.body.parent().removeClass("extended");
         this.extended = false;
     }
 
@@ -415,13 +417,14 @@ class Dropdown{
             if(this.name != undefined){
                 this.dropDownElem.append(`<div class="${Dropdown.nameClass}">${this.name}</div>`);
             }
-            if(this.parentObj != undefined){
-                if(object != this.content){
+            if(this.parentObj != undefined) {
+                if(object != this.content) {
                     this.dropDownElem.append(this.getBackButton());
                 }
             }
             for (const obj of object) {
-                this.dropDownElem.append(this.getObjElem(obj))
+                const elem = this.getObjElem(obj);
+                this.dropDownElem.append(elem)
             }
             const bounds = Dropdown.getFullBounds(this.dropDownElem);
             anime({
@@ -466,19 +469,6 @@ class Dropdown{
             elem.click(() => {
                 this.parentObj = obj;
                 this.load(obj.children);
-            });
-        }
-        /**
-         * onclick
-         */
-        if(obj.hasOwnProperty("onclick")){
-            // console.log("onclick")
-            elem.click(() => {
-                // console.log("clicked")
-                if(obj.onclick()){
-                    // console.log("tryna close?")
-                    this.close();
-                }
             });
         }
         /**
@@ -527,6 +517,21 @@ class Dropdown{
             dropDown.close();
         }
     }
+
+    // reset(content = this.content) {
+    //     if(!this.unfolded){
+    //         return;
+    //     }
+    //     if(Array.isArray(content)){
+    //         for (const elem of content) {
+    //             if(!elem.elem || typeof elem.reset !== 'function') continue;
+    //             elem?.reset(elem.elem);
+    //             reset(elem);
+    //         }
+    //     } else if(content.elem && typeof content.reset === 'function'){
+    //         content?.reset(content.elem);
+    //     }
+    // }
 
     static getFullBounds(elem){
         const elemCpy = $(elem).clone();
@@ -1009,8 +1014,9 @@ class ElemParser{
                 });
             } else{
                 $(elem).click((e) => {
-                    meta.onclick(e);
-                    // window.location = meta.link;
+                    if(meta.onclick(e)) {
+                        e.stopPropagation();
+                    }
                 });
             }
         }

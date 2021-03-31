@@ -50,7 +50,7 @@ include_once "../data/dbh.php";
         </div>
     </div>
     <div class="headline">
-        <div>Inline Data</div>
+        <div>Roller results</div>
     </div>
     <?php
         include "logo.html";
@@ -62,8 +62,7 @@ include_once "../data/dbh.php";
         </span>
     </div>
     <div class="content">
-        <a href="/hall-of-fame/"><h2>Hall of fame</h2></a>
-        <div class="table-test"></div>
+
     </div>
 </main>
 <script>
