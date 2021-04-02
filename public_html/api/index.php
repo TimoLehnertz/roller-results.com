@@ -85,6 +85,13 @@ if(!isset($NO_GET_API)){
         } else{
             echo "error in api";
         }
+    } else if(isset($_GET["getworldMovement"])){
+        $res = getWorldMovement();
+        if($res !== false){
+            echo json_encode($res);
+        } else{
+            echo "error in api";
+        }
     } else if(isset($_GET["search"])){
         $res = search($_GET["search"]);
         if($res !== false){
@@ -206,6 +213,15 @@ if(!isset($NO_GET_API)){
             }
             setRaceLinks($data);
         }
+    }
+}
+
+function getWorldMovement() {
+    $res = query("SELECT * FROM vWorldMovement;");
+    if(sizeof($res) > 0){
+        return $res;
+    } else{
+        return [];
     }
 }
 
