@@ -239,7 +239,7 @@ export var DAT = DAT || {};
      container.addEventListener('mousedown', onMouseDown, false);
      container.addEventListener('touchstart', onMouseDown, false);
  
-     container.addEventListener('mousewheel', onMouseWheel, false);
+    //  container.addEventListener('mousewheel', onMouseWheel, false);
  
      document.addEventListener('keydown', onDocumentKeyDown, false);
  
@@ -434,7 +434,7 @@ export var DAT = DAT || {};
         //     }
         // }
         return {
-            animate: (direction = "in", fillMode = "forewards", duration = 1000) => {
+            animate: (direction = "in", fillMode = "forewards", duration = 1000, easing = "easeInQuad") => {
                 // clearEffect();
 
                 direction = direction === "in";
@@ -447,7 +447,7 @@ export var DAT = DAT || {};
                     type: "lineSpecial",
                     direction: direction ? "normal" : "reverse",
                     iterationCount: 1,
-                    easingFunction: easingFunctions.linear,
+                    easingFunction: easingFunctions[easing],
                     start: Date.now(),
                     object: splineObject,
                     callback: (progress, effect) => {
