@@ -49,6 +49,7 @@ class Accordion{
         this.elem = $(`<div class="accordion"><div class="accordion__head"></div><div class="accordion__body"></div></div>`);
         this.elem.find(".accordion__head").append(this.head);
         this.elem.find(".accordion__body").append(this.body);
+        this.body.css("display", "none");
         this.head.click(() => {
             this.toggle();
         });
@@ -89,7 +90,8 @@ class Accordion{
             return false;
         }
         // this.body.css("height", "0");
-        window.setTimeout(() => {this.body.css("display", "none")}, 90);
+        this.body.css("display", "none");
+        // window.setTimeout(() => {this.body.css("display", "none")}, 90);
         this.body.parent().removeClass("extended");
         this.extended = false;
     }
@@ -1376,6 +1378,7 @@ class Profile{
         }
         this.init();
         this.updateData(data);
+        this.elem.append(this.secondaryElem);
         Profile.allProfiles.push(this);
     }
 
@@ -1383,7 +1386,6 @@ class Profile{
         if(typeof data === 'object'){
             if("maximizePage" in data) {
                 this.maximizePage = data.maximizePage;
-
             }
             if(data.hasOwnProperty("name")){
                 this.name = data.name;
@@ -1430,11 +1432,10 @@ class Profile{
             }
             if(data.hasOwnProperty("secondary")) {
                 this.secondary = data.secondary;
-                this.elem.find(".profile__secondary").empty();
+                this.secondaryElem.empty();
                 if(this.lod === Profile.MAX) {
                     this.secondary(this.secondaryElem, this.secondaryData);
                 }
-                this.elem.append(this.secondaryElem);
             }
             if("rank" in data){
                 this.elem.find(".profile__rank").remove();
@@ -1545,6 +1546,7 @@ class Profile{
         }
         this.elem.find(".profile__minimize").css("display", "");
         if(this.secondary !== undefined){
+            this.elem.find(".profile__secondary").empty();
             this.secondary(this.secondaryElem, this.secondaryData);
         }
         $(`body > *:not(header, footer)`).addClass("hidden");

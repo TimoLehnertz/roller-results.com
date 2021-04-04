@@ -605,12 +605,12 @@ function countryToProfileData(country, useRank = false, alternativeRank = undefi
         /**
          * Athletes
          */
-        const athletesElem = $(`<div id="${idAthletes}"><h2 class="section__header">Top ${Math.min(country.members, 10)} athletes</h2><div class="loading circle"></div></div>`)
+        const max = 5;
+        const athletesElem = $(`<div id="${idAthletes}"><h2 class="section__header">Top ${Math.min(country.members, max)} athletes</h2><div class="loading circle"></div></div>`)
         wrapper.append(athletesElem);
         get("countryAthletes", country.country).receive((succsess, athletes) => {
             const profiles = [];
             let i = 0;
-            max = 10;
             for (const athlete of athletes) {
                 if(i == max){
                     break;
