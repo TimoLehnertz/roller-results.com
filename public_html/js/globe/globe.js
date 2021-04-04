@@ -380,7 +380,7 @@ export var DAT = DAT || {};
             effect.onComplete = effect.onComplete || (() => true);
             effect.easing = effect.easing || "linear";
             effect.direction = effect.direction || "normal";//reverse / alternate
-            effect.start = Date.now();
+            effect.start = Date.now() - skipped;
             effect.object = highlight;
             effect.startPosition = pos;
 
@@ -423,8 +423,7 @@ export var DAT = DAT || {};
         const millis = Date.now() - skipped;
         const removals = [];
         for (const effect of effects) {
-            const lifetime = millis - (effect.start + effect.delay)
-            -;
+            const lifetime = millis - (effect.start + effect.delay);
             const iterations = Math.floor(lifetime / (effect.duration + effect.pause));
 
             if(lifetime < 0) continue;
