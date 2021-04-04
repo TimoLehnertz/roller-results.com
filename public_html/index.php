@@ -4,19 +4,19 @@ include_once "api/index.php";
 include_once "header.php";
 include_once "api/imgAPI.php";
 
-$amountCountry = getCountryAmount();
-$amountAthlete = getAthleteAmount();
-$amountResult = getResultAmount();
-$amountRace = getRaceAmount();
-$amountCompetition = getCompetitionAmount();
+// $amountCountry = getCountryAmount();
+// $amountAthlete = getAthleteAmount();
+// $amountResult = getResultAmount();
+// $amountRace = getRaceAmount();
+// $amountCompetition = getCompetitionAmount();
 
-echo "<script>
-    const amountCountry = $amountCountry;
-    const amountAthlete = $amountAthlete;
-    const amountResult = $amountResult;
-    const amountRace = $amountRace;
-    const amountCompetition = $amountCompetition;
-</script>";
+// echo "<script>
+//     const amountCountry = $amountCountry;
+//     const amountAthlete = $amountAthlete;
+//     const amountResult = $amountResult;
+//     const amountRace = $amountRace;
+//     const amountCompetition = $amountCompetition;
+// </script>";
 // echoRandWallpaper();
 
 ?>
@@ -28,12 +28,14 @@ echo "<script>
 <!-- <script type="module" src="/js/globe/third-party/Tween.js"></script> -->
 <script type="module" src="/js/globe/globe.js"></script>
 <main class="main index">
-    <div id="container">
-
-    </div>
+    <div class="date"></div>
+    <div id="container" class="globe"/>
 </main>
 <script type="module">
     import { DAT } from "/js/globe/globe.js";
+
+    console.log(hexToDecimal("#0"));
+    console.log(hexToDecimal("#FFFFFF"));
 
     var container = document.getElementById( 'container' );
     var globe = new DAT.Globe( container );
@@ -64,17 +66,120 @@ echo "<script>
     //         globe.highlightAt(lat, lng, {color: 0xff44aa});
     //     }
     // }
-    globe.initPopulationDots();
+    globe.initSurfaceDots();
     globe.animate();
 
-    get("worldMovement").receive((succsess, data) => {
-        console.log(data);
+    let data;
+    let pause = false;
+    get("worldMovement").receive((succsess, response) => {
+        data = response;
         for (const movement of data) {
-            const randomX = Math.random() * 3 - 1.5;
-            const randomY = Math.random() * 3 - 1.5;
-            globe.trajectoryFromTo(movement.compLatitude + randomX, movement.compLongitude + randomY, movement.athleteLatitude, movement.athleteLongitude, {color: 0xff5544 + Math.random() * 2000}).animate("in", "forewards", 5000 * (Math.random() / 2 + 1));
+            movement.controllers = [];
+            movement.date = mysqlDateToJsDate(movement.date);
+            // movement.athleteCountryRadius = Math.min(movement.athleteCountryRadius, 100);
+            for (let i = 0; i < Math.max(1, movement.athleteCount / 10); i++) {
+                const randomX = globe.kmToDregree(Math.random() * movement.athleteCountryRadius * 2 - movement.athleteCountryRadius) * 0.7;
+                const randomY = globe.kmToDregree(Math.random() * movement.athleteCountryRadius * 2 - movement.athleteCountryRadius) * 0.7;
+                
+                const controller = globe.trajectoryFromTo(movement.athleteLatitude + randomX,
+                movement.athleteLongitude + randomY,
+                movement.compLatitude, movement.compLongitude,
+                {color: hexToDecimal(movement.athleteCountryColor), visible: false,
+                    onhover: (me) => {
+                        me.material.color.set(0xffffff);
+                        globe.stopRotation();
+                        globe.pauseAnimations();
+                        pause = true;
+                    }, onleave: (me) => {
+                        me.material.color.set(hexToDecimal(movement.athleteCountryColor));
+                        globe.startRotation();
+                        globe.startAnimations()
+                        pause = false;
+                    }, onclick: (me) => {
+                        console.log("click");
+                    }
+                });
+                movement.controllers.push(controller);
+            }
         }
+        // console.log(data);
+
+        window.setInterval(() => {
+            if(pause) return;
+            date.setDate(date.getDate() + 1);
+            $(".date").text(dateToString(date));
+            dateUpdated();
+        }, 10);
     });
+
+    const date = new Date(1995, 11, 20);
+    const visible = [];
+
+    function hexToDecimal(hex) {
+        let newHex = "#";
+        if(hex.length === 4) {
+            for (let i = 1; i < 4; i++) {
+                newHex += hex.charAt(i);
+                newHex += hex.charAt(i);
+            }
+            return hexToDecimal(newHex);
+        } else {
+            return parseInt(hex.substr(1, 6), 16);
+        }
+    }
+
+    function dateUpdated() {
+        // console.log(date.toString());
+        // console.log(date.getDate());
+        for (const movement of data) {
+            if(sameDay(movement.date, date) && !visible.includes(movement)){
+                /**
+                 * add
+                 */
+                visible.push(movement);
+                for (const controller of movement.controllers) {
+                    controller.animate("in", "forewards", 5000 * random(0.7, 1.3)).onComplete(() => {
+                        controller.animate("out", "backwards", 2000, 1000);
+                        visible.splice(visible.indexOf(movement), 1);
+                    });
+                }
+            }
+            // if(!sameDay(movement.date, date) && visible.includes(movement)){
+            //     /**
+            //      * renove
+            //      */
+            //     visible.splice(visible.indexOf(movement), 1);
+            //     movement.controller.animate("out", "backwards", 2000);
+            // }
+        }
+    }
+
+    function random(min, max) {
+        return Math.random() * (max - min) + min;
+    }
+
+    function mysqlDateToJsDate(mysqlDate) {
+        const dateParts = mysqlDate.split("-");
+        return new Date(dateParts[0], dateParts[1] - 1, dateParts[2].substr(0,2));
+    }
+
+    function sameDay(d1, d2) {
+        return d1.getFullYear() === d2.getFullYear() &&
+            d1.getMonth() === d2.getMonth() &&
+            d1.getDate() === d2.getDate();
+    }
+
+    function dateToString(date) {
+        let day = date.getDate() + "";
+        if((day).length === 1) {
+            day = "0" + day;
+        }
+        let month = date.getMonth();
+        if(month.length === 1) {
+            month = "0" + month;
+        }
+        return month + " " + date.getFullYear();
+    }
 
 </script>
 <?php

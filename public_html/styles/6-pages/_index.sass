@@ -4,8 +4,29 @@
     inherits: false
 
 .index
-    background: linear-gradient(-215deg, #{$a}99 0%, #{$c}55 100%);
-    margin-top: -5rem
-    padding-top: 3rem
-    // position: absolute
-    // top: 0
+    background: #000
+    &::after
+        content: ""
+        position: absolute
+        top: 0
+        width: 100vw
+        height: 100vh
+        pointer-events: none
+        background: linear-gradient(-30deg, #{$a}22 0%, #{$d}22 100%),radial-gradient(at 0% 20%, #{$d}22 0%, rgba(0,0,0,0) 20%), radial-gradient(at 90% 0%, #{$d}33 0%, rgba(0,0,0,0) 70%), radial-gradient(at 100% 100%, #{$a}44 0%, rgba(0,0,0,0) 30%)
+    // background:  radial-gradient(at 10% 20%, $a 0%, rgba(0,0,0,0) 40%), radial-gradient(at 80% 70%, $c 0%, rgba(0,0,0,0) 40%)
+
+    margin-top: -7rem
+
+    .globe
+        margin-left: 30vw;
+        margin-top: -5rem
+        height: 120vh
+        width: 70vw
+        margin-left: 35vw
+
+
+    .date
+        margin-top: 5rem
+        position: absolute
+        color: #fff8
+        font-size: 10rem
