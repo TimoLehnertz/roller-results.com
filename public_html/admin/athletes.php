@@ -3,7 +3,8 @@ include_once "../includes/error.php";
 include_once "../includes/roles.php";
 
 if(!canI("configureAthletes")){
-    throwError($ERROR_NO_PERMISSION, "/admin");
+    // throwError($ERROR_NO_PERMISSION, "/admin");
+    echo "nopermission";
 }
 
 include_once "../header.php";
