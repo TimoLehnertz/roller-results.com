@@ -43,6 +43,7 @@ if(isset($_POST["submit-changes"])){
             if($img) {
                 $_POST["image"] = $img;
             } else {
+                unset($_FILES["image"]);
                 echo "<script>alert('Image is not supported. maximum size is 5mb')</script>";
             }
         }
