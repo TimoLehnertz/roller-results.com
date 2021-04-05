@@ -39,7 +39,12 @@ if(isset($_POST["submit-changes"])){
         $idperson = intval($_GET["idperson"]);
         $name = $_POST["firstname"]. "-" . $_POST["lastname"];
         if(isset($_FILES["image"])){
-            $_POST["image"] = uploadImg($_FILES["image"], "athlete-$name-");
+            $img = uploadImg($_FILES["image"], "athlete-$name-");
+            if($img) {
+                $_POST["image"] = $img;
+            } else {
+                echo "<script>alert('Image is not supported. maximum size is 5mb')</script>";
+            }
         }
         $person = [];
         foreach ($changeable as $prop => $value) {
