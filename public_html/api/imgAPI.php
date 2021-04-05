@@ -8,9 +8,9 @@ $IMG_ALLOWED_FILE_EXTENSIONS = [
 $IMG_MAX_SIZE = 5000000;
 
 function resize_image($file, $w, $h) {
-    $resizeObj = new resize($file);
-    $resizeObj -> resizeImage(w, h, 'crop');
-    $resizeObj -> saveImage($file, 100);
+    // $resizeObj = new resize($file);
+    // $resizeObj -> resizeImage(w, h, 'crop');
+    // $resizeObj -> saveImage($file, 100);
 }
 
 function uploadImg($file, $prefix = ""){

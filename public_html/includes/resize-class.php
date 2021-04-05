@@ -1,4 +1,5 @@
 <?php
+    echo "test";
         Class resize
         {
             // *** Class variables
