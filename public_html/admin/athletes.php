@@ -41,19 +41,19 @@ if(isset($_POST["submit-changes"])){
         $name = $_POST["firstname"]. "-" . $_POST["lastname"];
         // var_dump($_FILES);
         // exit();
-        if(isset($_FILES["image"]) && !empty($_FILES["image"]["tmp_name"])){
-            // vardump($_FILES["image"]);
-            // exit();
-            $img = uploadImg($_FILES["image"], "athlete-$name-");
-            // var_dump($img);
-            // exit();
-            if($img) {
-                $_POST["image"] = $img;
-            } else {
-                $_POST["image"] = NULL;
-                // $canUpdate = false;
-                // echo "<script>alert('Image is not supported. maximum size is 5mb')</script>";
-            } 
+        // if(isset($_FILES["image"]) && !empty($_FILES["image"]["tmp_name"])){
+        //     // vardump($_FILES["image"]);
+        //     // exit();
+        //     $img = uploadImg($_FILES["image"], "athlete-$name-");
+        //     // var_dump($img);
+        //     // exit();
+        //     if($img) {
+        //         $_POST["image"] = $img;
+        //     } else {
+        //         $_POST["image"] = NULL;
+        //         // $canUpdate = false;
+        //         // echo "<script>alert('Image is not supported. maximum size is 5mb')</script>";
+        //     } 
         }
         foreach ($changeable as $prop => $value) {
             if(!empty($_POST[$prop])){
