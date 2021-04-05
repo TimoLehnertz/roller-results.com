@@ -318,20 +318,18 @@ class Dropdown{
          */
         this.openAnimation = (bounds) => {
             return  {
-                height: [0, bounds.height],
-                scale: [0.5, 1],
+                transformOrigin: "top",
+                rotateX: ["-20deg", 0],
                 opacity: [0, 1],
-                duration: 100,
+                duration: 300,
                 easing: "easeOutCubic"
             }
         }
         
         this.closeAnimation = () => {
             return  {
-                height: 0,
-                scale: [1, 0.7],
                 opacity: [1, 0],
-                duration: 200,
+                duration: 100,
                 easing: "easeOutCubic"
             }
         }
@@ -970,7 +968,8 @@ class ElemParser{
         } else if(elem !== undefined && elem !== null){
             return ElemParser.finishElem(ElemParser.parsePrimitive(elem));
         } else{
-            return ElemParser.finishElem(ElemParser.getFreshElem());
+            // return ElemParser.finishElem(ElemParser.getFreshElem());
+            return $();
         }
     }
 
@@ -979,11 +978,11 @@ class ElemParser{
             return meta;
         }
         if(ElemParser.isValidMeta(meta)){
-            if(meta.data === null || meta.data === undefined){
-                return $();
+            if(!meta.data){
+                return false;
             }
-            if(meta.data.length === 0){
-                return $();
+            if(meta.data.length === 0 || meta.data === ""){
+                return false;
             }
             if(meta.hasOwnProperty("type")){
                 if(ElemParser.parser.hasOwnProperty(meta.type)){
@@ -993,7 +992,7 @@ class ElemParser{
             }
             return ElemParser.parser[ElemParser.TEXT](meta);
         } else{
-            return $();
+            return false;
         }
     }
 
@@ -1120,6 +1119,7 @@ class ElemParser{
     }
 
     static parsePrimitive(prim){
+        if(!prim) return false;
         const elem = $(`<div>${prim}</div>`);
         return elem;
     }

@@ -153,15 +153,21 @@
 
         .header__left
             position: absolute
+            max-width: 3rem
+            left: 0
             
             .wrapper
                 flex-direction: row
                 border: none
+                max-width: 4rem
                 padding: 0
                 background: none
+            
+            & > a
+                display: none
 
             .burger
-                margin-left: 0.5rem
+                margin-left: 3.5rem
 
             .burger div
                 background: #333

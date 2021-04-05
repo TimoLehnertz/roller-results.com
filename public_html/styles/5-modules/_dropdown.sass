@@ -1,22 +1,44 @@
 .data-dropdown
     z-index: 10
     position: absolute
+    max-width: 100vw
+    // overflow: auto
+    transform-origin: top
+    perspective: 1000px;
     top: 100%
-    background: white
     border: 1px solid #888
     width: auto
     font-size: 1rem
     color: black
+    box-shadow: 10px 10px 60px -10px rgba(0,0,0,0.75)
+
+    input
+        background: transparent
+        border: none
+        border-bottom: 1px solid $a
+        padding: 0.3rem
+        // transition: all 0.1s
+
+        &:hover
+            background: #0003
+
+.mobile-fullscreen .data-dropdown
+    @media only screen and (max-width: 65rem)
+        // left: 0
+        // width: 100vw
+        // right: 0
+        // bottom: 0
 
 .data-dropdown__entry
     border-bottom: 1px solid #AAA
     padding: 5px
     transition: filter 0.1s
     filter: brightness(1)
-    background-color: #FFF
+    background: linear-gradient(140deg, #cccc 0, #fff8 10rem);
+    backdrop-filter: blur(5px);
 
     &:hover
-        filter: brightness(0.8)
+        filter: brightness(0.9)
 
 .data-dropdown__name
     border-bottom: 2px solid #888888

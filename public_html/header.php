@@ -45,8 +45,12 @@ include_once "head.php";
                     <div class="profile-name"><?php echo $user["username"]; ?></div>
                 </div>
             <?php } else{?>
-                <a class="btn default" href="/signup">Sign up</a>
-                <a class="btn default" href="/login">log in</a>
+                <div class="toggle-profile-section">
+                    <img class="profile-img" src="/img/profile-men.png" alt="profile image">
+                    <div class="profile-name">Log in</div>
+                </div>
+                <!-- <a class="btn default" href="/signup">Sign up</a>
+                <a class="btn default" href="/login">log in</a> -->
             <?php }?>
         </div>
         <nav class="nav">
@@ -83,6 +87,9 @@ include_once "head.php";
                 <form action='/logout/index.php' method='POST'>
                     <button class="btn slide signup-btn default" name="logout-submit" value="1" type="submit"><i class="fas fa-sign-out-alt margin right"></i>Log out</button>
                 </form>
+            <?php } else { ?>
+                <a class="btn default" href="/signup">Sign up</a>
+                <a class="btn default" href="/login">log in</a>
             <?php } ?>
         </div>
         <div class="hider"></div>

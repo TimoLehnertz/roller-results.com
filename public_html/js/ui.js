@@ -86,7 +86,7 @@ function initSettings(){
      * header
      */
     const list = [{
-        element: "How are the scores calculated?",
+        element: "How does it work?",
         children: [
             "1 / place^1.2 * 30"
         ],
@@ -112,14 +112,14 @@ function initSettings(){
                 element: {
                     type: "list",
                     style: {
-                        padding: "0.5rem",
+                        padding: "0.4rem",
                         width: "100%"
                     },
                     data: [
                         icon,
                         {
                             data: comp.displayName,
-                            style: {width: "8rem", marginLeft: "1rem"}
+                            style: {width: "6rem", marginLeft: "0.3rem"}
                         },
                         {
                             type: "input",
@@ -127,18 +127,18 @@ function initSettings(){
                             data: 1,
                             attributes: {
                                 min: 0,
-                                max: 10,
-                                value: () => comp.influence,
-                                step: 0.02,
+                                value: () => comp.influence * 100,
+                                step: 1,
+                                style: "width: 4.2rem"
                             },
                             // reset: (me) => {
                             //     me.attr("value", defaultCompSettings[type].influence);
                             // },
                             change: function(e, val){
-                                comp.influence = Math.max(val, 0);
+                                comp.influence = Math.max(val / 100, 0);
                             },
-                            style: {marginLeft: "1rem"}
-                        }, {
+                            style: {marginLeft: "0.3rem"}
+                        }, "%", {
                             type: "input",
                             inputType: "checkbox",
                             data: 1,
@@ -154,8 +154,8 @@ function initSettings(){
                                 applyMedals(true);
                             },
                             style: {
-                                marginLeft: "1rem",
-                                marginRight: "1rem"
+                                marginLeft: "0.3rem",
+                                marginRight: "0.3rem"
                             }
                         }
                     ],
@@ -212,6 +212,7 @@ function initSettings(){
      * init
      */
     settingsDropdown = new Dropdown($(".settings-toggle"), list, {customClass: "settings-dropdown"});
+    settingsDropdown.elem.find(".data-dropdown").css("left", "-10rem");
 }
 
 function resetSettings() {

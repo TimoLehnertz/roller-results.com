@@ -24,9 +24,9 @@ echo "<script>let country = ". json_encode($country) .";</script>";
         const profile = countryToProfile(country, Profile.MAX);
         profile.appendTo($(".athletes"));
 
-        scoreCallbacks.push(() => {
-            profile.update();
-        });
+        // scoreCallbacks.push(() => {
+        //     profile.update();
+        // });
 
     </script>
 </main>

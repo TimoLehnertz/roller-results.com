@@ -474,6 +474,10 @@ $body-2-b: $bg
     color: white
     transition: all 0.2s
 
+    & > *
+        padding: 1rem
+        background: linear-gradient(90deg, #0000 0%, #0003 98%, #0000 100%)
+
 .profile__image
     position: absolute
     border-radius: 50%
@@ -516,7 +520,7 @@ $body-2-b: $bg
     transition: top 0.1s, left 0.2s, right 0.2s
     z-index: 14
 
-@media only screen and (max-width: 62.5rem)
+@media only screen and (max-width: 75rem)
     .profile.max
         & > .profile__primary
             grid-template-columns: 1fr 1fr !important
@@ -524,13 +528,10 @@ $body-2-b: $bg
         & > .profile__right
             top: 17.5rem
 
-@media only screen and (max-width: 47rem)
+@media only screen and (max-width: 45rem)
 
     .profile.min, .profile.card,
         width: 90vw !important
-
-    .profile__primary
-        grid-template-columns: 1fr !important
 
     .profile.max
         & > .profile__name
@@ -539,21 +540,29 @@ $body-2-b: $bg
             text-align: center
             left: 1rem
             right: 1rem
-            // text-align: left
-            // left: 0.625rem
         
         & > .profile__image
             top: 8rem
         
         & > .profile__special
             top: 19rem
+        
+        & > .profile__right
+            top: 20rem
+
+        & > .profile__left
+            top: 20rem
 
         &::before
-            height: 37.5rem
+            height: 39.5rem
 
         & > .profile__primary
+            grid-template-columns: 1fr !important
             margin-left: 1.25rem
             margin-top: 17.5rem
+
+            & > *
+                width: 90vw
 
         & > .profile__secondary
             margin-top: 37.5rem
