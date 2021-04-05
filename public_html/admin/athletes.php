@@ -63,13 +63,15 @@ if(isset($_POST["submit-changes"])){
             }
         }
         if($_POST["rem-img"]) {
-            // echo "rem";
-            // exit();
+            echo "rem";
+            exit();
             $person["image"] = NULL;
         }
         // var_dump($person);
         // exit();
         if($canUpdate) { 
+            var_dump($person);
+            exit();
             if(updatePerson($idperson, $person)){
                 header("location: /admin/athletes.php?idperson=$idperson&search-athlete=$search");
                 exit();
