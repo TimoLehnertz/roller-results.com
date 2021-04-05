@@ -69,7 +69,7 @@ if(isset($_POST["submit-changes"])){
         }
         // var_dump($person);
         // exit();
-        if($canUpdate) {
+        if($canUpdate) { 
             if(updatePerson($idperson, $person)){
                 header("location: /admin/athletes.php?idperson=$idperson&search-athlete=$search");
                 exit();
