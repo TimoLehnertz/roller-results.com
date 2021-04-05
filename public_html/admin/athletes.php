@@ -39,7 +39,7 @@ if(isset($_POST["submit-changes"])){
     if(isset($_GET["idperson"])){
         $idperson = intval($_GET["idperson"]);
         $name = $_POST["firstname"]. "-" . $_POST["lastname"];
-        var_dump($_POST);
+        var_dump($_FILES);
         exit();
         if(isset($_FILES["image"])){
             // vardump($_FILES["image"]);
@@ -53,7 +53,7 @@ if(isset($_POST["submit-changes"])){
                 $_POST["image"] = NULL;
                 // $canUpdate = false;
                 // echo "<script>alert('Image is not supported. maximum size is 5mb')</script>";
-            }
+            } 
         }
         foreach ($changeable as $prop => $value) {
             if(!empty($_POST[$prop])){
@@ -71,7 +71,7 @@ if(isset($_POST["submit-changes"])){
             if(updatePerson($idperson, $person)){
                 header("location: /admin/athletes.php?idperson=$idperson&search-athlete=$search");
                 exit();
-            } else{
+            } else {
                 throwError($ERROR_SERVER_ERROR, "/admin/athletes.php");
             }
         }
