@@ -49,7 +49,7 @@ if(isset($_POST["submit-changes"])){
         //     // exit();
         //     if($img) {
         //         $_POST["image"] = $img;
-        //     } else {
+        //     } else { 
         //         $_POST["image"] = NULL;
         //         // $canUpdate = false;
         //         // echo "<script>alert('Image is not supported. maximum size is 5mb')</script>";
