@@ -44,18 +44,20 @@ if(isset($_POST["submit-changes"])){
             if($img) {
                 $_POST["image"] = $img;
             } else {
-                unset($_FILES["image"]);
+                unset($_POST["image"]);
                 $canUpdate = false;
                 echo "<script>alert('Image is not supported. maximum size is 5mb')</script>";
             }
         }
-        $person = [];
         foreach ($changeable as $prop => $value) {
             if(!empty($_POST[$prop])){
                 $person[$prop] = $_POST[$prop];
             } else{
                 $person[$prop] = "";
             }
+        }
+        if($_POST["rem-img"]) {
+            $person["image"] = NULL;
         }
         if($canUpdate) {
             if(updatePerson($idperson, $person)){
@@ -100,6 +102,7 @@ include_once $_SERVER["DOCUMENT_ROOT"]."/header.php";
                 }
                 echo "<td>$image<input type='$type' name='$prop' placeholder='$prop' value='$value' max-size='200'></td></tr>";
             }
+            echo "<tr><td><label for='rem-img'>Remove image</label></td><td><input type='checkbox' name='rem-img' id='rem-img'></td></tr>";
             echo "</table>";
             echo "<button class='btn slide default' type='submit' name='submit-changes'>Submit changes</button>";
         echo "</form>";
