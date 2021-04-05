@@ -1,12 +1,16 @@
 <?php
 
+include("resize-class.php");
+
 $IMG_ALLOWED_FILE_EXTENSIONS = [
-    "png", "svg", "jpg", "tiff", "jpeg", ""
+    "png", "jpg", "jpeg"
 ];
 $IMG_MAX_SIZE = 5000000;
 
 function resize_image($file, $w, $h) {
-    
+    $resizeObj = new resize($file);
+    $resizeObj -> resizeImage(w, h, 'crop');
+    $resizeObj -> saveImage($file, 100);
 }
 
 function uploadImg($file, $prefix = ""){
