@@ -1,13 +1,13 @@
 <?php
-include_once "../includes/error.php";
-include_once "../includes/roles.php";
+include_once $_SERVER["DOCUMENT_ROOT"]."/includes/error.php";
+include_once $_SERVER["DOCUMENT_ROOT"]."/includes/roles.php";
 
 if(!canI("configureAthletes")){
     throwError($ERROR_NO_PERMISSION, "/admin/index.php");
     // echo "nopermission";
 }
 
-include_once "../header.php";
+include_once $_SERVER["DOCUMENT_ROOT"]."/header.php";
 
 $NO_GET_API = true;
 include_once $_SERVER["DOCUMENT_ROOT"]."/api/index.php";
