@@ -40,6 +40,13 @@ include_once "api/imgAPI.php";
     var container = document.getElementById( 'container' );
     var globe = new DAT.Globe( container );
 
+    const overlay = $(
+        `<div class="overlay">
+            <div class="head">title</div>
+            <div class="description">description</div>
+        </div>`);
+    $(".main").append(overlay);
+
     // const controller = globe.trajectoryFromTo(50.800209, 6.764670, 0, 0, {color: 0xff44aa});
 
     // controller.animate("in", "forewards", 2000).onComplete(() => {
@@ -75,9 +82,19 @@ include_once "api/imgAPI.php";
         data = response;
         for (const movement of data) {
             movement.controllers = [];
+            const athletes = [];
+            const names = movement.athleteNames.split(",");
+            const ids = movement.athleteIds.split(",");
+            for (let i = 0; i < names.length; i++) {
+                athletes.push({
+                    name: names[i],
+                    id: ids[i],
+                    html: `<a href="/athlete/index.php?id=${ids[0]}">${names[i]}</a>`,
+                });
+            }
             movement.date = mysqlDateToJsDate(movement.date);
             // movement.athleteCountryRadius = Math.min(movement.athleteCountryRadius, 100);
-            for (let i = 0; i < Math.max(1, movement.athleteCount / 10); i++) {
+            for (let i = 0; i < Math.max(1, movement.athleteCount / 10000); i++) {
                 const randomX = globe.kmToDregree(Math.random() * movement.athleteCountryRadius * 2 - movement.athleteCountryRadius) * 0.7;
                 const randomY = globe.kmToDregree(Math.random() * movement.athleteCountryRadius * 2 - movement.athleteCountryRadius) * 0.7;
                 
@@ -85,12 +102,39 @@ include_once "api/imgAPI.php";
                 movement.athleteLongitude + randomY,
                 movement.compLatitude, movement.compLongitude,
                 {color: hexToDecimal(movement.athleteCountryColor), visible: false,
-                    onhover: (me) => {
+                    onhover: (me, mouse) => {
+                        overlay.css("top", Math.min(window.innerHeight - (220 + Math.min(athletes.length, 8) * 16), mouse.clientY));
+                        overlay.css("left", Math.min(window.innerWidth - 330, mouse.clientX));
+                        overlay.addClass("drawn");
+                        overlay.find(".head").html(`${movement.athleteCount} athletes from <a href="/country/index.php?id=${movement.athleteCountryName}">${movement.athleteCountryName}</a>`);
+                        let medalString  = "";
+                        if(movement.gold > 0 || movement.silver > 0 || movement.bronze > 0) {
+                            medalString = "<div class='medals'><ul>";
+                            if(movement.gold > 0){
+                                medalString += `<li>${movement.gold} gold ${movement.gold > 1 ? "medals" : "medal"}</li>`;
+                            }
+                            if(movement.silver > 0){
+                                medalString += `<li>${movement.silver} silver ${movement.silver > 1 ? "medals" : "medal"}</li>`;
+                            }
+                            if(movement.bronze > 0){
+                                medalString += `<li>${movement.bronze} bronze ${movement.bronze > 1 ? "medals" : "medal"}</li>`;
+                            }
+                            medalString += "</ul></div>";
+                        }
+                        let athleteHtml = "<ol>";
+                        for (const athlete of athletes) {
+                            athleteHtml += `<li>${athlete.html}</li>`;
+                        }
+                        athleteHtml += "</ol>";
+                        overlay.find(".description").html(
+                            `Competing at the <br><a href="/competition?id=${movement.idCompetition}">${movement.competitionType} in ${movement.competitionLocation} ${movement.competitionCountryName}</a><br>
+                            ${medalString}<div class="athletes"><p>Athletes</p>${athleteHtml}</div>`);
                         me.material.color.set(0xffffff);
                         globe.stopRotation();
                         globe.pauseAnimations();
                         pause = true;
-                    }, onleave: (me) => {
+                    }, onleave: (me, mouse) => {
+                        overlay.removeClass("drawn");
                         me.material.color.set(hexToDecimal(movement.athleteCountryColor));
                         globe.startRotation();
                         globe.startAnimations()
@@ -109,7 +153,7 @@ include_once "api/imgAPI.php";
             date.setDate(date.getDate() + 1);
             $(".date").text(dateToString(date));
             dateUpdated();
-        }, 10);
+        }, 30);
     });
 
     const date = new Date(1995, 11, 20);
@@ -129,8 +173,6 @@ include_once "api/imgAPI.php";
     }
 
     function dateUpdated() {
-        // console.log(date.toString());
-        // console.log(date.getDate());
         for (const movement of data) {
             if(sameDay(movement.date, date) && !visible.includes(movement)){
                 /**
@@ -139,7 +181,7 @@ include_once "api/imgAPI.php";
                 visible.push(movement);
                 for (const controller of movement.controllers) {
                     controller.animate("in", "forewards", 5000 * random(0.7, 1.3)).onComplete(() => {
-                        controller.animate("out", "backwards", 2000, 1000);
+                        controller.animate("out", "backwards", 1000, 1000);
                         visible.splice(visible.indexOf(movement), 1);
                     });
                 }

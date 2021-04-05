@@ -1,5 +1,5 @@
         <footer class="footer">
-            © copyright by inline-data.org - All rights reserved
+            © copyright by www.roller-results.com - All rights reserved
         </footer>
     </body>
 </html>

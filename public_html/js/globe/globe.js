@@ -39,6 +39,7 @@ function isFunction(functionToCheck) {
 }
 
 let mousedown = false;
+let parsedMosueSave;
 
 function getSplineFromCoords(coords) {
     const startLat = coords[0];
@@ -222,6 +223,8 @@ export var DAT = DAT || {};
      mesh = new THREE.Mesh(geometry, material);
      mesh.rotation.y = Math.PI;
      scene.add(mesh);
+
+     mouseObjects.push(mesh);
  
      shader = Shaders['atmosphere'];
      uniforms = THREE.UniformsUtils.clone(shader.uniforms);
@@ -364,7 +367,7 @@ export var DAT = DAT || {};
         highlight.rotateX(-lat * DEGREE_TO_RADIAN + xRotOffset);
 
         scene.add( highlight );
-        hoverObjects.push(highlight);
+        mouseObjects.push(highlight);
 
 
         /**
@@ -409,13 +412,17 @@ export var DAT = DAT || {};
     let animPause = 0;
     let skipped = 0;
     function pauseAnimations() {
+      if(!runAnimations) return;
+
       animPause = Date.now();
       runAnimations = false;
     }
 
     function startAnimations() {
+      if(runAnimations) return;
+
       runAnimations = true;
-      skipped += Date.now() - animPause;
+      skipped += (Date.now() - animPause);
     }
 
     function tickEffects() {
@@ -444,7 +451,7 @@ export var DAT = DAT || {};
             effect.callback(progress, effect);
         }
         for (const removal of removals) {
-            if(removals.onComplete && isFunction(removal.onComplete)) {
+            if(removal.onComplete && isFunction(removal.onComplete)) {
                 removal.onComplete();
             } else if(removal.onComplete) {
                 removal.onComplete.callback();
@@ -487,6 +494,7 @@ export var DAT = DAT || {};
 
         return {
             animate: (direction = "in", fillMode = "forewards", duration = 1000, delay = 0, easing = "easeInQuad") => {
+              // console.log(direction)
                 direction = direction === "in";
                 fillMode = fillMode === "forewards";
 
@@ -516,7 +524,7 @@ export var DAT = DAT || {};
                     direction: direction ? "normal" : "reverse",
                     iterationCount: 1,
                     easingFunction: easingFunctions[easing],
-                    start: Date.now(),
+                    start: Date.now() - skipped,
                     object: splineObject,
                     callback: (progress, effect) => {
                         splineObject.material.dashSize = progress * lineLength;
@@ -533,20 +541,15 @@ export var DAT = DAT || {};
                 const onCompleteObj = {
                     onComplete: (func) => {
                         onCompleteObj.callback = () => {
-                            if(direction === "reverse") {
-                                console.log(direction)
+                            if(!direction) {
                                 removeEntity(splineObject);
                                 removeEntity(splineObject2);
                             }
-                            // console.log("removed")
-
-                            // scene.remove( splineObject );
-                            // scene.remove( splineObject2 );
                             func();
                         }
                     },
                     callback: () => {
-                        if(direction === "reverse") {
+                        if(!direction) {
                             removeEntity(splineObject);
                             removeEntity(splineObject2);
                         }
@@ -667,7 +670,7 @@ export var DAT = DAT || {};
    }
 
    function parseTouchEvent(event) {
-    if(event.touches) {
+    if(event.touches?.length > 0) {
         event.clientX = event.touches[0].clientX;
         event.clientY = event.touches[0].clientY;
 
@@ -682,7 +685,7 @@ export var DAT = DAT || {};
    function onMouseDown(event) {
       mousedown = true;
       rotate = false;
-      event.preventDefault();
+      // event.preventDefault();
  
      event = parseTouchEvent(event);
      
@@ -708,6 +711,10 @@ export var DAT = DAT || {};
       onMouseMove(event)
    }
  
+   function isTouchEvent(e) {
+     return e.touches !== undefined;
+   }
+
    function onMouseMove(event) {
 
     event = parseTouchEvent(event);
@@ -718,7 +725,9 @@ export var DAT = DAT || {};
      var zoomDamp = distance/1000;
  
      target.x = targetOnDown.x + (mouse.x - mouseOnDown.x) * 0.005 * zoomDamp;
-     target.y = targetOnDown.y + (mouse.y - mouseOnDown.y) * 0.005 * zoomDamp;
+     if(!isTouchEvent(event)) {
+       target.y = targetOnDown.y + (mouse.y - mouseOnDown.y) * 0.005 * zoomDamp;
+     }
  
      target.y = target.y > PI_HALF ? PI_HALF : target.y;
      target.y = target.y < - PI_HALF ? - PI_HALF : target.y;
@@ -792,7 +801,7 @@ export var DAT = DAT || {};
  
    function render() {
      zoom(curZoomSpeed);
- 
+     checkMouse();
      rotation.x += (target.x - rotation.x) * 0.1;
      rotation.y += (target.y - rotation.y) * 0.1;
      distance += (distanceTarget - distance) * 0.3;
@@ -903,34 +912,38 @@ export var DAT = DAT || {};
         return km * ((GLOBE_RADIUS * 2 * Math.PI) / earthCircumference);
     }
     
-    let lastHovered = [];
+    let lastHovered;
     function checkMouse(e, click = false) {
+      if(e) {
         e = parseTouchEvent(e);
+        parsedMosueSave = e;
+      } else if(parsedMosueSave && overRenderer){
+        e = parsedMosueSave;
+      } else {
+        return;
+      }
         const mouseVec = new THREE.Vector2(
           (e.offsetX / container.offsetWidth) * 2 - 1,
           -(e.offsetY/ container.offsetHeight) * 2 + 1);
         raycaster.setFromCamera(mouseVec, camera);
     	  intersects = raycaster.intersectObjects(mouseObjects);
 
-        const hovered = [];
-        for (const hit of intersects) {
-          hovered.push(hit.object.id);
+        let hovered;
+        if(intersects.length > 0) {
+          const hit = intersects[0];
+          hovered = hit.object.id;
           if(hit.object.type === "Line") {
-            // hit.object.material?.color?.set(0xffffff);
-            // console.log(hit.object.id);
             if(hoverCallbacks[hit.object.id]) {
-              hoverCallbacks[hit.object.id](hit.object);
+              hoverCallbacks[hit.object.id](hit.object, e);
             }
             if(click && clickCallbacks[hit.object.id]) {
-              clickCallbacks[hit.object.id](hit.object);
-            }console.log()
+              clickCallbacks[hit.object.id](hit.object, e);
+            }
           }
         }
-        for (const h of lastHovered) {
-          if(!hovered.includes(h)) {
-            if(leaveCallbacks[h]) {
-              leaveCallbacks[h](scene.getObjectById(h, true));
-            }
+        if(hovered !== lastHovered) {
+          if(leaveCallbacks[lastHovered]) {
+            leaveCallbacks[lastHovered](scene.getObjectById(lastHovered, true), e);
           }
         }
         lastHovered = hovered;

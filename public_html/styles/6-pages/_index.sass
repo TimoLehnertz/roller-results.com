@@ -23,6 +23,13 @@
         height: 120vh
         width: 70vw
         margin-left: 35vw
+        transition: all 0.1s
+    
+        @media screen and (max-width: 65rem)
+            margin-left: 0
+            width: 100vw
+            height: 100vh
+            padding-top: 25vh
 
 
     .date
@@ -30,3 +37,44 @@
         position: absolute
         color: #fff8
         font-size: 10rem
+
+    .overlay
+        position: absolute
+        padding: 1rem
+        min-width: 15rem
+        background: linear-gradient(180deg, #fff3 0, #000e 0.5rem, #000c 2.5rem, #3338 3.5rem);
+        backdrop-filter: blur(3px);
+        color: white
+        border-radius: 0.4rem
+        box-shadow: 5px 5px 20px 4px rgba(0,0,0,1)
+        opacity: 0
+        transform: translateY(-1rem)
+        transition: all 0.1s
+        pointer-events: none
+
+        &.drawn
+            pointer-events: auto
+            opacity: 1
+            transform: translateY(0)
+
+        .head
+            font-size: 0.9rem
+            padding-bottom: 0.5rem
+            border-bottom: 1px solid #999
+        
+        .description
+            
+            margin-top: 0.6rem
+            font-size: 0.9rem
+            
+        .medals
+            margin-top: 1rem
+            margin-left: 1.5rem
+
+        .athletes
+            margin-top: 1rem
+            max-height: 10rem
+            overflow: auto
+    
+
+

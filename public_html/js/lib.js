@@ -1425,7 +1425,7 @@ class Profile{
             if(data.hasOwnProperty("primary")){
                 this.primary = data.primary;
                 this.elem.find(".profile__primary").remove();
-                this.elem.append(this.primaryElem);
+                this.elem.prepend(this.primaryElem);
             }
             if(data.hasOwnProperty("secondaryData")){
                 this.secondaryData = data.secondaryData;
