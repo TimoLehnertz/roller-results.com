@@ -55,8 +55,6 @@ function uploadImg($file, $prefix = ""){
     $nameNew = $prefix . uniqid('', true) . '.' . $ext;
     $dest = '../img/uploads/' . $nameNew;
     $succsess = move_uploaded_file($tmp, $dest);
-    echo $succsess;
-    echo $nameNew;
     // resize_image($dest, 100, 100);
     if($succsess){
         return $nameNew;

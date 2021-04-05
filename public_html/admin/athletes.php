@@ -41,8 +41,8 @@ if(isset($_POST["submit-changes"])){
         $name = $_POST["firstname"]. "-" . $_POST["lastname"];
         if(isset($_FILES["image"])){
             $img = uploadImg($_FILES["image"], "athlete-$name-");
-            var_dump($img);
-            exit();
+            // var_dump($img);
+            // exit();
             if($img) {
                 $_POST["image"] = $img;
             } else {
