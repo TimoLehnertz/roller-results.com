@@ -34,7 +34,7 @@ $changeable = [
     "facebook" => "text"
 ];
 
-if(isset($_POST["submit-changes"])){
+if(isset($_POST["submit-changes"])){ 
     $canUpdate = true;
     if(isset($_GET["idperson"])){
         $idperson = intval($_GET["idperson"]);
