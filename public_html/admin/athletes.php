@@ -39,9 +39,9 @@ if(isset($_POST["submit-changes"])){
     if(isset($_GET["idperson"])){
         $idperson = intval($_GET["idperson"]);
         $name = $_POST["firstname"]. "-" . $_POST["lastname"];
-        var_dump($_FILES);
-        exit();
-        if(isset($_FILES["image"])){
+        // var_dump($_FILES);
+        // exit();
+        if(isset($_FILES["image"]) && !empty($_FILES["image"]["tmp_name"])){
             // vardump($_FILES["image"]);
             // exit();
             $img = uploadImg($_FILES["image"], "athlete-$name-");
