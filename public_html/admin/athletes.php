@@ -66,7 +66,7 @@ if(isset($_POST["submit-changes"])){
             echo "rem";
             exit();
             $person["image"] = NULL;
-        } else {
+        } else if(!empty($person["image"])){
             unset($person["image"]);
             // var_dump($person);
             // exit();
