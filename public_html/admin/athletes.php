@@ -39,7 +39,7 @@ if(isset($_POST["submit-changes"])){
     if(isset($_GET["idperson"])){
         $idperson = intval($_GET["idperson"]);
         $name = $_POST["firstname"]. "-" . $_POST["lastname"];
-        if(isset($_FILES["image"])){
+        if(isset($_FILES["image"]) && is_uploaded_file("image")){
             $img = uploadImg($_FILES["image"], "athlete-$name-");
             if($img) {
                 $_POST["image"] = $img;
