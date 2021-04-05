@@ -40,6 +40,7 @@ if(isset($_POST["submit-changes"])){
         $idperson = intval($_GET["idperson"]);
         $name = $_POST["firstname"]. "-" . $_POST["lastname"];
         var_dump($_POST);
+        exit();
         if(isset($_FILES["image"])){
             // vardump($_FILES["image"]);
             // exit();
