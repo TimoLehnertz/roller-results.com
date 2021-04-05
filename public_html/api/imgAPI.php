@@ -8,14 +8,14 @@ $IMG_ALLOWED_FILE_EXTENSIONS = [
 $IMG_MAX_SIZE = 5000000;
 
 function resize_image($file, $w, $h) {
-    $resizeObj = new resize($file);
-    $resizeObj -> resizeImage($w, $h, 'crop');
-    $resizeObj -> saveImage($file, 100);
-    // echo $dest;
-    // WideImage::load($file)
-    // ->resize($w, h, 'outside', 'any')
-    // ->crop('center', 'center', 150, 150)
-    // ->output('png');
+    // $resizeObj = new resize($file);
+    // $resizeObj -> resizeImage($w, $h, 'crop');
+    // $resizeObj -> saveImage($file, 100);
+    echo $dest;
+    WideImage::load($file)
+    ->resize($w, h, 'outside', 'any')
+    ->crop('center', 'center', $w, $h)
+    ->output('png');
 }
 
 function uploadImg($file, $prefix = ""){
