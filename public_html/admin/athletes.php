@@ -40,8 +40,8 @@ if(isset($_POST["submit-changes"])){
         $idperson = intval($_GET["idperson"]);
         $name = $_POST["firstname"]. "-" . $_POST["lastname"];
         if(isset($_FILES["image"])){
-            vardump($_FILES["image"]);
-            exit();
+            // vardump($_FILES["image"]);
+            // exit();
             $img = uploadImg($_FILES["image"], "athlete-$name-");
             // var_dump($img);
             // exit();
@@ -49,8 +49,8 @@ if(isset($_POST["submit-changes"])){
                 $_POST["image"] = $img;
             } else {
                 unset($_POST["image"]);
-                $canUpdate = false;
-                echo "<script>alert('Image is not supported. maximum size is 5mb')</script>";
+                // $canUpdate = false;
+                // echo "<script>alert('Image is not supported. maximum size is 5mb')</script>";
             }
         }
         foreach ($changeable as $prop => $value) {
