@@ -10,7 +10,7 @@ if(!canI("configureAthletes")){
 
 $NO_GET_API = true;
 #include_once $_SERVER["DOCUMENT_ROOT"]."/api/index.php";
-include_once $_SERVER["DOCUMENT_ROOT"]."/api/personAPI.php";
+#include_once $_SERVER["DOCUMENT_ROOT"]."/api/personAPI.php";
 include_once $_SERVER["DOCUMENT_ROOT"]."/api/imgAPI.php";
 
 $search = "";
