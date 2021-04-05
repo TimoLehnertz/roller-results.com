@@ -3,7 +3,7 @@ include_once "../includes/error.php";
 include_once "../includes/roles.php";
 
 if(!canI("configureAthletes")){
-    // throwError($ERROR_NO_PERMISSION, "/admin");
+    throwError($ERROR_NO_PERMISSION, "/admin/index.php");
     // echo "nopermission";
 }
 
@@ -55,7 +55,7 @@ if(isset($_POST["submit-changes"])){
             header("location: /admin/athletes.php?idperson=$idperson&search-athlete=$search");
             exit();
         } else{
-            // throwError($ERROR_SERVER_ERROR, "/admin/athletes.php");
+            throwError($ERROR_SERVER_ERROR, "/admin/athletes.php");
         }
     }
 }
