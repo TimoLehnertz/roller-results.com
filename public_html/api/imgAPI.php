@@ -1,6 +1,6 @@
 <?php
 
-include_once $_SERVER["DOCUMENT_ROOT"]."/includes/resize-class.php";
+// include_once $_SERVER["DOCUMENT_ROOT"]."/includes/resize-class.php";
 
 $IMG_ALLOWED_FILE_EXTENSIONS = [
     "png", "jpg", "gif", "jpeg"
@@ -11,11 +11,11 @@ function resize_image($file, $w, $h) {
     // $resizeObj = new resize($file);
     // $resizeObj -> resizeImage($w, $h, 'crop');
     // $resizeObj -> saveImage($file, 100);
-    echo $dest;
-    WideImage::load($file)
-    ->resize($w, h, 'outside', 'any')
-    ->crop('center', 'center', $w, $h)
-    ->output('png');
+    // echo $dest;
+    // WideImage::load($file)
+    // ->resize($w, h, 'outside', 'any')
+    // ->crop('center', 'center', $w, $h)
+    // ->output('png');
 }
 
 function uploadImg($file, $prefix = ""){

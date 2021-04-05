@@ -1,5 +1,5 @@
 <?php
-    echo "test";
+    // echo "test";
         Class resize
         {
             // *** Class variables
