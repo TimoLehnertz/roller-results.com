@@ -3,7 +3,7 @@
 include_once $_SERVER["DOCUMENT_ROOT"]."/includes/resize-class.php";
 
 $IMG_ALLOWED_FILE_EXTENSIONS = [
-    "png", "jpg", "jpeg"
+    "png", "jpg", "gif", "jpeg"
 ];
 $IMG_MAX_SIZE = 5000000;
 
