@@ -48,7 +48,7 @@ if(isset($_POST["submit-changes"])){
             if($img) {
                 $_POST["image"] = $img;
             } else {
-                unset($_POST["image"]);
+                $_POST["image"] = NULL;
                 // $canUpdate = false;
                 // echo "<script>alert('Image is not supported. maximum size is 5mb')</script>";
             }
@@ -57,14 +57,14 @@ if(isset($_POST["submit-changes"])){
             if(!empty($_POST[$prop])){
                 $person[$prop] = $_POST[$prop];
             } else{
-                $person[$prop] = "";
+                $person[$prop] = null;
             }
         }
         if($_POST["rem-img"]) {
             $person["image"] = NULL;
         }
-        var_dump($person);
-        exit();
+        // var_dump($person);
+        // exit();
         if($canUpdate) {
             if(updatePerson($idperson, $person)){
                 header("location: /admin/athletes.php?idperson=$idperson&search-athlete=$search");
