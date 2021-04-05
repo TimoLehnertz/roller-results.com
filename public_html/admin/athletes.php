@@ -68,12 +68,13 @@ if(isset($_POST["submit-changes"])){
             $person["image"] = NULL;
         } else {
             unset($person["image"]);
+            var_dump($person);
+            exit();
         }
         // var_dump($person);
         // exit();
         if($canUpdate) { 
-            var_dump($person);
-            exit();
+        
             if(updatePerson($idperson, $person)){
                 header("location: /admin/athletes.php?idperson=$idperson&search-athlete=$search");
                 exit();
