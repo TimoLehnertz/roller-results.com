@@ -63,6 +63,8 @@ if(isset($_POST["submit-changes"])){
             }
         }
         if($_POST["rem-img"]) {
+            echo "rem";
+            exit();
             $person["image"] = NULL;
         }
         // var_dump($person);
