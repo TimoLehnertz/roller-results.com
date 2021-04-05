@@ -1,6 +1,6 @@
 <?php
 
-include("resize-class.php");
+include_once $_SERVER["DOCUMENT_ROOT"]."/includes/resize-class.php";
 
 $IMG_ALLOWED_FILE_EXTENSIONS = [
     "png", "jpg", "jpeg"
