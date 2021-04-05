@@ -68,8 +68,8 @@ if(isset($_POST["submit-changes"])){
             $person["image"] = NULL;
         } else {
             unset($person["image"]);
-            var_dump($person);
-            exit();
+            // var_dump($person);
+            // exit();
         }
         // var_dump($person);
         // exit();
