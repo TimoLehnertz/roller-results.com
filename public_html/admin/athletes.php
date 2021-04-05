@@ -3,15 +3,15 @@ include_once $_SERVER["DOCUMENT_ROOT"]."/includes/error.php";
 include_once $_SERVER["DOCUMENT_ROOT"]."/includes/roles.php";
 
 if(!canI("configureAthletes")){
-    throwError($ERROR_NO_PERMISSION, "/admin/index.php");
+    #throwError($ERROR_NO_PERMISSION, "/admin/index.php");
     // echo "nopermission";
 } 
 #include_once $_SERVER["DOCUMENT_ROOT"]."/header.php";
 
 $NO_GET_API = true;
 #include_once $_SERVER["DOCUMENT_ROOT"]."/api/index.php";
-include_once $_SERVER["DOCUMENT_ROOT"]."/api/personAPI.php";
-include_once $_SERVER["DOCUMENT_ROOT"]."/api/imgAPI.php";
+#include_once $_SERVER["DOCUMENT_ROOT"]."/api/personAPI.php";
+#include_once $_SERVER["DOCUMENT_ROOT"]."/api/imgAPI.php";
 
 $search = "";
 if(!empty($_GET["search-athlete"])){
