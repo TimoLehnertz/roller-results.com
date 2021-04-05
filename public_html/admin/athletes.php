@@ -6,7 +6,7 @@ if(!canI("configureAthletes")){
     #throwError($ERROR_NO_PERMISSION, "/admin/index.php");
     // echo "nopermission";
 } 
-include_once $_SERVER["DOCUMENT_ROOT"]."/header.php";
+#include_once $_SERVER["DOCUMENT_ROOT"]."/header.php";
 
 $NO_GET_API = true;
 include_once $_SERVER["DOCUMENT_ROOT"]."/api/index.php";
