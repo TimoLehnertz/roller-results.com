@@ -58,7 +58,7 @@ if(isset($_POST["submit-changes"])){
         foreach ($changeable as $prop => $value) {
             if(!empty($_POST[$prop])){
                 $person[$prop] = $_POST[$prop];
-            } else{
+            } else {
                 $person[$prop] = null;
             }
         }
@@ -66,6 +66,8 @@ if(isset($_POST["submit-changes"])){
             echo "rem";
             exit();
             $person["image"] = NULL;
+        } else {
+            unset($person["image"]);
         }
         // var_dump($person);
         // exit();
