@@ -36,7 +36,7 @@ $changeable = [
 
 if(isset($_POST["submit-changes"])){ 
     $canUpdate = true;
-    if(isset($_GET["idperson"])){
+    if(isset($_GET["idperson"])) {
         $idperson = intval($_GET["idperson"]);
         $name = $_POST["firstname"]. "-" . $_POST["lastname"];
         // var_dump($_FILES);
@@ -54,7 +54,7 @@ if(isset($_POST["submit-changes"])){
         //         // $canUpdate = false;
         //         // echo "<script>alert('Image is not supported. maximum size is 5mb')</script>";
         //     } 
-        }
+        // }
         foreach ($changeable as $prop => $value) {
             if(!empty($_POST[$prop])){
                 $person[$prop] = $_POST[$prop];
