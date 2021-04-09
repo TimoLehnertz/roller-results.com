@@ -260,15 +260,20 @@ function applyScores(callCallbacks){
         }
     }
     ajaxState["scoreInfluences"] = dbArgument;
+    let noupdate = false;
     if(callCallbacks){
         Profile.grayOutAll();
         for (const callback of scoreCallbacks) {
-            callback();
+            if(callback()){
+                noupdate = true;
+            }
         }
     }
-    for (const profile of Profile.allProfiles) {
-        if(profile.type == "athlete"){
-            profile.update();
+    if(!noupdate) {
+        for (const profile of Profile.allProfiles) {
+            if(profile.type == "athlete"){
+                profile.update();
+            }
         }
     }
     updateStorage();

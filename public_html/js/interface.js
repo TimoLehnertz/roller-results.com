@@ -605,7 +605,7 @@ function countryToProfileData(country, useRank = false, alternativeRank = undefi
         /**
          * Athletes
          */
-        const max = 5;
+        const max = 10;
         const athletesElem = $(`<div id="${idAthletes}"><h2 class="section__header">Top ${Math.min(country.members, max)} athletes</h2><div class="loading circle"></div></div>`)
         wrapper.append(athletesElem);
         get("countryAthletes", country.country).receive((succsess, athletes) => {

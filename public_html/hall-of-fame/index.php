@@ -62,6 +62,7 @@ echoRandWallpaper();
 
         function update(){
             initGet();
+            return true;
         }
 
         let slideshows = [];
