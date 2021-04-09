@@ -1,9 +1,294 @@
 "use strict";
 
+
+class DateSlider {
+
+    static DAYLY_MILLIS = 1 * 1000 * 60 * 60 * 25;
+
+    constructor(startDate, endDate, settings) {
+        if(!settings) {
+            settings = {};
+        }
+        this.startDate = startDate;
+        this.endDate = endDate;
+        // console.log(endDate.getFullYear())
+
+        console.log(settings.drawCircle)
+        // this.currentDate = settings.currentDate || new Date((endDate.getTime() + startDate.getTime()) / 2),
+        this.currentDate = settings.currentDate || new Date((startDate.getTime() + 1000 * 60 * 60 * 24 * 30)),
+        this.daySpan = settings.daySpan || 365 * 10;
+        this.constantVel = settings.constantVel || 100; // days per second
+        this.cyclic = settings.cyclic || true;
+        this.drawCircle = settings.drawCircle || false;
+        this.circleColor = settings.circleColor || "#ddd";
+        
+        this.onchange = function() {};
+        this.oncomplete = function() {};
+
+        this.frozen = false;
+        this.velX = 0;
+        this.initBasic();
+        this.initEvents();
+        this.animate();
+
+    }
+
+    initEvents() {
+        window.addEventListener('resize', () => this.onWindowResize(), false);
+
+        this.wrapper.get(0).addEventListener("mousedown", (e) => this.mousedown(parseTouchEvent(e)), false);
+        this.wrapper.get(0).addEventListener("touchstart", (e) => this.mousedown(parseTouchEvent(e)), false);
+
+        this.wrapper.get(0).addEventListener("mouseup", (e) => this.mouseup(parseTouchEvent(e)), false);
+        this.wrapper.get(0).addEventListener("touchend", (e) => this.mouseup(parseTouchEvent(e)), false);
+        this.wrapper.get(0).addEventListener("mouseleave", (e) => this.mouseup(parseTouchEvent(e)), false);
+        this.wrapper.get(0).addEventListener("touchleave", (e) => this.mouseup(parseTouchEvent(e)), false);
+
+        this.wrapper.get(0).addEventListener("mousemove", (e) => this.mousemove(parseTouchEvent(e)), false);
+        this.wrapper.get(0).addEventListener("touchmove", (e) => this.mousemove(parseTouchEvent(e)), false);
+    }
+
+    mousedown(e) {
+        if(this.mousePressed) return;
+        this.mousePressed = {
+            left: e.offsetX,
+            top: e.offsetY,
+            time: window.performance.now()
+        };
+    }
+
+    mouseup() {
+        if(!this.mousePressed) return;
+        this.mousePressed = false;
+    }
+
+    mousemove(e) {
+        if(!this.mousePressed) return;
+
+        const now = window.performance.now();
+        this.addPxToDate(this.mousePressed.left - e.offsetX);
+
+        this.velX = Math.min(2, (this.mousePressed.left - e.offsetX) / (now - this.mousePressed.time));
+        this.mousePressed = {
+            left: e.offsetX,
+            top: e.offsetY,
+            time: now,
+        };
+    }
+
+    onWindowResize() {
+        if(!this.parent) return;
+        const width = this.parent.width();
+        this.ctx.canvas.width = width;
+    }
+
+    initBasic() {
+        this.uid = getUid();
+        const wrapper = $("<div id='" + this.uid + "' class='date-slider'></div>");
+        wrapper.append(`<canvas class="canvas" width="1920" height="170" />`);
+        this.ctx = wrapper.find(`.canvas`).get(0).getContext('2d');
+        this.wrapper = wrapper;
+    }
+
+    getPxPerDay() {
+        return this.getWidth() / this.getDaySpanAt(this.currentDate);
+    }
+
+    dayPerSecondToPxPerMs(dayPerSecond) {
+        return dayPerSecond / 1000 * this.getPxPerDay();
+    }
+
+    animate() {
+        window.requestAnimationFrame(() => {this.animate()});
+        if(this.frozen) {
+            return;
+        }
+        if(!this.mousePressed) {
+            const target = this.dayPerSecondToPxPerMs(this.constantVel);
+            const offBy = this.velX - target;
+            this.velX -= offBy * 0.05;
+            this.addPxToDate(this.velX * (1000 / 60), false);
+        }
+        this.render();
+    }
+
+    getLeftDate() {
+        // const clone = new Date(this.currentDate.getTime());
+        // clone.setDate(Math.max(clone.getDate() - this.daySpan / 2 - 365, this.startDate.getTime()));
+        // return clone;
+        return new Date(this.currentDate.getTime() - this.getDaySpanAt(this.currentDate) / 2 * DateSlider.DAYLY_MILLIS);
+        // return new Date(Math.max(this.currentDate.getTime() - this.daySpan * DateSlider.DAYLY_MILLIS / 2, this.startDate.getTime()));
+    }
+
+    getRightDate() {
+        // const clone = new Date(this.currentDate.getTime());
+        // clone.setDate(Math.min(clone.getDate() + this.daySpan / 2));
+        return new Date(this.currentDate.getTime() + this.getDaySpanAt(this.currentDate) / 2 * DateSlider.DAYLY_MILLIS);
+        // return new Date(Math.min(this.currentDate.getTime() + this.daySpan * DateSlider.DAYLY_MILLIS / 2, this.endDate.getTime()));
+    }
+
+    getDaySpanAt(date) {
+        const right = Math.min(date.getTime() + this.daySpan * DateSlider.DAYLY_MILLIS / 2, this.endDate.getTime());
+        const left = Math.max(date.getTime() - this.daySpan * DateSlider.DAYLY_MILLIS / 2, this.startDate.getTime());
+        const rightOffset =  right - date.getTime();
+        const leftOffset =  date.getTime() - left;
+        const minOffset = Math.min(leftOffset, rightOffset);
+        // console.log(leftOffset);
+        return (minOffset / DateSlider.DAYLY_MILLIS) * 2;
+    }
+
+    addPxToDate(px, useSlowness = true) {
+        const oldDate = new Date(this.currentDate.getTime());
+        if(useSlowness) {
+            const slowness = (this.daySpan - this.getDaySpanAt(this.currentDate)) / this.daySpan;
+            px *= 1 - slowness;
+        }
+        const leftDate = this.getLeftDate().getTime();
+        const rightDate = this.getRightDate().getTime();
+        this.currentDate = new Date(Math.min(this.endDate.getTime(), Math.max(this.startDate.getTime(), this.currentDate.getTime() + (px / this.getWidth()) * (rightDate - leftDate))));
+        this.onchange(oldDate, new Date(this.currentDate.getTime()));
+        if(this.currentDate.getTime() === this.endDate.getTime() && !useSlowness) {
+            this.oncomplete();
+            if(this.cyclic) {
+                this.setDate(new Date(this.startDate.getTime() + 1000 * 60 * 60 * 24 * 30));
+            }
+        }
+    }
+
+    setDate(date) {
+        this.currentDate = new Date(date.getTime());
+        this.mousePressed = false;
+        this.velX = 0;
+    }
+
+    getWidth() {
+        return this.ctx.canvas.width;
+    }
+
+    xFromDate(date) {
+        const leftDate = this.getLeftDate().getTime();
+        const rightDate = this.getRightDate().getTime();
+        const span = rightDate - leftDate;
+        const progress = (rightDate - date.getTime()) / span;
+        return (1 - progress) * this.getWidth();
+    }
+
+    yFromX(x) {
+        const width = this.getWidth();
+        const curvature = 50;
+        let progress = Math.abs((x / width - 0.5) * 2);
+        const circleY = curvature - Math.cos(progress * Math.PI / 3.3) * curvature;
+
+        // progress += -2;
+        // progress = 1 - (progress * 10);
+        // const centerY = Math.sin(Math.max(0, progress) * Math.PI / 3) * curvature
+        const centerY = 0;
+        return circleY - centerY;
+    }
+
+    differenceInDays(a, b) {
+        return Math.ceil((b.getTime() - a.getTime()) / (1000 * 60 * 60 * 24));
+    }
+
+    differenceInMonths(a, b) {
+        return Math.ceil((b.getTime() - a.getTime()) / (1000 * 60 * 60 * 24 * 30));
+    }
+
+    daysInView() {
+        return this.differenceInDays(this.getLeftDate(), this.getRightDate());
+    }
+
+    monthsInView() {
+        return this.differenceInMonths(this.getLeftDate(), this.getRightDate());
+    }
+
+    render() {
+        this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
+
+
+        /**
+         * circle
+         */
+        if(this.drawCircle) {
+            // console.log(this.drawCircle)
+            this.ctx.fillStyle = this.circleColor;
+            const radius = this.getWidth() * 5;
+            this.ctx.beginPath();
+            this.ctx.arc(this.getWidth() / 2, radius, radius - 100, 0, Math.PI * 2);
+            this.ctx.fill();
+        }
+
+        /**
+         * current
+         */
+         this.ctx.font = '1.5rem serif';
+         const text = this.dateToString(this.currentDate);
+         const textMetrics = this.ctx.measureText(text + "");
+ 
+         this.ctx.strokeStyle = "#7779";
+         this.ctx.fillText(text, this.getWidth() / 2 - textMetrics.width / 2, 20);
+         this.ctx.beginPath();
+         this.ctx.moveTo(this.getWidth() / 2, 35);
+         this.ctx.lineTo(this.getWidth() / 2, 80);
+         this.ctx.stroke();
+
+        this.ctx.fillStyle = "white";
+        this.ctx.font = '1.3rem serif';
+        
+        /**
+         * months
+         */
+        this.ctx.strokeStyle = "#aaa";
+        const monthsInView = Math.max(this.monthsInView());
+        const amount = Math.min(1400, monthsInView);
+        for (let month = 0; month <= amount; month++) {
+            const progress = month / amount;
+            let leftDate = this.getLeftDate();
+            leftDate = new Date(leftDate.getFullYear(), leftDate.getMonth(), 0)
+            const date = new Date(leftDate.getTime() + progress * monthsInView * 30 * 24 * 60 * 60 * 1000);
+            const x = this.xFromDate(date);
+            const y = this.yFromX(x);
+            this.ctx.beginPath();
+            this.ctx.moveTo(x, 75 + y);
+            this.ctx.lineTo(x, 80 + y);
+            this.ctx.stroke();
+        }
+
+        /**
+         * Years
+         */
+        this.ctx.strokeStyle = "white";
+        const leftDate = this.getLeftDate();
+        const rightDate = this.getRightDate();
+        for (let year = leftDate.getFullYear(); year <= rightDate.getFullYear() + 1; year++) {
+            const x = this.xFromDate(new Date(year, 0, 0));
+            const y = this.yFromX(x);
+            this.ctx.beginPath();
+            this.ctx.moveTo(x, 60 + y);
+            this.ctx.lineTo(x, 80 + y);
+            this.ctx.stroke();
+            const textMetrics = this.ctx.measureText(year + "");
+            if(!isMobile() || year % 2 === 0) {
+                this.ctx.fillText(year, x - textMetrics.width / 2, 47 + y);
+            }
+        }
+    }
+
+    dateToString(date) {
+        const month = date.toLocaleString('default', { month: 'short' });
+        return month + " " + date.getFullYear();
+    }
+
+    appendTo(parent) {
+        this.parent = $(parent);
+        this.parent.append(this.wrapper);
+        this.onWindowResize();
+    }
+}
+
 /**
  * simple Accordion
  */
-
 class Accordion{
 
     // static registered = [];
@@ -1402,15 +1687,15 @@ class Profile{
                 this.elem.find(".profile__right").remove();
                 this.elem.append(this.rightElem);
             }
-            if(data.hasOwnProperty("trophy1")){
-                this.trophy1 = data.trophy1;
-                this.elem.find(".profile__trophy-1").remove();
-                this.elem.append(this.getTrophy(0));
-            }
             if(data.hasOwnProperty("trophy2")){
                 this.trophy2 = data.trophy2;
                 this.elem.find(".profile__trophy-2").remove();
                 this.elem.append(this.getTrophy(1));
+            }
+            if(data.hasOwnProperty("trophy1")){
+                this.trophy1 = data.trophy1;
+                this.elem.find(".profile__trophy-1").remove();
+                this.elem.append(this.getTrophy(0));
             }
             if(data.hasOwnProperty("trophy3")){
                 this.trophy3 = data.trophy3;
@@ -1941,6 +2226,18 @@ function isDomElem(obj) {
         }
         return false;
     }
+}
+
+function parseTouchEvent(event) {
+    if(event.touches?.length > 0) {
+        event.clientX = event.touches[0].clientX;
+        event.clientY = event.touches[0].clientY;
+
+        const rect = event.target.getBoundingClientRect();
+        event.offsetX = event.clientX - rect.left;
+        event.offsetY = event.clientX - rect.top;
+    }
+    return event;
 }
 
 function numberAnimate(setup){

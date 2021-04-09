@@ -1,3 +1,5 @@
+"use strict";
+
 function countrytableFrompersons(persons){
     const table = [];
     for (const person of persons) {

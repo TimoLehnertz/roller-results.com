@@ -5,6 +5,8 @@
 
 .index
     background: #000
+    position: relative
+
     &::after
         content: ""
         position: absolute
@@ -15,12 +17,13 @@
         background: linear-gradient(-30deg, #{$a}22 0%, #{$d}22 100%),radial-gradient(at 0% 20%, #{$d}22 0%, rgba(0,0,0,0) 20%), radial-gradient(at 90% 0%, #{$d}33 0%, rgba(0,0,0,0) 70%), radial-gradient(at 100% 100%, #{$a}44 0%, rgba(0,0,0,0) 30%)
     // background:  radial-gradient(at 10% 20%, $a 0%, rgba(0,0,0,0) 40%), radial-gradient(at 80% 70%, $c 0%, rgba(0,0,0,0) 40%)
 
-    margin-top: -7rem
 
     .globe
-        margin-left: 30vw;
-        margin-top: -5rem
-        height: 120vh
+        margin-top: -7rem
+        margin-left: 30vw
+        position: relative
+        // margin-top: -5rem
+        height: 100vh
         width: 70vw
         margin-left: 35vw
         transition: all 0.1s
@@ -29,7 +32,7 @@
             margin-left: 0
             width: 100vw
             height: 100vh
-            padding-top: 25vh
+            // padding-top: 25vh
 
 
     .date
@@ -46,10 +49,11 @@
         backdrop-filter: blur(3px);
         color: white
         border-radius: 0.4rem
-        box-shadow: 5px 5px 20px 4px rgba(0,0,0,1)
+        box-shadow: 5px 5px 20px 0px rgba(0,0,0,0.6)
         opacity: 0
         transform: translateY(-1rem)
-        transition: all 0.1s
+        transition: all 0.2s
+        z-index: 4
         pointer-events: none
 
         &.drawn
@@ -76,5 +80,42 @@
             max-height: 10rem
             overflow: auto
     
+        &::before
+            content: ""
+            z-index: 4
+            position: absolute
+            bottom: 0
+            top: 0
+            left: 0
+            right: 0
+            transform: scale(1.3)
+            // background: #0004
+    
+    .dates
+        z-index: 1
+        margin-top: -200px
+        transform: translateY(40%)
+        position: relative
 
+    .curvature
+        position: relative
+        z-index: 2
 
+    .content
+        // margin-top: -40px
+        background: #ddd
+        color: black
+        padding: 3rem
+        position: relative
+        z-index: 2
+
+        // &::before
+        //     position: absolute
+        //     content: ""
+        //     top: -50px
+        //     bottom: calc(100% - 500px)
+        //     left: -100vw
+        //     width: 400vh
+        //     border-top-left-radius: 50%
+        //     border-top-right-radius: 50%
+        //     background: #ddd

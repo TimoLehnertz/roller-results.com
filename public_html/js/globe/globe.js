@@ -781,10 +781,10 @@ export var DAT = DAT || {};
    }
 
    function onWindowResize( event ) {
-    console.log(container.offsetHeight);
-    camera.aspect = container.offsetWidth / container.offsetHeight;
+    // console.log($(container).innerHeight());
+    camera.aspect = container.offsetWidth / container.clientHeight;
     camera.updateProjectionMatrix();
-    renderer.setSize( container.offsetWidth, container.offsetHeight );
+    renderer.setSize( container.offsetWidth, container.clientHeight );
    }
  
    function zoom(delta) {
@@ -801,12 +801,16 @@ export var DAT = DAT || {};
  
    function render() {
      zoom(curZoomSpeed);
-     checkMouse();
+     if(!isMobile()) {
+       checkMouse();
+     }
      rotation.x += (target.x - rotation.x) * 0.1;
      rotation.y += (target.y - rotation.y) * 0.1;
      distance += (distanceTarget - distance) * 0.3;
     if(rotate) {
         target.x -= 0.001;
+    } else {
+      target.x = rotation.x;
     }
 
      camera.position.x = distance * Math.sin(rotation.x) * Math.cos(rotation.y);
@@ -927,23 +931,23 @@ export var DAT = DAT || {};
           -(e.offsetY/ container.offsetHeight) * 2 + 1);
         raycaster.setFromCamera(mouseVec, camera);
     	  intersects = raycaster.intersectObjects(mouseObjects);
-
+          // console.log(mouseVec);
         let hovered;
         if(intersects.length > 0) {
           const hit = intersects[0];
           hovered = hit.object.id;
           if(hit.object.type === "Line") {
             if(hoverCallbacks[hit.object.id]) {
-              hoverCallbacks[hit.object.id](hit.object, e);
+              hoverCallbacks[hit.object.id](hit.object, e, mousedown);
             }
             if(click && clickCallbacks[hit.object.id]) {
-              clickCallbacks[hit.object.id](hit.object, e);
+              clickCallbacks[hit.object.id](hit.object, e, mousedown);
             }
           }
         }
         if(hovered !== lastHovered) {
           if(leaveCallbacks[lastHovered]) {
-            leaveCallbacks[lastHovered](scene.getObjectById(lastHovered, true), e);
+            leaveCallbacks[lastHovered](scene.getObjectById(lastHovered, true), e, mousedown);
           }
         }
         lastHovered = hovered;

@@ -10,32 +10,36 @@ include_once "api/imgAPI.php";
 // $amountRace = getRaceAmount();
 // $amountCompetition = getCompetitionAmount();
 
-// echo "<script>
+// echo "<>
 //     const amountCountry = $amountCountry;
 //     const amountAthlete = $amountAthlete;
 //     const amountResult = $amountResult;
 //     const amountRace = $amountRace;
 //     const amountCompetition = $amountCompetition;
-// </script>";
+// </>";
 // echoRandWallpaper();
 
 ?>
 <!-- geoInterpolate() -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.2.2/d3.min.js"></script>
 
-<!-- <script type="text/javascript" src="/js/globe/third-party/Detector.js"></script> -->
-<!-- <script type="text/javascript" src="/js/globe/third-party/three.min.js"></script> -->
-<!-- <script type="module" src="/js/globe/third-party/Tween.js"></script> -->
+<!-- < type="text/javascript" src="/js/globe/third-party/Detector.js"></> -->
+<!-- < type="text/javascript" src="/js/globe/third-party/three.min.js"></> -->
+<!-- < type="module" src="/js/globe/third-party/Tween.js"></> -->
 <script type="module" src="/js/globe/globe.js"></script>
 <main class="main index">
-    <div class="date"></div>
-    <div id="container" class="globe"/>
+    <div id="container" class="globe"></div>
+    <div class="dates"></div>
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" preserveAspectRatio="none" viewBox="0 0 1680 40" class="curvature" style="bottom: -1px;"><path d="M0 40h1680V30S1340 0 840 0 0 30 0 30z" fill="#ddd"></path></svg>
+    <div class="content">
+        <h1>Roller results</h1>
+        <p>
+            Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply  dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lore  Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of         Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of 
+        </p>
+    </div>
 </main>
 <script type="module">
     import { DAT } from "/js/globe/globe.js";
-
-    console.log(hexToDecimal("#0"));
-    console.log(hexToDecimal("#FFFFFF"));
 
     var container = document.getElementById( 'container' );
     var globe = new DAT.Globe( container );
@@ -46,6 +50,7 @@ include_once "api/imgAPI.php";
             <div class="description">description</div>
         </div>`);
     $(".main").append(overlay);
+    // overlay.on("hover", (e) => e.stopPropagation())
 
     // const controller = globe.trajectoryFromTo(50.800209, 6.764670, 0, 0, {color: 0xff44aa});
 
@@ -76,6 +81,17 @@ include_once "api/imgAPI.php";
     globe.initSurfaceDots();
     globe.animate();
 
+    /**
+     * slider
+     */
+    let date = new Date(1995, 0, 0);
+    const slider = new DateSlider(new Date(1931, 0, 0), new Date(Date.now()), {
+        currentDate: new Date(date.getTime()),
+        drawCircle: false
+    });
+    slider.onchange = updateDate;
+    slider.appendTo($(".dates"));
+
     let data;
     let pause = false;
     get("worldMovement").receive((succsess, response) => {
@@ -102,9 +118,12 @@ include_once "api/imgAPI.php";
                 movement.athleteLongitude + randomY,
                 movement.compLatitude, movement.compLongitude,
                 {color: hexToDecimal(movement.athleteCountryColor), visible: false,
-                    onhover: (me, mouse) => {
-                        overlay.css("top", Math.min(window.innerHeight - (220 + Math.min(athletes.length, 8) * 16), mouse.clientY));
-                        overlay.css("left", Math.min(window.innerWidth - 330, mouse.clientX));
+                    onhover: (me, mouse, mousedown) => {
+                        if(mousedown) return;
+                        slider.frozen = true;
+                        // overlay.css("top", Math.min(window.innerHeight - (220 + Math.min(athletes.length, 8) * 16), mouse.clientY));
+                        overlay.css("top", mouse.offsetY - 5);
+                        overlay.css("left", Math.min(window.innerWidth - 280, mouse.offsetX - 5 + $(".globe").offset().left));
                         overlay.addClass("drawn");
                         overlay.find(".head").html(`${movement.athleteCount} athletes from <a href="/country/index.php?id=${movement.athleteCountryName}">${movement.athleteCountryName}</a>`);
                         let medalString  = "";
@@ -133,12 +152,13 @@ include_once "api/imgAPI.php";
                         globe.stopRotation();
                         globe.pauseAnimations();
                         pause = true;
-                    }, onleave: (me, mouse) => {
+                    }, onleave: (me, mouse, mousedown) => {
                         overlay.removeClass("drawn");
                         me.material.color.set(hexToDecimal(movement.athleteCountryColor));
                         globe.startRotation();
                         globe.startAnimations()
                         pause = false;
+                        slider.frozen = false;
                     }, onclick: (me) => {
                         console.log("click");
                     }
@@ -146,17 +166,8 @@ include_once "api/imgAPI.php";
                 movement.controllers.push(controller);
             }
         }
-        // console.log(data);
-
-        window.setInterval(() => {
-            if(pause) return;
-            date.setDate(date.getDate() + 1);
-            $(".date").text(dateToString(date));
-            dateUpdated();
-        }, 30);
     });
 
-    const date = new Date(1995, 11, 20);
     const visible = [];
 
     function hexToDecimal(hex) {
@@ -172,27 +183,26 @@ include_once "api/imgAPI.php";
         }
     }
 
-    function dateUpdated() {
-        for (const movement of data) {
-            if(sameDay(movement.date, date) && !visible.includes(movement)){
-                /**
-                 * add
-                 */
-                visible.push(movement);
-                for (const controller of movement.controllers) {
-                    controller.animate("in", "forewards", 5000 * random(0.7, 1.3)).onComplete(() => {
-                        controller.animate("out", "backwards", 1000, 1000);
-                        visible.splice(visible.indexOf(movement), 1);
-                    });
+    function updateDate(oldDate, newDate) {
+        if(!data) return;
+        const min = Math.min(oldDate.getTime(), newDate.getTime());
+        const max = Math.max(oldDate.getTime(), newDate.getTime());
+        for (let i = min; i < max; i += 1000 * 60 * 60 * 24) {
+            date = new Date(i);
+            for (const movement of data) {
+                if(sameDay(movement.date, date) && !visible.includes(movement)){
+                    /**
+                     * add
+                     */
+                    visible.push(movement);
+                    for (const controller of movement.controllers) {
+                        controller.animate("in", "forewards", 3000 * random(0.7, 1.3)).onComplete(() => {
+                            controller.animate("out", "backwards", 700, 2000);
+                            visible.splice(visible.indexOf(movement), 1);
+                        });
+                    }
                 }
             }
-            // if(!sameDay(movement.date, date) && visible.includes(movement)){
-            //     /**
-            //      * renove
-            //      */
-            //     visible.splice(visible.indexOf(movement), 1);
-            //     movement.controller.animate("out", "backwards", 2000);
-            // }
         }
     }
 
