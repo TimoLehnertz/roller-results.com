@@ -75,6 +75,7 @@ echoRandWallpaper();
 
         function update(){
             initGet();
+            return true;
         }
 
         function init(skateCountries){
