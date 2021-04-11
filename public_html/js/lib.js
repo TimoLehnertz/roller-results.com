@@ -275,7 +275,7 @@ class DateSlider {
     }
 
     dateToString(date) {
-        const month = date.toLocaleString('default', { month: 'short' });
+        const month = date.toLocaleString('default', { locales: "en-US", month: 'short' });
         return month + " " + date.getFullYear();
     }
 
