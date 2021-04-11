@@ -468,7 +468,7 @@ export var DAT = DAT || {};
 
         const resolution = settings.resolution || 26;
         const color = settings.color || 0xff0000
-        const material = settings.material || new THREE.LineDashedMaterial( {color, opacity: 0.5, dashSize: 0, gapSize: 100000, scale: 1} );
+        const material = settings.material || new THREE.LineDashedMaterial( {linewidth: 10, color, opacity: 0.5, dashSize: 0, gapSize: 100000, scale: 1} );
         const visible = settings.visible || true;
         
         const onclick = settings.onclick || false;
