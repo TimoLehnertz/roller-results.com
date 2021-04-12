@@ -92,8 +92,8 @@ include_once "api/imgAPI.php";
     /**
      * slider
      */
-    let date = new Date(1995, 0, 0);
-    const slider = new DateSlider(new Date(1931, 0, 0), new Date(Date.now()), {
+    let date = new Date(1992, 0, 0);
+    const slider = new DateSlider(new Date(1929, 0, 0), new Date(Date.now()), {
         currentDate: new Date(date.getTime()),
         drawCircle: false
     });
@@ -119,8 +119,11 @@ include_once "api/imgAPI.php";
             movement.date = mysqlDateToJsDate(movement.date);
             // movement.athleteCountryRadius = Math.min(movement.athleteCountryRadius, 100);
             for (let i = 0; i < Math.max(1, movement.athleteCount / 10000); i++) {
-                const randomX = globe.kmToDregree(Math.random() * movement.athleteCountryRadius * 2 - movement.athleteCountryRadius) * 0.7;
-                const randomY = globe.kmToDregree(Math.random() * movement.athleteCountryRadius * 2 - movement.athleteCountryRadius) * 0.7;
+                // const randomX = globe.kmToDregree(Math.random() * movement.athleteCountryRadius * 2 - movement.athleteCountryRadius) * 0.7;
+//                 // const randomY = globe.kmToDregree(Math.random() * movement.athleteCountryRadius * 2 - movement.athleteCountryRadius) * 0.7;
+
+                const randomX = 0;
+                const randomY = 0;
                 
                 const controller = globe.trajectoryFromTo(movement.athleteLatitude + randomX,
                 movement.athleteLongitude + randomY,
@@ -154,7 +157,7 @@ include_once "api/imgAPI.php";
                         }
                         athleteHtml += "</ol>";
                         overlay.find(".description").html(
-                            `Competing at the <br><a href="/competition?id=${movement.idCompetition}">${movement.competitionType} in ${movement.competitionLocation} ${movement.competitionCountryName}</a><br>
+                            `${dateToMonthYear(movement.date)}<br><br>Competing at the <br><a href="/competition?id=${movement.idCompetition}">${movement.competitionType} in ${movement.competitionLocation} ${movement.competitionCountryName}</a><br>
                             ${medalString}<div class="athletes"><p>Athletes</p>${athleteHtml}</div>`);
                         me.material.color.set(0xffffff);
                         globe.stopRotation();
@@ -198,14 +201,16 @@ include_once "api/imgAPI.php";
         for (let i = min; i < max; i += 1000 * 60 * 60 * 24) {
             date = new Date(i);
             for (const movement of data) {
+                // console.log(movement);
                 if(sameDay(movement.date, date) && !visible.includes(movement)){
                     /**
                      * add
                      */
                     visible.push(movement);
                     for (const controller of movement.controllers) {
-                        controller.animate("in", "forewards", 3000 * random(0.7, 1.3)).onComplete(() => {
-                            controller.animate("out", "backwards", 700, 2000);
+                        controller.stop();
+                        controller.animate("in", "forewards", 2800 * random(0.7, 1.3)).onComplete(() => {
+                            controller.animate("out", "backwards", 7000, 1500);
                             visible.splice(visible.indexOf(movement), 1);
                         });
                     }
@@ -220,7 +225,9 @@ include_once "api/imgAPI.php";
 
     function mysqlDateToJsDate(mysqlDate) {
         const dateParts = mysqlDate.split("-");
-        return new Date(dateParts[0], dateParts[1] - 1, dateParts[2].substr(0,2));
+        const date = new Date(dateParts[0], dateParts[1] - 1, dateParts[2].substr(0,2));
+        // console.log(date);
+        return date;
     }
 
     function sameDay(d1, d2) {

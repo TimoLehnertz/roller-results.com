@@ -20,23 +20,25 @@
 
     .message
         position: absolute
-        max-width: 40rem
+        max-width: 30rem
         color: white
         z-index: 5
         line-height: 0.96
-        margin-top: 10rem
-        margin-left: 2rem
+        margin-top: 7rem
+        margin-left: 7vw
 
         .headline
             letter-spacing: 0.05em
             font-size: 4rem
             font-family: $font-title
             margin-bottom: 1.4rem
+            2px 2px 7px rgba(0,0,0,0.68)
 
         p
             color: #cccd
             font-size: 1.8rem
             line-height: 1.3em
+            2px 2px 7px rgba(0,0,0,0.68)
 
 
     .globe
@@ -118,7 +120,7 @@
 
     .lower
         pointer-events: none
-        margin-top: 130vh
+        margin-top: 110vh
         color: black
         position: relative
         z-index: 2
@@ -128,12 +130,20 @@
         background: #ddd
         padding: 3rem
 
-    @media screen and (max-width: 65rem)
+    @media screen and (max-width: 55rem) and (hover: hover)
+        .message
+            .headline
+                font-size: 3.5rem !important
+
+            p
+                font-size: 1.1rem !important
+
+    @media screen and (max-width: 55rem)
         .globe
             margin-left: 0
             width: 100vw
-            // padding-top: 50vh
-            margin-top: 40vh
+            padding-top: 30vw
+            // margin-top: 40vh
             height: 100vh
 
         .curvature
@@ -141,15 +151,17 @@
             width: 100vw
 
         .message
-            margin-top: 4rem
-            width: 100vw
+            margin-top: 3rem
+            margin-left: 50vw
+            transform: translateX(-50%)
+            // width: 100vw
             padding: 0 0.5rem
             text-align: center
-            max-width: 100vw
-            margin-left: 0
+            // max-width: 100vw
+            // margin-left: 0
 
             .headline
-                font-size: 2.4rem
+                font-size: 2.2rem
 
             p
-                font-size: 0.9rem
+                font-size: 0.8rem

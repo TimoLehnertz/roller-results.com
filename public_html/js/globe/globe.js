@@ -266,7 +266,9 @@ export var DAT = DAT || {};
  
      document.addEventListener('keydown', onDocumentKeyDown, false);
  
-     window.addEventListener('resize', onWindowResize, false);
+     window.addEventListener('resize', () => {
+       window.setTimeout(onWindowResize, 150);
+    }, false);
  
      container.addEventListener('mouseover', function() {
        overRenderer = true;
@@ -490,11 +492,14 @@ export var DAT = DAT || {};
         const ld = splineObject.geometry.getAttribute("lineDistance");
         const lineLength = ld.getX(ld.count - 1);
         splineObject.visible = visible;
-        splineObject2.visible = false;  
+        splineObject2.visible = false;
+        let stopped = false;
+        let usedEffects = [];
 
         return {
             animate: (direction = "in", fillMode = "forewards", duration = 1000, delay = 0, easing = "easeInQuad") => {
               // console.log(direction)
+                stopped = false;
                 direction = direction === "in";
                 fillMode = fillMode === "forewards";
 
@@ -505,15 +510,19 @@ export var DAT = DAT || {};
                  */
                 if(onhover || onclick || onleave) {
                   mouseObjects.push(splineObject);
+                  mouseObjects.push(splineObject2);
                 }
                 if(onhover) {
                   hoverCallbacks[splineObject.id] = onhover;
+                  hoverCallbacks[splineObject2.id] = onhover;
                 }
                 if(onhover) {
                   clickCallbacks[splineObject.id] = onclick;
+                  clickCallbacks[splineObject2.id] = onclick;
                 }
                 if(onleave) {
                   leaveCallbacks[splineObject.id] = onleave;
+                  leaveCallbacks[splineObject2.id] = onleave;
                 }
 
                 const effect = {
@@ -536,16 +545,19 @@ export var DAT = DAT || {};
                             splineObject.visible = false;
                         }
                     }
-                }
+                };
 
                 const onCompleteObj = {
                     onComplete: (func) => {
                         onCompleteObj.callback = () => {
+                          
                             if(!direction) {
                                 removeEntity(splineObject);
                                 removeEntity(splineObject2);
                             }
-                            func();
+                            if(!stopped){
+                              func();
+                            }
                         }
                     },
                     callback: () => {
@@ -557,7 +569,18 @@ export var DAT = DAT || {};
                 }
                 effect.onComplete = onCompleteObj;
                 effects.push(effect);
+                usedEffects.push(effect);
                 return onCompleteObj;
+            },
+            stop: () => {
+              stopped = false;
+              for (const removal of usedEffects) {
+                const index = effects.indexOf(removal);
+                if(index >= 0) {
+                  effects.splice(index, 1);
+                }
+              }
+              usedEffects = [];
             },
         };
     }
@@ -707,7 +730,7 @@ export var DAT = DAT || {};
       targetOnDown.x = target.x;
       targetOnDown.y = target.y;
       
-      container.style.cursor = 'move';
+      container.style.cursor = 'grabbing';
       onMouseMove(event)
    }
  
@@ -780,7 +803,7 @@ export var DAT = DAT || {};
      }
    }
 
-   function onWindowResize( event ) {
+   function onWindowResize(  ) {
     // console.log($(container).innerHeight());
     camera.aspect = container.offsetWidth / container.clientHeight;
     camera.updateProjectionMatrix();
