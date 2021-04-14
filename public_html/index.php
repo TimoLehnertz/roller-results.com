@@ -100,8 +100,25 @@ include_once "api/imgAPI.php";
     slider.onchange = updateDate;
     slider.appendTo($(".dates"));
 
+    let overlayOpened = false;
     let data;
     let pause = false;
+    // let me1 = null;
+    // let meColor = null;
+
+    // $(window).click(() => {
+    //     if(isMobile() && overlayOpened) {
+    //         console.log("close")
+    //         overlayOpened = false;
+    //         overlay.removeClass("drawn");
+    //         me1.material.color.set(hexToDecimal(meColor));
+    //         globe.startRotation();
+    //         globe.startAnimations();
+    //         pause = false;
+    //         slider.frozen = false;
+    //     }
+    // });
+
     get("worldMovement").receive((succsess, response) => {
         data = response;
         for (const movement of data) {
@@ -121,17 +138,19 @@ include_once "api/imgAPI.php";
             for (let i = 0; i < Math.max(1, movement.athleteCount / 10000); i++) {
                 // const randomX = globe.kmToDregree(Math.random() * movement.athleteCountryRadius * 2 - movement.athleteCountryRadius) * 0.7;
 //                 // const randomY = globe.kmToDregree(Math.random() * movement.athleteCountryRadius * 2 - movement.athleteCountryRadius) * 0.7;
-
+                const color = "#f69";
                 const randomX = 0;
                 const randomY = 0;
                 
                 const controller = globe.trajectoryFromTo(movement.athleteLatitude + randomX,
                 movement.athleteLongitude + randomY,
                 movement.compLatitude, movement.compLongitude,
-                {color: hexToDecimal(movement.athleteCountryColor), visible: false,
+                // {color: hexToDecimal(movement.athleteCountryColor), visible: false,
+                {color: hexToDecimal(color), visible: false,
                     onhover: (me, mouse, mousedown) => {
                         if(mousedown) return;
                         slider.frozen = true;
+                        overlayOpened = true;
                         // overlay.css("top", Math.min(window.innerHeight - (220 + Math.min(athletes.length, 8) * 16), mouse.clientY));
                         overlay.css("top", mouse.offsetY - 5 + + $(".globe").offset().top);
                         overlay.css("left", Math.min(isMobile() ? 10 : window.innerWidth - 280, mouse.offsetX - 5 + $(".globe").offset().left));
@@ -164,14 +183,18 @@ include_once "api/imgAPI.php";
                         globe.pauseAnimations();
                         pause = true;
                     }, onleave: (me, mouse, mousedown) => {
+                        // me1 = me;
+                        overlayOpened = false;
                         overlay.removeClass("drawn");
+                        // meColor = movement.athleteCountryColor;
                         me.material.color.set(hexToDecimal(movement.athleteCountryColor));
+                        me.material.color.set(hexToDecimal(color));
                         globe.startRotation();
-                        globe.startAnimations()
+                        globe.startAnimations();
                         pause = false;
                         slider.frozen = false;
                     }, onclick: (me) => {
-                        console.log("click");
+                        // console.log("click");
                     }
                 });
                 movement.controllers.push(controller);

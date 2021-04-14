@@ -23,6 +23,12 @@ echoRandWallpaper();
             <h3 class="top">Top 10 skaters</h3>
             <div class="slideshow best"></div>
 
+            <h3 class="top">Top 10 women</h3>
+            <div class="slideshow best-women"></div>
+
+            <h3 class="top">Top 10 men</h3>
+            <div class="slideshow best-men"></div>
+
             <h3 class="top">Top 10 sprinters</h3>
             <div class="slideshow sprinters"></div>
 
@@ -87,8 +93,18 @@ echoRandWallpaper();
                 profile.appendTo(".slideshow.best");
             }
             slideshows.push(new Slideshow($(".slideshow.best")));
-            sortArray(bestSkaters, "scoreShort");
 
+            // console.log(bestSkaters)
+            // sortArray(bestSkaters,  "score");
+            // for (let i = 0; i < topAmount; i++) {
+            //     const athlete = bestSkaters[i];
+            //     const profile = athleteToProfile(athlete, Profile.CARD, true, i + 1);
+            //     profile.appendTo(".slideshow.best");
+            // }
+            // slideshows.push(new Slideshow($(".slideshow.best")));
+
+
+            sortArray(bestSkaters, "scoreShort");
             for (let i = 0; i < topAmount; i++) {
                 const athlete = bestSkaters[i];
                 const profile = athleteToProfile(athlete, Profile.CARD, true, i + 1);
