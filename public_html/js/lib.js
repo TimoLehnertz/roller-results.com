@@ -11,7 +11,7 @@ class DateSlider {
         }
         this.startDate = startDate;
         this.endDate = endDate;
-        
+
         this.currentDate = settings.currentDate || new Date((startDate.getTime() + 1000 * 60 * 60 * 24 * 30)),
         this.daySpan = settings.daySpan || 365 * 10;
         this.constantVel = settings.constantVel || 100; // days per second
@@ -480,8 +480,8 @@ class Slideshow{
         this.pressed = false;
         this.x = this.elem.get()[0].scrollLeft;
         this.update();
-        // e.stopPropagation();
-        // e.preventDefault();
+        e.stopPropagation();
+        e.preventDefault();
     }
 
     move(e){

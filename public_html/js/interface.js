@@ -353,20 +353,18 @@ function pathFromRace(r){
 }
 
 function linksFromLinkString(string){
-    if(string === undefined){
+    if(!string || string.length === 0){
         return [];
     }
-    if(string === null){
-        return [];
-    }
-    if(string.length === 0){
-        return [];
-    }
-    let links = string.split("https://www.youtube.com/watch?v=");
+    let links = string.split(";");
     for (let i = 0; i < links.length; i++) {
-        links[i] = links[i].replace(";", "");
+        links[i] = links[i].split("v=")[1].split("&")[0];
     }
-    links.splice(0,1);
+    // let links = string.split("https://www.youtube.com/watch?v=");
+    // for (let i = 0; i < links.length; i++) {
+    //     links[i] = links[i].replace(";", "");
+    // }
+    // links.splice(0,1);
     return links;
 }
 

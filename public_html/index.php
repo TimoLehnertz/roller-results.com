@@ -43,6 +43,19 @@ include_once "api/imgAPI.php";
         <p>
             Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply  dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lore  Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of         Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of 
         </p>
+
+        <div class="hall-of-fame">
+            <div class="best-skaters">
+                <a class="no-underline" href="/hall-of-fame/index.php">
+                    <div class="index-card">
+                        <h2>Hall of fame</h2>
+                        <p>See the best skaters since 1930</p>
+                    </div>
+                </a>
+                <div class="loading circle"></div>
+            </div>
+        </div>
+
     </div>
     </div>
 </main>
@@ -271,6 +284,65 @@ include_once "api/imgAPI.php";
         return month + " " + date.getFullYear();
     }
 
+
+
+    /**
+     * hall of fame
+     */
+    scoreCallbacks.push(update);
+
+    initGet();
+
+    function initGet(){
+        get("hallOfFame").receive((succsess, bestSkaters) => {
+            console.log(bestSkaters);
+            if(succsess){
+                clear();
+                init(bestSkaters);
+            } else{
+                alert("An error occoured :/");
+            }
+        });
+    }
+
+    // anime({
+    //     targets: ".amount",
+    //     innerText: [athletesAmount - 100, athletesAmount],
+    //     easing: "easeOutQuad",
+    //     round: true,
+    //     duration: 2500,
+    //     update: function(a) {
+    //         const value = a.animations[0].currentValue;
+    //         document.querySelectorAll(".amount").innerHTML = value;
+    //     }
+    // });
+
+    function update(){
+        initGet();
+        return true;
+    }
+
+    let slideshows = [];
+    
+    function clear(){
+        for (const slideshow of slideshows) {
+            slideshow.remove();
+        }
+        slideshows = [];
+    }
+
+    function init(bestSkaters){
+        $(".best-skaters .loading").remove();
+        const topAmount = 5
+
+        sortArray(bestSkaters, "score");
+        for (let i = 0; i < topAmount; i++) {
+            const athlete = bestSkaters[i];
+            const profile = athleteToProfile(athlete, Profile.CARD, true, i + 1);
+            profile.appendTo(".best-skaters");
+        }
+        slideshows.push(new Slideshow($(".best-skaters")));
+    }
 </script>
 <?php
     include_once "footer.php";

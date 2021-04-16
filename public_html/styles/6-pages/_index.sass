@@ -128,7 +128,72 @@
     .content
         pointer-events: auto
         background: #ddd
-        padding: 3rem
+        padding-top: 3rem
+
+        h1
+            text-align: center
+            font-family: $font-a
+            font-size: 3rem
+            margin: 0
+
+        & > p
+            padding: 3rem
+
+        a
+            overflow: visible
+
+    
+
+    .index-card
+        width: 18.75rem
+        height: 31.25rem
+        margin-right: 1rem
+        padding: 1.5rem
+        z-index: 1
+        transition: all 0.2s
+        border-radius: 1rem
+        overflow: hidden
+        position: relative
+        color: white
+
+        h2
+            text-align: center
+            margin: 1rem 0
+
+
+        &:hover
+            transform: scale(1.02)
+            box-shadow: 10px 10px 32px -9px rgba(0,0,0,0.59)
+
+        &:hover::after
+            transform: scale(0.92, 0.94)
+
+        &::before
+            animation: rotate 4s
+            animation-iteration-count: infinite
+            animation-timing-function: linear;
+            content: ''
+            position: absolute
+            top: -100%
+            left: -100%
+            width: 300%
+            height: 300%
+            background: linear-gradient(105deg, $a 30%, yellow 70%)
+            border-radius: 1rem
+            z-index: -2
+
+        &::after
+            content: ''
+            position: absolute
+            top: 0
+            left: 0
+            width: 100%
+            height: 100%
+            transition: all 0.2s
+            transform: scale(0.95, 0.97)
+            background: linear-gradient(105deg, $a 0%, $b 100%)
+            border-radius: 1rem
+            z-index: -1
 
     @media screen and (max-width: 55rem) and (hover: hover)
         .message

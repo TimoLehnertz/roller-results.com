@@ -23,7 +23,6 @@ echo "<script>const race = ". json_encode($race) .";</script>";
     <script>
         getRaceTable($("main"), race);
     </script>
-    <iframe src="https://www.facebook.com/media/set/?set=a.2385945671518972&type=3" frameborder="0"></iframe>
 </main>
 <?php
 include_once "../footer.php";//s
