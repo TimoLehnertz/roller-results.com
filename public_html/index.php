@@ -41,7 +41,7 @@ include_once "api/imgAPI.php";
         <div class="content">
         <h1>Roller results</h1>
         <p>
-            Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply  dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lore  Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of         Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of 
+            Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply  dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lore  Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of 
         </p>
 
         <div class="hall-of-fame">
@@ -49,13 +49,38 @@ include_once "api/imgAPI.php";
                 <a class="no-underline" href="/hall-of-fame/index.php">
                     <div class="index-card">
                         <h2>Hall of fame</h2>
-                        <p>See the best skaters since 1930</p>
+                        <ul>
+                            <li>See the best skaters since 1930</li>
+                            <li>All Athletes are sorted by their live calculated score</li>
+                            <li>Take advantage of the setttings to change the way scores are calculated</li>
+                            <li class="top-five">Top 5 Skaters<i class="fas fa-angle-double-right arrow-right"></i></li>
+                            <li class="mobile-only margin top">Swipe left to reveal skaters</li>
+                        </ul>
                     </div>
                 </a>
-                <div class="loading circle"></div>
             </div>
         </div>
-
+        <p>
+            Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply  dummy text of Lorem Ipsum. Lorem Ipsum
+        </p>
+        <div class="hall-of-fame">
+            <div class="best-countries">
+                <a class="no-underline" href="/hall-of-fame/index.php">
+                    <div class="index-card">
+                        <h2>Hall of fame</h2>
+                        <ul>
+                            <li>See the best performing countries</li>
+                            <li>Take advantage of the setttings to change the way scores are calculated</li>
+                            <li class="top-five">Top 5 Countries<i class="fas fa-angle-double-right arrow-right"></i></li>
+                            <li class="mobile-only margin top">Swipe left to reveal countries</li>
+                        </ul>
+                    </div>
+                </a>
+            </div>
+        </div>
+        <p>
+            Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply  dummy text of Lorem Ipsum. Lorem Ipsum
+        </p>
     </div>
     </div>
 </main>
@@ -246,7 +271,7 @@ include_once "api/imgAPI.php";
                     for (const controller of movement.controllers) {
                         controller.stop();
                         controller.animate("in", "forewards", 2800 * random(0.7, 1.3)).onComplete(() => {
-                            controller.animate("out", "backwards", 7000, 1500);
+                            controller.animate("out", "backwards", 2000, 2500);
                             visible.splice(visible.indexOf(movement), 1);
                         });
                     }
@@ -290,58 +315,81 @@ include_once "api/imgAPI.php";
      * hall of fame
      */
     scoreCallbacks.push(update);
-
+    
+    const fameSlideshow = new Slideshow($(".best-skaters"));
+    const countrieSlideshow = new Slideshow($(".best-countries"));
     initGet();
+
+    /**
+     * placeholders
+     */
+    const placeholders = [{},{},{},{},{},];
+    initBestSkaters(placeholders, true);
+    initCountries(placeholders, true);
 
     function initGet(){
         get("hallOfFame").receive((succsess, bestSkaters) => {
-            console.log(bestSkaters);
             if(succsess){
-                clear();
-                init(bestSkaters);
+                clearBestSkaters();
+                initBestSkaters(bestSkaters);
+            } else{
+                alert("An error occoured :/");
+            }
+        });
+        get("countries").receive((succsess, countries) => {
+            if(succsess){
+                clearCountries();
+                initCountries(countries);
             } else{
                 alert("An error occoured :/");
             }
         });
     }
 
-    // anime({
-    //     targets: ".amount",
-    //     innerText: [athletesAmount - 100, athletesAmount],
-    //     easing: "easeOutQuad",
-    //     round: true,
-    //     duration: 2500,
-    //     update: function(a) {
-    //         const value = a.animations[0].currentValue;
-    //         document.querySelectorAll(".amount").innerHTML = value;
-    //     }
-    // });
-
-    function update(){
+    function update() {
         initGet();
         return true;
     }
 
-    let slideshows = [];
     
-    function clear(){
-        for (const slideshow of slideshows) {
-            slideshow.remove();
-        }
-        slideshows = [];
+    function clearBestSkaters(){
+        $(".best-skaters .profile__wrapper").remove();
     }
 
-    function init(bestSkaters){
-        $(".best-skaters .loading").remove();
-        const topAmount = 5
+    function clearCountries(){
+        $(".best-countries .profile__wrapper").remove();
+    }
+
+    
+    function initBestSkaters(bestSkaters, gray = false){
+        const topAmount = 5;
 
         sortArray(bestSkaters, "score");
         for (let i = 0; i < topAmount; i++) {
             const athlete = bestSkaters[i];
             const profile = athleteToProfile(athlete, Profile.CARD, true, i + 1);
             profile.appendTo(".best-skaters");
+            if(gray) {
+                profile.grayOut = true;
+            }
         }
-        slideshows.push(new Slideshow($(".best-skaters")));
+        fameSlideshow.updateChildren();
+    }
+
+    function initCountries(countries, gray = false){
+        console.log(countries)
+        const topAmount = 5;
+
+        sortArray(countries, "score");
+        for (let i = 0; i < topAmount; i++) {
+            const country = countries[i];
+            const profile = countryToProfile(country, Profile.CARD, true, i + 1);
+            profile.appendTo(".best-countries");
+            if(gray) {
+                profile.grayOut = true;
+            }
+        }
+        countrieSlideshow.updateChildren();
     }
 </script>
 <?php

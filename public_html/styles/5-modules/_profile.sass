@@ -39,23 +39,23 @@ $body-2-b: $bg
     //     background: #3336
     //     background: red !important
 
-    background: #333
+    background: #333 im !important
 
     *
         color: #777 !important
 
     &.min
-        background: linear-gradient(90deg,#555 20%, #333 110%)
+        background: linear-gradient(90deg,#555 20%, #333 110%) !important
 
     &.card
-        background: linear-gradient(0deg,#555 0%, #333 100%)
+        background: linear-gradient(0deg,#555 0%, #333 100%) !important
         &:before
-            background: radial-gradient(circle at bottom, #444 40%, #333 170%)
+            background: radial-gradient(circle at bottom, #444 40%, #333 170%) !important
 
     &.max
-        background: linear-gradient(-90deg,#666 -70%, #222 180%)
+        background: linear-gradient(-90deg,#666 -70%, #222 180%) !important
         &:before
-            background: radial-gradient(circle at left 9.375rem, #333 40%, #444 170%)
+            background: radial-gradient(circle at left 9.375rem, #333 40%, #444 170%) !important
 
 
 .profile.alternative-color
@@ -258,6 +258,8 @@ $body-2-b: $bg
             height: 100%
 
     .profile__maximize
+        font-size: 1.3rem
+        color: white
         position: absolute
         width: 100%
         bottom: 0
@@ -266,21 +268,22 @@ $body-2-b: $bg
         height: 3.125rem
         border: none
         opacity: 0
-        background: linear-gradient(0deg, #CCC 0%, rgba(0,0,0,0) 100%)
+        // background: linear-gradient(0deg, #CCC 0%, rgba(0,0,0,0) 100%)
         transition: opacity 0.2s, height 0.2s
+        background: #3338
         z-index: 2
 
-        &::after
-            content: ""
-            position: absolute
-            left: 8.125rem
-            bottom: 0.625rem
-            width: 2.5rem
-            height: 2.5rem
-            background: url("/img/full-screen.svg") no-repeat
-            transition: all 0.2s
-            opacity: 0.8
-            transform: rotate(90deg)
+        // &::after
+        //     content: ""
+        //     position: absolute
+        //     left: 8.125rem
+        //     bottom: 0.625rem
+        //     width: 2.5rem
+        //     height: 2.5rem
+        //     background: url("/img/full-screen.svg") no-repeat
+        //     transition: all 0.2s
+        //     opacity: 0.8
+        //     transform: rotate(90deg)
 
         &:hover
             height: 5rem
@@ -301,7 +304,7 @@ $body-2-b: $bg
         z-index: 2
 
         .profile__maximize
-            opacity: 0.3
+            opacity: 1
 
 
 // maximized view of profile taking up the whole screen showinfg all infor mation and addidional extras like analysis
@@ -527,11 +530,14 @@ $body-2-b: $bg
 
         & > .profile__right
             top: 17.5rem
+    
+    .profile__maximize
+        opacity: 1 !important
 
 @media only screen and (max-width: 45rem)
 
     .profile.min, .profile.card,
-        width: 90vw !important
+        width: 95vw !important
 
     .profile.max
         & > .profile__name

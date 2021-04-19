@@ -1,8 +1,20 @@
 .slideshow
     display: flex
     overflow-x: hidden
+    overflow-y: visible
     padding-bottom: 5rem
     user-select: none
+    position: relative
 
     & > *
+        position: relative
         flex-shrink: 0
+
+    .click-catcher
+        position: absolute
+        z-index: 10
+        top: 0
+        left: 0
+        bottom: 0
+        right: 0
+        // pointer-events: none

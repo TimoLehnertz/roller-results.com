@@ -287,13 +287,16 @@ function preprocessTime(time){
     const list = time.split(/[.:]+/);
     let timeString = "";
     let delimiter = "";
+    let started = false;
     for (let i = 0; i < list.length - 1; i++) {
         if(parseInt(list[i]) > 0){
             timeString += delimiter + parseInt(list[i]);
             delimiter = ":";
+            started = true;
+        } else if(started) {
+            timeString += delimiter + "00";
         }
     }
-
     timeString += ("" + parseFloat("0." + list.pop())).substring(1, 100); //last 3 digits
     return timeString;
 }

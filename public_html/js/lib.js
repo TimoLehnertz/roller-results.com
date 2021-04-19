@@ -402,13 +402,17 @@ class Slideshow{
         this.velY = 0;
         this.x = 0;
         this.fps = 60;
+        this.dragging = 0;
         this.pressed = false;
         this.lastMoved = Date.now();
         this.init();
+        this.updateChildren();
     }
 
     init(){
         this.elem.addClass("slideshow");
+        // this.clickCatcher = $(`<div class="click-catcher"></div>`);
+        // this.elem.append(this.clickCatcher);
         this.elem.get()[0].addEventListener('mousedown', (e) => this.down(e));
         this.elem.get()[0].addEventListener('mouseup', (e) => this.up(e));
         this.elem.get()[0].addEventListener('touchstart', (e) => this.down(e));
@@ -466,6 +470,7 @@ class Slideshow{
 
     down(e){
         this.pressed = true;
+        this.dragging = 0;
         this.x = this.elem.get()[0].scrollLeft;
         const page = Slideshow.getPageFromEvent(e);
         this.isMobile = page.isMobile;
@@ -476,18 +481,18 @@ class Slideshow{
         this.lastMoveTime = Date.now();
     }
 
-    up(e){
+    up(){
         this.pressed = false;
         this.x = this.elem.get()[0].scrollLeft;
         this.update();
-        e.stopPropagation();
-        e.preventDefault();
+        window.setTimeout(() => this.dragging = 0, 50);
     }
 
     move(e){
         if(!this.pressed){
             return;
         }
+        this.dragging++;
         const now = Date.now();
         const page = Slideshow.getPageFromEvent(e);
         this.velX = (this.lastMoveX - page.x) / (now - this.lastMoveTime);
@@ -496,7 +501,7 @@ class Slideshow{
         this.lastMoveY = page.y;
         this.lastMoveTime = now;
         this.x = this.scrollStartX + (this.tapStartX - page.x);
-        if(Math.abs(this.velY) * 1.5 > Math.abs(this.velX)){
+        if(isMobile() && Math.abs(this.velY) * 1.5 > Math.abs(this.velX)){
             this.velX = 0;
         } else {
             e.preventDefault();
@@ -509,7 +514,37 @@ class Slideshow{
     }
 
     leave(e){
-        this.up(e);
+        // this.up(e);
+    }
+
+    updateChildren() {
+        this.elem.find("a").each((i, e) => {
+            e.onclick = (e) => {
+                if(this.dragging > 10) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    this.up();
+                    return false;
+                }
+            };
+            for(const child of this.elem.children()) {
+                $(child).find("img").each(function() {
+                    this.setAttribute('draggable', false);
+                    this.setAttribute('ondragstart', "return false");
+                });
+                child.setAttribute('draggable', false);
+                // child.addEventListener('mouseup', (e) => {
+                //     if(this.dragging > 1) {
+                //         console.log("child up")
+                //         e.stopPropagation();
+                //         e.preventDefault();
+                //         // this.pressed = false;
+                //         this.up();
+                //         return false;
+                //     }
+                // });
+            }
+        });
     }
 
     static getPageFromEvent(e){
@@ -2014,7 +2049,7 @@ class Profile{
     }
 
     get maximizeElem(){
-        const elem = $(`<button class="profile__maximize"/>`);
+        const elem = $(`<button class="profile__maximize">>  More data  <</button>`);
         elem.click((e) => {e.stopPropagation(); this.incrementLod()});
         return elem;
     }

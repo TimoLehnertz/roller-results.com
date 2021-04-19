@@ -44,7 +44,6 @@ echoRandWallpaper();
 
         function initGet(){
             get("hallOfFame").receive((succsess, bestSkaters) => {
-                console.log(bestSkaters);
                 if(succsess){
                     clear();
                     init(bestSkaters);
@@ -84,7 +83,7 @@ echoRandWallpaper();
             $(".loading-message").addClass("scaleAway");
             $(".loading").remove();
             $(".rest1").removeClass("hidden");
-            const topAmount = 10
+            const topAmount = 10;
 
             sortArray(bestSkaters, "score");
             for (let i = 0; i < topAmount; i++) {
@@ -94,15 +93,32 @@ echoRandWallpaper();
             }
             slideshows.push(new Slideshow($(".slideshow.best")));
 
-            // console.log(bestSkaters)
-            // sortArray(bestSkaters,  "score");
-            // for (let i = 0; i < topAmount; i++) {
-            //     const athlete = bestSkaters[i];
-            //     const profile = athleteToProfile(athlete, Profile.CARD, true, i + 1);
-            //     profile.appendTo(".slideshow.best");
-            // }
-            // slideshows.push(new Slideshow($(".slideshow.best")));
 
+            /**
+             * women
+             */
+            const women = bestSkaters.filter(skater => skater.gender == "w");
+            sortArray(women,  "score");
+            console.log(women)
+            for (let i = 0; i < topAmount; i++) {
+                const athlete = women[i];
+                const profile = athleteToProfile(athlete, Profile.CARD, true, i + 1);
+                profile.appendTo(".slideshow.best-women");
+            }
+            slideshows.push(new Slideshow($(".slideshow.best-women")));
+
+            /**
+             * men
+             */
+            const men = bestSkaters.filter(skater => skater.gender == "m");
+            sortArray(men,  "score");
+            console.log(men)
+            for (let i = 0; i < topAmount; i++) {
+                const athlete = men[i];
+                const profile = athleteToProfile(athlete, Profile.CARD, true, i + 1);
+                profile.appendTo(".slideshow.best-men");
+            }
+            slideshows.push(new Slideshow($(".slideshow.best-men")));
 
             sortArray(bestSkaters, "scoreShort");
             for (let i = 0; i < topAmount; i++) {
