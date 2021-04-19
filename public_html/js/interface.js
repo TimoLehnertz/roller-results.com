@@ -330,7 +330,8 @@ function bestTimesAt(elem, bestTimes){
 const allAthleteProfiles = [];
 function athleteToProfile(athlete, minLod = Profile.MIN, useRank = false, alternativeRank = undefined){
     const profile = new Profile(athleteDataToProfileData(athlete, useRank, alternativeRank), minLod);
-    if(athlete?.score || "scoreLong" in athlete || "scoreShort" in athlete || "gold" in athlete || "silver" in athlete || "bronze" in athlete){//athlete not complete needs ajax
+    if(!athlete.score || !athlete.scoreLong || !athlete.scoreShort || !athlete.gold || !athlete.silver || !athlete.bronze){//athlete not complete needs ajax
+        // console.log("update")
         profile.update();
         // console.log("loading incomplete profile");
         // get("athlete", athlete.idAthlete).receive((succsess, newAthlete) => {
