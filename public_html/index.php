@@ -326,6 +326,9 @@ include_once "api/imgAPI.php";
     const placeholders = [{},{},{},{},{},];
     initBestSkaters(placeholders, true);
     initCountries(placeholders, true);
+    
+    // const bestSkaters = JSON.parse(`[{"idAthlete":6666,"lastname":"Kalbe","firstname":"Evelyn","gender":"w","country":"Germany","comment":null,"club":null,"team":null,"image":null,"birthYear":null,"facebook":null,"instagram":null,"minAge":null,"raceCount":5,"fullname":"Evelyn Kalbe","topTen":"0","bronze":"0","silver":"0","gold":"0","medalScore":"0","score":0,"scoreShort":0,"scoreLong":0,"competitionCount":3,"bestDistance":"5000m RELAY"},{"idAthlete":1973,"lastname":"Swings","firstname":"Bart","gender":"M","country":"Belgium","comment":null,"club":null,"team":null,"image":"athlete-Bart-Swings-60787b453f7de5.00907222.jpg","birthYear":null,"facebook":null,"instagram":null,"minAge":null,"raceCount":147,"fullname":"Bart Swings","topTen":"10","bronze":"0","silver":"3","gold":"4","medalScore":"18","score":859.903438102628,"scoreShort":79.63600487051022,"scoreLong":780.2674332321178,"competitionCount":25,"bestDistance":"10000m Points\/Elimination"},{"idAthlete":1267,"firstname":"Joey","lastname":"Mantia","gender":"M","country":"United States of America","score":1482.3668188739332,"scoreShort":599.3805944581916,"scoreLong":882.9862244157414},{"idAthlete":1213,"firstname":"Francesca","lastname":"Lollobrigida","gender":"W","country":"Italy","score":1249.4311495760683,"scoreShort":182.65037745054562,"scoreLong":1066.7807721255222},{"idAthlete":1410,"firstname":"Andres Felipe","lastname":"Mu\u00f1oz","gender":"M","country":"Colombia","score":1212.6462006353472,"scoreShort":677.0707360876484,"scoreLong":535.5754645476989}]`);
+    // initBestSkaters(bestSkaters);
 
     function initGet(){
         get("hallOfFame").receive((succsess, bestSkaters) => {
