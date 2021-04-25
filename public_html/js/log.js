@@ -20,6 +20,7 @@ function makeNew() {
     window.sessionStorage.removeItem(lastPageSessionName);
 }
 
+
 function getLastPage() {
     return window.sessionStorage.getItem(lastPageSessionName);
 }
