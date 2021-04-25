@@ -45,4 +45,8 @@ if($loggedIn){
         <script src="/js/lib.js"></script>
         <script src="/js/ui.js"></script>
         <script src="/js/interface.js"></script>
+        <script>
+            <?php echo "const phpUId = '".uniqid($_SERVER["SERVER_NAME"], true)."';";?>
+        </script>
+        <script src="/js/log.js"></script>
     </head>
