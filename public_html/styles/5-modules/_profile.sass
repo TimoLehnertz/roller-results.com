@@ -242,9 +242,11 @@ $body-2-b: $bg
         z-index: 10
     
     .profile__primary
-        margin-top: 14.0625rem
+        margin-top: 13rem
         padding-left: 1.875rem
         padding-right: 1.875rem
+        max-height: 13rem
+        overflow: hidden
 
     .profile__minimize
         position: absolute
@@ -472,14 +474,14 @@ $body-2-b: $bg
     position: absolute
     display: grid
     grid-template-columns: 1fr
-    grid-gap: 0.7rem
+    grid-gap: 0.3rem
     z-index: 1
     color: white
     transition: all 0.2s
 
     & > *
-        padding: 1rem
-        background: linear-gradient(90deg, #0000 0%, #0003 98%, #0000 100%)
+        padding: 0.5rem
+        background: linear-gradient(-90deg, #0000 0%, #0003 99%, #0000 100%)
 
 .profile__image
     position: absolute
@@ -524,15 +526,19 @@ $body-2-b: $bg
     z-index: 14
 
 @media only screen and (max-width: 75rem)
+    .profile.card
+        .profile__minimize
+            top: 25rem !important
+
+        .profile__primary
+            max-height: 10rem !important
+
     .profile.max
         & > .profile__primary
             grid-template-columns: 1fr 1fr !important
 
         & > .profile__right
             top: 17.5rem
-    
-    .profile__maximize
-        opacity: 1 !important
 
 @media only screen and (max-width: 45rem)
 

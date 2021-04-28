@@ -15,14 +15,23 @@ if(!$country){
 
 include_once "../header.php";
 
-echo "<script>let country = ". json_encode($country) .";</script>";
+// echo "<script>let country = ". json_encode($country) .";</script>";
+echo "<script>const id = '". $_GET["id"] ."';</script>";
 
 ?>
 <main class="main country">
     <script>
-        $(".countryName").prepend(getCountryFlag(findGetParameter("id"), 64));
-        const profile = countryToProfile(country, Profile.MAX);
-        profile.appendTo($(".athletes"));
+        // $(".countryName").prepend(getCountryFlag(findGetParameter("id"), 64));
+
+        get("country", id).receive((succsess, country) => {
+            if(!succsess || country.length === 0) {
+                window.location.href = "/index.php";
+            }
+            const profile = countryToProfile(country, Profile.MAX);
+        });
+
+        // const profile = countryToProfile(country, Profile.MAX);
+        // profile.appendTo("country");
 
         // scoreCallbacks.push(() => {
         //     profile.update();
