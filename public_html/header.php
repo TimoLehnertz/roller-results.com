@@ -67,6 +67,9 @@ include_once "head.php";
                     <a href="/hall-of-fame"><i class="fas fa-medal margin right"></i>Hall of fame</a>
                 </li>
                 <li>
+                    <a href="/competitions"><i class="fas fa-flag-checkered margin right"></i></i>Competitions</a>
+                </li>
+                <li>
                     <a href="/analytics"><i class="fas fa-binoculars margin right"></i>Analytics</a>
                 </li>
                 <li>

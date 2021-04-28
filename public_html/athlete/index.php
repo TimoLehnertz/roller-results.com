@@ -17,15 +17,17 @@ if(!$person){
 
 include_once "../header.php";
 
-echo "<script>const person = ". json_encode($person) .";</script>";
+echo "<script>const person = ". json_encode($person) ."; const id=".$_GET["id"]."</script>";
 ?>
 <main class="main">
     
 </main>
 <script>
-    const profile = athleteToProfile(person, Profile.MAX);
-    profile.appendTo($("main"));
-
+    get("athlete", id).receive((succsess, person) => {
+        console.log(person)
+        const profile = athleteToProfile(person, Profile.MAX);
+        profile.appendTo($("main"));
+    });
     // scoreCallbacks.push(() => {
     //     profile.grayOut = true;
         

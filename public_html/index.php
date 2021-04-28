@@ -131,7 +131,7 @@ include_once "api/imgAPI.php";
      * slider
      */
     let date = new Date(1992, 0, 0);
-    const slider = new DateSlider(new Date(1929, 0, 0), new Date(Date.now()), {
+    const slider = new DateSlider(new Date(1929, 5, 0), new Date(Date.now()), {
         currentDate: new Date(date.getTime()),
         drawCircle: false
     });
@@ -157,6 +157,7 @@ include_once "api/imgAPI.php";
     //     }
     // });
 
+    // getFile("/json/worldMovement.json").receive((succsess, response) => {
     get("worldMovement").receive((succsess, response) => {
         data = response;
         for (const movement of data) {
@@ -331,7 +332,8 @@ include_once "api/imgAPI.php";
     // initBestSkaters(bestSkaters);
 
     function initGet(){
-        get("hallOfFame").receive((succsess, bestSkaters) => {
+        // get("hallOfFame").receive((succsess, bestSkaters) => {
+        getFile("/json/hall-of-fame.json").receive((succsess, bestSkaters) => {
             if(succsess){
                 clearBestSkaters();
                 initBestSkaters(bestSkaters);
@@ -339,7 +341,8 @@ include_once "api/imgAPI.php";
                 alert("An error occoured :/");
             }
         });
-        get("countries").receive((succsess, countries) => {
+        getFile("/json/best-countries.json").receive((succsess, countries) => {
+        // get("countries").receive((succsess, countries) => {
             if(succsess){
                 clearCountries();
                 initCountries(countries);

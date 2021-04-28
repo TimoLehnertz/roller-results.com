@@ -903,8 +903,8 @@ export var DAT = DAT || {};
           return;
         }
         const data = [];
-        const rows = 170;
-        const dotDensity = 0.4;
+        const rows = 110;
+        const dotDensity = 0.25;
         for (let lat = -90; lat < 90; lat += 180 / rows) {
             const radius = Math.cos(Math.abs(lat) * DEGREE_TO_RADIAN) * GLOBE_RADIUS;
             const circumference = radius * Math.PI * 2;

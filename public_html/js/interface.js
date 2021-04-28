@@ -362,7 +362,7 @@ function linksFromLinkString(string){
     }
     let links = string.split(";");
     for (let i = 0; i < links.length; i++) {
-        links[i] = links[i].split("v=")[1].split("&")[0];
+            links[i] = links[i].split("v=")[1]?.split("&")[0];
     }
     // let links = string.split("https://www.youtube.com/watch?v=");
     // for (let i = 0; i < links.length; i++) {

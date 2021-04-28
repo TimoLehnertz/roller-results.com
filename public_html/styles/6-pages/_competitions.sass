@@ -1,0 +1,63 @@
+.competitionss-page
+
+    .top-site
+        min-height: 50vh
+
+    .comps
+        background: #ddd
+        padding: 1rem
+        padding-top: 5rem
+        display: grid
+        grid-template-columns: 1fr
+
+    .year
+        padding-top: 1rem
+        border-top: 1px solid #666
+    .year__num
+        font-size: 2rem
+        color: black
+
+    .comp-gallery
+        display: grid
+        gap: 1rem
+        grid-template-columns: 1fr 1fr 1fr
+
+    .comp
+        display: grid
+        grid-template-columns: 5fr 2fr
+        background: linear-gradient(0deg, #3f3f3f 0%, #333 100%)
+        border-radius: 2rem 0 2rem 0
+        overflow: hidden
+        transition: all 0.2s
+
+        
+        &:hover
+            box-shadow: 6px 6px 26px -3px rgba(0,0,0,0.7)
+
+            .right
+                opacity: 1
+                transform: translateX(20px) skewX(-5deg)
+
+        .name
+            font-size: 1.5rem
+            margin-bottom: 1rem
+
+        .left
+            padding: 2rem
+
+        .right
+            padding-right: 20px
+            transition: all 0.1s
+            opacity: 0
+            display: flex
+            justify-content: center
+            align-items: center
+            transform: translateX(50px)
+            background: #ccc
+            color: black
+
+            a
+                color: black
+
+            &:hover
+                transform: translateX(7px) skewX(5deg)

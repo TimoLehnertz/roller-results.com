@@ -369,7 +369,8 @@ function iconFromSearch(option){
     switch(option.type){
         case "competition": return $(`<i class="fas fa-map-marker-alt result__left"></i>`);
         case "person": return  $(`<i class="fas fa-user result__left"></i>`);
-        case "country": const code = countryNameToCode(option.name); if(code !== null) {return $(`<img class="result__left" src="https://www.countryflags.io/${code}/shiny/32.png">`);} else{return $()};
+        // case "country": const code = countryNameToCode(option.name); if(code !== null) {return $(`<img class="result__left" src="https://www.countryflags.io/${code}/shiny/32.png">`);} else{return $()};
+        case "country": const code = countryNameToCode(option.name); if(code !== null) {return $(`<img class="result__left" src="/img/countries/${code}.svg">`);} else{return $()};
     }
 }
 
