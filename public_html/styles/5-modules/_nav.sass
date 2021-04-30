@@ -18,13 +18,15 @@
     padding: 3rem
     padding-top: 7rem
     left: 0
-    transition: transform 0.3s cubic-bezier(0.075, 0.820, 0.165, 1.000), opacity 0.1s
+    transition: transform 0.2s cubic-bezier(0.075, 0.820, 0.165, 1.000), opacity 0.1s
     background: $bg
     z-index: -1
-    transform: rotate3d(0, 1, 0, 40deg)
+    transform: rotate3d(0, 1, 0, 20deg)
     opacity: 0
     transform-origin: left
     box-shadow: 50px 50px 100px 0px #0006
+    overflow: auto
+    max-height: 100vh
 
     &.extended
         visibility: visible
@@ -46,7 +48,7 @@
     li
         list-style: none
         font-size: 2rem
-        min-height: 2rem
+        min-height: 1.5rem
         // margin-bottom: 1rem
         overflow: visible
 

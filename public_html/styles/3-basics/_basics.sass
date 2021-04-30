@@ -48,7 +48,7 @@ button
     margin-right: auto
     display: block
 
-a
+a:not(.no-underline)
     position: relative
     color: inherit
     text-decoration: none
@@ -81,6 +81,10 @@ a::before
 
 a.no-underline::before
     display: none
+
+a.no-underline
+    text-decoration: none
+
 
 .hidden
     display: none !important

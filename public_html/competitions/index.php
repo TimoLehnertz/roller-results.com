@@ -4,7 +4,7 @@ include_once $_SERVER["DOCUMENT_ROOT"]."/api/index.php";
 
 $comps = getAllCompetitions();
 
-print_r($comps[0]);
+// print_r($comps[0]);
 
 echoRandWallpaper();
 ?>
@@ -18,28 +18,50 @@ echoRandWallpaper();
     <div class="comps">
         <?php
             if(sizeof($comps) > 0) {
-                $year = $comps[0]->raceYearNum;
+                $year = 0;
+                $begun = false;
+                foreach($comps as $comp) {
+                    if($comp["raceYearNum"] !== $year) {
+                        $year = $comp["raceYearNum"];
+                        if($begun) {
+                            echo "</div>";
+                        }
+                        echoYear($year);
+                        echo "<div class='comp-gallery'>";
+                        $begun = true;
+                    }
+                    echoComp($comp);
+                }
+                echo "</div>";
             }
 
             function echoComp($comp) {
-                $link = "/competition/index.php?id=$comp->idCompetition";
+                $startDate = $comp["raceYearNum"];
+                if($comp["startDate"] !== NULL) {
+                    $startDate = date("M d Y", strtotime($comp["startDate"]));
+                }
+                $link = "/competition/index.php?id=".$comp["idCompetition"];
+                $flag = "<img class='flag' alt='".$comp["country"]."' src='/img/countries/".strtolower($comp["alpha-2"]).".svg'>";
                 echo "
-                <div class='comp'>
-                <div class='left'>
-                    <div class='name'>
-                        $comp->location
+                <a class='no-underline comp-link' href='$link'>
+                    <div class='comp'>
+                        <div class='left'>
+                            $flag
+                            <div class='name'>
+                                ".translateType($comp["type"])." - ".$comp["location"]."
+                            </div>
+                            <div class='date'>
+                                $startDate
+                            </div>
+                            <div class='location'>
+                            ".$comp['country']."
+                            </div>
+                        </div>
+                        <div class='right'>
+                            <p>See More</p>
+                        </div>
                     </div>
-                    <div class='type'>
-                        $comp->type
-                    </div>
-                    <div class='location'>
-                        $comp->location
-                    </div>
-                </div>
-                <a class='no-underline right' href='$link'>
-                    <p>See More</p>
-                </a>
-            </div>";
+                </a>";
             }
 
             function echoYear($year) {
@@ -48,30 +70,15 @@ echoRandWallpaper();
                     <p class='year__num'>$year</p>
                 </div>";
             }
+
+            function translateType($type) {
+                switch (strtolower($type)) {
+                    case "wm": return "Worlds";
+                    case "em": return "Euros";
+                    default: return $type;
+                }
+            }
         ?>
-
-
-        <div class="year">
-            <p class="year__num">2019</p>
-        </div>
-        <div class="comp-gallery">
-            <div class="comp">
-                <div class="left">
-                    <div class="name">
-                        Barcelona
-                    </div>
-                    <div class="type">
-                        Worlds
-                    </div>
-                    <div class="location">
-                        Barcelona, Espana
-                    </div>
-                </div>
-                <a class="no-underline right" href="#">
-                    <p>See More</p>
-                </a>
-            </div>
-        </div>
     </div>
 </main>
 <?php

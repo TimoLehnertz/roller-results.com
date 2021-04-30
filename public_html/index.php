@@ -85,6 +85,22 @@ include_once "api/imgAPI.php";
     </div>
 </main>
 <script type="module">
+
+    let overlayOpened = false;
+    let data;
+    let pause = false;
+
+    /**
+     * slider
+     */
+    let date = new Date(1992, 0, 0);
+    const slider = new DateSlider(new Date(1929, 5, 0), new Date(Date.now()), {
+        currentDate: new Date(date.getTime()),
+        drawCircle: false
+    });
+    slider.onchange = updateDate;
+    slider.appendTo($(".dates"));
+
     import { DAT } from "/js/globe/globe.js";
 
     var container = document.getElementById( 'container' );
@@ -96,6 +112,10 @@ include_once "api/imgAPI.php";
             <div class="description">description</div>
         </div>`);
     $(".main").append(overlay);
+
+    globe.animate();
+    globe.initSurfaceDots();
+
     // overlay.on("hover", (e) => e.stopPropagation())
 
     // const controller = globe.trajectoryFromTo(50.800209, 6.764670, 0, 0, {color: 0xff44aa});
@@ -124,23 +144,6 @@ include_once "api/imgAPI.php";
     //         globe.highlightAt(lat, lng, {color: 0xff44aa});
     //     }
     // }
-    globe.initSurfaceDots();
-    globe.animate();
-
-    /**
-     * slider
-     */
-    let date = new Date(1992, 0, 0);
-    const slider = new DateSlider(new Date(1929, 5, 0), new Date(Date.now()), {
-        currentDate: new Date(date.getTime()),
-        drawCircle: false
-    });
-    slider.onchange = updateDate;
-    slider.appendTo($(".dates"));
-
-    let overlayOpened = false;
-    let data;
-    let pause = false;
     // let me1 = null;
     // let meColor = null;
 
@@ -157,8 +160,12 @@ include_once "api/imgAPI.php";
     //     }
     // });
 
-    // getFile("/json/worldMovement.json").receive((succsess, response) => {
-    get("worldMovement").receive((succsess, response) => {
+    getFile("/json/worldMovement.json").receive((succsess, response) => {
+    // get("worldMovement").receive((succsess, response) => {
+        if(!succsess) {
+            console.log("worldMovement error");
+            return;
+        }
         data = response;
         for (const movement of data) {
             movement.controllers = [];

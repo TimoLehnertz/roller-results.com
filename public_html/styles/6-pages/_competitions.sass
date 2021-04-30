@@ -11,22 +11,36 @@
         grid-template-columns: 1fr
 
     .year
-        padding-top: 1rem
-        border-top: 1px solid #666
+        border-radius: 2rem 2rem 0 0
+        background: #333
+        font-size: 4rem
+        margin-top: 2rem
+        padding: 1rem
+        // margin-bottom: 1rem
+        // border-top: 3px solid #666
+
     .year__num
-        font-size: 2rem
-        color: black
+        // font-size: 2rem
+        text-align: center
+        color: #ccc
 
     .comp-gallery
         display: grid
+
         gap: 1rem
         grid-template-columns: 1fr 1fr 1fr
+
+    .comp-link:nth-child(4), .comp-link:nth-child(5), .comp-link:nth-child(6)
+        .comp
+            border-radius: 2rem
 
     .comp
         display: grid
         grid-template-columns: 5fr 2fr
-        background: linear-gradient(0deg, #3f3f3f 0%, #333 100%)
-        border-radius: 2rem 0 2rem 0
+        background: #333
+        position: relative
+
+        border-radius: 0 0 2rem 2rem
         overflow: hidden
         transition: all 0.2s
 
@@ -38,12 +52,36 @@
                 opacity: 1
                 transform: translateX(20px) skewX(-5deg)
 
-        .name
-            font-size: 1.5rem
-            margin-bottom: 1rem
-
         .left
-            padding: 2rem
+            padding: 1rem
+            padding-top: 2rem
+            padding-right: 0
+            position: relative
+            text-shadow: 2px 2px 5px rgba(0,0,0,0.75);
+
+            & > *
+                position: relative
+                z-index: 5
+
+            .flag
+                position: absolute
+                top: 0
+                left: 0
+                height: 100%
+                width: 100%
+                object-fit: cover
+                opacity: 1
+                z-index: 1
+
+            &::before
+                content: ""
+                position: absolute
+                left: 0
+                top: 0
+                width: 100%
+                height: 100%
+                background: linear-gradient(90deg, #333c 0%, #333 100%);
+                z-index: 4
 
         .right
             padding-right: 20px
@@ -60,4 +98,38 @@
                 color: black
 
             &:hover
-                transform: translateX(7px) skewX(5deg)
+                transform: translateX(7px) skewX(3deg)
+        
+        .name
+            font-size: 1.8rem
+            margin-bottom: 1rem
+            color: white
+
+        .date
+            font-size: 1.5rem
+            color: #ccc
+
+        .location
+            margin-top: 1rem
+            color: white
+            font-size: 1.5rem
+
+    @media (pointer: coarse)
+        .comp .right
+            display: none
+
+    @media screen and (max-width: 70rem)
+        .comp-gallery
+            grid-template-columns: 1fr 1fr
+        
+        .comp-link:nth-child(3)
+            .comp
+                border-radius: 2rem
+
+    @media screen and (max-width: 50rem)
+        .comp-gallery
+            grid-template-columns: 1fr
+        
+        .comp-link:nth-child(2)
+            .comp
+                border-radius: 2rem

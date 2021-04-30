@@ -30,7 +30,7 @@ function getCurrentPage() {
 }
 
 function postLog() {
-    console.log(uId)
+    // console.log(uId)
     const lastPage = getLastPage();
     let lastPageQuery = "";
     if(lastPage) {
@@ -41,7 +41,7 @@ function postLog() {
         // data: data,
         // data: JSON.stringify(data),
         success: (response) => {
-            console.log(response);
+            // console.log(response);
         },
         error: function(xhr, ajaxOptions, thrownError) {
             console.log("log failed");
