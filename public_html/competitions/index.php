@@ -8,7 +8,7 @@ $comps = getAllCompetitions();
 
 echoRandWallpaper();
 ?>
-<main class="main competitionss-page">
+<main class="main competitions-page">
 
     <div class="top-site">
         <h1>Competitions</h1>
@@ -48,7 +48,7 @@ echoRandWallpaper();
                         <div class='left'>
                             $flag
                             <div class='name'>
-                                ".translateType($comp["type"])." - ".$comp["location"]."
+                                ".translateCompType($comp["type"])." - ".$comp["location"]."
                             </div>
                             <div class='date'>
                                 $startDate
@@ -69,14 +69,6 @@ echoRandWallpaper();
                  <div class='year'>
                     <p class='year__num'>$year</p>
                 </div>";
-            }
-
-            function translateType($type) {
-                switch (strtolower($type)) {
-                    case "wm": return "Worlds";
-                    case "em": return "Euros";
-                    default: return $type;
-                }
             }
         ?>
     </div>

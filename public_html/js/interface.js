@@ -420,7 +420,7 @@ function getRaceTable(parent, race){
     const table = new Table(raceTable, race.results);
     table.setup({
         layout: {
-            place: {allowSort: false},
+            place: {allowSort: false, displayName: "Place"},
             time: {
                 displayName: "Time",
                 allowSort: true,

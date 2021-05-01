@@ -515,6 +515,14 @@ function getCompetition($id){
     }
 }
 
+function translateCompType($type) {
+    switch (strtolower($type)) {
+        case "wm": return "Worlds";
+        case "em": return "Euros";
+        default: return $type;
+    }
+}
+
 function getCountry($name){
     global $scoreInfluences;
     global $usedMedals;

@@ -1,0 +1,57 @@
+.competition-page
+    .top-site
+        min-height: 40vh
+
+    .content
+        background: #ddd
+        color: #000
+        padding-top: 2rem
+
+
+    .date
+        margin: 2rem
+        font-size: 1.5rem
+        gap: 1rem
+        display: flex
+        justify-content: center
+        align-items: center
+
+        i
+            color: #444
+            font-size: 3rem
+
+    .location
+        position: relative
+        overflow: hidden
+        width: 75%
+        margin-left: 12.5%
+        padding-top: 30%
+
+    .maps
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        width: 100%;
+        height: 100%;
+    
+    .races
+        border-top: 1px solid #aaa
+        text-align: center
+        padding-top: 1rem
+        margin: 2rem
+        color: #333
+        font-size: 3rem
+
+    @media screen and (max-width: 50rem)
+        .location
+            width: 100%
+            margin: 0
+            padding-top: 130%
+
+        .date
+            flex-direction: column
+            font-size: 1.2rem
+            i
+                font-size: 2rem
