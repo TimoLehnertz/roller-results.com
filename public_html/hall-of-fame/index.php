@@ -99,7 +99,6 @@ echoRandWallpaper();
              */
             const women = bestSkaters.filter(skater => skater.gender.toLowerCase() == "w");
             sortArray(women, "score");
-            console.log(women)
             for (let i = 0; i < topAmount; i++) {
                 const athlete = women[i];
                 const profile = athleteToProfile(athlete, Profile.CARD, true, i + 1);
@@ -112,7 +111,6 @@ echoRandWallpaper();
              */
             const men = bestSkaters.filter(skater => skater.gender.toLowerCase() == "m");
             sortArray(men, "score");
-            console.log(men)
             for (let i = 0; i < topAmount; i++) {
                 const athlete = men[i];
                 const profile = athleteToProfile(athlete, Profile.CARD, true, i + 1);

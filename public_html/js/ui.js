@@ -361,8 +361,8 @@ function linkFromOption(option){
 }
 
 function optionClicked(option){
-    console.log("clicked");
-    console.log(option);
+    // console.log("clicked");
+    // console.log(option);
 }
 
 function iconFromSearch(option){

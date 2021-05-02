@@ -649,11 +649,8 @@ export var DAT = DAT || {};
              }));
        } else {
          if (this._baseGeometry.morphTargets.length < 8) {
-           console.log('t l',this._baseGeometry.morphTargets.length);
            var padding = 8-this._baseGeometry.morphTargets.length;
-           console.log('padding', padding);
            for(var i=0; i<=padding; i++) {
-             console.log('padding',i);
              this._baseGeometry.morphTargets.push({'name': 'morphPadding'+i, vertices: this._baseGeometry.vertices});
            }
          }
