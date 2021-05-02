@@ -8,10 +8,10 @@ if(!isset($_GET["id"])){
 }
 include_once "../api/index.php";
 
-$country = getCountry($_GET["id"]);
-if(!$country){
-    // throwError($ERROR_INVALID_ID);
-}
+// $country = getCountry($_GET["id"]);
+// if(!$country){
+//     // throwError($ERROR_INVALID_ID);
+// }
 
 include_once "../header.php";
 
