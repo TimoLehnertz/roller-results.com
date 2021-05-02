@@ -390,7 +390,6 @@ include_once "api/imgAPI.php";
     }
 
     function initCountries(countries, gray = false){
-        console.log(countries)
         const topAmount = 5;
 
         sortArray(countries, "score");

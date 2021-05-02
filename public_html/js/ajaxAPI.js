@@ -12,7 +12,6 @@ function search(text, callback){
                 callback(true, JSON.parse(response));
             } else{
                 callback(false, null);
-                console.log(response)
             }
         },
         error: function(xhr, ajaxOptions, thrownError) {
@@ -67,7 +66,6 @@ function get(property, data1, data2){
             if(isJson(response) && response.length > 0/* && !response.includes("error")*/){
                 promise.callback(true, JSON.parse(response));
             } else{
-                console.log(response)
                 console.log("Response from get" + property + " was empty");
                 promise.callback(false, null);
             }
@@ -85,14 +83,11 @@ function set(property, data){
         receive: (callback) => {promise.callback = callback},
         callback: () => {}
     }
-    console.log("data: ");
-    console.log(data);
     $.ajax(`/api/?set${property}=1`, {
         method: "POST",
         // data: data,
         data: JSON.stringify(data),
         success: (response) => {
-            console.log(response);
             promise.callback(response);
         },
         error: function(xhr, ajaxOptions, thrownError) {
