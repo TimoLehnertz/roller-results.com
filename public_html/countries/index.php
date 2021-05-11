@@ -102,13 +102,19 @@ echoRandWallpaper();
             /**
              * slideshows
              */
+            /**
+             * over all
+             */
+            console.log(skateCountries);
             for (let i = 0; i < Math.min(topAmount, skateCountries.length); i++) {
                 const profile = countryToProfile(skateCountries[i], Profile.CARD, true, i + 1);
                 profile.appendTo(".slideshow.best");
             }
             slideshows.push(new Slideshow($(".slideshow.best")));
+            /**
+             * sprint
+             */
             sortArray(skateCountries, "scoreShort");
-
             for (let i = 0; i < Math.min(topAmount, skateCountries.length); i++) {
                 const profile = countryToProfile(skateCountries[i], Profile.CARD, true, i + 1);
                 profile.appendTo(".slideshow.sprinters");
