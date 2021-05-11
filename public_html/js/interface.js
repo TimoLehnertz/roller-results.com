@@ -328,10 +328,9 @@ function bestTimesAt(elem, bestTimes){
 }
 
 const allAthleteProfiles = [];
-function athleteToProfile(athlete, minLod = Profile.MIN, useRank = false, alternativeRank = undefined){
+function athleteToProfile(athlete, minLod = Profile.MIN, useRank = false, alternativeRank = undefined, loadFirst = true){
     const profile = new Profile(athleteDataToProfileData(athlete, useRank, alternativeRank), minLod);
-    if(!athlete.score || !athlete.scoreLong || !athlete.scoreShort || !athlete.gold || !athlete.silver || !athlete.bronze){//athlete not complete needs ajax
-        // console.log("update")
+    if(loadFirst && (!athlete.score || !athlete.scoreLong || !athlete.scoreShort || !athlete.gold || !athlete.silver || !athlete.bronze)){//athlete not complete needs ajax
         profile.update();
         // console.log("loading incomplete profile");
         // get("athlete", athlete.idAthlete).receive((succsess, newAthlete) => {
@@ -481,7 +480,7 @@ function countryToProfile(country, minLod = Profile.MIN, useRank = false, altern
     return profile;
 }
 
-function countryToProfileData(country, useRank = false, alternativeRank = undefined){
+function countryToProfileData(country, useRank = false, alternativeRank = undefined) {
     let trophy1 = {
         data: getMedal("silver", country.silver),
         type: ElemParser.DOM,
@@ -612,7 +611,15 @@ function countryToProfileData(country, useRank = false, alternativeRank = undefi
         const max = 10;
         const athletesElem = $(`<div id="${idAthletes}"><h2 class="section__header">Top ${Math.min(country.members, max)} athletes</h2><div class="loading circle"></div></div>`)
         wrapper.append(athletesElem);
-        get("countryAthletes", country.country).receive((succsess, athletes) => {
+
+        const allAthletesElem = $(`<div><div class="athlete-list-big margin bottom"></div></div>`);
+        wrapper.append(allAthletesElem);
+
+        const athleteButton = $(`<button class=" align center btn default">Load all athlethes</button>`);
+        allAthletesElem.append(athleteButton);
+        
+        const maxDisplay = isMobile() ? 20 : 100;
+        get("countryAthletes", country.country, maxDisplay + 1).receive((succsess, athletes) => {
             const profiles = [];
             let i = 0;
             for (const athlete of athletes) {
@@ -628,7 +635,29 @@ function countryToProfileData(country, useRank = false, alternativeRank = undefi
                 profileSlideShowIn(slideShow, profiles);
                 athletesElem.append(slideShow);
             }
+            /**
+             * all athletes
+             */
+            athleteButton.text(`Load ${Math.min(maxDisplay, athletes.length)} more athletes`);
+            athleteButton.click(() => {
+                athleteButton.hide();
+                let count = 0;
+                let overflow = false;
+                for (const athlete of athletes) {
+                    const profile = athleteToProfile(athlete, Profile.MIN, false, 0, false);
+                    profile.appendTo(allAthletesElem.find(".athlete-list-big"));
+                    count++;
+                    if(count >= maxDisplay) {
+                        overflow = true;
+                        break;
+                    }
+                }
+                if(overflow) {
+                    allAthletesElem.append(`<a style="color: white" class="btn default margin left top" href="/country/allAthletes.php?id=${athletes[0].country}">See All athletes</a>`);
+                }
+            });
         });
+
 
         /**
          * Career

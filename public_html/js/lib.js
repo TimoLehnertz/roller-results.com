@@ -514,7 +514,7 @@ class Slideshow{
     }
 
     leave(e){
-        // this.up(e);
+        this.up(e);
     }
 
     updateChildren() {
@@ -936,7 +936,9 @@ class Table{
         if(params.hasOwnProperty("orderBy")){
             this.orderBy = params.orderBy;
         }
-        this.usedColumns= this.getUsedColumns();
+        this.usedColumns = this.getUsedColumns();
+        this.useAnimations = false;
+        // this.useAnimations = params.useAnimations || true;
     }
 
     getDisplayNameOfColumn(column){
@@ -976,18 +978,21 @@ class Table{
         }
         $(this.elem).find(".data-table").remove();
         $(this.elem).append(this.getTable());
-        anime({
-            targets: `.${Table.class} tr`,
-            translateX: [-50, 0],
-            opacity: [0, 1],
-            duration: 50,
-            delay: anime.stagger(10), // increase delay by 100ms for each elements.
-            easing: "easeOutCubic",
-            complete: () => {
-                $(`.${Table.class} tr`).css("transform", "");
-                $(`.${Table.class} td`).css("position", "");
-            }
-        });
+        if(this.useAnimations) {
+            console.log("anmate")
+            anime({
+                targets: `.${Table.class} tr`,
+                translateX: [-50, 0],
+                opacity: [0, 1],
+                duration: 50,
+                delay: anime.stagger(10), // increase delay by 100ms for each elements.
+                easing: "easeOutCubic",
+                complete: () => {
+                    $(`.${Table.class} tr`).css("transform", "");
+                    $(`.${Table.class} td`).css("position", "");
+                }
+            });
+        }
         this.initiated = true;
     }
 
@@ -1091,19 +1096,24 @@ class Table{
             if(allowSort){
                 const dropdown = new Dropdown(tdElem, [
                     {
-                        element: "Sort ascending",
+                        element: {
+                            data: "Sort ascending",
+                            onclick: () => {
+                                console.log("sort")
+                                this.sort(td, true);
+                                return true;
+                            }
+                        },
                         icon: "fas fa-sort-up",
-                        onclick: () => {
-                            this.sort(td, true);
-                            return true;
-                        }
                     }, {
-                        element: "Sort descending",
+                        element: {
+                            data: "Sort descending",
+                            onclick: () => {
+                                this.sort(td, false);
+                                return true;
+                            },
+                        },
                         icon: "fas fa-sort-down",
-                        onclick: () => {
-                            this.sort(td, false);
-                            return true;
-                        }
                     }
                 ]);
                 dropdown.setup({

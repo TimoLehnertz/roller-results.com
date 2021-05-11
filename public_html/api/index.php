@@ -368,7 +368,7 @@ function getAthleteBestTimes($idAthlete){
 
 function getCountryAthletes($country, $limit) {
     global $scoreInfluences;
-    $res = query("CALL results.sp_getCountryAthletes(?, ?);", "ss", $country, $scoreInfluences);
+    $res = query("CALL results.sp_getCountryAthletes(?, ?, ?);", "ssi", $country, $scoreInfluences, $limit);
     // $res = query("SELECT * FROM vAthlete WHERE country = ? ORDER BY score DESC LIMIT ?;", "si", $country, $limit);
     if(sizeof($res) > 0){
         return $res;
