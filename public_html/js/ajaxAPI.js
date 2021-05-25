@@ -50,8 +50,8 @@ function get(property, data1, data2){
         receive: (callback) => {promise.callback = callback},
         callback: () => {console.log("no callback")}
     }
-    let url = `/api?get${property}=${data1}`;
-    if(data2 !== undefined){
+    let url = `/api/index.php?get${property}=${data1}`;
+    if(data2 !== undefined) {
         url += `&data=${data2}`;
     }
     // console.log(url)

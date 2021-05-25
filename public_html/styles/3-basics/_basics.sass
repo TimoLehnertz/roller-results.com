@@ -26,6 +26,7 @@ i
 
 .html
     // background: black
+    overflow: auto
 
 .main
     width: 100%
@@ -33,6 +34,9 @@ i
 
 .fa-youtube
     color: #FF0000
+    
+    &:hover
+        color: white
 
 // * + *
 //     margin-top: $margin-top
@@ -101,8 +105,8 @@ a.no-underline
 
 @media only screen and (max-width: 600px)
     .pc-only
-        display: none
+        display: none !important
 
 @media only screen and (min-width: 600px)
     .mobile-only
-        display: none
+        display: none !important

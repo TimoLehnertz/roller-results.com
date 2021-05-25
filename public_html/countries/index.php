@@ -8,6 +8,10 @@ include_once "../header.php";
 
 // echo "<script> let skateCountries = ".json_encode(getCountries())."</script>";
 
+$countryAmount = getCountryAmount();
+
+echo "<script>let countryAmount = $countryAmount;</script>";
+
 echoRandWallpaper();
 
 ?>
@@ -34,8 +38,6 @@ echoRandWallpaper();
     <script>
         // $(() => {init(skateCountries);});// got echoed from php
         scoreCallbacks.push(update);
-        
-        let countryAmount = 99;
 
         initGet();
 

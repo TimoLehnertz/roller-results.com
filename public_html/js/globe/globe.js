@@ -267,6 +267,7 @@ export var DAT = DAT || {};
      document.addEventListener('keydown', onDocumentKeyDown, false);
  
      window.addEventListener('resize', () => {
+      // onWindowResize();
        window.setTimeout(onWindowResize, 150);
     }, false);
  

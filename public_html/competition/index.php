@@ -53,6 +53,7 @@ $mapsKey = "AIzaSyAZriMrsCFOsEEAKcRLxdtI6V8b9Fbfd-c";
         <h2 class="races">Races</h2>
         <div class="races-table alignment center"></div>
         <script>
+            console.log(comp);
             const table = new Table($(".races-table"), comp.races);
             let orderBy = {column: "distance", up: true};
             if(findGetParameter("trackStreet") !== null){
@@ -69,7 +70,12 @@ $mapsKey = "AIzaSyAZriMrsCFOsEEAKcRLxdtI6V8b9Fbfd-c";
                     },
                     category: {},
                     gender: {},
-                    trackStreet: {}
+                    trackStreet: {},
+                    link: {
+                        callback: (link) => getYtVideoElems(link),
+                        displayName: "Videos",
+                        allowSort: false
+                    },
                 }
             });
             table.init();

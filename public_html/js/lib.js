@@ -130,7 +130,6 @@ class DateSlider {
         const rightOffset =  right - date.getTime();
         const leftOffset =  date.getTime() - left;
         const minOffset = Math.min(leftOffset, rightOffset);
-        // console.log(leftOffset);
         return (minOffset / DateSlider.DAYLY_MILLIS) * 2;
     }
 
@@ -207,7 +206,6 @@ class DateSlider {
          * circle
          */
         if(this.drawCircle) {
-            // console.log(this.drawCircle)
             this.ctx.fillStyle = this.circleColor;
             const radius = this.getWidth() * 5;
             this.ctx.beginPath();
@@ -535,7 +533,6 @@ class Slideshow{
                 child.setAttribute('draggable', false);
                 // child.addEventListener('mouseup', (e) => {
                 //     if(this.dragging > 1) {
-                //         console.log("child up")
                 //         e.stopPropagation();
                 //         e.preventDefault();
                 //         // this.pressed = false;
@@ -574,16 +571,91 @@ class Slideshow{
  *  _tooltip.sass
  */
 
-class Tooltip{
-    constructor(elem, text){
-        this.elem = elem;
-        this.text = text;
+// class Tooltip{
+//     constructor(elem, text){
+//         this.elem = elem;
+//         this.text = text;
+//         $(() => {this.init()});
+//     }
+
+//     init(){
+//         $(this.elem).addClass("tooltip");
+//         $(this.elem).append(`<span class="tooltiptext">${this.text}</span>`);
+//     }
+// }
+
+class Tooltip {
+    constructor(parent, tip, settings){
+        this.parent = $(parent);
+        this.tip = tip || "<Tooltip>";
+        /**
+         * setup
+         */
+        settings = settings || {};
+        this.delay = settings.delay || 350;
+        this.noMobile = settings.noMobile || false;
+
         $(() => {this.init()});
     }
 
     init(){
-        $(this.elem).addClass("tooltip");
-        $(this.elem).append(`<span class="tooltiptext">${this.text}</span>`);
+        this.elem = this.getToolTipElem();
+        // this.elem.hide();
+        $("body").append(this.elem);
+        this.parent.on("mouseenter", (e) => this.mouseenter(e));
+        this.parent.on("mouseleave", (e) => this.mouseleave(e));
+        this.parent.on("touchenter", (e) => this.mouseenter(e));
+        this.parent.on("touchleave", (e) => this.mouseleave(e));
+    }
+
+    mouseenter(e) {
+        this.mouseInside = true;
+        window.setTimeout(() => {
+            if(this.mouseInside) {
+                this.open();
+            }
+        }, this.delay);
+    }
+
+    mouseleave(e) {
+        this.mouseInside = false;
+        this.close();
+    }
+
+    open() {
+        if(this.opened || (this.noMobile && isMobile())) {
+            return;
+        }
+        this.elem.addClass("opened");
+        this.opened = true;
+        const pOffset = this.parent.offset();
+        const pWidth = this.parent.width();
+        const pHeight = this.parent.outerHeight();
+        const top = pOffset.top + pHeight;
+        const left = pOffset.left + 20// + pWidth / 2;
+        this.elem.css("top", top);
+        this.elem.css("left", left);
+    }
+
+    close() {
+        if(!this.opened) {
+            return;
+        }
+        this.elem.removeClass("opened");
+        this.opened = false;
+    }
+
+    offset(el) {
+        var rect = el.getBoundingClientRect(),
+        scrollLeft = window.pageXOffset || document.documentElement.scrollLeft,
+        scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        return { top: rect.top + scrollTop, left: rect.left + scrollLeft }
+    }
+
+    getToolTipElem() {
+        const elem = $(`<div class="tooltip"></div>`);
+        elem.append(ElemParser.parse(this.tip));
+        return elem;
     }
 }
 
@@ -685,7 +757,6 @@ class Dropdown{
      */
     init(){
         this.dropDownElem = $(`<div class="${Dropdown.dropdownClass} ${this.customClass != undefined ? this.customClass : ""}"></div>`);
-        // console.log(this.content);
         // this.dropDownElem.append(this.content);
         /**
          * Css beeing defined in _dropdown.sass
@@ -730,7 +801,7 @@ class Dropdown{
     load(object){
         this.dropDownElem.empty();
         if(Array.isArray(object)){
-            this.path.push(object);
+            // this.path.push(object);
             if(this.name != undefined){
                 this.dropDownElem.append(`<div class="${Dropdown.nameClass}">${this.name}</div>`);
             }
@@ -740,7 +811,7 @@ class Dropdown{
                 }
             }
             for (const obj of object) {
-                const elem = this.getObjElem(obj);
+                const elem = this.getObjElem(obj, object);
                 this.dropDownElem.append(elem)
             }
             const bounds = Dropdown.getFullBounds(this.dropDownElem);
@@ -752,7 +823,7 @@ class Dropdown{
                 easing: "easeOutSine"
             });
         } else{
-            console.log("todo");
+            throw new Error();
         }
     }
 
@@ -760,8 +831,7 @@ class Dropdown{
         const btn = $(`<div class="${Dropdown.entryClass}">Back</div>`);
         btn.prepend(Dropdown.getIcon(this.backIcon, "margin right"));
         btn.click(() => {
-            this.path.pop();
-            this.load(this.path[this.path.length - 1]);
+            this.load(this.path.pop());
         });
         return btn;
     }
@@ -775,16 +845,17 @@ class Dropdown{
         return $(`<i class="${faClass} ${extraClasses ? extraClasses : ""}"><i>`);
     }
 
-    getObjElem(obj){
+    getObjElem(obj, container){
         const elem = $(`<div class="${Dropdown.entryClass} flex"></div>`);
         if(obj.hasOwnProperty("element")){
             elem.append(ElemParser.parse(obj.element));
         } else {
             elem.append(ElemParser.parse(obj));
         }
-        if(obj.children){
+        if(obj.children && !(obj instanceof jQuery)){
             elem.click(() => {
                 this.parentObj = obj;
+                this.path.push(container);
                 this.load(obj.children);
             });
         }
@@ -815,6 +886,11 @@ class Dropdown{
                     elem.css(key, element);
                 }
             }
+        }
+        if(obj.hasOwnProperty("link")){
+           elem.click(() => {
+               window.location = obj.link;
+           });
         }
         // elem.css("width", "100%")
         return elem;
@@ -860,7 +936,7 @@ class Dropdown{
         elemCpy.css("height", "");
         elemCpy.css("position", "absolute");
         $("body").append(elemCpy);
-        const bounds = {width: elemCpy.width(), height: elemCpy.height()}
+        const bounds = {width: elemCpy.width(), height: elemCpy.height() + 2}
         elemCpy.remove();
         return bounds;
     }
@@ -925,7 +1001,7 @@ class Table{
          *      }
          *  }
          */
-        if(params.hasOwnProperty("layout")){
+        if("layout" in params){
             this.layout = params.layout;
         }
         /**
@@ -979,7 +1055,6 @@ class Table{
         $(this.elem).find(".data-table").remove();
         $(this.elem).append(this.getTable());
         if(this.useAnimations) {
-            console.log("anmate")
             anime({
                 targets: `.${Table.class} tr`,
                 translateX: [-50, 0],
@@ -1099,7 +1174,6 @@ class Table{
                         element: {
                             data: "Sort ascending",
                             onclick: () => {
-                                console.log("sort")
                                 this.sort(td, true);
                                 return true;
                             }
@@ -1130,7 +1204,9 @@ class Table{
     getRow(row, zebra){
         const rowElem = $(`<tr class="${Table.bodyClass} ${zebra ? "zebra" : ""}"></tr>`);
         for (const column of this.usedColumns) {
-            if(column in row){
+            if(this.layout[column].callback) {
+                $(rowElem).append(this.getColumn(this.layout[column].callback(row[column])));
+            } else if(column in row){
                 $(rowElem).append(this.getColumn(row[column]));
             } else{
                 $(rowElem).append(this.getColumn(""));
@@ -1405,6 +1481,9 @@ class ElemParser{
                     wrapper.css(style, value);
                 }
             }
+        }
+        if("tooltip" in meta) {
+            new Tooltip(wrapper, meta.tooltip);
         }
         return wrapper;
     }
@@ -1876,7 +1955,7 @@ class Profile{
             this.elem.find(".profile__secondary").empty();
             this.secondary(this.secondaryElem, this.secondaryData);
         }
-        $(`body > *:not(header, footer)`).addClass("hidden");
+        $(`body > *:not(header, footer, .tooltip)`).addClass("hidden");
         $("header").after(this.elem);
     }
 
@@ -1955,7 +2034,10 @@ class Profile{
     }
 
     get specialElem(){
-        return $(`<div class="profile__special">${this.special}</div>`);
+        const elem = ElemParser.parse(this.special);
+        elem.addClass("profile__special");
+        return elem;
+        // return $(`<div class="profile__special">${this.special}</div>`);
     }
 
     get leftElem(){
@@ -2163,7 +2245,7 @@ function findGetParameter(parameterName) {
 /**
  * Medals
  */
-function getMedal(color, amount){
+function getMedal(color, amount, tooltip){
     let linkSimple = "/img/medals/" + color + "-medal-simple.svg";
     let linkBig = "/img/medals/" + color + "-medal.svg";
     const elem = $(`<div class="medal ${color}">
@@ -2171,8 +2253,11 @@ function getMedal(color, amount){
         <img class="medal__simple" width="40" src="${linkSimple}" alt="${color} medal">
         <span class="medal__amount">${amount}</span>
     </div>`);
-    // elem.click(() => {window.location = "/hall-of-fame"});
-    new Tooltip(elem, color);
+    new Tooltip(elem, tooltip || color);
+    if(amount == 0) {
+        elem.addClass("grayed-out");
+        elem.find(".medal__amount").text("");
+    }
     return elem;
 }
 
@@ -2606,6 +2691,7 @@ const countries = [
     {name: 'United Arab Emirates', code: 'AE'}, 
     {name: 'United Kingdom', code: 'GB'}, 
     {name: 'United States', code: 'US'}, 
+    {name: 'USA', code: 'US'}, 
     {name: 'United States of America', code: 'US'},
     {name: 'America', code: 'US'},
     {name: 'United States Minor Outlying Islands', code: 'UM'}, 

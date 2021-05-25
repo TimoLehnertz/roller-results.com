@@ -9,6 +9,14 @@ include_once "api/imgAPI.php";
 // $amountResult = getResultAmount();
 // $amountRace = getRaceAmount();
 // $amountCompetition = getCompetitionAmount();
+// $amountVideo = getVideoAmount();
+
+$amountCountry = 77;
+$amountAthlete = 7602;
+$amountResult = 41744;
+// $amountRace = getRaceAmount();
+// $amountCompetition = getCompetitionAmount();
+$amountVideo = 513;
 
 // echo "<>
 //     const amountCountry = $amountCountry;
@@ -31,15 +39,21 @@ include_once "api/imgAPI.php";
     <div class="message">
         <h1 class="headline">Where Rollerskating results come alive</h1>
         <p>
-            Explore 90 Years of Roller skating results. Review, compare and analize your data with thousands of skaters arround the globe. 
+            Explore <b class="font color white">90 Years</b> of Roller skating <b class="font color white">results</b> and <b class="font color white">videos</b>. Review, compare and analize your data with thousands of <b class="font color white">skaters</b> arround the globe. 
         </p>
     </div>
     <div id="container" class="globe"></div>
     <div class="lower">
-    <div class="dates"></div>
+    <div class="dates" style="height: 170px"></div>
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" preserveAspectRatio="none" viewBox="0 0 1680 40" class="curvature" style="bottom: -1px;"><path d="M0 40h1680V30S1340 0 840 0 0 30 0 30z" fill="#ddd"></path></svg>
         <div class="content">
-        <h1>Roller results</h1>
+        <div class="amounts">
+            <div class="pc-only"><div><?= $amountCountry?></div><div>Countries</div></div>
+            <div><div><?= $amountResult?></div><div>Results</div></div>
+            <div><div><?= $amountVideo?></div><div>Videos</div></div>
+            <div class="pc-only"><div><?= $amountAthlete?></div><div>Athletes</div></div>
+        </div>
+        <h1> <img class="rr-logo" src="/img/logo/rr.png" alt="Roller results logo">Roller results</h1>
         <p>
             Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply  dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lore  Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of 
         </p>
@@ -67,7 +81,7 @@ include_once "api/imgAPI.php";
             <div class="best-countries">
                 <a class="no-underline" href="/hall-of-fame/index.php">
                     <div class="index-card">
-                        <h2>Hall of fame</h2>
+                        <h2>Top countries</h2>
                         <ul>
                             <li>See the best performing countries</li>
                             <li>Take advantage of the setttings to change the way scores are calculated</li>

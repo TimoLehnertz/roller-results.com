@@ -44,6 +44,9 @@
             background: #555
             flex-direction: row
 
+            > *:not(:first-child)
+                margin-left: 0.5rem
+
         a
 
             &::before
@@ -162,6 +165,8 @@
                 max-width: 4rem
                 padding: 0
                 background: none
+                left: 0
+                position: absolute
             
             & > a
                 display: none
@@ -180,6 +185,7 @@
             grid-column-end: 4
             padding-left: 4rem
             border: none
+            box-shadow: 0px 3px 10px 0px rgba(0,0,0,0.2)
 
             svg
                 display: none
@@ -205,6 +211,7 @@
 
         .toggle-profile-section
             padding: 0
+            border: none
 
             &::hover
                 border-radius: 50%

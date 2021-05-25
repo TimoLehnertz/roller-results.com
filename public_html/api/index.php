@@ -422,6 +422,15 @@ function getCompetitionAmount(){
     }
 }
 
+function getVideoAmount(){
+    $res = query("SELECT count(*) as amount FROM vRace WHERE link IS NOT NULL;");
+    if(sizeof($res) > 0){
+        return $res[0]["amount"];
+    } else{
+        return [];
+    }
+}
+
 function getCountryCompetitions($country){
     $competitions = query("CALL sp_getCountryCompetitions(?);", "s", $country);
     if(sizeof($competitions) > 0){

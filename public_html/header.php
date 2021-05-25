@@ -13,7 +13,8 @@ include_once "head.php";
                 <a href="/index.php">
                     <?php
                         if(!isset($indexPage)){
-                            include "logo.html";
+                            // include "logo.html";
+                            include "rr-logo.html";
                         }
                     ?>
                 <!-- <div class="site-name"><span class="inline">Inline </span><span class="data">data</span><span class="org"></span></div> -->
@@ -35,7 +36,7 @@ include_once "head.php";
                     echo "<script>$(() => {alert('". getErrormessage($_GET["error"]) ."'); window.location = removeParams('error');})</script>";
                 }
             ?>
-            <input class="search-bar__input" type="text" autocomplete="off" placeholder="Search" value="<?=$search?>">
+            <input class="search-bar__input" type="text" autocomplete="off" placeholder="Search for Athletes / countries / locations..." value="<?=$search?>">
             <div class="search-bar__options"></div>
         </div>
         <div class="header__right">

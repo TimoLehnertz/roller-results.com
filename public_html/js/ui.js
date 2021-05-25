@@ -4,8 +4,8 @@ const scoreCallbacks = [];
 
 $(() => {
     $(".search-bar__input").on("input", searchChange);
-    initSearchBar();
     // initIndexLogo();
+    initSearchBar();
     initHeader();
     initNav();
     initSettings();
@@ -88,14 +88,36 @@ function initSettings(){
     const list = [{
         element: "How does it work?",
         children: [
-            "1 / place^1.2 * 30"
+            {
+                element: "How do scores work?",
+                children: [
+                    $("<p><b>How do our scores work?</b></p>"),
+                    $("<p>Scores are the numbers<br>visible in <span class='font color purple'>purple circles</span></p>"),
+                    $("<p>Scores are divided into <br><b>sprint</b>- and <b>long-scores</b>.<br>added together those<br>give the overall score</p>"),
+                    $("<p>We calculate them in<br><b>real-time</b>based on<br>your settings</p>"),
+                    $("<p></p>"),
+                    $("<p><b>But how?</b></p>"),
+                    $("<p>We take each <b>place</b><br>feed them into a<br><b>formula</b>, multiply the<br>result with your values<br>and <b>sum them up</b></p>"),
+                    $("<p>Change the Percentages<br>per competition type<br>just as you like</p>"),
+                    $("<p><b>The formula</b>:<br>f(<b>place</b>)=1/(<b>place</b>^1.2)*30;</p>"),
+                    $(`<iframe src="https://www.desmos.com/calculator/locbyec6or?embed" width="200" height="100" style="border: 1px solid #ccc" frameborder=0></iframe>`),
+                    $(`<a target="_blank" rel="noopener noreferrer" href="https://www.desmos.com/calculator/locbyec6or?lang=de">Open in Desmos</a>`),
+                ]
+            }, {
+                element: "How do medals work?",
+                children: [
+                    $("<p><b>How do our medals work?</b></p>"),
+                    $("<p>Medals are counted<br>per <b>country</b> and <b>athlete</b>.<br>You can see them in<br>displayed under or<br>right to the<br>profile image.</p>"),
+                    $("<p>What competitions are<br>counted can be set<br>via the settings.<br>Use the checkboxes<br>next to the<br>competitions.</p>"),
+                ]
+            }
         ],
         icon: "fas fa-question",
         style: {
             padding: "1rem",
             backgroundColor: "#333",
             color: "white"
-        }
+        },
     }];
 
     /**
@@ -281,6 +303,8 @@ function applyScores(callCallbacks){
 
 let lastSearch = "";
 
+let searchTooltip;
+
 function initSearchBar(){
     $("body").click(closeSearchBar);
     $(".search-bar__input").keyup((e) => {
@@ -289,7 +313,12 @@ function initSearchBar(){
                 window.location = linkFromOption(options[0]);
             }
         }
-    })
+    });
+    if(isMobile()) {
+        $(".search-bar__input").attr("placeholder", "Search");
+    }
+    searchTooltip = new Tooltip(".search-bar", `<div class="font color white"><p>Stuff you can find:</p><p><i class="far fa-dot-circle"></i>Athletes</p><p><i class="far fa-dot-circle"></i>Competitions</p><p><i class="far fa-dot-circle"></i>Countries</p><p><i class="far fa-dot-circle"></i>Competitions</p></div>`);
+    // new Tooltip(".search-bar", "1234");
 }
 
 let options = [];
@@ -321,6 +350,9 @@ function closeSearchBar(){
 }
 
 function updateSearchBar(data){
+    if(data?.length > 0) {
+        searchTooltip.close();
+    }
     const optionsElem = $(".search-bar__options");
     optionsElem.empty();
     if(data !== undefined){
@@ -365,8 +397,8 @@ function optionClicked(option){
     // console.log(option);
 }
 
-function iconFromSearch(option){
-    switch(option.type){
+function iconFromSearch(option) {
+    switch(option.type) {
         case "competition": return $(`<i class="fas fa-map-marker-alt result__left"></i>`);
         case "person": return  $(`<i class="fas fa-user result__left"></i>`);
         // case "country": const code = countryNameToCode(option.name); if(code !== null) {return $(`<img class="result__left" src="https://www.countryflags.io/${code}/shiny/32.png">`);} else{return $()};

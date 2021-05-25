@@ -19,8 +19,9 @@
         color: white
         z-index: 5
         line-height: 0.96
-        margin-top: 7rem
+        margin-top: 5rem
         margin-left: 7vw
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.75)
 
         .headline
             letter-spacing: 0.05em
@@ -42,9 +43,11 @@
         position: absolute
         // margin-top: -5rem
         height: 120vh
+        // min-height: 100rem
         width: 70vw
         margin-left: 35vw
         transition: all 0.1s
+        overflow: visible
 
 
     .date
@@ -115,7 +118,7 @@
 
     .lower
         pointer-events: none
-        margin-top: 110vh
+        margin-top: clamp(40rem, 110vh, 110vh)
         color: black
         position: relative
         z-index: 2
@@ -127,15 +130,49 @@
 
         h1
             text-align: center
-            font-family: $font-a
+            font-family: $font-title
             font-size: 3rem
+            color: #222
             margin: 0
+            display: flex
+            align-items: center
+            justify-content: center
+
+            .rr-logo
+                margin-right: 1rem
 
         & > p
             padding: 3rem
 
         a
             overflow: visible
+
+    .amounts
+        display: flex
+        justify-content: space-around
+        flex-direction: row
+        margin-bottom: 2rem
+
+        *
+            text-align: center
+
+        > div
+            border-left: 1px solid #555
+            padding: 0 1rem
+            display: flex
+            flex-direction: column
+            text-align: cemter
+            width: 100%
+        
+        > div > div:first-child
+            font-size: 2rem
+            color: #444
+
+        > div > div:last-child
+            color: #111
+        
+        > div:first-child
+            border: none
 
     .hall-of-fame
         padding-top: 4rem
@@ -189,6 +226,7 @@
             background: linear-gradient(130deg, #ff7a18,#af002d 41.07%,#319197 76.05%)
             border-radius: 1rem
             z-index: -2
+            overflow: visible
 
         &::after
             content: ''
@@ -203,6 +241,7 @@
             background: #111
             border-radius: 1rem
             z-index: -1
+            overflow: visible
 
         .top-five
             margin-top: 1rem
@@ -217,6 +256,8 @@
 
     @media screen and (max-width: 55rem) and (hover: hover)
         .message
+            margin-top: 3rem !important
+            
             .headline
                 font-size: 3.5rem !important
 
@@ -236,7 +277,7 @@
             width: 100vw
 
         .message
-            margin-top: 3rem
+            margin-top: 2rem
             margin-left: 50vw
             transform: translateX(-50%)
             // width: 100vw
@@ -250,3 +291,6 @@
 
             p
                 font-size: 0.8rem
+
+        .content h1
+            flex-direction: column

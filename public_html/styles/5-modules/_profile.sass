@@ -250,7 +250,7 @@ $body-2-b: $bg
 
     .profile__minimize
         position: absolute
-        top: 27.5rem
+        top: 28rem
         left: 1.25rem
         right: 1.25rem
         height: 2.5rem
@@ -418,7 +418,7 @@ $body-2-b: $bg
 
     & > .profile__primary
         display: grid
-        margin-left: 21.875rem
+        margin-left: 19.5rem
         margin-top: 3rem
         margin-right: 1.25rem
         grid-template-columns: 1fr 1fr 1fr
@@ -525,17 +525,20 @@ $body-2-b: $bg
     transition: top 0.1s, left 0.2s, right 0.2s
     z-index: 14
 
-@media only screen and (max-width: 75rem)
+@media only screen and (max-width: 70rem)
     .profile.card
         .profile__minimize
-            top: 25rem !important
+            top: 28rem !important
 
         .profile__primary
-            max-height: 10rem !important
+            max-height: 14.5rem !important
 
     .profile.max
         & > .profile__primary
             grid-template-columns: 1fr 1fr !important
+
+            > *
+                padding: 0.3rem
 
         & > .profile__right
             top: 17.5rem
@@ -554,7 +557,7 @@ $body-2-b: $bg
             right: 1rem
         
         & > .profile__image
-            top: 8rem
+            top: 7rem
         
         & > .profile__special
             top: 19rem
@@ -566,7 +569,7 @@ $body-2-b: $bg
             top: 20rem
 
         &::before
-            height: 39.5rem
+            height: 42.5rem
 
         & > .profile__primary
             grid-template-columns: 1fr !important
@@ -575,6 +578,7 @@ $body-2-b: $bg
 
             & > *
                 width: 90vw
+                padding: 0.3rem
 
         & > .profile__secondary
             margin-top: 37.5rem

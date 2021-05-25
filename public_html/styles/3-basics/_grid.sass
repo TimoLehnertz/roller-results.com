@@ -1,0 +1,19 @@
+.grid
+    display: grid
+
+    &.one
+        grid-template-columns: 1fr
+
+    &.two
+        grid-template-columns: 1fr 1fr
+
+    &.three
+        grid-template-columns: 1fr 1fr 1fr
+
+    &.four
+        grid-template-columns: 1fr 1fr 1fr 1fr
+
+    @media only screen and (max-width: 65rem)
+        grid-template-columns: 1fr !important
+        margin-left: auto
+        margin-right: auto

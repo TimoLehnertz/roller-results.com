@@ -96,19 +96,19 @@ function updateAllCountryProfiles(){
 
 function athleteDataToProfileData(athlete, useRank = false, alternativeRank = undefined){
     let trophy1 = {
-        data: getMedal("silver", athlete.silver),
+        data: getMedal("silver", athlete.silver, athlete.silver +" Silver medals"),
         type: ElemParser.DOM,
-        validate: () => athlete.silver > 0
+        // validate: () => athlete.silver > 0
     }
     let trophy2 = {
-        data: getMedal("gold", athlete.gold),
+        data: getMedal("gold", athlete.gold, athlete.gold + " Gold medals"),
         type: ElemParser.DOM,
-        validate: () => athlete.gold > 0
+        // validate: () => athlete.gold > 0
     }
     let trophy3 = {
-        data: getMedal("bronze", athlete.bronze),
+        data: getMedal("bronze", athlete.bronze, athlete.bronze + " Bronze medals"),
         type: ElemParser.DOM,
-        validate: () => athlete.bronze > 0
+        // validate: () => athlete.bronze > 0
     }
 
     let searchParam = findGetParameter("search1");
@@ -130,66 +130,84 @@ function athleteDataToProfileData(athlete, useRank = false, alternativeRank = un
     if(athlete.gold > 0){
         amount++; color = "gold";
     }
-    if(amount === 1){
-        let tmp = trophy2;
-        switch(color){
-            case "silver": trophy2 = trophy1; trophy1 = tmp; break;
-            case "bronze": trophy2 = trophy3; trophy3 = tmp; break;
-        }
-    }
+    // if(amount === 1){
+    //     let tmp = trophy2;
+    //     switch(color){
+    //         case "silver": trophy2 = trophy1; trophy1 = tmp; break;
+    //         case "bronze": trophy2 = trophy3; trophy3 = tmp; break;
+    //     }
+    // }
     const data = {
         type: "athlete",
         maximizePage: `/athlete?id=${athlete.idAthlete}${searchParam}`,
         name: athlete.firstname + " " +athlete.lastname,
         image: athlete.image != null ? "/img/uploads/" + athlete.image : null,
-        left: {data: athlete.country, type: "countryFlag", link: `/country?id=${athlete.country}`, tooltip: true},
-        right: {data: athlete.gender, type: "gender"},
+        left: {data: athlete.country, type: "countryFlag", link: `/country?id=${athlete.country}`, tooltip: athlete.country},
+        right: {data: athlete.gender, type: "gender", tooltip: athlete.gender?.toLowerCase() == "w" ? "Female" : "Male"},
         trophy1, trophy2, trophy3,
-        special: Math.round(athlete.score),
+        special: {
+            data: Math.round(athlete.score) + "",
+            tooltip: "Overall score | See settings to know how it works",
+            type: ElemParser.TEXT
+        },
         primary: {
-            // scoreShort: {
-            //     description: "score short",
-            //     data: Math.round(athlete.scoreShort)
-            // },
-            // scoreLong: {
-            //     description: "score long",
-            //     data: Math.round(athlete.scoreLong)
-            // },
+            scoreShort: {
+                description: "Sprint score:",
+                data: Math.round(athlete.scoreShort),
+                tooltip: "Score only applied to relays and distances < 1500m",
+            },
+            scoreLong: {
+                description: "Score long:",
+                data: Math.round(athlete.scoreLong),
+                tooltip: "Score only applied to distances > 1500m"
+            },
             sprinter: {
                 data: (athlete.scoreLong / (athlete.scoreLong + athlete.scoreShort)),
                 description: "Best discipline",
                 description1: "Sprint",
                 description2: "Long",
-                type: "slider"
+                type: "slider",
+                tooltip: "Relation of sprint score and long score"
             },
             topTen: {
                 data: athlete.topTen,
-                description: "WM top 10 places:",
-                validate: () => athlete.topTen > 0
+                description: "Top 10 places:",
+                validate: () => athlete.topTen > 0,
+                tooltip: "All top 10 places on competitions in the medal settings (All competitions that are ticked in the settings)",
             },
             birthYear: {
                 data: athlete.birthYear,
                 icon: "far fa-calendar",
-                validate: (data) => {return data !== null && data > 1800}
+                validate: (data) => {return data !== null && data > 1800},
+                description: "Birth year:",
+                tooltip: "Birth year(Might be incorrect)"
             },
             bestDistance: {
                 data: athlete.bestDistance,
-                description: "Best discipline",
+                description: "Favorite discipline:",
+                tooltip: `The discipline ${athlete.firstname} got the most score points on`
             },
-            rank: {
-                data: athlete.rank,
-                description: "Rank",
+            raceCount: {
+                data: athlete.raceCount,
+                description: "Race count:",
+                // validate: () => athlete.topTen > 0,
+                tooltip: "Amount of races in the database"
             },
-            rankShort: {
-                data: athlete.rankShort,
-                description: "Rank Short",
+            medalScore: {
+                data: athlete.medalScore,
+                description: "Medal score:",
+                tooltip: "Gold = 3, Silver = 2, Bronze = 1 | All summed up"
             },
-            rankLong: {
-                data: athlete.rankLong,
-                description: "Rank long",
+            club: {
+                data: athlete.club,
+                description: "Club:",
+                tooltip: "Athletes club"
             },
-            club: {data: athlete.club, description: "Club:"},
-            team: {data: athlete.team, description: "Team:"}
+            team: {
+                data: athlete.team,
+                description: "Team:",
+                tooltip: "Athletes team / sponsor"
+            }
         },
         secondary: profileInit,
         secondaryData: athlete,
@@ -371,6 +389,20 @@ function linksFromLinkString(string){
     return links;
 }
 
+function getYtVideoElems(link) {
+    const links = linksFromLinkString(link);
+    const data = [];
+    for (const link of links) {
+        const a = $(`<a href="https://www.youtube.com/watch?v=${link}" target="_blank" rel="noopener noreferrer"><i class="fab fa-youtube"></a>`);
+        a.click((e) => e.stopPropagation())
+        data.push(a);
+    }
+    return {
+        data,
+        type: ElemParser.LIST
+    }
+}
+
 function getYtVideo(link){
     const ids = linksFromLinkString(link);
     if(ids.length === 0){
@@ -482,19 +514,19 @@ function countryToProfile(country, minLod = Profile.MIN, useRank = false, altern
 
 function countryToProfileData(country, useRank = false, alternativeRank = undefined) {
     let trophy1 = {
-        data: getMedal("silver", country.silver),
+        data: getMedal("silver", country.silver, country.silver + " Silver medals"),
         type: ElemParser.DOM,
-        validate: () => country.silver > 0
+        // validate: () => country.silver > 0
     }
     let trophy2 = {
-        data: getMedal("gold", country.gold),
+        data: getMedal("gold", country.gold, country.gold + " Gold medals"),
         type: ElemParser.DOM,
-        validate: () => country.gold > 0
+        // validate: () => country.gold > 0
     }
     let trophy3 = {
-        data: getMedal("bronze", country.bronze),
+        data: getMedal("bronze", country.bronze, country.bronze + " Bronze medals"),
         type: ElemParser.DOM,
-        validate: () => country.bronze > 0
+        // validate: () => country.bronze > 0
     }
 
     let searchParam = findGetParameter("search1");
@@ -516,13 +548,13 @@ function countryToProfileData(country, useRank = false, alternativeRank = undefi
     if(country.gold > 0){
         amount++; color = "gold";
     }
-    if(amount === 1){
-        let tmp = trophy2;
-        switch(color){
-            case "silver": trophy2 = trophy1; trophy1 = tmp; break;
-            case "bronze": trophy2 = trophy3; trophy3 = tmp; break;
-        }
-    }
+    // if(amount === 1){
+    //     let tmp = trophy2;
+    //     switch(color){
+    //         case "silver": trophy2 = trophy1; trophy1 = tmp; break;
+    //         case "bronze": trophy2 = trophy3; trophy3 = tmp; break;
+    //     }
+    // }
     const data = {
         type: "country",
         maximizePage: `/country?id=${country.country}${searchParam}`,
@@ -530,28 +562,46 @@ function countryToProfileData(country, useRank = false, alternativeRank = undefi
         image: {data: country.country, type: "countryFlag", link: `/country?id=${country.country}`, width: "100%", height: "100%", class: "countryBig"},
         // right: country.country,
         trophy1, trophy2, trophy3,
-        special: Math.round(country.score),
+        special: {
+            data: Math.round(country.score) + "",
+            tooltip: "Overall score | See settings to know how it works",
+            type: ElemParser.TEXT
+        },
         primary: {
             scoreShort: {
-                description: "score short",
-                data: Math.round(country.scoreShort)
+                description: "Sprint score:",
+                data: Math.round(country.scoreShort),
+                tooltip: "Score only applied to relays and distances < 1500m"
             },
             scoreLong: {
-                description: "score long",
-                data: Math.round(country.scoreLong)
+                description: "Score long:",
+                data: Math.round(country.scoreLong),
+                tooltip: "Score only applied to distances > 1500m"
             },
             sprinter: {
                 data: (country.scoreLong / (country.scoreLong + country.scoreShort)),
                 description: "Best discipline",
                 description1: "Sprint",
                 description2: "Long",
-                type: "slider"
+                type: "slider",
+                tooltip: "Relation of sprint score and long score"
             },
             topTen: {
                 data: country.topTen,
-                description: "WM top 10 places:",
-                validate: () => country.topTen > 0
+                description: "Top 10 places:",
+                validate: () => country.topTen > 0,
+                tooltip: "All top 10 places on competitions in the medal settings (All competitions that are ticked in the settings)"
             },
+            members: {
+                data: country.members,
+                description: "Members:",
+                tooltip: "Amount of members that raced for this country"
+            },
+            medalScore: {
+                data: country.medalScore,
+                description: "Medal score:",
+                tooltip: "Gold = 3, Silver = 2, Bronze = 1 | All summed up"
+            }
         },
         secondary: profileInit,
         secondaryData: country,
@@ -601,7 +651,7 @@ function countryToProfileData(country, useRank = false, alternativeRank = undefi
         const nav = $(`<div class="profile-navigation">
             <a href="#${idAthletes}">Athletes</a>
             <a href="#${idCareer}">Career</a>
-            <a href="#${idBestTimes}">Best times</a>
+            <!--<a href="#${idBestTimes}">Best times</a>--!>
             <a href="#${idCompetitions}">Competitions</a>
         </div>`);
         wrapper.append(nav);
@@ -638,7 +688,7 @@ function countryToProfileData(country, useRank = false, alternativeRank = undefi
             /**
              * all athletes
              */
-            athleteButton.text(`Load ${Math.min(maxDisplay, athletes.length)} more athletes`);
+            athleteButton.text(`Load more athletes`);
             athleteButton.click(() => {
                 athleteButton.hide();
                 let count = 0;
@@ -676,14 +726,14 @@ function countryToProfileData(country, useRank = false, alternativeRank = undefi
          /**
          * best times
          */
-        const bestTimesElem = $(`<div id="${idBestTimes}"><h2 class="section__header">Countrywide best times</h2><div class="loading circle"></div></div>`);
-        get("countryBestTimes", country.country).receive((succsess, times) => {
-            bestTimesElem.find(".loading").remove();
-            if(succsess){
-                bestTimesAt(bestTimesElem, times)
-            }
-        });
-        wrapper.append(bestTimesElem);
+        // const bestTimesElem = $(`<div id="${idBestTimes}"><h2 class="section__header">Countrywide best times</h2><div class="loading circle"></div></div>`);
+        // get("countryBestTimes", country.country).receive((succsess, times) => {
+        //     bestTimesElem.find(".loading").remove();
+        //     if(succsess){
+        //         bestTimesAt(bestTimesElem, times)
+        //     }
+        // });
+        // wrapper.append(bestTimesElem);
         /**
          * competitions
          */
@@ -742,13 +792,13 @@ function getCompetitionListElem(competitions){
         const head = $(`<div class="flex justify-start align-center"><div>${comp.type} ${comp.location} ${comp.raceYear}</div></div>`);
         if(comp.bronzeMedals !== undefined){
             if(comp.bronzeMedals > 0){
-                head.append(getMedal("bronze", comp.bronzeMedals));
+                head.append(getMedal("bronze", comp.bronzeMedals, comp.bronzeMedals +" Bronze medals"));
             }
             if(comp.silverMedals > 0){
-                head.append(getMedal("silver", comp.silverMedals));
+                head.append(getMedal("silver", comp.silverMedals, comp.silverMedals + " Silver medals"));
             }
             if(comp.goldMedals > 0){
-                head.append(getMedal("gold", comp.goldMedals));
+                head.append(getMedal("gold", comp.goldMedals, comp.goldMedals + " Gold medals"));
             }
         }
         if(comp.hasLink !== null){
