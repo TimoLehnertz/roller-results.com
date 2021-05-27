@@ -2107,14 +2107,17 @@ class Profile{
 
     get shareElem() {
         if(!navigator.share) {
+            if(!share123) {
+                alert("share not supported");
+                share123 = true;
+            }
             return $();
         }
         const elem = $(`<div class="profile__share"><i class="fas fa-share-alt"></i></div>`);
         elem.click(() => {
             navigator.share(this.shareData).then(() => {
                 console.log('Thanks for sharing!');
-            })
-            .catch(console.error);
+            }).catch(console.error);
         });
         return elem;
     }
