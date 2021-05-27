@@ -1,25 +1,37 @@
 .index
-    background: #000
-    position: absolute
+    // background: #000
+    // position: relative
     top: 0
 
     &::after
         content: ""
         position: absolute
         top: 0
+        left: 0
         width: 100vw
         height: 130vh
+        min-height: 70rem
         pointer-events: none
         background: linear-gradient(-30deg, #{$c}22 0%, #{$c}11 100%),radial-gradient(at 0% 10%, #{$c}32 10%, rgba(0,0,0,0) 30%), radial-gradient(at 90% 0%, #{$c}25 0%, rgba(0,0,0,0) 80%), radial-gradient(at 100% 80%, #{$a}40 10%, rgba(0,0,0,0) 25%)
+    
+    &::before
+        content: ""
+        position: absolute
+        top: 0
+        left: 0
+        width: 100vw
+        height: 130vh
+        min-height: 70rem
+        background: #00000c
     // background:  radial-gradient(at 10% 20%, $a 0%, rgba(0,0,0,0) 40%), radial-gradient(at 80% 70%, $c 0%, rgba(0,0,0,0) 40%)
 
     .message
         position: absolute
-        max-width: 30rem
+        max-width: 40rem
         color: white
         z-index: 5
         line-height: 0.96
-        margin-top: 5rem
+        margin-top: 2rem
         margin-left: 7vw
         text-shadow: 2px 2px 4px rgba(0,0,0,0.75)
 
@@ -38,14 +50,13 @@
 
 
     .globe
-        margin-top: 0rem
-        margin-left: 30vw
-        position: absolute
-        // margin-top: -5rem
-        height: 120vh
-        // min-height: 100rem
-        width: 70vw
-        margin-left: 35vw
+        position: relative
+        top: -5rem
+        height: clamp(50rem, 100vh, 100vh)
+        // max-height: 98vh
+        max-height: 50rem
+        width: 90vw
+        margin-left: 25vw
         transition: all 0.1s
         overflow: visible
 
@@ -118,7 +129,7 @@
 
     .lower
         pointer-events: none
-        margin-top: clamp(40rem, 110vh, 110vh)
+        // margin-top: clamp(40rem, 110vh, 110vh)
         color: black
         position: relative
         z-index: 2
@@ -256,7 +267,7 @@
 
     @media screen and (max-width: 55rem) and (hover: hover)
         .message
-            margin-top: 3rem !important
+            top: 3rem !important
             
             .headline
                 font-size: 3.5rem !important
@@ -264,27 +275,32 @@
             p
                 font-size: 1.1rem !important
 
+    @media screen and (max-width: 70rem)
+        .message
+            max-width: 30rem
+
     @media screen and (max-width: 55rem)
         .globe
             margin-left: 0
             width: 100vw
-            padding-top: 35vh
+            padding-top: 30vh
             // margin-top: 40vh
-            height: 100vh
+            height: clamp(50rem, 70vh, 50rem)
+            max-height: 43rem
 
         .curvature
             height: 1.5rem
             width: 100vw
 
         .message
-            margin-top: 2rem
+            top: 2rem
             margin-left: 50vw
             transform: translateX(-50%)
-            // width: 100vw
             padding: 0 0.5rem
             text-align: center
-            // max-width: 100vw
-            // margin-left: 0
+            // width: 100vw
+            max-width: 90vw
+            width: 90vw
 
             .headline
                 font-size: 2.2rem

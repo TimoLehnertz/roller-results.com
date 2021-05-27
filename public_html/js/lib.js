@@ -221,7 +221,7 @@ class DateSlider {
          const textMetrics = this.ctx.measureText(text + "");
  
          this.ctx.strokeStyle = "#7779";
-         this.ctx.fillText(text, this.getWidth() / 2 - textMetrics.width / 2, 20);
+         this.ctx.fillText(text, this.getWidth() / 2 - textMetrics.width / 2, 22);
          this.ctx.beginPath();
          this.ctx.moveTo(this.getWidth() / 2, 35);
          this.ctx.lineTo(this.getWidth() / 2, 80);
@@ -1858,6 +1858,11 @@ class Profile{
             if("type" in data){
                 this.type = data.type;
             }
+            if("share" in data) {
+                this.shareData = data.share;
+                this.elem.find(".profile__share").remove();
+                this.elem.append(this.shareElem);
+            }
         } else if(typeof data === 'string'){
             this.name = data;
         }
@@ -2098,6 +2103,20 @@ class Profile{
                 return $(`<div class="profile__image"><img src="/img/profile-men.png" alt="profile image"></div>`);
             }
         }
+    }
+
+    get shareElem() {
+        if(!navigator.share) {
+            return $();
+        }
+        const elem = $(`<div class="profile__share"><i class="fas fa-share-alt"></i></div>`);
+        elem.click(() => {
+            navigator.share(this.shareData).then(() => {
+                console.log('Thanks for sharing!');
+            })
+            .catch(console.error);
+        });
+        return elem;
     }
 
     get gender(){

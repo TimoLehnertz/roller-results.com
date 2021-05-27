@@ -111,11 +111,11 @@ export var DAT = DAT || {};
          'varying vec2 vUv;',
          'void main() {',
         //    'vec3 diffuse = texture2D( texture, vUv ).xyz;',
-           'vec3 diffuse = vec3( 0.1, 0.1, 0.3 );',
+           'vec3 diffuse = vec3( 0.1, 0.09, 0.4 );',
            'float intensity = 1.0 - dot( vNormal, vec3( 0.2, -0.3, 0.9 ) ) * 0.84;',
            'vec3 atmosphere = vec3( 0.8, 0.8, 1.0 ) * pow( intensity, 10.0 );',
            'float darkness = max(0.0, dot(vec3(0.5, -0.3, 0.6), vNormal) - 0.4) * 0.3;',
-           'float darkness2 = max(0.0, dot(vec3(1.0, -0.2, 0.5), vNormal) - 0.8) * 0.2;',
+           'float darkness2 = max(0.0, dot(vec3(1.0, -0.4, 0.5), vNormal) - 0.8) * 0.3;',
            'gl_FragColor = vec4( diffuse + atmosphere - darkness - darkness2, 1.0 );',
           //  'gl_FragColor = vec4( darkness2, darkness2, darkness2, 1.0 );',
          '}'

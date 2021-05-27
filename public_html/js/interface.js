@@ -145,6 +145,9 @@ function athleteDataToProfileData(athlete, useRank = false, alternativeRank = un
         left: {data: athlete.country, type: "countryFlag", link: `/country?id=${athlete.country}`, tooltip: athlete.country},
         right: {data: athlete.gender, type: "gender", tooltip: athlete.gender?.toLowerCase() == "w" ? "Female" : "Male"},
         trophy1, trophy2, trophy3,
+        share: {
+            url: "https://www.roller-results.com/athlete/index.php?id=" + athlete.id
+        },
         special: {
             data: Math.round(athlete.score) + "",
             tooltip: "Overall score | See settings to know how it works",

@@ -177,7 +177,7 @@ $body-2-b: $bg
     overflow: hidden
 
     // visibility
-    .profile__name, .profile__image, .profile__special, .profile__left, .profile__right, .profile__minimize, .profile__trophy-1, .profile__trophy-2, .profile__trophy-3, .profile__maximize, .profile__special, & > .profile__rank
+    .profile__name, .profile__image, .profile__special, .profile__left, .profile__right, .profile__minimize, .profile__trophy-1, .profile__trophy-2, .profile__trophy-3, .profile__maximize, .profile__special, & > .profile__rank, .profile__share
         display: blocK
     
     // top color
@@ -274,6 +274,20 @@ $body-2-b: $bg
         transition: opacity 0.2s, height 0.2s
         background: #3338
         z-index: 2
+
+    .profile__share
+        position: absolute
+        left: 0.5rem
+        top: 2rem
+        transition: all 0.1s
+        
+        i
+            font-size: 1.5rem
+            color: #ccc
+            text-shadow: none
+        
+        &:hover
+            transform: scale(1.05)
 
         // &::after
         //     content: ""
