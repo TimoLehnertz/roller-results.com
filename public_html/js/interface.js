@@ -96,17 +96,17 @@ function updateAllCountryProfiles(){
 
 function athleteDataToProfileData(athlete, useRank = false, alternativeRank = undefined){
     let trophy1 = {
-        data: getMedal("silver", athlete.silver, athlete.silver +" Silver medals"),
+        data: getMedal("silver", athlete.silver, athlete.silver +" Silver medals | Used competitions: " + getMedalComps()),
         type: ElemParser.DOM,
         // validate: () => athlete.silver > 0
     }
     let trophy2 = {
-        data: getMedal("gold", athlete.gold, athlete.gold + " Gold medals"),
+        data: getMedal("gold", athlete.gold, athlete.gold + " Gold medals | Used competitions: " + getMedalComps()),
         type: ElemParser.DOM,
         // validate: () => athlete.gold > 0
     }
     let trophy3 = {
-        data: getMedal("bronze", athlete.bronze, athlete.bronze + " Bronze medals"),
+        data: getMedal("bronze", athlete.bronze, athlete.bronze + " Bronze medals | Used competitions: " + getMedalComps()),
         type: ElemParser.DOM,
         // validate: () => athlete.bronze > 0
     }
@@ -146,7 +146,10 @@ function athleteDataToProfileData(athlete, useRank = false, alternativeRank = un
         right: {data: athlete.gender, type: "gender", tooltip: athlete.gender?.toLowerCase() == "w" ? "Female" : "Male"},
         trophy1, trophy2, trophy3,
         share: {
-            url: "https://www.roller-results.com/athlete/index.php?id=" + athlete.id
+            url: "https://www.roller-results.com/athlete/index.php?id=" + athlete.idAthlete,
+            title: "Share profiles",
+            text: `Share ${athlete.firstname} ${athlete.lastname}'s profile on social media`,
+            files: []
         },
         special: {
             data: Math.round(athlete.score) + "",
@@ -517,17 +520,17 @@ function countryToProfile(country, minLod = Profile.MIN, useRank = false, altern
 
 function countryToProfileData(country, useRank = false, alternativeRank = undefined) {
     let trophy1 = {
-        data: getMedal("silver", country.silver, country.silver + " Silver medals"),
+        data: getMedal("silver", country.silver, country.silver + " Silver medals | Used competitions: " + getMedalComps()),
         type: ElemParser.DOM,
         // validate: () => country.silver > 0
     }
     let trophy2 = {
-        data: getMedal("gold", country.gold, country.gold + " Gold medals"),
+        data: getMedal("gold", country.gold, country.gold + " Gold medals | Used competitions: " + getMedalComps()),
         type: ElemParser.DOM,
         // validate: () => country.gold > 0
     }
     let trophy3 = {
-        data: getMedal("bronze", country.bronze, country.bronze + " Bronze medals"),
+        data: getMedal("bronze", country.bronze, country.bronze + " Bronze medals | Used competitions: " + getMedalComps()),
         type: ElemParser.DOM,
         // validate: () => country.bronze > 0
     }
@@ -794,14 +797,14 @@ function getCompetitionListElem(competitions){
         }
         const head = $(`<div class="flex justify-start align-center"><div>${comp.type} ${comp.location} ${comp.raceYear}</div></div>`);
         if(comp.bronzeMedals !== undefined){
-            if(comp.bronzeMedals > 0){
-                head.append(getMedal("bronze", comp.bronzeMedals, comp.bronzeMedals +" Bronze medals"));
+            if(comp.goldMedals > 0){
+                head.append(getMedal("gold", comp.goldMedals, comp.goldMedals + " Gold medals | Used competitions: " + getMedalComps()));
             }
             if(comp.silverMedals > 0){
-                head.append(getMedal("silver", comp.silverMedals, comp.silverMedals + " Silver medals"));
+                head.append(getMedal("silver", comp.silverMedals, comp.silverMedals + " Silver medals | Used competitions: " + getMedalComps()));
             }
-            if(comp.goldMedals > 0){
-                head.append(getMedal("gold", comp.goldMedals, comp.goldMedals + " Gold medals"));
+            if(comp.bronzeMedals > 0){
+                head.append(getMedal("bronze", comp.bronzeMedals, comp.bronzeMedals +" Bronze medals | Used competitions: " + getMedalComps()));
             }
         }
         if(comp.hasLink !== null){

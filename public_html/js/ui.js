@@ -58,15 +58,30 @@ function initHeader(){
 const defaultCompSettings =  {
     worlds: {dbName: "WM",                          displayName: "Worlds",                  influence: 1,   useMedals: true, icon: "fas fa-globe"},
     worldGames: {dbName: "World Games",             displayName: "World games",             influence: 1,   useMedals: true, icon: "fas fa-globe"},
-    yog: {dbName: "Youth Olympic Games",            displayName: "Youth Olympic Games",     influence: 0.5, useMedals: false, icon: "fas fa-globe"},
-    euros: {dbName: "EM",                           displayName: "Euros",                   influence: 0.3, useMedals: false, icon: "fas fa-globe-europe"},
-    combined: {dbName: "Combined",                  displayName: "Worlds / Euros Combined", influence: 0.3, useMedals: false, icon: "fas fa-globe-europe"},
-    universade: {dbName: "Universade",              displayName: "Universade",              influence: 0.1, useMedals: false, icon: "fas fa-graduation-cap"},
-    cadetsChallenge: {dbName: "Cadets Challenge",   displayName: "Cadets Challenge",        influence: 0.05,useMedals: false, icon: "fas fa-award"}
+    yog: {dbName: "Youth Olympic Games",            displayName: "Youth Olympic Games",     influence: 0, useMedals: false, icon: "fas fa-globe"},
+    euros: {dbName: "EM",                           displayName: "Euros",                   influence: 0, useMedals: false, icon: "fas fa-globe-europe"},
+    combined: {dbName: "Combined",                  displayName: "Worlds / Euros Combined", influence: 0, useMedals: false, icon: "fas fa-globe-europe"},
+    universade: {dbName: "Universade",              displayName: "Universade",              influence: 0, useMedals: false, icon: "fas fa-graduation-cap"},
+    cadetsChallenge: {dbName: "Cadets Challenge",   displayName: "Cadets Challenge",        influence: 0,useMedals: false, icon: "fas fa-award"}
 }
 
 let settingCompetitions = defaultCompSettings;
 loadStorage();
+
+function getMedalComps() {
+    let out = "";
+    let delimiter = "";
+    for (const key in settingCompetitions) {
+        if (Object.hasOwnProperty.call(settingCompetitions, key)) {
+            const comp = settingCompetitions[key];
+            if(comp.useMedals) {
+                out += delimiter + comp.displayName;
+                delimiter = ", ";
+            }
+        }
+    }
+    return out;
+}
 
 function loadStorage() {
     const storedSettings = sessionStorage.getItem("settingCompetitions");

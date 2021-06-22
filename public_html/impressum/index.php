@@ -10,7 +10,7 @@ Heidebroichstra&szlig;e 23<br />
 50374 Erftstadt</p>
 
 <h2>Postadresse</h2>
-<p>Alexander Lenertz<br />
+<p>Alexander Lehnertz<br />
 Heidebroichstr. 23 50374 Erftstadt</p>
 <h2>Kontakt</h2>
 <p>Telefon: 015733686931<br />

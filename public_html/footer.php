@@ -3,14 +3,14 @@
                 <div>
                     <p>Product</p>
                     <a href="/impressum/index.php">Impressum</a>
-                    <a href="/impressum/faq.php">Faq</a>
+                    <!-- <a href="/impressum/faq.php">Faq</a> -->
                     <a href="/impressum/features.php">Features</a>
                 </div>
                 <div>
                     <p>Platform</p>
-                    <a href="/api/introduction.php">Developer API</a>
+                    <!-- <a href="/api/introduction.php">Developer API</a> -->
                     <a href="/blog/dev.php">Dev blog</a>
-                    <a href="/impressum/partners.php">Partners</a>
+                    <!-- <a href="/impressum/partners.php">Partners</a> -->
                 </div>
                 <div>
                     <p>Support</p>
@@ -22,10 +22,10 @@
                     © <?= date("Y")?> www.roller-results.com - All rights reserved
                 </p>
                 <p class="right">
-                    <a href="#" class="no-underline"><i class="fab fa-youtube"></i></a>
-                    <a href="#" class="no-underline"><i class="fab fa-instagram"></i></a>
-                    <a href="#" class="no-underline"><i class="fab fa-twitter"></i></a>
-                    <a href="#" class="no-underline"><i class="fab fa-github"></i></a>
+                    <!-- <a href="#" class="no-underline"><i class="fab fa-youtube"></i></a> -->
+                    <a target="_blank" rel="noopener noreferrer" href="https://www.instagram.com/roller_results/" class="no-underline"><i class="fab fa-instagram"></i></a>
+                    <a target="_blank" rel="noopener noreferrer" href="#" class="no-underline"><i class="fab fa-twitter"></i></a>
+                    <a target="_blank" rel="noopener noreferrer" href="https://github.com/TimoLehnertz/inline-data.org" class="no-underline"><i class="fab fa-github"></i></a>
                 </p>
             </div>
         </footer>

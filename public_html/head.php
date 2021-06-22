@@ -45,6 +45,7 @@ if($loggedIn){
         <script src="/js/lib.js"></script>
         <script src="/js/ui.js"></script>
         <script src="/js/interface.js"></script>
+        <script src="/js/html2canvas/html2canvas.js" defer></script>
         <script>
             <?php echo "const phpUId = '".uniqid($_SERVER["SERVER_NAME"], true)."';";?>
         </script>
