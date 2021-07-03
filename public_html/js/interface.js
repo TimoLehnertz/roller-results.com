@@ -146,10 +146,9 @@ function athleteDataToProfileData(athlete, useRank = false, alternativeRank = un
         right: {data: athlete.gender, type: "gender", tooltip: athlete.gender?.toLowerCase() == "w" ? "Female" : "Male"},
         trophy1, trophy2, trophy3,
         share: {
-            url: "https://www.roller-results.com/athlete/index.php?id=" + athlete.idAthlete,
-            title: "Share profiles",
-            text: `Share ${athlete.firstname} ${athlete.lastname}'s profile on social media`,
-            files: []
+            url: "https://www.roller-results.com/athlete/index.php?id=" + athlete.idAthlete + "&name=" + athlete.firstname + "_" + athlete.lastname,
+            title: `Share ${athlete.firstname} ${athlete.lastname}'s profile`,
+            text: `Show ${athlete.firstname} ${athlete.lastname}'s profile to friends on social media`,
         },
         special: {
             data: Math.round(athlete.score) + "",
@@ -158,7 +157,7 @@ function athleteDataToProfileData(athlete, useRank = false, alternativeRank = un
         },
         primary: {
             scoreShort: {
-                description: "Sprint score:",
+                description: "Score short:",
                 data: Math.round(athlete.scoreShort),
                 tooltip: "Score only applied to relays and distances < 1500m",
             },
@@ -173,7 +172,7 @@ function athleteDataToProfileData(athlete, useRank = false, alternativeRank = un
                 description1: "Sprint",
                 description2: "Long",
                 type: "slider",
-                tooltip: "Relation of sprint score and long score"
+                tooltip: "Relation of Score short and long score"
             },
             topTen: {
                 data: athlete.topTen,
@@ -575,7 +574,7 @@ function countryToProfileData(country, useRank = false, alternativeRank = undefi
         },
         primary: {
             scoreShort: {
-                description: "Sprint score:",
+                description: "Score short:",
                 data: Math.round(country.scoreShort),
                 tooltip: "Score only applied to relays and distances < 1500m"
             },
@@ -590,7 +589,7 @@ function countryToProfileData(country, useRank = false, alternativeRank = undefi
                 description1: "Sprint",
                 description2: "Long",
                 type: "slider",
-                tooltip: "Relation of sprint score and long score"
+                tooltip: "Relation of Score short and long score"
             },
             topTen: {
                 data: country.topTen,
@@ -857,7 +856,7 @@ function careerGraphAt(parent, career){
             data: {
                 labels,
                 datasets: [{
-                    label: 'sprint score',
+                    label: 'Score short',
                     data: dataArrays[2],
                     backgroundColor: "#77f81577",
                     borderColor: "#00aa33",

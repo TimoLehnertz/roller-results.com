@@ -2259,18 +2259,36 @@ class Profile{
 0
     get shareElem() {
         if(!navigator.share) {
-            // if(!share123) {
-            //     alert("share not supported");
-            //     share123 = true;
-            // }
             return $();
         }
         const elem = $(`<div class="profile__share"><i class="fas fa-share-alt"></i></div>`);
         elem.click(() => {
-            console.log(document.querySelector("#" + this.uid))
-            html2canvas(document.querySelector("#" + this.uid)).then(function(canvas) {
-                canvas.toBlob(blob => navigator.share({blob: blob, mimeType: 'image/png'}),'image/png');
-            });
+            // console.log(document.querySelector("#" + this.uid))
+            // html2canvas(document.querySelector("#" + .uid)).then(function(canvas) {
+            // const canvas = document.createElement('canvas');
+            // canvas.width = 100;
+            // canvas.height = 100;
+            // // canvas.getContext('2d').drawImage(image, 0, 0);
+            // canvas.toBlob((blob) => {
+            //     // console.log(this);
+            //     const files = [Profile.blobToFile(blob)];
+            //     // const files = [Profile.blobToFile(blob)];
+            //     Object.freeze(files[0]);
+                // Object.freeze(files);
+                // const data = {
+                //     // files,
+                //     // mimeType: 'image/png',
+                //     title: `Share ${this.name}'s Profile`,
+                //     url: "localhost"
+                // }
+                if(navigator.canShare(this.shareData)) {
+                    navigator.share(this.shareData)
+                } else {
+                    console.log("can not share");
+                }
+            // }, 'image/png');
+            // $("main").append(canvas);
+        // });
         });
         return elem;
     }
