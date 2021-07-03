@@ -147,8 +147,8 @@ function athleteDataToProfileData(athlete, useRank = false, alternativeRank = un
         trophy1, trophy2, trophy3,
         share: {
             url: "https://www.roller-results.com/athlete/index.php?id=" + athlete.idAthlete + "&name=" + athlete.firstname + "_" + athlete.lastname,
-            title: `Share ${athlete.firstname} ${athlete.lastname}'s profile`,
-            text: `Show ${athlete.firstname} ${athlete.lastname}'s profile to friends on social media`,
+            title: `See ${athlete.firstname} ${athlete.lastname}'s athlete profile`,
+            text: `Check out ${athlete.firstname} ${athlete.lastname}'s athlete profile on Roller-results.`,
         },
         special: {
             data: Math.round(athlete.score) + "",
@@ -564,6 +564,11 @@ function countryToProfileData(country, useRank = false, alternativeRank = undefi
         type: "country",
         maximizePage: `/country?id=${country.country}${searchParam}`,
         name: country.country,
+        share: {
+            url: "https://www.roller-results.com/country/index.php?id=" + country.country,
+            title: `See ${country.country}'s national profile`,
+            text: `Check out ${country.country}'s nation profile on Roller-results.`,
+        },
         image: {data: country.country, type: "countryFlag", link: `/country?id=${country.country}`, width: "100%", height: "100%", class: "countryBig"},
         // right: country.country,
         trophy1, trophy2, trophy3,
@@ -673,7 +678,7 @@ function countryToProfileData(country, useRank = false, alternativeRank = undefi
         const athleteButton = $(`<button class=" align center btn default">Load all athlethes</button>`);
         allAthletesElem.append(athleteButton);
         
-        const maxDisplay = isMobile() ? 20 : 100;
+        const maxDisplay = isMobile() ? 20 : 30;
         get("countryAthletes", country.country, maxDisplay + 1).receive((succsess, athletes) => {
             const profiles = [];
             let i = 0;
@@ -698,6 +703,7 @@ function countryToProfileData(country, useRank = false, alternativeRank = undefi
                 athleteButton.hide();
                 let count = 0;
                 let overflow = false;
+                console.log(athletes);
                 for (const athlete of athletes) {
                     const profile = athleteToProfile(athlete, Profile.MIN, false, 0, false);
                     profile.appendTo(allAthletesElem.find(".athlete-list-big"));

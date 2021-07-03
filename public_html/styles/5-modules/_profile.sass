@@ -279,15 +279,6 @@ $body-2-b: $bg
         position: absolute
         left: 0.5rem
         top: 2rem
-        transition: all 0.1s
-        
-        i
-            font-size: 1.5rem
-            color: #ccc
-            text-shadow: none
-        
-        &:hover
-            transform: scale(1.05)
 
         // &::after
         //     content: ""
@@ -356,6 +347,14 @@ $body-2-b: $bg
         transform: skewY(-1deg)
         transform-origin: left
 
+    & > .profile__share
+        position: absolute
+        left: 14rem
+        top: 9.3em
+        font-size: 1.8rem
+        background: $a
+        padding: 1rem
+        border-radius: 50%
 
     // img
     & > .profile__image
@@ -445,6 +444,16 @@ $body-2-b: $bg
     &::after
         display: none
 
+.profile__share
+    transition: all 0.1s
+    
+    i
+        font-size: 1.5rem
+        color: #ccc
+        text-shadow: none
+    
+    &:hover
+        transform: scale(1.05)
 
 .profile__trophy
     position: absolute

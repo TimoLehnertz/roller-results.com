@@ -2290,6 +2290,7 @@ class Profile{
             // $("main").append(canvas);
         // });
         });
+        new Tooltip(elem, "Share this profile with friends");
         return elem;
     }
 
