@@ -9,7 +9,7 @@ function getPreview() {
         // if(file_exists($_SERVER["DOCUMENT_ROOT"]."/img/previews/athletes/$id.jpg")) {
         //     return "/img/previews/atheles/$id.jpg";
         // } else {
-            // return makeAthletePreview($id);
+            return makeAthletePreview($id);
         // }
     }
 
@@ -36,6 +36,6 @@ function makeAthletePreview($id) {
     // imagettftext($img, $fontSize, 0, 11, 40, $textcolor, $fontFile, $athlete["fullname"]);
     // imagettftext($img, 20, 0, 11, 21, $textcolor, $fontFile, $athlete["fullname"]);
 
-    imagejpeg($img, $previewFileName);
+    // imagejpeg($img, $previewFileName);
     return "/img/previews/athletes/$id.jpg";
 }
