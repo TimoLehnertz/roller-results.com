@@ -35,8 +35,8 @@ function makeAthletePreview($id) {
     $fontFile = $_SERVER["DOCUMENT_ROOT"]."/fonts/win/sarcasti.ttf";
     $fontSize = 42;
 
-    $res  = imagettftext($img, $fontSize, 0, 11, 40, $textcolor, $fontFile, $athlete["fullname"]);
+    imagettftext($img, $fontSize, 0, 11, 40, $textcolor, $fontFile, $athlete["fullname"]);
 
-    imagejpeg($img, $previewFileName);
+    $res = imagejpeg($img, $previewFileName);
     return "/img/previews/athletes/$id.jpg | $res";
 }
