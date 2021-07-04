@@ -23,7 +23,7 @@ function makeAthletePreview($id) {
     $athlete = getAthlete($id);
     $bgFileName = $_SERVER["DOCUMENT_ROOT"]."/img/previews/athletes/bg.jpg";
     $previewFileName = $_SERVER["DOCUMENT_ROOT"]."/img/previews/athletes/$id.jpg";
-    copy($bgFileName, $previewFileName);
+    // copy($bgFileName, $previewFileName);
     // $img = imagecreatetruecolor(120, 20);
     $font = 5;
     // echo $bgFileName;
@@ -37,6 +37,6 @@ function makeAthletePreview($id) {
 
     imagettftext($img, $fontSize, 0, 11, 40, $textcolor, $fontFile, $athlete["fullname"]);
 
-    $res = imagejpeg($img, $previewFileName);
-    return "/img/previews/athletes/$id.jpg | $res";
+    imagejpeg($img, $previewFileName);
+    return "/img/previews/athletes/$id.jpg";
 }
