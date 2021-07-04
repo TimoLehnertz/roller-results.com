@@ -27,17 +27,16 @@ function makeAthletePreview($id) {
     // $img = imagecreatetruecolor(120, 20);
     $font = 5;
     // echo $bgFileName;
-    // $img = imagecreatefromjpeg($bgFileName);
-    $img = imagecreatetruecolor(100, 100);
-    // $bg = imagecolorallocate($img, 70, 60, 150);
-    // $textcolor = imagecolorallocate($img, 255, 255, 255);
+    $img = imagecreatefromjpeg($bgFileName);
+    // $img = imagecreatetruecolor(100, 100);
+    $bg = imagecolorallocate($img, 70, 60, 150);
+    $textcolor = imagecolorallocate($img, 255, 255, 255);
 
     $fontFile = $_SERVER["DOCUMENT_ROOT"]."/fonts/win/sarcasti.ttf";
     $fontSize = 42;
 
-    // imagettftext($img, $fontSize, 0, 11, 40, $textcolor, $fontFile, $athlete["fullname"]);
-    // imagettftext($img, 20, 0, 11, 21, $textcolor, $fontFile, $athlete["fullname"]);
+    imagettftext($img, $fontSize, 0, 11, 40, $textcolor, $fontFile, $athlete["fullname"]);
 
-    // imagejpeg($img, $previewFileName);
+    imagejpeg($img, $previewFileName);
     return "/img/previews/athletes/$id.jpg";
 }
