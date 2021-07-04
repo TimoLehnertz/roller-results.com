@@ -9,7 +9,7 @@ function getPreview() {
         // if(file_exists($_SERVER["DOCUMENT_ROOT"]."/img/previews/athletes/$id.jpg")) {
         //     return "/img/previews/atheles/$id.jpg";
         // } else {
-            makeAthletePreview($id);
+            // return makeAthletePreview($id);
         // }
     }
 
@@ -37,4 +37,5 @@ function makeAthletePreview($id) {
     // imagettftext($img, 20, 0, 11, 21, $textcolor, $fontFile, $athlete["fullname"]);
 
     imagejpeg($img, $previewFileName);
+    return "/img/previews/athletes/$id.jpg";
 }
