@@ -26,7 +26,8 @@ function makeAthletePreview($id) {
     // copy($bgFileName, $previewFileName);
     // $img = imagecreatetruecolor(120, 20);
     $font = 5;
-    // $img = imagecreatefromjpeg($bgFileName);
+    echo $bgFileName;
+    $img = imagecreatefromjpeg($bgFileName);
     // $bg = imagecolorallocate($img, 70, 60, 150);
     // $textcolor = imagecolorallocate($img, 255, 255, 255);
 
