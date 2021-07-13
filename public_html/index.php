@@ -44,58 +44,144 @@ $amountVideo = 513;
     </div>
     <div id="container" class="globe"></div>
     <div class="lower">
-    <div class="dates" style="height: 170px"></div>
+        <div class="dates" style="height: 170px"></div>
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" preserveAspectRatio="none" viewBox="0 0 1680 40" class="curvature" style="bottom: -1px;"><path d="M0 40h1680V30S1340 0 840 0 0 30 0 30z" fill="#ddd"></path></svg>
         <div class="content">
-        <div class="amounts">
-            <div class="pc-only"><div><?= $amountCountry?></div><div>Countries</div></div>
-            <div><div><?= $amountResult?></div><div>Results</div></div>
-            <div><div><?= $amountVideo?></div><div>Videos</div></div>
-            <div class="pc-only"><div><?= $amountAthlete?></div><div>Athletes</div></div>
-        </div>
-        <h1> <img class="rr-logo" src="/img/logo/rr.png" alt="Roller results logo">Roller results</h1>
-        <p>
-            Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply  dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lore  Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply dummy text of 
-        </p>
+            <div class="amounts">
+                <div class="pc-only"><div><?= $amountCountry?></div><div>Countries</div></div>
+                <div><div><?= $amountResult?></div><div>Results</div></div>
+                <div><div><?= $amountVideo?></div><div>Videos</div></div>
+                <div class="pc-only"><div><?= $amountAthlete?></div><div>Athletes</div></div>
+            </div>
+            <h2></h2>
+            <p class="head-paragraph align center">
+                <span><b>Data</b> and <b>results</b> are the best basis for progress in elite sport</span><br>
+                <br><span><b>Inline speedskating</b> has no central point for results collection</span><br>
+                <br><span style="color: #222">We're here to fix that!</span>
+            </p>
 
-        <div class="hall-of-fame">
-            <div class="best-skaters">
-                <a class="no-underline" href="/hall-of-fame/index.php">
-                    <div class="index-card">
-                        <h2>Hall of fame</h2>
+            <div class="dark section align center">
+                <h2>Results from as far back as 1935!</h2>
+                <p>
+                    we have dug up the internet for every bit of skating result so you dont need to
+                </p>
+            </div>
+            <div class="light section">
+                <h2>500+ Videos</h2>
+                <ul>
+                    <li>
+                        Anytime you see this <i class="fab fa-youtube"></i> Icon there will be a video availbale for the race / competition
+                    </li>
+                    <li>
+                        Search for a race or competition and find lots of videos
+                    </li>
+                </ul>
+            </div>
+            <div class="dark section globe-section">
+                <h2>Roller globe</h2>
+                <div class="globe-flex">
+                    <div>
+                        <h3 class="margin bottom">Wondered what that globe with its lines stands for?</h3>
                         <ul>
-                            <li>See the best skaters since 1930</li>
-                            <li>All Athletes are sorted by their live calculated score</li>
-                            <li>Take advantage of the setttings to change the way scores are calculated</li>
-                            <li class="top-five">Top 5 Skaters<i class="fas fa-angle-double-right arrow-right"></i></li>
-                            <li class="mobile-only margin top">Swipe left to reveal skaters</li>
+                            <li>Every line represents a country wich participated in a competition</li>
+                            <li>Hover the lines to see who what and where</li>
+                            <li>Drag the timeline to travel back and forth in time</li>
                         </ul>
+                        <p class="margin top triple">It shows the connectivity and network wich unites us skaters</p>
                     </div>
-                </a>
+                    <img src="/img/globe/globe.jpg" alt="globe preview">
+                </div>
+            </div>
+            <div class="light section">
+                <h2>Athlete profiles</h2>
+                <div class="profile-showcase">
+                    <div class="profile-left">
+                        <ul>
+                            <li>Review all important information in seconds</li>
+                            <li>See all your competitions and competitors</li>
+                            <li>Check your career graph and see how others have performed</li>
+                            <li>Check your best times</li>
+                        </ul>
+                        <p class="pc-only margin top triple color gray">Hover over anything on the profile to get hints</p>
+                    </div>
+                    <div class="profile-section-profile-a">
+                        <script>
+                            get("athlete", 6606).receive((succsess, athlete) => {//chad
+                                const p = athleteToProfile(athlete, Profile.CARD);
+                                p.appendTo(".profile-section-profile-a");
+                            });
+                        </script>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="dark">
+                <div class="best-skaters">
+                    <a class="no-underline" href="/hall-of-fame/index.php">
+                        <div class="index-card">
+                            <h2>Hall of fame</h2>
+                            <ul>
+                                <li>See the best skaters since 1930</li>
+                                <li>All Athletes are sorted by their live calculated score</li>
+                                <li>Take advantage of the setttings to change the way scores are calculated</li>
+                                <li class="top-five">Top 5 Skaters<i class="fas fa-angle-double-right arrow-right"></i></li>
+                                <li class="mobile-only margin top">Swipe left to reveal skaters</li>
+                            </ul>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <div class="light section">
+                <h2>Country profiles</h2>
+                <div class="profile-showcase">
+                    <div class="profile-left">
+                        <ul>
+                            <li>Review all important information in seconds</li>
+                            <li>See all your competitions and competitors</li>
+                            <li>Check your career graph and see how others have performed</li>
+                            <li>Check your best times</li>
+                        </ul>
+                        <p class="pc-only margin top triple color gray">Hover over anything on the profile to get hints</p>
+                    </div>
+                    <div class="profile-section-profile-c">
+                        <script>
+                            get("country", "italy").receive((succsess, athlete) => {//chad
+                                const p = countryToProfile(athlete, Profile.CARD);
+                                p.appendTo(".profile-section-profile-c");
+                            });
+                        </script>
+                    </div>
+                </div>
+            </div>
+            <div class="dark">
+                <div class="best-countries">
+                    <a class="no-underline" href="/hall-of-fame/index.php">
+                        <div class="index-card">
+                            <h2>Top countries</h2>
+                            <ul>
+                                <li>See the best performing countries</li>
+                                <li>Take advantage of the setttings to change the way scores are calculated</li>
+                                <li class="top-five">Top 5 Countries<i class="fas fa-angle-double-right arrow-right"></i></li>
+                                <li class="mobile-only margin top">Swipe left to reveal countries</li>
+                            </ul>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <div class="light section align center">
+                <h2>And the best is yet to come:<br>it's all free source and open source!</h2>
+                <p>
+                    We commit this site to the amazing inline speedskating comunity!
+                </p>
+                <p>
+                    The whole sourcecode for this website is<br>available on <a target="_blank" rel="noopener noreferrer" href="https://github.com/TimoLehnertz/inline-data.org" class="no-underline"><i class="fab fa-github"></i> Gihub</a>
+                    for you to check out.
+                </p>
+                <p>
+                    Any support is appreciated and you can<br> ask us anything you want. See The <a href="/impressum/contact">Contact</a> <br>section for ways to reach out to us.
+                </p>
             </div>
         </div>
-        <p>
-            Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply  dummy text of Lorem Ipsum. Lorem Ipsum
-        </p>
-        <div class="hall-of-fame">
-            <div class="best-countries">
-                <a class="no-underline" href="/hall-of-fame/index.php">
-                    <div class="index-card">
-                        <h2>Top countries</h2>
-                        <ul>
-                            <li>See the best performing countries</li>
-                            <li>Take advantage of the setttings to change the way scores are calculated</li>
-                            <li class="top-five">Top 5 Countries<i class="fas fa-angle-double-right arrow-right"></i></li>
-                            <li class="mobile-only margin top">Swipe left to reveal countries</li>
-                        </ul>
-                    </div>
-                </a>
-            </div>
-        </div>
-        <p>
-            Lorem Ipsum is simply dummy text of Lorem Ipsum. Lorem Ipsum is simply  dummy text of Lorem Ipsum. Lorem Ipsum
-        </p>
-    </div>
     </div>
 </main>
 <script type="module">

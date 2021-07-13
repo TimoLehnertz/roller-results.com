@@ -185,10 +185,61 @@
         > div:first-child
             border: none
 
-    .hall-of-fame
+    .head-paragraph
+        // display: flex
+        // flex-direction: column
+        // justify-content: center
+        font-size: 2rem
+
+    .profile-showcase
+        display: flex
+        align-items: center
+        justify-content: space-evenly
+
+
+        .profile-left
+            font-size: 1.4rem
+
+        li
+            padding-left: 1rem
+            margin-top: 1rem
+            padding-bottom: 1rem
+    
+    .dark
         padding-top: 4rem
         background: #333
         box-shadow: inset 0px 8px 22px -9px #000000;
+        color: white
+
+    .section
+        padding: 3rem
+        font-size: 1.5rem
+
+        h2
+            text-align: center
+            font-size: 2.5rem
+            margin-bottom: 2rem
+
+    .light
+        padding-top: 4rem
+        background: #ddd
+        box-shadow: inset 0px 8px 22px -9px #000000;
+
+    .globe-section
+        .globe-flex
+            display: flex
+            justify-content: space-evenly
+
+        img
+            max-width: 30vw
+            height: auto
+
+    .section ul
+        border-left: 7px solid $c
+
+        li
+            list-style: none
+            padding: 1rem
 
     .index-card
         width: 18.75rem
@@ -275,9 +326,9 @@
             p
                 font-size: 1.1rem !important
 
-    @media screen and (max-width: 70rem)
-        .message
-            max-width: 30rem
+        .head-paragraph
+            span
+                font-size: 1.2rem
 
     @media screen and (max-width: 55rem)
         .globe
@@ -310,3 +361,27 @@
 
         .content h1
             flex-direction: column
+
+        .head-paragraph
+            span
+                font-size: 1.3rem
+            
+        .section
+            padding: 1.5rem
+            font-size: 1.2rem
+            h2
+                font-size: 2rem
+
+        .profile-showcase
+            flex-direction: column
+
+            .profile-left
+                font-size: 1.2rem
+                margin-bottom: 2rem
+
+        .globe-section
+            .globe-flex
+                flex-direction: column
+            img
+                margin-top: 2rem
+                max-width: 100vw

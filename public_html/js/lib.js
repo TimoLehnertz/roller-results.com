@@ -653,7 +653,9 @@ class Slideshow{
         if(isMobile() && Math.abs(this.velY) * 1.5 > Math.abs(this.velX)){
             this.velX = 0;
         } else {
-            e.preventDefault();
+            if(e.cancelable) {
+                e.preventDefault();
+            }
             this.update();
         }
     }
