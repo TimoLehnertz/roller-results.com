@@ -1,6 +1,6 @@
 <?php
 
-// include_once $_SERVER["DOCUMENT_ROOT"]."/api/index.php";
+include_once $_SERVER["DOCUMENT_ROOT"]."/api/index.php";
 
 // function getPreview() {
 //     return "https://www.roller-results.com/img/previews/logo.PNG";
