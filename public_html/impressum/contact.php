@@ -37,7 +37,7 @@ include_once "../header.php";
             <h2>Facebook group:<a class="margin left margin right" target="_blank" rel="noopener noreferrer" href="https://www.facebook.com/RollerResults" class="no-underline"><i class="fab fa-facebook" style="color: #ccc"></i> Roller-Results</a></h2>
         </li>
         <li>
-            <h2>Github:<a class="margin left margin right" target="_blank" rel="noopener noreferrer" href="https://www.facebook.com/RollerResults" class="no-underline"><i class="fab fa-github" style="color: #ccc"></i> Roller-Results</a></h2>
+            <h2>Github:<a class="margin left margin right" target="_blank" rel="noopener noreferrer" href="https://github.com/TimoLehnertz/roller-results.com" class="no-underline"><i class="fab fa-github" style="color: #ccc"></i> Roller-Results</a></h2>
         </li>
         <li>
             <h3>Email: <i class="fas fa-envelope margin right" style="color: #ccc"></i>Roller.results@gmail.com</h3>

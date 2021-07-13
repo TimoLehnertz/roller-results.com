@@ -174,7 +174,7 @@ $amountVideo = 513;
                     We commit this site to the amazing inline speedskating comunity!
                 </p>
                 <p>
-                    The whole sourcecode for this website is<br>available on <a target="_blank" rel="noopener noreferrer" href="https://github.com/TimoLehnertz/inline-data.org" class="no-underline"><i class="fab fa-github"></i> Gihub</a>
+                    The whole sourcecode for this website is<br>available on <a target="_blank" rel="noopener noreferrer" href="https://github.com/TimoLehnertz/roller-results.com" class="no-underline"><i class="fab fa-github"></i> Gihub</a>
                     for you to check out.
                 </p>
                 <p>
