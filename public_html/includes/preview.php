@@ -3,17 +3,17 @@
 include_once $_SERVER["DOCUMENT_ROOT"]."/api/index.php";
 
 function getPreview() {
+    return "https://www.roller-results.com/img/previews/logo.PNG";
     $path = $_SERVER["REQUEST_URI"];
     if(strpos($path, "athlete")) {
         $id = $_GET["id"];
         if(file_exists($_SERVER["DOCUMENT_ROOT"]."/img/previews/athletes/$id.jpg")) {
             return "https://www.roller-results.com/img/previews/atheles/$id.jpg";
         } else {
-            return makeAthletePreview($id);
+            // return makeAthletePreview($id);
         // }
     }
 
-    return "https://www.roller-results.com/img/previews/logo.PNG";
 }
 
 /**
