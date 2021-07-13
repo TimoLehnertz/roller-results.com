@@ -49,14 +49,14 @@ function makeAthletePreview($id) {
         $goldOffset = 23;
     }
 
-    imagettftext($img, $fontSizeName, 0, 60, 100, $textcolor, $fontFile, $athlete["firstname"]);
-    imagettftext($img, $fontSizeName, 0, 60, 175, $textcolor, $fontFile, $athlete["lastname"]);
-    //medals
-    imagettftext($img, $fontSizeMedal, 0, 92 + $silverOffset, 320, $textcolor, $fontFile, $athlete["silver"]);
-    imagettftext($img, $fontSizeMedal, 0, 232 + $goldOffset, 340, $textcolor, $fontFile, $athlete["gold"]);
-    imagettftext($img, $fontSizeMedal, 0, 350 + $bronzeOffset, 363, $textcolor, $fontFile, $athlete["bronze"]);
+    // imagettftext($img, $fontSizeName, 0, 60, 100, $textcolor, $fontFile, $athlete["firstname"]);
+    // imagettftext($img, $fontSizeName, 0, 60, 175, $textcolor, $fontFile, $athlete["lastname"]);
+    // //medals
+    // imagettftext($img, $fontSizeMedal, 0, 92 + $silverOffset, 320, $textcolor, $fontFile, $athlete["silver"]);
+    // imagettftext($img, $fontSizeMedal, 0, 232 + $goldOffset, 340, $textcolor, $fontFile, $athlete["gold"]);
+    // imagettftext($img, $fontSizeMedal, 0, 350 + $bronzeOffset, 363, $textcolor, $fontFile, $athlete["bronze"]);
 
-    imagejpeg($img, $previewFileName);
+    // imagejpeg($img, $previewFileName);
     // return "/img/previews/athletes/$id.jpg";
     return "https://www.roller-results.com/img/previews/athletes/$id.jpg";
 }
