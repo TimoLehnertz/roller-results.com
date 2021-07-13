@@ -10,7 +10,7 @@ if(!isLoggedIn()){
 include_once "includes/error.php";
 include_once "api/userAPI.php";
 include_once "includes/roles.php";
-include_once "includes/preview.php";
+// include_once "includes/preview.php";
 $loggedIn = isLoggedIn();//
 $user;
 if($loggedIn){
