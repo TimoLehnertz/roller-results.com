@@ -1,6 +1,6 @@
 <?php
 
-include_once "../api/index.php";
+include_once $_SERVER["DOCUMENT_ROOT"]."/api/index.php";
 
 function getPreview() {
     $path = $_SERVER["REQUEST_URI"];
@@ -13,7 +13,8 @@ function getPreview() {
         // }
     }
 
-    return "/img/previews/logo.PNG";
+    return "https://www.roller-results.com/img/previews/logo.PNG";
+    // return "/img/previews/logo.PNG";
 }
 
 /**
@@ -32,11 +33,18 @@ function makeAthletePreview($id) {
     $bg = imagecolorallocate($img, 70, 60, 150);
     $textcolor = imagecolorallocate($img, 255, 255, 255);
 
-    $fontFile = $_SERVER["DOCUMENT_ROOT"]."/fonts/win/sarcasti.ttf";
-    $fontSize = 42;
+    $fontFile = $_SERVER["DOCUMENT_ROOT"]."/fonts/win/CenturyGothic.ttf";
+    $fontSizeName = 55;
+    $fontSizeMEdal = 90;
 
-    imagettftext($img, $fontSize, 0, 11, 40, $textcolor, $fontFile, $athlete["fullname"]);
+    imagettftext($img, $fontSizeName, 0, 60, 100, $textcolor, $fontFile, $athlete["firstname"]);
+    imagettftext($img, $fontSizeName, 0, 60, 175, $textcolor, $fontFile, $athlete["lastname"]);
+    //medals
+    imagettftext($img, $fontSizeMEdal, 0, 115, 328, $textcolor, $fontFile, $athlete["silver"]);
+    imagettftext($img, $fontSizeMEdal, 0, 245, 348, $textcolor, $fontFile, $athlete["gold"]);
+    imagettftext($img, $fontSizeMEdal, 0, 375, 372, $textcolor, $fontFile, $athlete["bronze"]);
 
     imagejpeg($img, $previewFileName);
-    return "/img/previews/athletes/$id.jpg";
+    // return "/img/previews/athletes/$id.jpg";
+    return "https://www.roller-results.com/img/previews/athletes/$id.jpg";
 }

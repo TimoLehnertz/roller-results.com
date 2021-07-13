@@ -23,8 +23,8 @@ canI("managePermissions");
 /**
  * setup
  */
-$scoreInfluences = "WM,1"; // @todo
-$usedMedals = "WMl,World Games";
+$scoreInfluences = "WM,1,World Games,1,EM,0.2"; // @todo
+$usedMedals = "WM,World Games";
 
 /**
  * Getters

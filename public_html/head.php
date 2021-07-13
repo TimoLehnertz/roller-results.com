@@ -29,7 +29,7 @@ $actual_link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https"
         <meta property="og:image" content="<?php echo getPreview();?>">
 
         <meta property="og:title" content="Roller Results" />
-        <meta property="og:url" content="$actual_link" />
+        <meta property="og:url" content="<?=$actual_link?>" />
         <meta property="og:description" content="Roller skating results and analysis">
         <meta property="og:type" content="profile" />
 
