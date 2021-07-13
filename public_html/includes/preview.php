@@ -16,7 +16,7 @@ function getPreview() {
 
 }
 
-/**
+/***
  * creates or overwrites the athletes preview's
  */
 function makeAthletePreview($id) {
