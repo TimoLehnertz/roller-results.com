@@ -24,7 +24,7 @@
                 </p>
                 <p class="right">
                     <!-- <a href="#" class="no-underline"><i class="fab fa-youtube"></i></a> -->
-                    <a target="_blank" rel="noopener noreferrer" href="https://github.com/TimoLehnertz/inline-data.org" class="no-underline"><i class="fab fa-github"></i></a>
+                    <a target="_blank" rel="noopener noreferrer" href="https://github.com/TimoLehnertz/roller-results.com" class="no-underline"><i class="fab fa-github"></i></a>
                     <a target="_blank" rel="noopener noreferrer" href="https://www.facebook.com/RollerResults" class="no-underline"><i class="fab fa-facebook"></i></a>
                     <a target="_blank" rel="noopener noreferrer" href="https://www.instagram.com/roller_results/" class="no-underline"><i class="fab fa-instagram"></i></a>
                     <!-- <a target="_blank" rel="noopener noreferrer" href="#" class="no-underline"><i class="fab fa-twitter"></i></a> -->
