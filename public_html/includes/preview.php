@@ -22,12 +22,9 @@ function makeAthletePreview($id) {
     $athlete = getAthlete($id);
     $bgFileName = $_SERVER["DOCUMENT_ROOT"]."/img/previews/athletes/bg.jpg";
     $previewFileName = $_SERVER["DOCUMENT_ROOT"]."/img/previews/athletes/$id.jpg";
-    // copy($bgFileName, $previewFileName);
-    // $img = imagecreatetruecolor(120, 20);
+    copy($bgFileName, $previewFileName);
     $font = 5;
-    // echo $bgFileName;
     $img = imagecreatefromjpeg($bgFileName);
-    // $img = imagecreatetruecolor(100, 100);
     $bg = imagecolorallocate($img, 70, 60, 150);
     $textcolor = imagecolorallocate($img, 255, 255, 255);
 
