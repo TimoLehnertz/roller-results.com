@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <label for="position">in position</label>
+    <input type="number" id="position" value="2">
+    <br>
+    <label for="set">set</label>
+    <input type="number" id="set" value="4">
+    <br>
+    <label for="setRand">set + / -</label>
+    <input type="number" id="setRand" value="2">
+    <br>
+    <label for="go">go</label>
+    <input type="number" id="go" value="3">
+    <br>
+    <label for="goRand">go + -</label>
+    <input type="number" id="goRand" value="1">
+    <br>
+    <button onclick="start()">Start!</button>
+</body>
+<script>
+
+function rand(ran) {
+    const rand = Math.random() * ran * 2;
+    return rand - ran;
+}
+
+function inPosition() {
+    console.log("position")
+    var audio = new Audio('sounds/inposition.m4a');
+    audio.play();
+    document.body.style.background = "red";
+}
+
+function set1() {
+    console.log("set")
+    var audio = new Audio('sounds/set.m4a');
+    audio.play();
+    document.body.style.background = "orange";
+}
+
+function shot() {
+    console.log("go")
+    var audio = new Audio('sounds/go.wav');
+    audio.play();
+    document.body.style.background = "green";
+}
+function start() {
+    document.body.style.background = "white";
+    const position = document.getElementById("position").value * 1000;
+    const set = document.getElementById("set").value * 1000;
+    const go = document.getElementById("go").value * 1000;
+    const setRand = document.getElementById("setRand").value * 1000;
+    const goRand = document.getElementById("goRand").value * 1000;
+    console.log(set)
+    setTimeout(function(){
+        inPosition();
+        setTimeout(function(){
+            set1();
+            setTimeout(function(){
+                shot();
+            }, go + rand(goRand));
+        }, set + rand(setRand));
+    }, position);
+}
+</script>
+<style>
+    * {
+        font-size: 1.5rem;
+    }
+    input {
+        padding: 0.5rem;
+    }
+    button {
+        margin-top: 1rem;
+        background: green;
+        color: white;
+        padding: 1rem;
+    }
+</style>
+</html>
