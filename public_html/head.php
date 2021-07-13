@@ -10,7 +10,7 @@ if(!isLoggedIn()){
 include_once "includes/error.php";
 include_once "api/userAPI.php";
 include_once "includes/roles.php";
-include_once "includes/preview.php";
+// include_once "includes/preview.php";
 $loggedIn = isLoggedIn();
 $user;
 if($loggedIn){
@@ -26,7 +26,7 @@ $actual_link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https"
         <title>Roller Results</title>
         <meta name="description" content="Roller skating results and analysis">
 
-        <meta property="og:image" content="<?php echo getPreview();?>">
+        <meta property="og:image" content="<?php// echo getPreview();?>">
 
         <meta property="og:title" content="Roller Results" />
         <meta property="og:url" content="<?=$actual_link?>" />
