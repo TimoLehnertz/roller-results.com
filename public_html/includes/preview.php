@@ -14,7 +14,6 @@ function getPreview() {
     }
 
     return "https://www.roller-results.com/img/previews/logo.PNG";
-    // return "/img/previews/logo.PNG";
 }
 
 /**
@@ -35,14 +34,27 @@ function makeAthletePreview($id) {
 
     $fontFile = $_SERVER["DOCUMENT_ROOT"]."/fonts/win/CenturyGothic.ttf";
     $fontSizeName = 55;
-    $fontSizeMEdal = 90;
+    $fontSizeMedal = 70;
+
+    $bronzeOffset = 0;
+    $silverOffset = 0;
+    $goldOffset = 0;
+    if($athlete["bronze"] < 10) {
+        $bronzeOffset = 23;
+    }
+    if($athlete["silver"] < 10) {
+        $silverOffset = 23;
+    }
+    if($athlete["gold"] < 10) {
+        $goldOffset = 23;
+    }
 
     imagettftext($img, $fontSizeName, 0, 60, 100, $textcolor, $fontFile, $athlete["firstname"]);
     imagettftext($img, $fontSizeName, 0, 60, 175, $textcolor, $fontFile, $athlete["lastname"]);
     //medals
-    imagettftext($img, $fontSizeMEdal, 0, 115, 328, $textcolor, $fontFile, $athlete["silver"]);
-    imagettftext($img, $fontSizeMEdal, 0, 245, 348, $textcolor, $fontFile, $athlete["gold"]);
-    imagettftext($img, $fontSizeMEdal, 0, 375, 372, $textcolor, $fontFile, $athlete["bronze"]);
+    imagettftext($img, $fontSizeMedal, 0, 92 + $silverOffset, 320, $textcolor, $fontFile, $athlete["silver"]);
+    imagettftext($img, $fontSizeMedal, 0, 232 + $goldOffset, 340, $textcolor, $fontFile, $athlete["gold"]);
+    imagettftext($img, $fontSizeMedal, 0, 350 + $bronzeOffset, 363, $textcolor, $fontFile, $athlete["bronze"]);
 
     imagejpeg($img, $previewFileName);
     // return "/img/previews/athletes/$id.jpg";
