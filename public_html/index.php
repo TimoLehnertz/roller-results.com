@@ -53,6 +53,9 @@ $amountVideo = 513;
                 <div><div><?= $amountVideo?></div><div>Videos</div></div>
                 <div class="pc-only"><div><?= $amountAthlete?></div><div>Athletes</div></div>
             </div>
+            <hr>
+            <a href="/competition/?id=396&name=Canelas"><h2>Results from Canelas - Portugal</h2></a>
+            <hr>
             <h2></h2>
             <p class="head-paragraph align center">
                 <span><b>Data</b> and <b>results</b> are the best basis for progress in elite sport</span><br>
@@ -176,7 +179,7 @@ $amountVideo = 513;
                 <p>
                     The whole sourcecode for this website is<br>available on <a target="_blank" rel="noopener noreferrer" href="https://github.com/TimoLehnertz/roller-results.com" class="no-underline"><i class="fab fa-github"></i> Gihub</a>
                     for you to check out.
-                </p>
+                </p> 
                 <p>
                     Any support is appreciated and you can<br> ask us anything you want. See The <a href="/impressum/contact">Contact</a> <br>section for ways to reach out to us.
                 </p>
