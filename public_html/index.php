@@ -54,7 +54,7 @@ $amountVideo = 513;
                 <div class="pc-only"><div><?= $amountAthlete?></div><div>Athletes</div></div>
             </div>
             <hr>
-            <a href="/competition/?id=396&name=Canelas"><h2>Results from Canelas - Portugal</h2></a>
+            <a href="/competition/?id=396&name=Canelas"><h2>Results from Canelas</h2></a>
             <hr>
             <h2></h2>
             <p class="head-paragraph align center">
