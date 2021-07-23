@@ -4,19 +4,19 @@ include_once "api/index.php";
 include_once "header.php";
 include_once "api/imgAPI.php";
 
-// $amountCountry = getCountryAmount();
-// $amountAthlete = getAthleteAmount();
-// $amountResult = getResultAmount();
+ $amountCountry = getCountryAmount();
+ $amountAthlete = getAthleteAmount();
+ $amountResult = getResultAmount();
 // $amountRace = getRaceAmount();
 // $amountCompetition = getCompetitionAmount();
-// $amountVideo = getVideoAmount();
+ $amountVideo = getVideoAmount();
 
-$amountCountry = 77;
-$amountAthlete = 7602;
-$amountResult = 41744;
+// $amountCountry = 77;
+// $amountAthlete = 7602;
+// $amountResult = 41744;
 // $amountRace = getRaceAmount();
 // $amountCompetition = getCompetitionAmount();
-$amountVideo = 513;
+// $amountVideo = 513;
 
 // echo "<>
 //     const amountCountry = $amountCountry;
