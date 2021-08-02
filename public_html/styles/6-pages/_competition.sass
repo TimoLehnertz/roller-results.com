@@ -45,6 +45,53 @@
         color: #333
         font-size: 3rem
 
+    .stats
+        margin-top: 3rem
+
+    .basic-stats
+        background: 
+        margin-bottom: 2rem
+        font-size: 1.3rem
+        display: flex
+        flex-direction: row
+        justify-content: space-evenly
+        padding: 2rem
+        border-top: 1px solid #aaa
+        border-bottom: 1px solid #aaa
+        background: linear-gradient(0deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.04) 50%, rgba(0,0,0,0) 100%);
+
+        .stat
+            text-align: center
+
+    .medal-stats
+        display: flex
+        flex-direction: row
+        justify-content: space-around
+        *
+            color: black
+
+        table
+            border-collapse: collapse
+
+        td
+            border-left: 1px solid #999
+        
+        td:nth-child(1)
+            border-left: none
+        
+        td
+            padding: 0.5rem
+            text-align: center
+
+        tr:nth-child(odd)
+            background: #ccc
+
+        tr:nth-child(1)
+            background: #444
+            td
+                color: white
+            font-size: 1.1rem
+
     @media screen and (max-width: 50rem)
         .location
             width: 100%
@@ -56,3 +103,21 @@
             font-size: 1.2rem
             i
                 font-size: 2rem
+
+        .medal-stats
+            flex-direction: column
+
+            table
+                width: 100%
+            
+            td
+                padding: 0.1rem
+
+            td:nth-child(1)
+                display: none
+
+            tr:nth-child(1)
+                font-size: 1rem
+            
+            .medal
+                transform: scale(0.7)
