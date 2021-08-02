@@ -89,7 +89,7 @@ foreach ($bestAthletes as $athlete) {
                 <div class="countries">
                     <h3 class="align center">Countries</h3>
                     <table>
-                        <tr><td>Position</td><td>Country</td><td class="bronzem"></td><td class="silverm"></td><td class="goldm"></td><td>Total</td></tr>
+                        <tr><td>Position</td><td>Country</td><td class="goldm"></td><td class="silverm"></td><td class="bronzem"></td><td>Total</td></tr>
                         <?php
                             $i = 1;
                             foreach ($bestCountries as $country) {
@@ -101,7 +101,7 @@ foreach ($bestAthletes as $athlete) {
                                 if(!$total) {
                                     break;
                                 }
-                                echo "<tr><td>$i</td><td><a href='/country/?id=$countryName'>$countryName</td><td>$bronze</td><td>$silver</td><td>$gold</td><td>$total</td></tr>";
+                                echo "<tr><td>$i</td><td><a href='/country/?id=$countryName'>$countryName</td><td>$gold</td><td>$silver</td><td>$bronze</td><td>$total</td></tr>";
                                 $i++;
                             }
                         ?>
@@ -110,7 +110,7 @@ foreach ($bestAthletes as $athlete) {
                 <div class="athletes">
                     <h3 class="align center">Athletes</h3>
                     <table>
-                        <tr><td>Position</td><td>Athlete</td><td class="bronzem"></td><td class="silverm"></td><td class="goldm"></td><td>Total</td></tr>
+                        <tr><td>Position</td><td>Athlete</td><td class="goldm"></td><td class="silverm"></td><td class="bronzem"></td><td>Total</td></tr>
                         <?php
                             $i = 1;
                             foreach ($bestAthletes as $athlete) {
@@ -123,7 +123,7 @@ foreach ($bestAthletes as $athlete) {
                                 if(!$total) {
                                     break;
                                 }
-                                echo "<tr><td>$i</td><td><a href='/athlete/?id=$athleteId'>$athleteName</td><td>$bronze</td><td>$silver</td><td>$gold</td><td>$total</td></tr>";
+                                echo "<tr><td>$i</td><td><a href='/athlete/?id=$athleteId'>$athleteName</td><td>$gold</td><td>$silver</td><td>$bronze</td><td>$total</td></tr>";
                                 $i++;
                             }
                         ?>
