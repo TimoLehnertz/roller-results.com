@@ -9,15 +9,17 @@
         height: inherit
         width: inherit
         opacity: 0.65
-        transition: opacity 0.2s, transform 0.2s 0.1s
+        transition: opacity 0.1s, transform 0.1s
         transform: scale(1)
 
     .medal__simple
         opacity: 0.8
+        left: 0
 
     .medal__big
         opacity: 0
-        transform: rotateX(-90deg)
+        transform: rotateX(70deg) scale(0.9)
+        left: 0
 
     &:hover
         .medal__simple
@@ -33,7 +35,7 @@
 
 .medal__amount
     font-family: 'Permanent Marker', cursive
-    color: white
+    color: white !important
     position: absolute
     font-size: 1.2rem
     font-weight: 500

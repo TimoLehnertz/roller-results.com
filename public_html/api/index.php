@@ -196,6 +196,16 @@ if(!isset($NO_GET_API)){
         } else{
             echo "error provide data";
         }
+    } else if(isset($_GET["compAthleteMedals"])){
+        if(strlen($_GET["compAthleteMedals"]) > 0){
+            $idComp = $_GET["gethallOfFame"];
+            echo json_encode(getCompAthleteMedals($idComp));
+        }
+    } else if(isset($_GET["compCountryMedals"])){
+        if(strlen($_GET["compCountryMedals"]) > 0){
+            $idComp = $_GET["compCountryMedals"];
+            echo json_encode(getCompCountryMedals($idComp));
+        }
     }
     /**
      * set api
@@ -218,6 +228,24 @@ if(!isset($NO_GET_API)){
 
 function getWorldMovement() {
     $res = query("SELECT * FROM vWorldMovement;");
+    if(sizeof($res) > 0){
+        return $res;
+    } else{
+        return [];
+    }
+}
+
+function getCompAthleteMedals($idComp) {
+    $res = query("SELECT * FROM vCompAthleteMedals WHERE idCompetition = ?;", "i", $idComp);
+    if(sizeof($res) > 0){
+        return $res;
+    } else{
+        return [];
+    }
+}
+
+function getCompCountryMedals($idComp) {
+    $res = query("SELECT * FROM vCompCountryMedals WHERE idCompetition = ?;", "i", $idComp);
     if(sizeof($res) > 0){
         return $res;
     } else{

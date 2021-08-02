@@ -8,7 +8,8 @@ if(!isset($_GET["id"])){
 }
 include_once "../api/index.php";
 
-$comp = getCompetition($_GET["id"]);
+$idComp = $_GET["id"];
+$comp = getCompetition($idComp);
 if(!$comp){
     throwError($ERROR_INVALID_ID);
 }
@@ -31,6 +32,27 @@ echoRandWallpaper();
 // print_r($comp);
 $mapsKey = "AIzaSyAZriMrsCFOsEEAKcRLxdtI6V8b9Fbfd-c";
 
+$bestAthletes = getCompAthleteMedals($idComp);
+$bestCountries = getCompCountryMedals($idComp);
+
+$bestCountry = $bestCountries[0]["country"];
+$bestAthlete = $bestAthletes[0]["fullname"];
+$bestAthleteId = $bestAthletes[0]["idAthlete"];
+
+$athleteCount = sizeof($bestAthletes);
+$countryCount = sizeof($bestCountries);
+
+$femaleCount = 0;
+$maleCount = 0;
+
+foreach ($bestAthletes as $athlete) {
+    if($athlete["gender"] == "w" || $athlete["gender"] == "W") {
+        $femaleCount++;
+    } else {
+        $maleCount++;
+    }
+}
+
 ?>
 <main class="main competition-page">
     <div class="top-site">
@@ -40,6 +62,14 @@ $mapsKey = "AIzaSyAZriMrsCFOsEEAKcRLxdtI6V8b9Fbfd-c";
         <h1 class="align center"><?= translateCompType($comp["type"])." | ".$comp["location"]." ".$comp["raceYear"]?></h1>
         <div class="date">
             <i class="fas fa-calendar-alt margin right"></i><?= $date?>
+        </div>
+        <div class="basic-stats">
+            <div>Countries: <div class="stat"><?=$countryCount?></div></div>
+            <div>Athletes: <div class="stat"><?=$athleteCount?></div></div>
+            <div>Female: <div class="stat"><?=$femaleCount?></div></div>
+            <div>Male:  <div class="stat"><?=$maleCount?></div></div>
+            <div>Best Country: <a href="/country/?id=<?=$bestCountry?>"><?=$bestCountry?></a></div>
+            <div>Best Athlete: <a href="/athlete/?id=<?=$bestAthleteId?>"><?=$bestAthlete?></a></div>
         </div>
         <div class="location">
             <iframe class="maps"
@@ -52,8 +82,68 @@ $mapsKey = "AIzaSyAZriMrsCFOsEEAKcRLxdtI6V8b9Fbfd-c";
         </div>
         <h2 class="races">Races</h2>
         <div class="races-table alignment center"></div>
+        <div class="stats">
+            <h2 class="races">Statistics</h2>
+            <div class="medal-stats">
+                <div class="countries">
+                    <h3 class="align center">Countries</h3>
+                    <table>
+                        <tr><td>Position</td><td>Country</td><td class="bronzem"></td><td class="silverm"></td><td class="goldm"></td><td>Total</td></tr>
+                        <?php
+                            $i = 1;
+                            foreach ($bestCountries as $country) {
+                                $countryName = $country["country"];
+                                $bronze = $country["bronze"];
+                                $silver = $country["silver"];
+                                $gold = $country["gold"];
+                                $total = $country["medalScore"];
+                                if(!$total) {
+                                    break;
+                                }
+                                echo "<tr><td>$i</td><td><a href='/country/?id=$countryName'>$countryName</td><td>$bronze</td><td>$silver</td><td>$gold</td><td>$total</td></tr>";
+                                $i++;
+                            }
+                        ?>
+                    </table>
+                </div>
+                <div class="athletes">
+                    <h3 class="align center">Athletes</h3>
+                    <table>
+                        <tr><td>Position</td><td>Athlete</td><td class="bronzem"></td><td class="silverm"></td><td class="goldm"></td><td>Total</td></tr>
+                        <?php
+                            $i = 1;
+                            foreach ($bestAthletes as $athlete) {
+                                $athleteName = $athlete["fullname"];
+                                $athleteId = $athlete["idAthlete"];
+                                $bronze = $athlete["bronze"];
+                                $silver = $athlete["silver"];
+                                $gold = $athlete["gold"];
+                                $total = $athlete["medalScore"];
+                                if(!$total) {
+                                    break;
+                                }
+                                echo "<tr><td>$i</td><td><a href='/athlete/?id=$athleteId'>$athleteName</td><td>$bronze</td><td>$silver</td><td>$gold</td><td>$total</td></tr>";
+                                $i++;
+                            }
+                        ?>
+                    </table>
+                </div>
+            </div>
+        </div>
         <script>
-            console.log(comp);
+            
+            
+            $(".bronzem").each(function() {
+                $(this).append(getMedal("bronze", 3, false));
+            });
+            $(".silverm").each(function() {
+                $(this).append(getMedal("silver", 2, false));
+            });
+            $(".goldm").each(function() {
+                $(this).append(getMedal("gold", 1, false));
+            });
+            
+            // console.log(comp);
             const table = new Table($(".races-table"), comp.races);
             let orderBy = {column: "distance", up: true};
             if(findGetParameter("trackStreet") !== null){

@@ -107,7 +107,7 @@ echoRandWallpaper();
             /**
              * over all
              */
-            console.log(skateCountries);
+            // console.log(skateCountries);
             for (let i = 0; i < Math.min(topAmount, skateCountries.length); i++) {
                 const profile = countryToProfile(skateCountries[i], Profile.CARD, true, i + 1);
                 profile.appendTo(".slideshow.best");
