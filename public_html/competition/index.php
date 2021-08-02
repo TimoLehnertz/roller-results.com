@@ -70,6 +70,7 @@ foreach ($bestAthletes as $athlete) {
             <div>Male:  <div class="stat"><?=$maleCount?></div></div>
             <div>Best Country: <a href="/country/?id=<?=$bestCountry?>"><?=$bestCountry?></a></div>
             <div>Best Athlete: <a href="/athlete/?id=<?=$bestAthleteId?>"><?=$bestAthlete?></a></div>
+            <!--  -->
         </div>
         <div class="location">
             <iframe class="maps"
