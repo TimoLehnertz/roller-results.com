@@ -53,9 +53,9 @@ include_once "api/imgAPI.php";
                 <div><div><?= $amountVideo?></div><div>Videos</div></div>
                 <div class="pc-only"><div><?= $amountAthlete?></div><div>Athletes</div></div>
             </div>
-            <hr>
+            <!-- <hr>
             <a href="/competition/?id=396&name=Canelas"><h2>Results from Canelas</h2></a>
-            <hr>
+            <hr> -->
             <h2></h2>
             <p class="head-paragraph align center">
                 <span><b>Data</b> and <b>results</b> are the best basis for progress in elite sport</span><br>
