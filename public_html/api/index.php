@@ -196,15 +196,31 @@ if(!isset($NO_GET_API)){
         } else{
             echo "error provide data";
         }
-    } else if(isset($_GET["compAthleteMedals"])){
+    } else if(isset($_GET["compAthleteMedals"])) {
         if(strlen($_GET["compAthleteMedals"]) > 0){
             $idComp = $_GET["gethallOfFame"];
             echo json_encode(getCompAthleteMedals($idComp));
         }
-    } else if(isset($_GET["compCountryMedals"])){
+    } else if(isset($_GET["compCountryMedals"])) {
         if(strlen($_GET["compCountryMedals"]) > 0){
             $idComp = $_GET["compCountryMedals"];
             echo json_encode(getCompCountryMedals($idComp));
+        }
+    } else if(isset($_GET["get500mData"])){
+        echo json_encode(get500mData());
+    }
+    else if(isset($_GET["getteamAdvantage"])){
+        if(isset($_GET["data"]) && isset($_GET["data1"])) {
+            echo json_encode(getTeamAdvantage($_GET["getteamAdvantage"], $_GET["data"], $_GET["data1"]));
+        } else {
+            echo("supply distance, maxplace and comps arguments!");
+        }
+    }
+    else if(isset($_GET["getteamAdvantageDetails"])){
+        if(isset($_GET["data"]) && isset($_GET["data1"])) {
+            echo json_encode(getTeamAdvantageDetails($_GET["getteamAdvantageDetails"], $_GET["data"], $_GET["data1"]));
+        } else {
+            echo("supply distance, maxplace and comps arguments!");
         }
     }
     /**
@@ -224,6 +240,24 @@ if(!isset($NO_GET_API)){
             setRaceLinks($data);
         }
     }
+}
+
+function getTeamAdvantage($distance, $maxPlace, $comps) {
+    $res = query("CALL sp_teamAdvantage(?, ?, ?);", "sis", $distance, $maxPlace, $comps);
+    if(sizeof($res) > 0) {
+        return $res[0];
+    }
+    return [];
+}
+
+function getTeamAdvantageDetails($distance, $maxPlace, $comps) {
+    $res = query("CALL sp_teamAdvantageDetails(?, ?, ?);", "sis", $distance, $maxPlace, $comps);
+    return $res;
+}
+
+function get500mData() {
+    $res = query("SELECT * FROM `Tb_500m`;");
+    return $res;
 }
 
 function getWorldMovement() {

@@ -46,3 +46,14 @@
 
     *
         margin-top: 0
+
+    @media screen and (max-width: 50rem)
+        &.mobile
+            flex-direction: column
+            align-items: center
+
+            & > *:not(& > *:first-child)
+                margin-top: 2rem
+            
+            .fa-chevron-right
+                transform: rotate(90deg)

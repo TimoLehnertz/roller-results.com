@@ -1357,7 +1357,7 @@ class Table{
     getRow(row, zebra){
         const rowElem = $(`<tr class="${Table.bodyClass} ${zebra ? "zebra" : ""}"></tr>`);
         for (const column of this.usedColumns) {
-            if(this.layout[column].callback) {
+            if(this.layout?.[column].callback) {
                 $(rowElem).append(this.getColumn(this.layout[column].callback(row[column])));
             } else if(column in row){
                 $(rowElem).append(this.getColumn(row[column]));

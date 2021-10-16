@@ -45,7 +45,7 @@ function isJson(text){
  * @param {text} property property to be called from the server
  * @param {text / number} data data to be send mostly ids
  */
-function get(property, data1, data2){
+function get(property, data1, data2, data3){
     const promise = {
         receive: (callback) => {promise.callback = callback},
         callback: () => {console.log("no callback")}
@@ -53,8 +53,11 @@ function get(property, data1, data2){
     let url = `/api/index.php?get${property}=${data1}`;
     if(data2 !== undefined) {
         url += `&data=${data2}`;
+        if(data3 !== undefined) {
+            url += `&data1=${data3}`;
+        }
     }
-    // console.log(url)
+    
     $.ajax({
         type: "GET",
         url: url + getAjaxStateString(),

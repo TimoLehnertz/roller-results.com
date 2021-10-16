@@ -1,2 +1,20 @@
 .table
-    //border-collapse: collapse
+    border-collapse: collapse
+
+    &.twoCols
+        font-size: 1.3rem
+
+        tr:nth-child(even)
+            background-color: #fff2
+
+        tr:nth-child(odd)
+            background-color: #0002
+
+        td
+            padding: 0.5rem 2rem
+
+        td:first-child
+            border-right: 1px solid #fff5
+
+    &.fixed
+        table-layout: fixed
