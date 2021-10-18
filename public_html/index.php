@@ -172,7 +172,7 @@ include_once "api/imgAPI.php";
                 </div>
             </div>
             <div class="light section align center">
-                <h2>And the best is yet to come:<br>it's all free source and open source!</h2>
+                <h2>And the best is yet to come:<br>it's all free and open source!</h2>
                 <p>
                     We commit this site to the amazing inline speedskating comunity!
                 </p>
