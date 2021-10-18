@@ -953,6 +953,7 @@ class Dropdown{
 
     load(object){
         this.dropDownElem.empty();
+        // this.dropDownElem.find(`div.${Dropdown.nameClass}`).css("display", "none");
         if(Array.isArray(object)){
             // this.path.push(object);
             if(this.name != undefined){
@@ -1283,7 +1284,7 @@ class Table{
     }
 
     sort(column, up, noInit){
-        const mul = up ? 1 : -1
+        const mul = up ? -1 : 1
         this.data.sort(function(a, b){
             if(a[column] == undefined){
                 return mul;
@@ -1291,8 +1292,8 @@ class Table{
             if(b[column] == undefined){
                 return -mul;
             }
-            if(a[column] < b[column]) { return -1 * mul;}
-            if(a[column] > b[column]) { return 1 * mul;}
+            if(a[column] < b[column]) { return 1 * mul;}
+            if(a[column] > b[column]) { return -1 * mul;}
             return 0;
         });
         if(noInit !== true){
@@ -1346,7 +1347,7 @@ class Table{
                 dropdown.setup({
                     name: "Sort by " + td
                 })
-                dropdown.init();
+                // dropdown.init();
             }
             $(head).append(tdElem);
             count++;
@@ -1358,7 +1359,11 @@ class Table{
         const rowElem = $(`<tr class="${Table.bodyClass} ${zebra ? "zebra" : ""}"></tr>`);
         for (const column of this.usedColumns) {
             if(this.layout?.[column].callback) {
-                $(rowElem).append(this.getColumn(this.layout[column].callback(row[column])));
+                if(this.useRowAsCallback) {
+                    $(rowElem).append(this.getColumn(this.layout[column].callback(row)));
+                } else {
+                    $(rowElem).append(this.getColumn(this.layout[column].callback(row[column])));
+                }
             } else if(column in row){
                 $(rowElem).append(this.getColumn(row[column]));
             } else{
@@ -1578,7 +1583,8 @@ class ElemParser{
                 });
             }
         }
-        if("change" in meta){
+        if(meta?.change) {
+            // console.log(meta?.change);
             $(elem).change(function(e) {
                 if($(this).find("input[type='checkbox']").length !== 0){
                     meta.change(e, $(this).find("input").is(":checked"));
@@ -1600,6 +1606,9 @@ class ElemParser{
         if(meta.hasOwnProperty("alignment")){
             if(meta.alignment === "center"){
                 wrapper.addClass("flex");
+            }
+            if(meta.alignment === "right"){
+                wrapper.addClass("flex justify-end");
             }
         }
         wrapper.append(elem);
@@ -2258,7 +2267,7 @@ class Profile{
             }
         }
     }
-0
+
     get shareElem() {
         if(!navigator.share) {
             return $();
@@ -2640,6 +2649,10 @@ function getCountryFlag(country, width = "2rem", height = "1.5rem", tooltip = fa
             return $(`<div>${country}</div>`);
         }
     }
+}
+
+function code(text) {
+    return `<span class="code">${text}</span>`;
 }
 
 /**

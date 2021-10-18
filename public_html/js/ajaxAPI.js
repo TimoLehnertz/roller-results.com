@@ -50,11 +50,21 @@ function get(property, data1, data2, data3){
         receive: (callback) => {promise.callback = callback},
         callback: () => {console.log("no callback")}
     }
-    let url = `/api/index.php?get${property}=${data1}`;
-    if(data2 !== undefined) {
-        url += `&data=${data2}`;
-        if(data3 !== undefined) {
-            url += `&data1=${data3}`;
+    let url = `/api/index.php?get${property}`;
+    if(typeof data1 === 'object' ) {
+        for (const key in data1) {
+            if (Object.hasOwnProperty.call(data1, key)) {
+                const element = data1[key];
+                url += `&${key}=${element}`;
+            }
+        }
+    } else {
+        url += `=${data1}`;
+        if(data2 !== undefined) {
+            url += `&data=${data2}`;
+            if(data3 !== undefined) {
+                url += `&data1=${data3}`;
+            }
         }
     }
     
@@ -86,7 +96,7 @@ function set(property, data){
         receive: (callback) => {promise.callback = callback},
         callback: () => {}
     }
-    $.ajax(`/api/?set${property}=1`, {
+    $.ajax(`/api/?set${property}`, {
         method: "POST",
         // data: data,
         data: JSON.stringify(data),

@@ -6,11 +6,12 @@ echoRandWallpaper();
 ?>
 <main class="main competition-page">
     <div class="top-site">
-        <h1 class="title">500m+D</h1>
+        <!-- <h1 class="title">500m+D</h1> -->
     </div>
-    <svg style="margin-bottom: 0" xmlns="http://www.w3.org/2000/svg" fill="none" preserveAspectRatio="none" viewBox="0 0 1680 40" class="curvature" style="bottom: -1px;"><path d="M0 40h1680V30S1340 0 840 0 0 30 0 30z" fill="#333"></path></svg>
+    <svg style="margin-bottom: 0; position: relative; transform: translateY(85%); z-index: -1;" xmlns="http://www.w3.org/2000/svg" fill="none" preserveAspectRatio="none" viewBox="0 0 1680 40" class="curvature" style="bottom: -1px;"><path d="M0 40h1680V30S1340 0 840 0 0 30 0 30z" fill="#ddd"></path></svg>
+    <svg style="margin-bottom: 0; position: relative; top: 0px; z-index: 1;" xmlns="http://www.w3.org/2000/svg" fill="none" preserveAspectRatio="none" viewBox="0 0 1680 40" class="curvature" style="bottom: -1px;"><path d="M0 40h1680V30S1340 0 840 0 0 30 0 30z" fill="#333"></path></svg>
     <div class="dark section no-shadow">
-        <h1>500m+D Analytics</h1>
+        <h1><a href="/analytics/index.php">Analytics</a><i class="margin left right fas fa-chevron-right"></i>500m+D Analytics</h1>
         <p class="align center font color light">
             Regarding start position, position in the first corner, out the last corner and finish
         </p>
@@ -27,7 +28,7 @@ echoRandWallpaper();
             <!-- Layer Diagramm -->
         </div>
     </div>
-    <div class="dark section">
+    <div class="dark section flex column">
         <h2 class="align center">Statistic in numbers</h2>
         <?php include "winnerTable.html";?>
         <p>
@@ -39,10 +40,10 @@ echoRandWallpaper();
         <h2>
             Statistic to win from position x at x
         </h2>
-        <div class="flex row">
-            <img src="charts/winnerFromStart.PNG" class="width third" alt="Chart">
-            <img src="charts/winnerFromAfterStart.PNG" class="width third" alt="Chart">
-            <img src="charts/winnerFrombeforeFinish.PNG" class="width third" alt="Chart">
+        <div class="flex row mobile">
+            <img src="charts/winnerFromStart.PNG" class="width third mobile" alt="Chart">
+            <img src="charts/winnerFromAfterStart.PNG" class="width third mobile" alt="Chart">
+            <img src="charts/winnerFrombeforeFinish.PNG" class="width third mobile" alt="Chart">
         </div>
     </div>
     <script>
@@ -137,7 +138,7 @@ echoRandWallpaper();
 
         function reOffset(){
             if(canvas != null){
-                canvas.width = document.querySelector("main").offsetWidth * 0.9;
+                canvas.width = document.querySelector("main").offsetWidth * (isMobile() ? 0.97 : 0.95);
                 var bb=canvas.getBoundingClientRect();
                 offsetX=bb.left;
                 offsetY=bb.top;
@@ -439,13 +440,13 @@ echoRandWallpaper();
                 return "Start";
             }
             if(name.toLowerCase().includes("afterstart")){
-                return "Entry 1st corner";
+                return "After start";
             }
             if(name.toLowerCase().includes("beforefinish")){
-                return "After last corner";
+                return "Finishline";
             }
             if(name.toLowerCase().includes("finish")){
-                return "Finish";
+                return "Result";
             }
             return "--";
         }

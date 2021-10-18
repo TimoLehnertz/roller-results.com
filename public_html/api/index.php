@@ -18,6 +18,7 @@
 
 include_once $_SERVER["DOCUMENT_ROOT"]."/../data/dbh.php";
 include_once $_SERVER["DOCUMENT_ROOT"]."/includes/roles.php";
+include_once $_SERVER["DOCUMENT_ROOT"]."/api/userAPI.php";
 canI("managePermissions");
 
 /**
@@ -222,6 +223,63 @@ if(!isset($NO_GET_API)){
         } else {
             echo("supply distance, maxplace and comps arguments!");
         }
+    } else if(isset($_GET["getathletes"])) {
+        $distances = $_GET["distances"] ?? ".";// RLIKE
+        $comps = $_GET["comps"] ?? "."; //RLIKE
+        $gender = $_GET["gender"] ?? "."; //RLIKE
+        $categories = $_GET["categories"] ?? "."; //RLIKE
+        $discipline = $_GET["discipline"] ?? "."; //RLIKE
+        // $orderBy = $_GET["orderBy"] ?? ".";
+        $minPlace = $_GET["minPlace"] ?? "1"; // Between
+        $maxPlace = $_GET["maxPlace"] ?? "1000";// Between
+        $locations = $_GET["locations"] ?? ".";// RLIKE
+        $fromDate = $_GET["fromDate"] ?? "1910-04-30";// Between
+        $toDate = $_GET["toDate"] ?? "2100-04-30";// Between
+        $ids  = $_GET["ids"] ?? "."; // RLIKE
+        $limit  = $_GET["limit"] ?? "50"; // Limit
+        $joinMethode  = $_GET["joinMethode"] ?? "and"; // Limit
+        $countries  = $_GET["countries"] ?? "."; // Limit
+
+
+        $presetName  = $_GET["presetName"] ?? NULL; // Limit
+        $public  = isset($_GET["public"]) ? 1 : 0; // Limit
+
+        if(isset($_GET["addPreset"]) && isset($_GET["presetName"])) {
+            if(isLoggedIn()) {
+                if(analyticsSelectPresetExists($_GET["presetName"])) {
+                    if(doIOwnSelectPreset($_GET["presetName"])) {
+                        updateSelectPreset($distances, $comps, $gender, $categories, $discipline, $minPlace, $maxPlace, $locations, $fromDate, $toDate, $ids, $limit, $_GET["presetName"], $joinMethode, $countries);
+                    } else {
+                        echo "Name taken";
+                    }
+                } else {
+                    $owner = $_SESSION["iduser"];
+                    addAnalyticsSelectPreset($distances, $comps, $gender, $categories, $discipline, $minPlace, $maxPlace, $locations, $fromDate, $toDate, $ids, $limit,$_GET["presetName"], $owner, $public, $joinMethode, $countries);
+                }
+            } else {
+                echo "You need to be logged in to add presets";
+            }
+        } else {
+            echo json_encode(getAthletes($distances, $comps, $gender, $categories, $discipline, $minPlace, $maxPlace, $locations, $fromDate, $toDate, $ids, $limit, $countries));
+        }
+    } else if(isset($_GET["getselectPresets"])) {
+        echo json_encode(getSelectPresets());
+    } else if(isset($_GET["getdeleteSelectPreset"]) && isset($_GET["presetName"])) {
+         $presetName = $_GET["presetName"];
+         if(doIOwnSelectPreset($presetName)) {
+            deleteSelectPreset($presetName);
+        } else {
+            echo "You cant delete preset you dont own!";
+        }
+    } else if(isset($_GET["getdeleteAnalytics"]) && isset($_GET["name"])) {
+        $name = $_GET["name"];
+        if(doIOwnAnalytics($name)) {
+            deletAnalytics($name);
+       } else {
+           echo "You cant delete preset you dont own!";
+       }
+    } else if(isset($_GET["getanalytics"])) {
+        echo json_encode(getAnalytics());
     }
     /**
      * set api
@@ -240,6 +298,118 @@ if(!isset($NO_GET_API)){
             setRaceLinks($data);
         }
     }
+    if(isset($_GET["setanalytics"]) && isset($_GET["name"])){
+        if(!isLoggedIn()) {
+            echo "you need to be logged in";
+            exit(0);
+        }
+        $name = $_GET["name"];
+        $json = file_get_contents('php://input');
+        $public = isset($_GET["public"]) ? 1 : 0;
+        if(analyticsExists($name)) {
+            echo "update";
+            updateAnalytics($name, $public, $json);
+        } else {
+            addAnalytics($name, $public, $json);
+        }
+    }
+}
+
+function getAnalytics() {
+    if(isLoggedIn()) {
+        return query("SELECT * FROM Tb_analyticsPreset WHERE `owner`=? OR public=1;", "i", $_SESSION["iduser"]);
+    } else {
+        return query("SELECT * FROM Tb_analyticsPreset WHERE public=1;");
+    }
+}
+
+function updateAnalytics($name, $public, $json) {
+    if(isLoggedIn()) {
+        query("UPDATE Tb_analyticsPreset SET `public`=?, `json`=? WHERE `name`=? AND `owner`=?;", "issi", $public, $json, $name, $_SESSION["iduser"]);
+    }
+}
+
+function addAnalytics($name, $public, $json) {
+    if(isLoggedIn()) {
+        query("INSERT INTO Tb_analyticsPreset(`name`,`public`,`json`,`owner`) VALUES (?,?,?,?);", "sisi", $name, $public, $json, $_SESSION["iduser"]);
+    }
+}
+
+function analyticsExists($name) {
+    if(isLoggedIn()) {
+        return sizeof(query("SELECT idAnalyticsPreset FROM Tb_analyticsPreset WHERE `name` = ? AND (owner = ? OR public = 1);", "si", $name, $_SESSION["iduser"])) > 0;
+    } else {
+        return sizeof(query("SELECT idAnalyticsPreset FROM Tb_analyticsPreset WHERE `name` = ? AND public = 1;", "s", $name)) > 0;
+    }
+}
+
+function deleteSelectPreset($presetName) {
+    if(!isLoggedIn()) {
+        return;
+    }
+    query("DELETE FROM Tb_analyticsSelectPreset WHERE owner = ? AND name = ?;", "is", $_SESSION["iduser"], $presetName);
+}
+
+function deletAnalytics($name) {
+    if(!isLoggedIn()) {
+        return;
+    }
+    query("DELETE FROM Tb_analyticsPreset WHERE owner = ? AND name = ?;", "is", $_SESSION["iduser"], $name);
+}
+
+function doIOwnAnalytics($name) {
+    if(!isLoggedIn()) {
+        return false;
+    }
+    return sizeof(query("SELECT idAnalyticsPreset FROM Tb_analyticsPreset WHERE owner = ? AND name = ?;", "is", $_SESSION["iduser"], $name)) > 0;
+}
+
+function doIOwnSelectPreset($presetName) {
+    if(!isLoggedIn()) {
+        return false;
+    }
+    return sizeof(query("SELECT idAnalyticsSelectPreset FROM Tb_analyticsSelectPreset WHERE owner = ? AND name = ?;", "is", $_SESSION["iduser"], $presetName)) > 0;
+}
+
+function getSelectPresets() {
+    if(isLoggedIn()) {
+        return query("SELECT * FROM Tb_analyticsSelectPreset WHERE public = 1 OR owner = ?;", "i", $_SESSION["iduser"]);
+    } else {
+        return query("SELECT * FROM Tb_analyticsSelectPreset WHERE public = 1;");
+    }
+}
+
+function analyticsSelectPresetExists($name) {
+    $res = query("SELECT idAnalyticsSelectPreset FROM Tb_analyticsSelectPreset WHERE name = ?;", "s", $name);
+    return sizeof($res) > 0;
+}
+
+function updateSelectPreset($distances, $comps, $gender, $categories, $discipline, $minPlace, $maxPlace, $locations, $fromDate, $toDate, $ids, $limit, $name, $joinMethode, $countries) {
+    query("UPDATE `results`.`Tb_analyticsSelectPreset`
+    SET
+    `distances` = ?,
+    `comps` = ?,
+    `gender` = ?,
+    `categories` = ?,
+    `disciplines` = ?,
+    `minPlace` = ?,
+    `maxPlace` = ?,
+    `locations` = ?,
+    `fromDate` = ?,
+    `toDate` = ?,
+    `limit` = ?,
+    `joinMethode` = ?,
+    `countries` = ?
+    WHERE `name` = ?;", "sssssiisssisss", $distances, $comps, $gender, $categories, $discipline, $minPlace, $maxPlace, $locations, $fromDate, $toDate, $limit, $joinMethode, $name, $countries);
+}
+
+function addAnalyticsSelectPreset($distances, $comps, $gender, $categories, $discipline, $minPlace, $maxPlace, $locations, $fromDate, $toDate, $ids, $limit, $presetName, $owner, $public, $joinMethode, $countries) {
+    query("INSERT INTO `results`.`Tb_analyticsSelectPreset`(`distances`,`comps`,`gender`,`categories`,`disciplines`,`minPlace`,`maxPlace`,`locations`,`fromDate`,`toDate`,`limit`,`name`, `ids`,`owner`,`public`,`joinMethode`,`countries`)VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);", "sssssiisssissiiss", $distances, $comps, $gender, $categories, $discipline, $minPlace, $maxPlace, $locations, $fromDate, $toDate, $limit, $presetName, $ids, $owner, $public, $joinMethode, $countries);
+}
+
+function getAthletes($distances, $comps, $gender, $categories, $discipline, $minPlace, $maxPlace, $locations, $fromDate, $toDate, $ids, $limit, $countries) {
+    $res = query("call results.sp_getAthletes(?,?,?,?,?,?,?,?,?,?,?,?,?);", "sssssiissssis", $distances, $comps, $gender, $categories, $discipline, $minPlace, $maxPlace, $locations, $fromDate,$toDate, $ids, $limit, $countries);
+    return $res;
 }
 
 function getTeamAdvantage($distance, $maxPlace, $comps) {

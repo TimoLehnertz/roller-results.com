@@ -6,11 +6,12 @@ echoRandWallpaper();
 ?>
 <main class="main competition-page">
     <div class="top-site">
-        <h1 class="title">Advantages for sprint teams</h1>
+        <!-- <h1 class="title">Advantages for sprint teams</h1> -->
     </div>
-    <svg style="margin-bottom: 0" xmlns="http://www.w3.org/2000/svg" fill="none" preserveAspectRatio="none" viewBox="0 0 1680 40" class="curvature" style="bottom: -1px;"><path d="M0 40h1680V30S1340 0 840 0 0 30 0 30z" fill="#333"></path></svg>
+    <svg style="margin-bottom: 0; position: relative; transform: translateY(85%); z-index: -1;" xmlns="http://www.w3.org/2000/svg" fill="none" preserveAspectRatio="none" viewBox="0 0 1680 40" class="curvature" style="bottom: -1px;"><path d="M0 40h1680V30S1340 0 840 0 0 30 0 30z" fill="#ddd"></path></svg>
+    <svg style="margin-bottom: 0; position: relative; top: 0px; z-index: 1;" xmlns="http://www.w3.org/2000/svg" fill="none" preserveAspectRatio="none" viewBox="0 0 1680 40" class="curvature" style="bottom: -1px;"><path d="M0 40h1680V30S1340 0 840 0 0 30 0 30z" fill="#333"></path></svg>
     <div class="dark section no-shadow">
-        <h1>Do teams have an advantage in sprint finals?</h1>
+        <h1 class="flex mobile"><a href="/analytics/index.php">Analytics</a><i class="margin left right fas fa-chevron-right"></i>Do teams have an advantage in sprint finals?</h1>
         <p class="align center font color light">
             This is the tool to compare your statistic chance of winning if you have a team mate in your sprint final
         </p>
@@ -88,10 +89,6 @@ echoRandWallpaper();
             $(".res").empty();
             $(".res").append("<div class='loading circle'/>");
             $(".go").prop("disabled",true);
-        }
-
-        function code(text) {
-            return `<span class="code">${text}</span>`;
         }
 
         function process(res) {
