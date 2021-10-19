@@ -193,6 +193,9 @@ echoRandWallpaper();
                 get("deleteSelectPreset", {
                     presetName
                 }).receive((succsess, res) => {
+                    // if(res) {
+                    //     alert(res);
+                    // }
                     get("selectPresets").receive((succsess, res) => {
                         selectPresets = res;
                         updateSelectPresets(true, false);
