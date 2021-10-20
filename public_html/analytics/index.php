@@ -961,9 +961,11 @@ echoRandWallpaper();
                     }
                 }
             }
-            for (const row of rows) {
-                row.draw();
-            }
+            window.setTimeout(() => {
+                for (const row of rows) {
+                    row.draw();
+                }
+            }, 100);
         }
 
         function removeAnalytics() {
