@@ -558,6 +558,7 @@ echoRandWallpaper();
                                 value = "";
                                 let delimiter = "";
                                 for (const tmp of element.tmp) {
+                                    if(tmp == ".") continue;
                                     value += delimiter + tmp;
                                     delimiter = "|";
                                 }
@@ -605,6 +606,7 @@ echoRandWallpaper();
                                     value = "\\b(";
                                     let delimiter = "";
                                     for (const tmp of element.tmp) {
+                                        if(tmp == ".") continue;
                                         value += delimiter + tmp;
                                         delimiter = "|";
                                     }
