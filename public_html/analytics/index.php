@@ -222,7 +222,6 @@ echoRandWallpaper();
                     const presetName = this.elem.find(".preset-setect").val();
                     preset = this.getSelectPreset(presetName);
                 }
-                console.log(preset.joinMethode);
                 this.elem.find(".name").val(preset.name);
                 this.joinMethod = preset.joinMethode;
                 this.updateJoin(true);
@@ -231,13 +230,10 @@ echoRandWallpaper();
                     if (Object.hasOwnProperty.call(this.state, key)) {
                         const element = this.state[key];
                         if(element.type === 1) {
-                            console.log(key);
-                            console.log(preset);
                             element.all = preset[key] === ".";
                             let split = preset[key].split("|");
                             split = split.filter((split) => split.length > 0);
                             element.tmp = split;
-                            console.log(split);
                         } else if(element.type === 2) {
                             element.value = preset[key];
                         }
@@ -527,8 +523,6 @@ echoRandWallpaper();
                                     }
                                 }
                                 ids = idNew;
-                                console.log("and:")
-                                console.log(ids);
                             } else if(me.joinMethod === "or") {
                                 for (const id of res) {
                                     if(!ids.includes(id)) {
@@ -553,7 +547,6 @@ echoRandWallpaper();
                 if(isPublic) {
                     settings["public"] = 1;
                 }
-                console.log(this.state);
                 for (const key in this.state) {
                     if (Object.hasOwnProperty.call(this.state, key)) {
                         const element = this.state[key];
@@ -591,7 +584,6 @@ echoRandWallpaper();
                             delimiter = "|";
                         }
                         idString += `)\\b`;
-                        console.log()
                         if(res.length === 0) {
                             idString = "a^";
                         }
@@ -803,7 +795,6 @@ echoRandWallpaper();
             }
 
             create(settings) {
-                console.log(settings);
                 for (const selectorSettings of settings.selectors) {
                     const selector = this.addNew();
                     selector.load(selectorSettings);
