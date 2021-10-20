@@ -961,6 +961,9 @@ echoRandWallpaper();
                     }
                 }
             }
+            for (const row of rows) {
+                row.draw();
+            }
         }
 
         function removeAnalytics() {
