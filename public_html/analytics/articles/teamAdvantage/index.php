@@ -40,9 +40,9 @@ echoRandWallpaper();
             <i class="fas fa-chevron-right"></i>
             <div>
                 <h2>Distance</h2>
-                <div><input type="radio" name="distance" id="500m" checked><label class="margin left" for="500m">500m</label></div>
-                <div><input type="radio" name="distance" id="oneLap"><label class="margin left" for="oneLap">One lap</label></div>
-                <div><input type="radio" name="distance" id="1000m"><label class="margin left" for="1000m">1000m</label></div>
+                <div><input value="500m" type="radio" name="distance" id="500m" checked><label class="margin left" for="500m">500m</label></div>
+                <div><input value="oneLap" type="radio" name="distance" id="oneLap"><label class="margin left" for="oneLap">One lap</label></div>
+                <div><input value="1000m" type="radio" name="distance" id="1000m"><label class="margin left" for="1000m">1000m</label></div>
             </div>
             <i class="fas fa-chevron-right"></i>
             <div>
