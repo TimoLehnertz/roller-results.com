@@ -208,6 +208,11 @@ echoRandWallpaper();
                     get("selectPresets").receive((succsess, res) => {
                         selectPresets = res;
                         updateSelectPresets(true, false);
+                        window.setTimeout(() => {
+                            for (const row of rows) {
+                                row.draw();
+                            }
+                        }, 100);
                     });
                 });
             }
