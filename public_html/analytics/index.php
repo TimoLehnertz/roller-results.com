@@ -62,6 +62,15 @@ echoRandWallpaper();
             <p class="font size big">Hit <span class="code">run</span> on a select node to see the result.</p>
         </div>
     </div>
+    <div class="light section">
+        <h2>Explore more analytics</h2>
+        <div>
+            <ul>
+                <li><a href="articles/500m">500m analytics</a></li>
+                <li><a href="articles/teamAdvantage">Team advantage</a></li>
+            </ul>
+        </div>
+    </div>
     <script>
 
         let selectPresets = [];
@@ -723,7 +732,7 @@ echoRandWallpaper();
                  * Lines
                  */
                 this.ctx.fillStyle = "blue";
-                this.ctx.clearRect(0,0,1000,1000);
+                this.ctx.clearRect(0, 0, 10000, 150);
                 if(this.rowAfter !== undefined) {
                     for (const selector of this.rowAfter.selectors) {
                         let index = 0;
