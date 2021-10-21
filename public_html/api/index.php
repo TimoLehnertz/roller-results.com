@@ -307,7 +307,6 @@ if(!isset($NO_GET_API)){
         $json = file_get_contents('php://input');
         $public = isset($_GET["public"]) ? 1 : 0;
         if(analyticsExists($name)) {
-            echo "update";
             updateAnalytics($name, $public, $json);
         } else {
             addAnalytics($name, $public, $json);
