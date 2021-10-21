@@ -937,7 +937,7 @@ echoRandWallpaper();
             const public = ($(".analytics-public").is(":checked") ? "&public" : "");
             set("analytics&name=" + analyticsName + public, analytics).receive((res) => {
                 if(res?.length > 0) {
-                    alert.log(res);
+                    alert(res);
                 }
                 updateAnalytics(true);
             });
