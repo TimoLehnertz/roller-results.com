@@ -208,6 +208,11 @@ echoRandWallpaper();
                     get("selectPresets").receive((succsess, res) => {
                         selectPresets = res;
                         updateSelectPresets(true, false);
+                        window.setTimeout(() => {
+                            for (const row of rows) {
+                                row.draw();
+                            }
+                        }, 100);
                     });
                 });
             }
@@ -217,7 +222,6 @@ echoRandWallpaper();
                     const presetName = this.elem.find(".preset-setect").val();
                     preset = this.getSelectPreset(presetName);
                 }
-                console.log(preset.joinMethode);
                 this.elem.find(".name").val(preset.name);
                 this.joinMethod = preset.joinMethode;
                 this.updateJoin(true);
@@ -226,13 +230,10 @@ echoRandWallpaper();
                     if (Object.hasOwnProperty.call(this.state, key)) {
                         const element = this.state[key];
                         if(element.type === 1) {
-                            console.log(key);
-                            console.log(preset);
                             element.all = preset[key] === ".";
                             let split = preset[key].split("|");
                             split = split.filter((split) => split.length > 0);
                             element.tmp = split;
-                            console.log(split);
                         } else if(element.type === 2) {
                             element.value = preset[key];
                         }
@@ -522,8 +523,6 @@ echoRandWallpaper();
                                     }
                                 }
                                 ids = idNew;
-                                console.log("and:")
-                                console.log(ids);
                             } else if(me.joinMethod === "or") {
                                 for (const id of res) {
                                     if(!ids.includes(id)) {
@@ -548,7 +547,6 @@ echoRandWallpaper();
                 if(isPublic) {
                     settings["public"] = 1;
                 }
-                console.log(this.state);
                 for (const key in this.state) {
                     if (Object.hasOwnProperty.call(this.state, key)) {
                         const element = this.state[key];
@@ -558,6 +556,7 @@ echoRandWallpaper();
                                 value = "";
                                 let delimiter = "";
                                 for (const tmp of element.tmp) {
+                                    if(tmp == ".") continue;
                                     value += delimiter + tmp;
                                     delimiter = "|";
                                 }
@@ -585,7 +584,6 @@ echoRandWallpaper();
                             delimiter = "|";
                         }
                         idString += `)\\b`;
-                        console.log()
                         if(res.length === 0) {
                             idString = "a^";
                         }
@@ -605,6 +603,7 @@ echoRandWallpaper();
                                     value = "\\b(";
                                     let delimiter = "";
                                     for (const tmp of element.tmp) {
+                                        if(tmp == ".") continue;
                                         value += delimiter + tmp;
                                         delimiter = "|";
                                     }
@@ -796,7 +795,6 @@ echoRandWallpaper();
             }
 
             create(settings) {
-                console.log(settings);
                 for (const selectorSettings of settings.selectors) {
                     const selector = this.addNew();
                     selector.load(selectorSettings);
@@ -938,7 +936,9 @@ echoRandWallpaper();
             console.log(analytics);
             const public = ($(".analytics-public").is(":checked") ? "&public" : "");
             set("analytics&name=" + analyticsName + public, analytics).receive((res) => {
-                console.log(res);
+                if(res?.length > 0) {
+                    alert(res);
+                }
                 updateAnalytics(true);
             });
         }
