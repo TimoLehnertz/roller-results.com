@@ -181,7 +181,7 @@ echoRandWallpaper();
                             dragStartSelect = undefined;
                             this.row.elem.removeClass("dropable");
                         }
-                    })
+                    });
                 }
 
                 /**
