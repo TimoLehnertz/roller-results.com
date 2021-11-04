@@ -54,7 +54,8 @@ include_once "api/imgAPI.php";
                 <div class="pc-only"><div><?= $amountAthlete?></div><div>Athletes</div></div>
             </div>
             <hr>
-            <a href="/competition/?id=400&name=Ibagué" class="padding top bottom align center"><h2>Daily updated results from worlds in Ibagué!</h2></a>
+            <a href="/competition/?id=400&name=Ibagué" class="padding top bottom align center pc-only"><h2>Daily updated results from worlds in Ibagué!</h2></a>
+            <a href="/competition/?id=400&name=Ibagué" class="padding top bottom align center mobile-only"><h3>Results from  Ibagué!</h3></a>
             <hr>
             <h2></h2>
             <p class="head-paragraph align center">
