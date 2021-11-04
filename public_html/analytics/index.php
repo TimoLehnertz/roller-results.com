@@ -938,6 +938,8 @@ echoRandWallpaper();
             set("analytics&name=" + analyticsName + public, analytics).receive((res) => {
                 if(res?.length > 0) {
                     alert(res);
+                } else {
+                    alert("Saved");
                 }
                 updateAnalytics(true);
             });
