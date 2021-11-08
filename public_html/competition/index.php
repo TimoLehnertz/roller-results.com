@@ -89,7 +89,7 @@ foreach ($bestAthletes as $athlete) {
                 <div class="countries">
                     <h3 class="align center">Countries</h3>
                     <table>
-                        <tr><td>Position</td><td>Country</td><td class="goldm"></td><td class="silverm"></td><td class="bronzem"></td><td>Total</td></tr>
+                        <tr><td>Position</td><td>Country</td><td class="goldm"></td><td class="silverm"></td><td class="bronzem"></td><td>Points</td></tr>
                         <?php
                             $i = 1;
                             foreach ($bestCountries as $country) {
