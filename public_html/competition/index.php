@@ -110,7 +110,7 @@ foreach ($bestAthletes as $athlete) {
                 <div class="athletes">
                     <h3 class="align center">Athletes</h3>
                     <table>
-                        <tr><td>Position</td><td>Athlete</td><td class="goldm"></td><td class="silverm"></td><td class="bronzem"></td><td>Total</td></tr>
+                        <tr><td>Position</td><td>Athlete</td><td class="goldm"></td><td class="silverm"></td><td class="bronzem"></td><td>Points</td></tr>
                         <?php
                             $i = 1;
                             foreach ($bestAthletes as $athlete) {
