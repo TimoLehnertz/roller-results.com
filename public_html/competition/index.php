@@ -145,7 +145,7 @@ foreach ($bestAthletes as $athlete) {
             });
             
             // console.log(comp);
-            comp.races.filter(race => return race.resultCount > 0);
+            comp.races.filter(race => race.resultCount > 0);
             const table = new Table($(".races-table"), comp.races);
             let orderBy = {column: "distance", up: true};
             if(findGetParameter("trackStreet") !== null){
