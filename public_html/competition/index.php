@@ -144,7 +144,7 @@ foreach ($bestAthletes as $athlete) {
                 $(this).append(getMedal("gold", 1, false));
             });
             
-            // console.log(comp);
+            console.log(comp);
             comp.races.filter(race => race.resultCount > 0);
             const table = new Table($(".races-table"), comp.races);
             let orderBy = {column: "distance", up: true};
