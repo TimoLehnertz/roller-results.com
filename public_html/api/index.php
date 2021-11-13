@@ -667,7 +667,8 @@ function getCountryCompetitions($country){
     $competitions = query("CALL sp_getCountryCompetitions(?);", "s", $country);
     if(sizeof($competitions) > 0){
         foreach ($competitions as $key => &$competition) {
-            $competition["races"] = getCountryRacesFromCompetition($country, $competition["idCompetition"]);
+            // $competition["races"] = getCountryRacesFromCompetition($country, $competition["idCompetition"]);
+            $competition["races"] = [];
         }
         return $competitions;
     } else{
