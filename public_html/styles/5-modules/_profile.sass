@@ -40,8 +40,9 @@ $body-2-b: $bg
     //     background: red !important
 
     background: #333 im !important
+    pointer-events: none
 
-    *
+    > *, > * > *
         color: #777 !important
 
     &.min
@@ -177,8 +178,11 @@ $body-2-b: $bg
     overflow: hidden
 
     // visibility
-    .profile__name, .profile__image, .profile__special, .profile__left, .profile__right, .profile__minimize, .profile__trophy-1, .profile__trophy-2, .profile__trophy-3, .profile__maximize, .profile__special, & > .profile__rank, .profile__share
+    .profile__name, .profile__image, .profile__left, .profile__right, .profile__minimize, .profile__trophy-1, .profile__trophy-2, .profile__trophy-3, .profile__maximize, .profile__special, & > .profile__rank, .profile__share
         display: blocK
+    
+    .profile__special
+        display: none
     
     // top color
     &::before
@@ -194,10 +198,10 @@ $body-2-b: $bg
     .profile__name
         position: absolute
         left: 0
-        right: 2rem
+        right: 0rem
         top: 0
         line-height: 2.5rem
-        font-size: 1.3rem
+        font-size: 1.1rem
         text-align: center
 
     // img
@@ -208,10 +212,10 @@ $body-2-b: $bg
         left: 4.6875rem
         border-width: 0.625rem
 
-        &:hover
-            width: 8.75rem
-            height: 8.75rem
-            border-width: 0
+        // &:hover
+        //     width: 8.75rem
+        //     height: 8.75rem
+        //     border-width: 0
 
     .profile__left
         position: absolute
@@ -245,7 +249,7 @@ $body-2-b: $bg
         margin-top: 13rem
         padding-left: 1.875rem
         padding-right: 1.875rem
-        max-height: 13rem
+        max-height: 16rem
         overflow: hidden
 
     .profile__minimize
@@ -306,8 +310,8 @@ $body-2-b: $bg
         display: none
 
     &:hover
-        height: 35rem
-        transform: scale(1.02)
+        // height: 35rem
+        // transform: scale(1.02)
         z-index: 2
 
         .profile__maximize
@@ -554,7 +558,7 @@ $body-2-b: $bg
             top: 28rem !important
 
         .profile__primary
-            max-height: 14.5rem !important
+            // max-height: 14.5rem !important
 
     .profile.max
         & > .profile__primary

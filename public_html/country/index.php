@@ -21,23 +21,7 @@ echo "<script>let country = JSON.parse(`". json_encode($country) ."`);</script>"
 ?>
 <main class="main country">
     <script>
-        // $(".countryName").prepend(getCountryFlag(findGetParameter("id"), 64));
-
-        // get("country", id).receive((succsess, country) => {
-        //     if(!succsess || country.length === 0) {
-        //         window.location.href = "/index.php";
-        //     }
-        console.log(country)
-            const profile = countryToProfile(country, Profile.MAX);
-        // });
-
-        // const profile = countryToProfile(country, Profile.MAX);
-        // profile.appendTo("country");
-
-        // scoreCallbacks.push(() => {
-        //     profile.update();
-        // });
-
+        const profile = countryToProfile(country, Profile.MAX);
     </script>
 </main>
 <?php
