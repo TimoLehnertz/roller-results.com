@@ -95,6 +95,7 @@ function updateAllCountryProfiles() {
 }
 
 function athleteDataToProfileData(athlete, useRank = false, alternativeRank = undefined){
+    console.log(athlete);
     let trophy1 = {
         data: getMedal("silver", athlete.silver, athlete.silver +" Silver medals | Used competitions: " + getMedalComps()),
         type: ElemParser.DOM,

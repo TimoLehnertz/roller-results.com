@@ -793,10 +793,10 @@ function translateCompType($type) {
 function getCountry($name){
     global $scoreInfluences;
     global $usedMedals;
-    // $country = query("SELECT * FROM vCountry WHERE country = ?;", "ss", $country, $scoreInfluences);
-    // $country = query("CALL sp_getCountries(?, ?, ?)", "sss", $name, $scoreInfluences, $usedMedals);
     $countries = getCountries();
-    // print_r($countries);
+    if(sizeof($countries) === 0) {
+        $countries = query("CALL sp_getCountryNew(?)", "s", $name);
+    }
     foreach ($countries as $country) {
         if($country["country"] == $name) {
             return $country;

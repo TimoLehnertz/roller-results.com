@@ -486,23 +486,33 @@ include_once "api/imgAPI.php";
     
     function initBestSkaters(bestSkaters){
         for (let i = 0; i < topAmount; i++) {
+            if(i >= bestSkaters.length) break;
             const athlete = bestSkaters[i];
             const profile = athleteToProfile(athlete, Profile.CARD, true, i + 1);
             profile.update = function() {this.grayOut = true};
             profile.appendTo(".best-skaters");
         }
+
+        if(bestSkaters.length === 0) {
+            $(".best-skaters").append(`<h3 class="margin top triple">Select Competitions in the settings to calculate the hall of fame</h3>`);
+        }
+
         fameSlideshow.updateChildren();
     }
 
-    function initCountries(countries){
+    function initCountries(countries) {
         const topAmount = 5;
 
         sortArray(countries, "score");
         for (let i = 0; i < topAmount; i++) {
+            if(i >= countries.length) break;
             const country = countries[i];
             const profile = countryToProfile(country, Profile.CARD, true, i + 1);
             profile.update = function(){this.grayOut = true};
             profile.appendTo(".best-countries");
+        }
+        if(countries.length === 0) {
+            $(".best-countries").append(`<h3 class="margin top triple">Select Competitions in the settings to calculate countries</h3>`);
         }
         countrieSlideshow.updateChildren();
     }
