@@ -20,7 +20,7 @@ include_once "head.php";
                 <!-- <div class="site-name"><span class="inline">Inline </span><span class="data">data</span><span class="org"></span></div> -->
                 </a>
                 <div class="settings-toggle">
-                    <img src="img/settings.svg" alt="Settings">
+                    <img src="/img/settings.svg" alt="Settings">
                     <!-- <i class="fas fa-cog"></i> -->
                 </div>
             </div>

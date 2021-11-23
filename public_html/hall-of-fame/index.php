@@ -20,19 +20,19 @@ echoRandWallpaper();
         <h4 class="loading-message align center margin top triple">Selecting the best between <div class="amount"></div> skaters</h4>
         <!-- <div class="loading circle"></div> -->
         <div class="rest1">
-            <h3 class="top">Top 10 skaters</h3>
+            <h3 class="top align center">Top 10 skaters</h3>
             <div class="slideshow best"></div>
 
-            <h3 class="top">Top 10 women</h3>
+            <h3 class="top align center">Top 10 women</h3>
             <div class="slideshow best-women"></div>
 
-            <h3 class="top">Top 10 men</h3>
+            <h3 class="top align center">Top 10 men</h3>
             <div class="slideshow best-men"></div>
 
-            <h3 class="top">Top 10 sprinters</h3>
+            <h3 class="top align center">Top 10 sprinters</h3>
             <div class="slideshow sprinters"></div>
 
-            <h3 class="top">Top 10 longdistance skaters</h3>
+            <h3 class="top align center">Top 10 longdistance skaters</h3>
             <div class="slideshow long"></div>
         </div>
     </div>
@@ -72,27 +72,31 @@ echoRandWallpaper();
             }
         }
 
-        function update(){
+        function update() {
             initGet();
             return true;
         }
 
-        countryCompareElemAt($(".country-compare"), []);
-
         function init(bestSkaters){
+            if(getMedalCount() === 0) {
+                $(".rest1").prepend(`<h2 class="margin left hint color hint">Select Competitions in teh settings to compute country rankings</h2>`);
+            } else {
+                $(".hint").remove();
+            }
             for (let i = 0; i < topAmount; i++) {
+                if(i >= bestSkaters.length) break;
                 const athlete = bestSkaters[i];
                 const profile = athleteToProfile(athlete, Profile.CARD, true, i + 1);
                 profile.update = function() {this.grayOut = true};
                 profile.appendTo(".slideshow.best");
             }
 
-
             /**
              * women
              */
             const women = bestSkaters.filter(skater => skater.gender.toLowerCase() == "w");
             for (let i = 0; i < topAmount; i++) {
+                if(i >= women.length) break;
                 const athlete = women[i];
                 const profile = athleteToProfile(athlete, Profile.CARD, true, i + 1);
                 profile.update = function() {this.grayOut = true};
@@ -104,6 +108,7 @@ echoRandWallpaper();
              */
             const men = bestSkaters.filter(skater => skater.gender.toLowerCase() == "m");
             for (let i = 0; i < topAmount; i++) {
+                if(i >= men.length) break;
                 const athlete = men[i];
                 const profile = athleteToProfile(athlete, Profile.CARD, true, i + 1);
                 profile.update = function() {this.grayOut = true};
@@ -111,6 +116,7 @@ echoRandWallpaper();
             }
             sortArray(bestSkaters, "medalScoreShort", true, true);
             for (let i = 0; i < topAmount; i++) {
+                if(i >= bestSkaters.length) break;
                 const athlete = bestSkaters[i];
                 const profile = athleteToProfile(athlete, Profile.CARD, true, i + 1);
                 profile.update = function() {this.grayOut = true};
@@ -120,6 +126,7 @@ echoRandWallpaper();
             sortArray(bestSkaters, "medalScoreLong", true, true);
 
             for (let i = 0; i < topAmount; i++) {
+                if(i >= bestSkaters.length) break;
                 const athlete = bestSkaters[i];
                 const profile = athleteToProfile(athlete, Profile.CARD, true, i + 1);
                 profile.update = function() {this.grayOut = true};

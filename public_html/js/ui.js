@@ -66,8 +66,22 @@ const defaultCompSettings =  {
     cadetsChallenge: {dbName: "Cadets Challenge",   displayName: "Cadets Challenge",        influence: 0,useMedals: false, icon: "fas fa-award"}
 }
 
+
 let settingCompetitions = defaultCompSettings;
 loadStorage();
+
+function getMedalCount() {
+    let count = 0;
+    for (const key in settingCompetitions) {
+        if (Object.hasOwnProperty.call(settingCompetitions, key)) {
+            const comp = settingCompetitions[key];
+            if(comp.useMedals) {
+                count++;
+            }
+        }
+    }
+    return count;
+}
 
 function getMedalComps() {
     let out = "";
@@ -423,7 +437,6 @@ function elemFromSearchOption(option){
     return elem;
 }
 
-
 function linkFromOption(option){
     if(option.type == "person"){
         return `/athlete?id=${option.id}&search1=${lastSearch}`;
@@ -440,8 +453,7 @@ function iconFromSearch(option) {
     switch(option.type) {
         case "competition": return $(`<i class="fas fa-map-marker-alt result__left"></i>`);
         case "person": return  $(`<i class="fas fa-user result__left"></i>`);
-        // case "country": const code = countryNameToCode(option.name); if(code !== null) {return $(`<img class="result__left" src="https://www.countryflags.io/${code}/shiny/32.png">`);} else{return $()};
-        case "country": const code = countryNameToCode(option.name); if(code !== null) {return $(`<img class="result__left" src="/img/countries/${code}.svg">`);} else{return $()};
+        case "country": const code = countryNameToCode(option.country); if(code !== null) {return $(`<img class="result__left" src="/img/countries/${code}.svg">`);} else{return $()};
     }
 }
 

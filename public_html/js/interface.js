@@ -95,7 +95,6 @@ function updateAllCountryProfiles() {
 }
 
 function athleteDataToProfileData(athlete, useRank = false, alternativeRank = undefined){
-    console.log(athlete);
     let trophy1 = {
         data: getMedal("silver", athlete.silver, athlete.silver +" Silver medals | Used competitions: " + getMedalComps()),
         type: ElemParser.DOM,
@@ -609,9 +608,14 @@ function countryToProfileData(country, useRank = false, alternativeRank = undefi
             type: ElemParser.TEXT
         },
         primary: {
+            rank: {
+                data: country.rank,
+                description: "Overall rank:",
+                tooltip: "Ranking using first gold medals than silver medals, than bronze. Only using the selected competitions(" + getUsedMedalsString() + ")"
+            },
             medalScore: {
                 data: country.medalScore,
-                description: "Medal score:",
+                description: "Medal points:",
                 tooltip: "(Gold=3pts, Silver=2pts, Bronze=1pt)",
             },
             scoreShort: {
@@ -824,37 +828,82 @@ function getCompetitionElem(comp, isCountry, name) {
     /**
         Head
      */
-    const head = $(`<div class="flex justify-start align-center"><div>${comp.type} ${comp.location} ${comp.raceYear}</div></div>`);
-    if(comp.bronzeMedals !== undefined){
+    const head = $(`<div class="flex justify-start align-center"><div>${comp.raceYear} ${comp.type} ${comp.location}</div></div>`);
+    const right = $(`<div class="flex justify-end flex-grow"></div>`);
+    if(comp.bronzeMedals !== undefined) {
         if(comp.goldMedals > 0){
-            head.append(getMedal("gold", comp.goldMedals, comp.goldMedals + " Gold medals | Used competitions: " + getMedalComps()));
+            right.append(getMedal("gold", comp.goldMedals, comp.goldMedals + " Gold medals | Used competitions: " + getMedalComps()));
         }
         if(comp.silverMedals > 0) {
-            head.append(getMedal("silver", comp.silverMedals, comp.silverMedals + " Silver medals | Used competitions: " + getMedalComps()));
+            right.append(getMedal("silver", comp.silverMedals, comp.silverMedals + " Silver medals | Used competitions: " + getMedalComps()));
+        } else {
+            right.append(getEmptyMedal());
         }
         if(comp.bronzeMedals > 0){
-            head.append(getMedal("bronze", comp.bronzeMedals, comp.bronzeMedals +" Bronze medals | Used competitions: " + getMedalComps()));
+            right.append(getMedal("bronze", comp.bronzeMedals, comp.bronzeMedals +" Bronze medals | Used competitions: " + getMedalComps()));
+        } else {
+            right.append(getEmptyMedal());
         }
+        head.append(right);
     }
-    if(comp.hasLink !== null){
-        head.append(`<div class="flex justify-end flex-grow"><i class="fab fa-youtube font size bigger"></i></div>`);
+    if(comp.hasLink !== null) {
+        right.append(`<i class="fab fa-youtube font size bigger pc-only"></i>`);
+    } else {
+        right.append(`<i class="fab fa-youtube font size bigger pc-only hidden-placeholder"></i>`);
     }
+    head.append(right);
     return new Accordion(head, $("<div class='loading circle'></div>"), {
         onextend: (head, body) => {
             get(getter, name, comp.idCompetition).receive((succsess, races) => {
-                body.empty();
-                body.addClass("competition");
-                for (const race of races) {
-                    body.append(getRaceElem(race));
-                }
+                getRacesElem(races, body);
+                // body.empty();
+                // body.addClass("competition");
+                // let trackStreet = "";
+                // let distance = "";
+                // for (const race of races) {
+                //     if(trackStreet !== race.trackStreet) {
+                //         trackStreet = race.trackStreet;
+                //         body.append(getRaceDelimiter(`<h2>${trackStreet}<h2>`));
+                //     }
+                //     if(distance !== race.distance) {
+                //         distance = race.distance;
+                //         body.append(getRaceDelimiter(distance));
+                //     }
+                //     body.append(getRaceElem(race));
+                // }
             });
         }
     }).element;
 }
 
+function getRacesElem(races, body) {
+    if(body === undefined) {
+        body = $(`<div class="competition"></div>`);
+    } else {
+        body.empty();
+    }
+    let trackStreet = "";
+    let distance = "";
+    for (const race of races) {
+        if(trackStreet !== race.trackStreet) {
+            trackStreet = race.trackStreet;
+            body.append(getRaceDelimiter(`<h2>${trackStreet}<h2>`));
+        }
+        if(distance !== race.distance) {
+            distance = race.distance;
+            body.append(getRaceDelimiter(distance));
+        }
+        body.append(getRaceElem(race));
+    }
+    return body;
+}
+
+function getRaceDelimiter(text) {
+    return $(`<div class="race align center delimiter">${text}</div>`);
+}
+
 function getRaceElem(race) {
-    console.log(race);
-    const head = $(`<div class="race flex align-center justify-space-between padding right"><span>${race.distance} ${race.trackStreet} ${race.category} ${race.gender}</span></div>`)
+    const head = $(`<div class="race flex align-center justify-space-between padding right ${race.gender}"><span>${race.distance} ${race.trackStreet} ${race.category} ${race.gender}</span></div>`)
     const links = linksFromLinkString(race.link).length;
     if(links > 0){
         for (let i = 0; i < links; i++) {
@@ -874,7 +923,6 @@ function getRaceElem(race) {
                 body1.addClass("race--max");
                 if(!status.fetched){
                     get("race", race.id).receive((succsess, race) => {
-                        console.log(race);
                         body1.find(".loading").remove();
                         if(!succsess){
                             return;

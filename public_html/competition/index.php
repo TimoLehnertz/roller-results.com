@@ -144,9 +144,9 @@ foreach ($bestAthletes as $athlete) {
             });
             
             comp.races.filter(race => race.resultCount > 0);
-            for (const race of comp.races) {
-                $(".races-table").append(getRaceElem(race));
-            }
+            // for (const race of comp.races) {
+                $(".races-table").append(getRacesElem(comp.races));
+            // }
         </script>
     </div>
 </main>

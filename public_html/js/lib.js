@@ -2476,6 +2476,14 @@ function findGetParameter(parameterName) {
 /**
  * Medals
  */
+function getEmptyMedal() {
+    return $(`<div class="medal gold hidden-placeholder">
+        <img class="medal__big" width="40" src="" alt="} medal">
+        <img class="medal__simple" width="40" src="" alt="medal">
+        <span class="medal__amount"></span>
+    </div>`);
+}
+
 function getMedal(color, amount, tooltip){
     let linkSimple = "/img/medals/" + color + "-medal-simple.svg";
     let linkBig = "/img/medals/" + color + "-medal.svg";

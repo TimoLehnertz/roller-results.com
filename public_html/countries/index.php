@@ -13,16 +13,16 @@ echoRandWallpaper();
     <div class="countries">
         <h1 class="title">Countries</h1>
         <div class="rest1">
-            <h3 class="top">Top 10 countries overall</h3>
+            <h3 class="top align center">Top 10 countries overall</h3>
             <div class="slideshow best"></div>
 
             <!-- <div class="loading"></div> -->
             <div class="country-compare"></div>
 
-            <h3 class="top">Top 10 sprint countries</h3>
+            <h3 class="top align center">Top 10 sprint countries</h3>
             <div class="slideshow sprinters"></div>
 
-            <h3 class="top">Top 10 longdistance countries</h3>
+            <h3 class="top align center">Top 10 longdistance countries</h3>
             <div class="slideshow long"></div>
             <!-- <h3 class="top">All Countries</h3>
             <div class="all-list"></div> -->
@@ -47,7 +47,6 @@ echoRandWallpaper();
 
         function initGet(){
             get("countries").receive((succsess, bestCountries) => {
-                console.log(bestCountries);
                 if(succsess){
                     countryAmount = bestCountries.length;
                     clear();
@@ -72,6 +71,13 @@ echoRandWallpaper();
         countryCompareElemAt($(".country-compare"), []);
 
         function init(skateCountries){
+
+            if(getMedalCount() === 0) {
+                $(".rest1").prepend(`<h2 class="margin left hint color hint">Select Competitions in teh settings to compute country rankings</h2>`);
+            } else {
+                $(".hint").remove();
+            }
+
             $(".loading-message").addClass("scaleAway");
             $(".loading").remove();
 
@@ -94,7 +100,6 @@ echoRandWallpaper();
             /**
              * over all
              */
-            // console.log(skateCountries);
             for (let i = 0; i < Math.min(topAmount, skateCountries.length); i++) {
                 const profile = countryToProfile(skateCountries[i], Profile.CARD, true, i + 1);
                 profile.update = function() {this.grayOut = true};
