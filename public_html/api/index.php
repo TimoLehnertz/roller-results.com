@@ -114,6 +114,13 @@ if(!isset($NO_GET_API)){
         } else{
             echo "error in api";
         }
+    }else if(isset($_GET["getcountryRacesFromCompetition"]) && isset($_GET["data"])){
+        $res = getCountryRacesFromCompetition($_GET["getcountryRacesFromCompetition"], $_GET["data"]);
+        if($res !== false){
+            echo json_encode($res);
+        } else{
+            echo "error in api";
+        }
     }else if(isset($_GET["getcountryAthletes"])){
         $limit = 10;
         if(isset($_GET["data"])){
@@ -457,16 +464,24 @@ function getCompCountryMedals($idComp) {
 }
 
 function getCountryScores(){
-    $countries = query("SELECT * FROM vCountry;");
+    global $usedMedals;
     global $scoreInfluences;
+    $countries = getCountries();
+    $out = [];
+    $i = 0;
     foreach($countries as &$country){
         $country["scores"] = [];
-        if($country["score"] > 10){
-            $scores = query("CALL sp_countryCareerSimple(?, ?);", "ss", $country["country"], $scoreInfluences);
+        if($country["medalScore"] > 10) {
+            $scores = query("CALL sp_countryCareerNew(?, ?);", "ss", $country["country"], $usedMedals);;
             $country["scores"] = $scores;
+            $out[] = $country;
+            $i++;
+            if($i >= 10) {
+                break;
+            }
         }
     }
-    return $countries;
+    return $out;
 }
 
 function setRaceLinks($races){
@@ -561,7 +576,8 @@ function getAllAthletes($influences){
 
 function getCountryCareer($country){
     global $scoreInfluences;
-    $res = query("CALL sp_countryCareer(?, ?);", "ss", $country, $scoreInfluences);
+    // $res = query("CALL sp_countryCareer(?, ?);", "ss", $country, $scoreInfluences);
+    $res = query("CALL sp_countryCareerNew(?, ?);", "ss", $country, $scoreInfluences);
     if(sizeof($res) > 0){
         return $res;
     } else{
@@ -600,8 +616,8 @@ function getAthleteBestTimes($idAthlete){
 function getCountryAthletes($country, $limit) {
     global $scoreInfluences;
     global $usedMedals;
-    $res = query("CALL results.sp_getCountryAthletes(?, ?, ?, ?);", "sssi", $country, $scoreInfluences, $usedMedals, $limit);
-    // $res = query("SELECT * FROM vAthlete WHERE country = ? ORDER BY score DESC LIMIT ?;", "si", $country, $limit);
+    $res = query("CALL results.sp_getCountryAthletesNew(?, ?);", "ss", $country, $usedMedals);
+    // $res = query("CALL results.sp_getCountryAthletes(?, ?, ?, ?);", "sssi", $country, $scoreInfluences, $usedMedals, $limit);
     if(sizeof($res) > 0){
         return $res;
     } else{
@@ -665,11 +681,11 @@ function getVideoAmount(){
 
 function getCountryCompetitions($country){
     $competitions = query("CALL sp_getCountryCompetitions(?);", "s", $country);
-    if(sizeof($competitions) > 0){
-        foreach ($competitions as $key => &$competition) {
+    if(sizeof($competitions) > 0) {
+        // foreach ($competitions as $key => &$competition) {
+            // $competition["races"] = [];
             // $competition["races"] = getCountryRacesFromCompetition($country, $competition["idCompetition"]);
-            $competition["races"] = [];
-        }
+        // }
         return $competitions;
     } else{
         return [];
@@ -678,7 +694,7 @@ function getCountryCompetitions($country){
 
 function getCountryRacesFromCompetition($country, $idcompetition){
     $races = query("CALL sp_getCountryRacesFromCompetition(?, ?);", "si", $country, intval($idcompetition));
-    if(sizeof($races) > 0){
+    if(sizeof($races) > 0) {
         return $races;
     } else {
         return [];
@@ -688,7 +704,7 @@ function getCountryRacesFromCompetition($country, $idcompetition){
 function getBestSkaters(){
     global $scoreInfluences;
     $skaters = query("CALL sp_hallOfFame(?);", "s", $scoreInfluences);
-    if(sizeof($skaters) > 0){
+    if(sizeof($skaters) > 0) {
         return $skaters;
     } else{
         return [];
@@ -728,10 +744,11 @@ function getAthleteCompetitions($idathlete){
 function getAthlete($id){
     global $scoreInfluences;
     global $usedMedals;
-    $result = query("CALL sp_athleteFull(?, ?, ?)", "iss", intval($id), $scoreInfluences, $usedMedals);
-    if(sizeof($result) > 0){
+    // $result = query("CALL sp_athleteFull(?, ?, ?)", "iss", intval($id), $scoreInfluences, $usedMedals);
+    $result = query("CALL sp_getAthleteNew(?, ?)", "is", intval($id), $usedMedals);
+    if(sizeof($result) > 0) {
         return $result[0];
-    } else{
+    } else {
         return [];
     }
 }
@@ -740,7 +757,7 @@ function getAthleteFull($id){
     global $scoreInfluences;
     global $usedMedals;
     $result = query("CALL sp_athletePrivateFull(?, ?, ?)", "iss", intval($id), $scoreInfluences, $usedMedals);
-    if(sizeof($result) > 0){
+    if(sizeof($result) > 0) {
         return $result[0];
     } else{
         return [];
@@ -769,19 +786,25 @@ function getCountry($name){
     global $scoreInfluences;
     global $usedMedals;
     // $country = query("SELECT * FROM vCountry WHERE country = ?;", "ss", $country, $scoreInfluences);
-    $country = query("CALL sp_getCountries(?, ?, ?)", "sss", $name, $scoreInfluences, $usedMedals);
-    if(sizeof($country) > 0){
-        return $country[0];
-    } else{
-        return [];
+    // $country = query("CALL sp_getCountries(?, ?, ?)", "sss", $name, $scoreInfluences, $usedMedals);
+    $countries = getCountries();
+    foreach ($countries as $country) {
+        if($country["country"] == $name) {
+            return $country;
+        }
     }
+    return [];
 }
 
-function getCountries(){
+function getCountries() {
     global $scoreInfluences;
     global $usedMedals;
     // $countries = query("SELECT * FROM vCountry ORDER BY score DESC");
-    $countries = query("CALL sp_getCountries('%', ?, ?)", "ss", $scoreInfluences, $usedMedals);
+    // $countries = query("CALL sp_getCountries('%', ?, ?)", "ss", $scoreInfluences, $usedMedals);
+    $countries = query("CALL sp_getCountriesNew(?)", "s",  $usedMedals);
+    for ($i=0; $i < sizeof($countries); $i++) { 
+        $countries[$i]["rank"] = $i + 1;
+    }
     if(sizeof($countries) > 0){
         return $countries;
     } else{
@@ -798,11 +821,12 @@ function getResult($id){
     }
 }
 
-function getRace($id){
-    $result = query("SELECT * FROM vRace WHERE idRace = ?;", "i", intval($id));
-    if(sizeof($result) > 0){
-        $result[0]["results"] = getRaceResults($id);
-        return $result[0];
+function getRace($id) {
+    global $usedMedals;
+    $race = query("SELECT * FROM vRace WHERE idRace = ?;", "i", intval($id));
+    if(sizeof($race) > 0) {
+        $race[0]["results"] = query("CALL sp_getRaceResultsNew(?,?)", "is", intval($id), $usedMedals);
+        return $race[0];
     } else{
         return [];
     }

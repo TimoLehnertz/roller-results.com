@@ -53,10 +53,10 @@ include_once "api/imgAPI.php";
                 <div><div><?= $amountVideo?></div><div>Videos</div></div>
                 <div class="pc-only"><div><?= $amountAthlete?></div><div>Athletes</div></div>
             </div>
-            <hr>
+            <!-- <hr>
             <a href="/competition/?id=400&name=Ibagué" class="padding top bottom triple align center pc-only"><h1>Daily updated results from worlds in Ibagué!</h1></a>
             <a href="/competition/?id=400&name=Ibagué" class="padding top bottom triple align center mobile-only"><h3>Results from  Ibagué!</h3></a>
-            <hr>
+            <hr> -->
             <h2></h2>
             <p class="head-paragraph align center">
                 <span><b>Data</b> and <b>results</b> are the best basis for progress in elite sport</span><br>
@@ -445,7 +445,8 @@ include_once "api/imgAPI.php";
     function initGet(){
         // get("hallOfFame").receive((succsess, bestSkaters) => {
         getFile("/json/hall-of-fame.json").receive((succsess, bestSkaters) => {
-            if(succsess){
+        // get("bestAthletes").receive((succsess, bestSkaters) => {
+            if(succsess) {
                 clearBestSkaters();
                 initBestSkaters(bestSkaters);
             } else{

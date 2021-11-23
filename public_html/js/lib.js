@@ -613,7 +613,7 @@ class Slideshow{
         if(closestIndex !== -1){
             return closestOffset + scroll;
         } else{
-            return x;
+            return 0;
         }
     }
 
@@ -1951,49 +1951,57 @@ class Profile{
         Profile.allProfiles.push(this);
     }
 
+    static getPlaceholder(lod) {
+        if(lod === Profile.CARD) {
+            const p = new Profile({}, lod);
+            p.grayOut = true;
+            return p.wrapper;
+        }
+    }
+
     updateData(data){
-        if(typeof data === 'object'){
+        if(typeof data === 'object') {
             if("maximizePage" in data) {
                 this.maximizePage = data.maximizePage;
             }
             if(data.hasOwnProperty("name")){
                 this.name = data.name;
-                this.elem.find(".profile__name").remove();
-                this.elem.append(this.nameElem);
+                this.elem.find(".profile__name").first().remove();
+                this.elem.prepend(this.nameElem);
             }
             if(data.hasOwnProperty("left")){
                 this.left = data.left;
-                this.elem.find(".profile__left").remove();
-                this.elem.append(this.leftElem);
+                this.elem.find(".profile__left").first().remove();
+                this.elem.prepend(this.leftElem);
             }
             if(data.hasOwnProperty("right")){
                 this.right = data.right;
-                this.elem.find(".profile__right").remove();
-                this.elem.append(this.rightElem);
+                this.elem.find(".profile__right").first().remove();
+                this.elem.prepend(this.rightElem);
             }
             if(data.hasOwnProperty("trophy2")){
                 this.trophy2 = data.trophy2;
-                this.elem.find(".profile__trophy-2").remove();
-                this.elem.append(this.getTrophy(1));
+                this.elem.find(".profile__trophy-2").first().remove();
+                this.elem.prepend(this.getTrophy(1));
             }
             if(data.hasOwnProperty("trophy1")){
                 this.trophy1 = data.trophy1;
-                this.elem.find(".profile__trophy-1").remove();
-                this.elem.append(this.getTrophy(0));
+                this.elem.find(".profile__trophy-1").first().remove();
+                this.elem.prepend(this.getTrophy(0));
             }
             if(data.hasOwnProperty("trophy3")){
                 this.trophy3 = data.trophy3;
-                this.elem.find(".profile__trophy-3").remove();
-                this.elem.append(this.getTrophy(2));
+                this.elem.find(".profile__trophy-3").first().remove();
+                this.elem.prepend(this.getTrophy(2));
             }
             if(data.hasOwnProperty("special")){
                 this.special = data.special;
-                this.elem.find(".profile__special").remove();
-                this.elem.append(this.specialElem);
+                this.elem.find(".profile__special").first().remove();
+                this.elem.prepend(this.specialElem);
             }
             if(data.hasOwnProperty("primary")){
                 this.primary = data.primary;
-                this.elem.find(".profile__primary").remove();
+                this.elem.find(".profile__primary").first().remove();
                 this.elem.prepend(this.primaryElem);
             }
             if(data.hasOwnProperty("secondaryData")){
@@ -2001,19 +2009,15 @@ class Profile{
             }
             if(data.hasOwnProperty("secondary")) {
                 this.secondary = data.secondary;
-                this.secondaryElem.empty();
-                if(this.lod === Profile.MAX) {
-                    this.secondary(this.secondaryElem, this.secondaryData);
-                }
             }
             if("rank" in data){
-                this.elem.find(".profile__rank").remove();
-                this.elem.append(`<div class="profile__rank">${data.rank}</div>`);
+                this.elem.find(".profile__rank").first().remove();
+                this.elem.prepend(`<div class="profile__rank">${data.rank}</div>`);
             }
             if(data.hasOwnProperty("image")){
                 this.image = data.image;
-                this.elem.find(".profile__image").remove();
-                this.elem.append(this.profileImg);
+                this.elem.find(".profile__image").first().remove();
+                this.elem.prepend(this.profileImg);
             }
             if("update" in data){
                 this.update = data.update;
@@ -2023,8 +2027,8 @@ class Profile{
             }
             if("share" in data) {
                 this.shareData = data.share;
-                this.elem.find(".profile__share").remove();
-                this.elem.append(this.shareElem);
+                this.elem.find(".profile__share").first().remove();
+                this.elem.prepend(this.shareElem);
             }
         } else if(typeof data === 'string'){
             this.name = data;
@@ -2042,10 +2046,10 @@ class Profile{
             this.elem.append(this.maximizeElem);
             $(this.wrapper).on("dblclick", '.profile', {}, (e) => {this.incrementLod()});
         }
-        if(this.lod === Profile.CARD){
+        if(this.lod === Profile.CARD) {
             this.elem.find(".profile__minimize").css("display", "none");
         }
-        if(this.lod === Profile.MAX){
+        if(this.lod === Profile.MAX) {
             this.initMax();
         }
         if(this.lod === Profile.MIN){
@@ -2115,13 +2119,17 @@ class Profile{
     }
 
     initMax(){
-        if(this.maximizePage) {
+        let link = false;
+        if(this.maximizePage && this.minLod < Profile.MAX) {
             window.location = this.maximizePage;
+            link = true;
         }
         this.elem.find(".profile__minimize").css("display", "");
         if(this.secondary !== undefined){
             this.elem.find(".profile__secondary").empty();
-            this.secondary(this.secondaryElem, this.secondaryData);
+            if(!link) {
+                this.secondary(this.secondaryElem, this.secondaryData);
+            }
         }
         $(`body > *:not(header, footer, .tooltip)`).addClass("hidden");
         $("header").after(this.elem);

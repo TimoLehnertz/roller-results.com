@@ -78,17 +78,17 @@ function sortAthletes(athletes){
     return athletes;
 }
 
-function updateAllAthleteProfiles(){
+function updateAllAthleteProfiles() {
     for (const profile of Profile.allProfiles) {
-        if(profile.type === "athlete"){
+        if(profile.type === "athlete" && !profile.grayedOut){
             profile.update();
         }
     }
 }
 
-function updateAllCountryProfiles(){
+function updateAllCountryProfiles() {
     for (const profile of Profile.allProfiles) {
-        if(profile.type === "country"){
+        if(profile.type === "country" && !profile.grayedOut){
             profile.update();
         }
     }
@@ -139,40 +139,46 @@ function athleteDataToProfileData(athlete, useRank = false, alternativeRank = un
     // }
     const data = {
         type: "athlete",
-        maximizePage: `/athlete?id=${athlete.idAthlete}${searchParam}`,
+        maximizePage: `/athlete?id=${athlete.id}${searchParam}`,
         name: athlete.firstname + " " +athlete.lastname,
         image: athlete.image != null ? "/img/uploads/" + athlete.image : null,
         left: {data: athlete.country, type: "countryFlag", link: `/country?id=${athlete.country}`, tooltip: athlete.country},
         right: {data: athlete.gender, type: "gender", tooltip: athlete.gender?.toLowerCase() == "w" ? "Female" : "Male"},
         trophy1, trophy2, trophy3,
         share: {
-            url: "https://www.roller-results.com/athlete/index.php?id=" + athlete.idAthlete + "&name=" + athlete.firstname + "_" + athlete.lastname,
+            url: "https://www.roller-results.com/athlete/index.php?id=" + athlete.id + "&name=" + athlete.firstname + "_" + athlete.lastname,
             title: `See ${athlete.firstname} ${athlete.lastname}'s athlete profile`,
             text: `Check out ${athlete.firstname} ${athlete.lastname}'s athlete profile on Roller-results.`,
         },
         special: {
-            data: Math.round(athlete.score) + "",
+            data: athlete.gold + "",
             tooltip: "Overall score | See settings to know how it works",
-            type: ElemParser.TEXT
+            type: ElemParser.TEXT,
+            validate: () => athlete.gold > 0
         },
         primary: {
-            scoreShort: {
-                description: "Score short:",
-                data: Math.round(athlete.scoreShort),
-                tooltip: "Score only applied to relays and distances < 1500m",
+            medalScore: {
+                data: athlete.medalScore,
+                description: "Medal points:",
+                tooltip: "(Gold=3pts, Silver=2pts, Bronze=1pt) using only competitions checked in settings(" + getUsedMedalsString() + ")"
             },
-            scoreLong: {
-                description: "Score long:",
-                data: Math.round(athlete.scoreLong),
-                tooltip: "Score only applied to distances > 1500m"
+            medalScoreShort: {
+                description: "Points short:",
+                data: Math.round(athlete.medalScoreShort),
+                tooltip: "Medal score (Gold=3pts, Silver=2pts, Bronze=1pt) only applied to distances < 1500m",
+            },
+            medalScoreLong: {
+                description: "Points long:",
+                data: Math.round(athlete.medalScoreLong),
+                tooltip: "Medal score (Gold=3pts, Silver=2pts, Bronze=1pt) only applied to distances > 1500m"
             },
             sprinter: {
-                data: (athlete.scoreLong / (athlete.scoreLong + athlete.scoreShort)),
+                data: (athlete.medalScoreShort / (athlete.medalScoreLong + athlete.medalScore)),
                 description: "Best discipline",
                 description1: "Sprint",
                 description2: "Long",
                 type: "slider",
-                tooltip: "Relation of Score short and long score"
+                tooltip: "Relation of Score short and long points"
             },
             topTen: {
                 data: athlete.topTen,
@@ -192,17 +198,12 @@ function athleteDataToProfileData(athlete, useRank = false, alternativeRank = un
                 description: "Favorite discipline:",
                 tooltip: `The discipline ${athlete.firstname} got the most score points on`
             },
-            raceCount: {
-                data: athlete.raceCount,
-                description: "Race count:",
-                // validate: () => athlete.topTen > 0,
-                tooltip: "Amount of races in the database"
-            },
-            medalScore: {
-                data: athlete.medalScore,
-                description: "Medal score:",
-                tooltip: "Gold = 3, Silver = 2, Bronze = 1 | All summed up"
-            },
+            // raceCount: {
+            //     data: athlete.raceCount,
+            //     description: "Race count:",
+            //     // validate: () => athlete.topTen > 0,
+            //     tooltip: "Amount of races in the database (only activated competitions count)"
+            // },
             club: {
                 data: athlete.club,
                 description: "Club:",
@@ -218,11 +219,14 @@ function athleteDataToProfileData(athlete, useRank = false, alternativeRank = un
         secondaryData: athlete,
         update: function() {
             this.grayOut = true;
-            get("athlete", athlete.idAthlete).receive((succsess, newAthlete) => {
-                if(succsess){
+            // console.log("Updating athlete");
+            // console.log(athlete);
+            get("athlete", athlete.id).receive((succsess, newAthlete) => {
+                console.log(newAthlete);
+                if(succsess) {
                     this.grayOut = false;
                     this.updateData(athleteDataToProfileData(newAthlete, useRank));
-                } else{
+                } else {
                     console.log("failed loading profile")
                 }
             });
@@ -268,7 +272,7 @@ function athleteDataToProfileData(athlete, useRank = false, alternativeRank = un
          */
         const careerElem = $(`<div id="${idCareer}"><h2 class="section__header">Career</h2><div class="loading"></div></div>`);
         wrapper.append(careerElem);
-        get("athleteCareer", athlete.idAthlete).receive((succsess, career) => {
+        get("athleteCareer", athlete.id).receive((succsess, career) => {
             careerElem.find(".loading").remove();
             if(succsess && career.length !== 0){
                 careerGraphAt(careerElem, career);
@@ -281,7 +285,7 @@ function athleteDataToProfileData(athlete, useRank = false, alternativeRank = un
          * best times
          */
         const bestTimesElem = $(`<div id="${idBestTimes}"><h2 class="section__header">Personal best times</h2><div class="loading circle"></div></div>`);
-        get("athleteBestTimes", athlete.idAthlete).receive((succsess, times) => {
+        get("athleteBestTimes", athlete.id).receive((succsess, times) => {
             bestTimesElem.find(".loading").remove();
             if(succsess && times.length !== 0){
                 bestTimesAt(bestTimesElem, times)
@@ -295,10 +299,10 @@ function athleteDataToProfileData(athlete, useRank = false, alternativeRank = un
          */
         const compElem = $(`<div id="${idCompetitions}"><h2 class="section__header">Competitions</h2><div class="loading circle"></div></div>`);
         wrapper.append(compElem);
-        get("athleteCompetitions", athlete.idAthlete).receive((succsess, competitions) => {
+        get("athleteCompetitions", athlete.id).receive((succsess, competitions) => {
             compElem.find(".loading").remove();
             if(succsess && competitions.length !== 0){
-                compElem.append(getCompetitionListElem(competitions));
+                compElem.append(getCompetitionListElem(competitions, false, athlete.id));
             } else{
                 compElem.append(`<p class="margin left double">${athlete.fullname} didn't compete in any of our listed races yet :(</p>`)
             }
@@ -353,17 +357,17 @@ function bestTimesAt(elem, bestTimes){
 const allAthleteProfiles = [];
 function athleteToProfile(athlete, minLod = Profile.MIN, useRank = false, alternativeRank = undefined, loadFirst = true){
     const profile = new Profile(athleteDataToProfileData(athlete, useRank, alternativeRank), minLod);
-    if(loadFirst && (!athlete.score || !athlete.scoreLong || !athlete.scoreShort || !athlete.gold || !athlete.silver || !athlete.bronze)){//athlete not complete needs ajax
-        profile.update();
-        // console.log("loading incomplete profile");
-        // get("athlete", athlete.idAthlete).receive((succsess, newAthlete) => {
-        //     if(succsess){
-        //         profile.updateData(athleteDataToProfileData(newAthlete, useRank));
-        //     } else{
-        //         console.log("failed loading profile")
-        //     }
-        // });
-    }
+    // if(loadFirst && (!athlete.score || !athlete.scoreLong || !athlete.scoreShort || !athlete.gold || !athlete.silver || !athlete.bronze)){//athlete not complete needs ajax
+    //     profile.update();
+    //     // console.log("loading incomplete profile");
+    //     // get("athlete", athlete.idAthlete).receive((succsess, newAthlete) => {
+    //     //     if(succsess){
+    //     //         profile.updateData(athleteDataToProfileData(newAthlete, useRank));
+    //     //     } else{
+    //     //         console.log("failed loading profile")
+    //     //     }
+    //     // });
+    // }
     allAthleteProfiles.push(profile);
     return profile;
 }
@@ -429,15 +433,37 @@ function getYtVideo(link){
 }
 // <iframe width="949" height="534" src="https://www.youtube.com/embed/YcXbt0iVu0A" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
+function athleteFromResult(result) {
+    const athlete = {};
+    Object.assign(athlete, result);
+    athlete.id = athlete.idAthlete;
+    return athlete;
+}
+
 function getRaceTable(parent, race){
+    console.log(race)
     const elem = $(`<div class="race"></div>`);
     const raceTable = $(`<div class="race-table">`);
     elem.append(pathFromRace(race));
     elem.append(getYtVideo(race.link));
     elem.append(raceTable);
+
+    const places = [];
+    const results = [];
     for (const result of race.results) {
-        if(result.time !== null) {
-            result.time = preprocessTime(result.time);
+        if(places.includes(result.place)) {
+            results[results.length -1].athletes.push(athleteFromResult(result));
+        } else {
+            result.athletes = [athleteFromResult(result)];
+            results.push(result);
+            places.push(result.place);
+        }
+    }
+    race.results = results;
+
+    for (const result of race.results) {
+        if(result.timeDate !== null) {
+            result.time = preprocessTime(result.timeDate);
         }
         result.profiles = profilesElemFromResult(result);
         result.place = {
@@ -501,17 +527,17 @@ function profilesElemFromResult(result){
 const allCountryProfiles = [];
 function countryToProfile(country, minLod = Profile.MIN, useRank = false, alternativeRank = undefined){
     const profile = new Profile(countryToProfileData(country, useRank, alternativeRank), minLod);
-    if("score" in country === false || "scoreLong" in country === false || "scoreShort" in country === false || "gold" in country === false || "silver" in country === false || "bronze" in country === false){//athlete not complete needs ajax
-        profile.update();
-        // console.log("loading incomplete profile")
-        // get("country", country.country).receive((succsess, newCountry) => {
-        //     if(succsess){
-        //         profile.updateData(athleteDataToProfileData(newCountry));
-        //     } else{
-        //         console.log("failed loading country " + country.country);
-        //     }
-        // });
-    }
+    // if("score" in country === false || "scoreLong" in country === false || "scoreShort" in country === false || "gold" in country === false || "silver" in country === false || "bronze" in country === false){//athlete not complete needs ajax
+    //     profile.update();
+    //     // console.log("loading incomplete profile")
+    //     // get("country", country.country).receive((succsess, newCountry) => {
+    //     //     if(succsess){
+    //     //         profile.updateData(athleteDataToProfileData(newCountry));
+    //     //     } else{
+    //     //         console.log("failed loading country " + country.country);
+    //     //     }
+    //     // });
+    // }
     profile.colorScheme = 1;
     allCountryProfiles.push(profile);
     return profile;
@@ -573,23 +599,28 @@ function countryToProfileData(country, useRank = false, alternativeRank = undefi
         // right: country.country,
         trophy1, trophy2, trophy3,
         special: {
-            data: Math.round(country.score) + "",
-            tooltip: "Overall score | See settings to know how it works",
+            data: Math.round(country.gold) + "",
+            tooltip: "Gold medals won on the selected types of competition (" + getUsedMedalsString() + ")",
             type: ElemParser.TEXT
         },
         primary: {
+            medalScore: {
+                data: country.medalScore,
+                description: "Medal score:",
+                tooltip: "(Gold=3pts, Silver=2pts, Bronze=1pt)",
+            },
             scoreShort: {
-                description: "Score short:",
-                data: Math.round(country.scoreShort),
-                tooltip: "Score only applied to relays and distances < 1500m"
+                description: "Points short:",
+                data: Math.round(country.medalScoreShort),
+                tooltip: "Medal score (Gold=3pts, Silver=2pts, Bronze=1pt) only applied to distances < 1500m"
             },
             scoreLong: {
-                description: "Score long:",
-                data: Math.round(country.scoreLong),
-                tooltip: "Score only applied to distances > 1500m"
+                description: "Points long:",
+                data: Math.round(country.medalScoreLong),
+                tooltip: "Medal score (Gold=3pts, Silver=2pts, Bronze=1pt) only applied to distances > 1500m"
             },
             sprinter: {
-                data: (country.scoreLong / (country.scoreLong + country.scoreShort)),
+                data: (country.medalScoreLong / (country.medalScoreShort + country.medalScore)),
                 description: "Best discipline",
                 description1: "Sprint",
                 description2: "Long",
@@ -600,35 +631,41 @@ function countryToProfileData(country, useRank = false, alternativeRank = undefi
                 data: country.topTen,
                 description: "Top 10 places:",
                 validate: () => country.topTen > 0,
-                tooltip: "All top 10 places on competitions in the medal settings (All competitions that are ticked in the settings)"
+                tooltip: "All top 10 places on competitions checked in the medal settings (" + getUsedMedalsString() + ")"
             },
             members: {
                 data: country.members,
                 description: "Members:",
-                tooltip: "Amount of members that raced for this country"
+                tooltip: "Amount of members that raced for this country(Note: only competitions checked in the settings count)"
             },
-            medalScore: {
-                data: country.medalScore,
-                description: "Medal score:",
-                tooltip: "Gold = 3, Silver = 2, Bronze = 1 | All summed up"
-            }
         },
         secondary: profileInit,
         secondaryData: country,
-        update: function(){
-            // console.log("loading incomplete profile")
+        update: function() {
             this.grayOut = true;
+            console.log("updating country");
             get("country", country.country).receive((succsess, newCountry) => {
-                if(succsess){
+                if(succsess) {
                     this.grayOut = false;
                     this.updateData(countryToProfileData(newCountry));
+                    const slideshow = this.elem.find(".country-skater-slideshow").first();
+                    console.log(slideshow);
+                    get("countryAthletes", country.country, 5).receive((succsess, athletes) => {
+                        slideshow.empty();
+                        let i = 0;
+                        for (const athlete of athletes) {
+                            const profile = athleteToProfile(athlete, Profile.CARD, true, ++i);
+                            profile.appendTo(slideshow);
+                            if(i >= 5) break;
+                        }
+                    });
                 } else{
                     console.log("failed loading country " + country.country);
                 }
             });
         }
     };
-    if(useRank){
+    if(useRank) {
         if(alternativeRank !== undefined){
             data.rank = alternativeRank;
         } else if("rank" in country) {
@@ -647,9 +684,8 @@ function countryToProfileData(country, useRank = false, alternativeRank = undefi
      * contact
      * follow(also card mode)
      * 
-     * 
      */
-    function profileInit(wrapper, country){
+    function profileInit(wrapper, country) {
         /**
          * Navigation
          */
@@ -668,9 +704,16 @@ function countryToProfileData(country, useRank = false, alternativeRank = undefi
         /**
          * Athletes
          */
-        const max = 10;
-        const athletesElem = $(`<div id="${idAthletes}"><h2 class="section__header">Top ${Math.min(country.members, max)} athletes</h2><div class="loading circle"></div></div>`)
+        const max = 5;
+        const athletesElem = $(`<div id="${idAthletes}"><h2 class="section__header">Top ${Math.min(country.members, max)} athletes</h2></div>`)
         wrapper.append(athletesElem);
+
+        const slideShow = $(`<div class="country-skater-slideshow"/>`);
+        new Slideshow(slideShow);
+        athletesElem.append(slideShow);
+        for(let i = 0; i < max; i++) {
+            slideShow.append(Profile.getPlaceholder(Profile.CARD));
+        }
 
         const allAthletesElem = $(`<div><div class="athlete-list-big margin bottom"></div></div>`);
         wrapper.append(allAthletesElem);
@@ -678,22 +721,26 @@ function countryToProfileData(country, useRank = false, alternativeRank = undefi
         const athleteButton = $(`<button class=" align center btn default">Load all athlethes</button>`);
         allAthletesElem.append(athleteButton);
         
-        const maxDisplay = isMobile() ? 20 : 30;
-        get("countryAthletes", country.country, maxDisplay + 1).receive((succsess, athletes) => {
+        let maxDisplay = max;
+        get("countryAthletes", country.country, 5).receive((succsess, athletes) => {
             const profiles = [];
             let i = 0;
             for (const athlete of athletes) {
                 if(i == max){
                     break;
                 }
-                profiles.push(athleteToProfile(athlete, Profile.CARD, true, i + 1));
+                const profile = athleteToProfile(athlete, Profile.CARD, true, i + 1);
+                profile.update = function() {
+                    this.grayOut = true;
+                }
+                profiles.push(profile);
                 i++;
             }
-            athletesElem.find(".loading").remove();
             if(succsess){
-                const slideShow = $(`<div/>`);
-                profileSlideShowIn(slideShow, profiles);
-                athletesElem.append(slideShow);
+                slideShow.empty();
+                for (const profile of profiles) {
+                    profile.appendTo(slideShow);
+                }
             }
             /**
              * all athletes
@@ -752,73 +799,92 @@ function countryToProfileData(country, useRank = false, alternativeRank = undefi
         wrapper.append(compElem);
         get("countryCompetitions", country.country).receive((succsess, competitions) => {
             compElem.find(".loading").remove();
-            if(succsess){
-                compElem.append(getCompetitionListElem(competitions));
+            if(succsess) {
+                compElem.append(getCompetitionListElem(competitions, true, country.country));
             }
         });
     };
 }
 
-function getCompetitionListElem(competitions){
+function getCompetitionListElem(competitions, isCountry, name) {
     const elem = $(`<div class="competition-list"/>`);
     for (const comp of competitions) {
-        const compElem = $(`<div class="competition"></div>`);
-        for (const race of comp.races) {
-            const head = $(`<div class="race flex align-center justify-space-between padding right"><span>${race.distance} ${race.category} ${race.gender}</span></div>`)
-            const links = linksFromLinkString(race.link).length;
-            if(links > 0){
-                for (let i = 0; i < links; i++) {
-                    head.find("span").append(`<i class="fab fa-youtube margin left"></i>`);
-                }
-            }
-            if(race.sportlers !== undefined){
-                head.append(`<div class="margin left double">${race.sportlers} sportlers, best place: ${race.bestPlace} </div>`);
-            }
-            if(race.place !== undefined){
-                head.append(getPlaceElem(race.place));
-            }
-            
-            const acRace = new Accordion(head, $("<div class='loading circle'></div>"),
-                {
-                    onextend: (head, body1, status) => {
-                        body1.addClass("race--max");
-                        if(!status.fetched){
-                            get("race", race.idRace).receive((succsess, race) => {
-                                body1.find(".loading").remove();
-                                if(!succsess){
-                                    return;
-                                }
-                                getRaceTable(body1, race);
-                            });
-                            status.fetched = true;
-                        }
-                }}, {
-                    status: {
-                        fetched: false
-                    }
-                }
-            );
-            compElem.append(acRace.element);
-        }
-        const head = $(`<div class="flex justify-start align-center"><div>${comp.type} ${comp.location} ${comp.raceYear}</div></div>`);
-        if(comp.bronzeMedals !== undefined){
-            if(comp.goldMedals > 0){
-                head.append(getMedal("gold", comp.goldMedals, comp.goldMedals + " Gold medals | Used competitions: " + getMedalComps()));
-            }
-            if(comp.silverMedals > 0){
-                head.append(getMedal("silver", comp.silverMedals, comp.silverMedals + " Silver medals | Used competitions: " + getMedalComps()));
-            }
-            if(comp.bronzeMedals > 0){
-                head.append(getMedal("bronze", comp.bronzeMedals, comp.bronzeMedals +" Bronze medals | Used competitions: " + getMedalComps()));
-            }
-        }
-        if(comp.hasLink !== null){
-            head.append(`<div class="flex justify-end flex-grow"><i class="fab fa-youtube font size bigger"></i></div>`);
-        }
-        const acComp = new Accordion(head, compElem);
-        elem.append(acComp.element);
+        elem.append(getCompetitionElem(comp, isCountry, name));
     }
     return elem;
+}
+
+function getCompetitionElem(comp, isCountry, name) {
+    const getter = isCountry ? "countryRacesFromCompetition" : "athleteRacesFromCompetition";
+    /**
+        Head
+     */
+    const head = $(`<div class="flex justify-start align-center"><div>${comp.type} ${comp.location} ${comp.raceYear}</div></div>`);
+    if(comp.bronzeMedals !== undefined){
+        if(comp.goldMedals > 0){
+            head.append(getMedal("gold", comp.goldMedals, comp.goldMedals + " Gold medals | Used competitions: " + getMedalComps()));
+        }
+        if(comp.silverMedals > 0) {
+            head.append(getMedal("silver", comp.silverMedals, comp.silverMedals + " Silver medals | Used competitions: " + getMedalComps()));
+        }
+        if(comp.bronzeMedals > 0){
+            head.append(getMedal("bronze", comp.bronzeMedals, comp.bronzeMedals +" Bronze medals | Used competitions: " + getMedalComps()));
+        }
+    }
+    if(comp.hasLink !== null){
+        head.append(`<div class="flex justify-end flex-grow"><i class="fab fa-youtube font size bigger"></i></div>`);
+    }
+    return new Accordion(head, $("<div class='loading circle'></div>"), {
+        onextend: (head, body) => {
+            get(getter, name, comp.idCompetition).receive((succsess, races) => {
+                body.empty();
+                body.addClass("competition");
+                for (const race of races) {
+                    body.append(getRaceElem(race));
+                }
+            });
+        }
+    }).element;
+}
+
+function getRaceElem(race) {
+    const head = $(`<div class="race flex align-center justify-space-between padding right"><span>${race.distance} ${race.trackStreet} ${race.category} ${race.gender}</span></div>`)
+    const links = linksFromLinkString(race.link).length;
+    if(links > 0){
+        for (let i = 0; i < links; i++) {
+            head.find("span").append(`<i class="fab fa-youtube margin left"></i>`);
+        }
+    }
+    if(race.sportlers !== undefined){
+        head.append(`<div class="margin left double">${race.sportlers} sportlers, best place: ${race.bestPlace} </div>`);
+    }
+    if(race.place !== undefined){
+        head.append(getPlaceElem(race.place));
+    }
+    
+    const acRace = new Accordion(head, $("<div class='loading circle'></div>"),
+        {
+            onextend: (head, body1, status) => {
+                body1.addClass("race--max");
+                if(!status.fetched){
+                    get("race", race.id).receive((succsess, race) => {
+                        console.log(race);
+                        body1.find(".loading").remove();
+                        if(!succsess){
+                            return;
+                        }
+                        getRaceTable(body1, race);
+                    });
+                    status.fetched = true;
+                }
+            }
+        }, {
+            status: {
+                fetched: false
+            }
+        }
+    );
+    return acRace.element;
 }
 
 function careerGraphAt(parent, career){

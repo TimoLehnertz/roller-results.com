@@ -6,6 +6,8 @@ include_once "../includes/error.php";
 if(!isset($_GET["id"])){
     throwError($ERROR_NO_ID);
 }
+$id = $_GET["id"];
+
 include_once "../api/index.php";
 include_once "../api/imgAPI.php";
 
@@ -17,19 +19,22 @@ include_once "../api/imgAPI.php";
 
 include_once "../header.php";
 
+
 // echo "<script>const person = ". json_encode($person) ."; const id=".$_GET["id"]."</script>";
-echo "<script>const id=".$_GET["id"]."</script>";
+echo "<script>const id=$id</script>";
+// echo "<script>const athlete=".getAthlete($id)."</script>";
 ?>
 <main class="main">
     
 </main>
 <script>
-    get("athlete", id).receive((succsess, person) => {
-        if(!succsess || person.length === 0) {
+    const placeholder = athleteToProfile({}, Profile.MAX);
+    get("athlete", id).receive((succsess, athlete) => {
+        if(!succsess ) {
             window.location.href = "/index.php";
         }
-        const profile = athleteToProfile(person, Profile.MAX);
-        profile.appendTo($("main"));
+        const profile = athleteToProfile(athlete, Profile.MAX);
+        // profile.appendTo($("main"));
     });
     // scoreCallbacks.push(() => {
     //     profile.grayOut = true;

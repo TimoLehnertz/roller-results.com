@@ -1,6 +1,7 @@
 "use strict";
 
 const scoreCallbacks = [];
+const medalCallbacks = [];
 
 $(() => {
     $(".search-bar__input").on("input", searchChange);
@@ -260,6 +261,26 @@ function resetSettings() {
 }
 
 applyMedals(false);
+
+function addMedalCallback(callback) {
+    medalCallbacks.push(callback);
+}
+
+function getUsedMedalsString() {
+    let used = "";
+    let del = "";
+    for (const compName in settingCompetitions) {
+        if (Object.hasOwnProperty.call(settingCompetitions, compName)) {
+            const comp = settingCompetitions[compName];
+            if(comp.useMedals){
+                used += del + comp.dbName;
+                del = ", ";
+            }
+        }
+    }
+    return used;
+}
+
 function applyMedals(updateAthletes){
     let dbUsedMedals = "";
     let del = "";
@@ -281,6 +302,9 @@ function applyMedals(updateAthletes){
         // }
     }
     updateStorage();
+    for (const callback of medalCallbacks) {
+        callback();
+    }
 }
 
 applyScores(false);//scores for ajax state
