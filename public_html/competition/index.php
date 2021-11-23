@@ -29,7 +29,6 @@ $lng = $comp["longitude"];
 echo "<script>const comp = ". json_encode($comp) .";</script>";
 echoRandWallpaper();
 
-// print_r($comp);
 $mapsKey = "AIzaSyAZriMrsCFOsEEAKcRLxdtI6V8b9Fbfd-c";
 
 $bestAthletes = getCompAthleteMedals($idComp);
@@ -134,8 +133,6 @@ foreach ($bestAthletes as $athlete) {
             </div>
         </div>
         <script>
-            
-            
             $(".bronzem").each(function() {
                 $(this).append(getMedal("bronze", 3, false));
             });
@@ -146,37 +143,10 @@ foreach ($bestAthletes as $athlete) {
                 $(this).append(getMedal("gold", 1, false));
             });
             
-            console.log(comp);
             comp.races.filter(race => race.resultCount > 0);
-            // const table = new Table($(".races-table"), comp.races);
-            // let orderBy = {column: "distance", up: true};
-            // if(findGetParameter("trackStreet") !== null){
-            //     orderBy = {column: "trackStreet", up: findGetParameter("trackStreet") === "Road"};
-            // }
-            
             for (const race of comp.races) {
                 $(".races-table").append(getRaceElem(race));
             }
-
-            // table.setup({
-            //     rowLink: row => `/race?id=${row.idRace}`,
-            //     orderBy,
-            //     layout: {
-            //         distance: {
-            //             // allowSort: false
-            //             displayName: "Distance"
-            //         },
-            //         category: {displayName: "Category"},
-            //         gender: {displayName: "Gender"},
-            //         trackStreet: {displayName: "Circuit"},
-            //         link: {
-            //             callback: (link) => getYtVideoElems(link),
-            //             displayName: "Videos",
-            //             allowSort: false
-            //         },
-            //     }
-            // });
-            // table.init();
         </script>
     </div>
 </main>

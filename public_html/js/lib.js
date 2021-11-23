@@ -931,9 +931,17 @@ class Dropdown{
             this.close();
         });
         $(this.elem).click((e) => {
-            this.open();
+            this.toggle();
             e.stopPropagation();
         });
+    }
+
+    toggle() {
+        if(this.unfolded) {
+            this.close();
+        } else {
+            this.open();
+        }
     }
 
     open(){

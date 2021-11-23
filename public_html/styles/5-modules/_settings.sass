@@ -7,16 +7,18 @@
     width: 4rem
     // transition: all 0.2s
 
-    & > i
+    & > img
         color: #DDD
-        background: #333
+        background: #33333390
         border-radius: 50%
-        padding: 0.7rem
-        transition: all 0.1s ease-out
+        padding: 0.5rem
+        transition: all 0.03s ease-out
+        width: 3.5rem
+        height: auto
 
     &:hover
-        & > i
-            transform: rotate(45deg) scale(1.4)
+        & > img
+            transform: rotate(0deg) scale(1.2)
             // padding: 0.3rem
             background: transparent
             color: white
@@ -28,6 +30,10 @@
         position: absolute
         // display: none
         left: calc(100vw - 13rem)
+
+        & > img
+            transform: none !important
+            background: #333 !important
 
     @media only screen and (max-width: 800px) and (pointer: coarse)
         left: calc(100vw - 12rem) !important

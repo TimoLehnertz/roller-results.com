@@ -102,33 +102,33 @@ function initSettings(){
      * header
      */
     const list = [{
-        element: "How does it work?",
-        children: [
-            {
-                element: "How do scores work?",
-                children: [
-                    $("<p><b>How do our scores work?</b></p>"),
-                    $("<p>Scores are the numbers<br>visible in <span class='font color purple'>purple circles</span></p>"),
-                    $("<p>Scores are divided into <br><b>sprint</b>- and <b>long-scores</b>.<br>added together those<br>give the overall score</p>"),
-                    $("<p>We calculate them in<br><b>real-time</b>based on<br>your settings</p>"),
-                    $("<p></p>"),
-                    $("<p><b>But how?</b></p>"),
-                    $("<p>We take each <b>place</b><br>feed them into a<br><b>formula</b>, multiply the<br>result with your values<br>and <b>sum them up</b></p>"),
-                    $("<p>Change the Percentages<br>per competition type<br>just as you like</p>"),
-                    $("<p><b>The formula</b>:<br>f(<b>place</b>)=1/(<b>place</b>^1.2)*30;</p>"),
-                    $(`<iframe src="https://www.desmos.com/calculator/locbyec6or?embed" width="200" height="100" style="border: 1px solid #ccc" frameborder=0></iframe>`),
-                    $(`<a target="_blank" rel="noopener noreferrer" href="https://www.desmos.com/calculator/locbyec6or?lang=de">Open in Desmos</a>`),
-                ]
-            }, {
-                element: "How do medals work?",
-                children: [
-                    $("<p><b>How do our medals work?</b></p>"),
-                    $("<p>Medals are counted<br>per <b>country</b> and <b>athlete</b>.<br>You can see them in<br>displayed under or<br>right to the<br>profile image.</p>"),
-                    $("<p>What competitions are<br>counted can be set<br>via the settings.<br>Use the checkboxes<br>next to the<br>competitions.</p>"),
-                ]
-            }
-        ],
-        icon: "fas fa-question",
+        element: "Settings",
+        // children: [
+            // {
+            //     element: "How do scores work?",
+            //     children: [
+            //         $("<p><b>How do our scores work?</b></p>"),
+            //         $("<p>Scores are the numbers<br>visible in <span class='font color purple'>purple circles</span></p>"),
+            //         $("<p>Scores are divided into <br><b>sprint</b>- and <b>long-scores</b>.<br>added together those<br>give the overall score</p>"),
+            //         $("<p>We calculate them in<br><b>real-time</b>based on<br>your settings</p>"),
+            //         $("<p></p>"),
+            //         $("<p><b>But how?</b></p>"),
+            //         $("<p>We take each <b>place</b><br>feed them into a<br><b>formula</b>, multiply the<br>result with your values<br>and <b>sum them up</b></p>"),
+            //         $("<p>Change the Percentages<br>per competition type<br>just as you like</p>"),
+            //         $("<p><b>The formula</b>:<br>f(<b>place</b>)=1/(<b>place</b>^1.2)*30;</p>"),
+            //         $(`<iframe src="https://www.desmos.com/calculator/locbyec6or?embed" width="200" height="100" style="border: 1px solid #ccc" frameborder=0></iframe>`),
+            //         $(`<a target="_blank" rel="noopener noreferrer" href="https://www.desmos.com/calculator/locbyec6or?lang=de">Open in Desmos</a>`),
+            //     ]
+            // }, {
+            //     element: "How do medals work?",
+            //     children: [
+            //         $("<p><b>How do our medals work?</b></p>"),
+            //         $("<p>Medals are counted<br>per <b>country</b> and <b>athlete</b>.<br>You can see them in<br>displayed under or<br>right to the<br>profile image.</p>"),
+            //         $("<p>What competitions are<br>counted can be set<br>via the settings.<br>Use the checkboxes<br>next to the<br>competitions.</p>"),
+            //     ]
+            // }
+        // ],
+        icon: "fas fa-sliders-h",
         style: {
             padding: "1rem",
             backgroundColor: "#333",
@@ -150,33 +150,34 @@ function initSettings(){
                 element: {
                     type: "list",
                     style: {
-                        padding: "0.4rem",
+                        padding: "0.2rem",
                         width: "100%"
                     },
                     data: [
                         icon,
                         {
                             data: comp.displayName,
-                            style: {width: "6rem", marginLeft: "0.3rem"}
+                            style: {width: "7rem", marginLeft: "0.0rem"}
                         },
+                        // {
+                        //     type: "input",
+                        //     inputType: "number",
+                        //     data: 1,
+                        //     attributes: {
+                        //         min: 0,
+                        //         value: () => comp.influence * 100,
+                        //         step: 1,
+                        //         style: "width: 4.2rem"
+                        //     },
+                        //     // reset: (me) => {
+                        //     //     me.attr("value", defaultCompSettings[type].influence);
+                        //     // },
+                        //     change: function(e, val){
+                        //         comp.influence = Math.max(val / 100, 0);
+                        //     },
+                        //     style: {marginLeft: "0.3rem"}
+                        // }, "%",
                         {
-                            type: "input",
-                            inputType: "number",
-                            data: 1,
-                            attributes: {
-                                min: 0,
-                                value: () => comp.influence * 100,
-                                step: 1,
-                                style: "width: 4.2rem"
-                            },
-                            // reset: (me) => {
-                            //     me.attr("value", defaultCompSettings[type].influence);
-                            // },
-                            change: function(e, val){
-                                comp.influence = Math.max(val / 100, 0);
-                            },
-                            style: {marginLeft: "0.3rem"}
-                        }, "%", {
                             type: "input",
                             inputType: "checkbox",
                             data: 1,
@@ -192,8 +193,8 @@ function initSettings(){
                                 applyMedals(true);
                             },
                             style: {
-                                marginLeft: "0.3rem",
-                                marginRight: "0.3rem"
+                                marginLeft: "0.0rem",
+                                marginRight: "0.1rem"
                             }
                         }
                     ],
@@ -272,7 +273,7 @@ function getUsedMedalsString() {
     for (const compName in settingCompetitions) {
         if (Object.hasOwnProperty.call(settingCompetitions, compName)) {
             const comp = settingCompetitions[compName];
-            if(comp.useMedals){
+            if(comp.useMedals) {
                 used += del + comp.dbName;
                 del = ", ";
             }
