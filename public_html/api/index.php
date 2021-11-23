@@ -186,9 +186,9 @@ if(!isset($NO_GET_API)){
             echo "error in api";
         }
     }else if(isset($_GET["gethallOfFame"])){
-        if(strlen($_GET["gethallOfFame"]) > 0){
+        // if(strlen($_GET["gethallOfFame"]) > 0){
             echo json_encode(getBestSkaters());
-        }
+        // }
     } else if(isset($_GET["getathleteRacesFromCompetition"])){
         $id = intval($_GET["getathleteRacesFromCompetition"]);
         if(isset($_GET["data"])){
@@ -687,7 +687,12 @@ function getCountryRacesFromCompetition($country, $idcompetition){
 
 function getBestSkaters(){
     global $scoreInfluences;
-    $skaters = query("CALL sp_hallOfFame(?);", "s", $scoreInfluences);
+    $limit = 100;
+    // $skaters = query("CALL sp_hallOfFame(?);", "s", $scoreInfluences);
+    $skaters = query("CALL sp_getAthletesNew(?,?);", "si", $scoreInfluences, $limit);
+    for ($i=0; $i < sizeof($skaters); $i++) { 
+        $skaters[$i]["rank"] = $i + 1;
+    }
     if(sizeof($skaters) > 0){
         return $skaters;
     } else{
