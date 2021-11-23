@@ -603,7 +603,7 @@ function countryToProfileData(country, useRank = false, alternativeRank = undefi
         // right: country.country,
         trophy1, trophy2, trophy3,
         special: {
-            data: country.gold,
+            data: country.gold + "",
             tooltip: "Gold medals won on the selected types of competition (" + getUsedMedalsString() + ")",
             type: ElemParser.TEXT
         },
