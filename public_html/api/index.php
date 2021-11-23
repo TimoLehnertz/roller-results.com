@@ -446,7 +446,8 @@ function getWorldMovement() {
 }
 
 function getCompAthleteMedals($idComp) {
-    $res = query("SELECT * FROM vCompAthleteMedals WHERE idCompetition = ?;", "i", $idComp);
+    // $res = query("SELECT * FROM vCompAthleteMedals WHERE idCompetition = ?;", "i", $idComp);
+    $res = query("CALL sp_getCompAthleteMedals(?)", "i", $idComp);
     if(sizeof($res) > 0){
         return $res;
     } else{
@@ -455,7 +456,8 @@ function getCompAthleteMedals($idComp) {
 }
 
 function getCompCountryMedals($idComp) {
-    $res = query("SELECT * FROM vCompCountryMedals WHERE idCompetition = ?;", "i", $idComp);
+    // $res = query("SELECT * FROM vCompCountryMedals WHERE idCompetition = ?;", "i", $idComp);
+    $res = query("CALL sp_getCompCountryMedals(?)", "i", $idComp);
     if(sizeof($res) > 0){
         return $res;
     } else{
@@ -545,7 +547,7 @@ function setRaceLinks($races){
 
 
 function getAllCompetitions(){
-    $res = query("SELECT * FROM vCompetition;");
+    $res = query("call results.sp_getCompetitionsNew();");
     if(sizeof($res) > 0){
         return $res;
     } else{
@@ -702,10 +704,10 @@ function getCountryRacesFromCompetition($country, $idcompetition){
 }
 
 function getBestSkaters(){
-    global $scoreInfluences;
+    global $usedMedals;
     $limit = 100;
     // $skaters = query("CALL sp_hallOfFame(?);", "s", $scoreInfluences);
-    $skaters = query("CALL sp_getAthletesNew(?,?);", "si", $scoreInfluences, $limit);
+    $skaters = query("CALL sp_getAthletesNew(?,?);", "si", $usedMedals, $limit);
     for ($i=0; $i < sizeof($skaters); $i++) { 
         $skaters[$i]["rank"] = $i + 1;
     }
@@ -770,7 +772,8 @@ function getAthleteFull($id){
 }
 
 function getCompetition($id){
-    $result = query("SELECT * FROM vCompetition WHERE idCompetition = ?;", "i", intval($id));
+    // $result = query("SELECT * FROM vCompetition WHERE idCompetition = ?;", "i", intval($id));
+    $result = query("CALL sp_getCompNew(?);", "i", intval($id));
     if(sizeof($result) > 0){
         $result[0] ["races"] = getRacesFromCompetition($id);
         return $result[0];
@@ -793,6 +796,7 @@ function getCountry($name){
     // $country = query("SELECT * FROM vCountry WHERE country = ?;", "ss", $country, $scoreInfluences);
     // $country = query("CALL sp_getCountries(?, ?, ?)", "sss", $name, $scoreInfluences, $usedMedals);
     $countries = getCountries();
+    // print_r($countries);
     foreach ($countries as $country) {
         if($country["country"] == $name) {
             return $country;
@@ -828,7 +832,7 @@ function getResult($id){
 
 function getRace($id) {
     global $usedMedals;
-    $race = query("SELECT * FROM vRace WHERE idRace = ?;", "i", intval($id));
+    $race = query("CALL sp_getRaceNew(?);", "i", intval($id));
     if(sizeof($race) > 0) {
         $race[0]["results"] = query("CALL sp_getRaceResultsNew(?,?)", "is", intval($id), $usedMedals);
         return $race[0];
@@ -847,7 +851,8 @@ function getRaces(){
 }
 
 function getRacesFromCompetition($id){
-    $result = query("CALL sp_getRacesFromCompetition(?);", "i", intval($id));
+    // $result = query("CALL sp_getRacesFromCompetition(?);", "i", intval($id));
+    $result = query("CALL sp_getRacesFromCompetitionNew(?);", "i", intval($id));
     if(sizeof($result) > 0){
         return $result;
     } else{
