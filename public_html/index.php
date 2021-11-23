@@ -110,8 +110,10 @@ include_once "api/imgAPI.php";
                     </div>
                     <div class="profile-section-profile-a">
                         <script>
+                            $(".profile-section-profile-a").append(Profile.getPlaceholder(Profile.CARD));
                             get("athlete", 6606).receive((succsess, athlete) => {//chad
                                 const p = athleteToProfile(athlete, Profile.CARD);
+                                $(".profile-section-profile-a").empty();
                                 p.appendTo(".profile-section-profile-a");
                             });
                         </script>
@@ -149,8 +151,10 @@ include_once "api/imgAPI.php";
                     </div>
                     <div class="profile-section-profile-c">
                         <script>
-                            get("country", "italy").receive((succsess, athlete) => {//chad
+                            $(".profile-section-profile-c").append(Profile.getPlaceholder(Profile.CARD));
+                            get("country", "Italy").receive((succsess, athlete) => {//chad
                                 const p = countryToProfile(athlete, Profile.CARD);
+                                $(".profile-section-profile-c").empty();
                                 p.appendTo(".profile-section-profile-c");
                             });
                         </script>
@@ -426,7 +430,7 @@ include_once "api/imgAPI.php";
     /**
      * hall of fame
      */
-    scoreCallbacks.push(update);
+    medalCallbacks.push(update);
     
     const fameSlideshow = new Slideshow($(".best-skaters"));
     const countrieSlideshow = new Slideshow($(".best-countries"));
@@ -435,17 +439,19 @@ include_once "api/imgAPI.php";
     /**
      * placeholders
      */
+    const topAmount = 5;
     const placeholders = [{},{},{},{},{},];
-    initBestSkaters(placeholders, true);
-    initCountries(placeholders, true);
     
     // const bestSkaters = JSON.parse(`[{"idAthlete":6666,"lastname":"Kalbe","firstname":"Evelyn","gender":"w","country":"Germany","comment":null,"club":null,"team":null,"image":null,"birthYear":null,"facebook":null,"instagram":null,"minAge":null,"raceCount":5,"fullname":"Evelyn Kalbe","topTen":"0","bronze":"0","silver":"0","gold":"0","medalScore":"0","score":0,"scoreShort":0,"scoreLong":0,"competitionCount":3,"bestDistance":"5000m RELAY"},{"idAthlete":1973,"lastname":"Swings","firstname":"Bart","gender":"M","country":"Belgium","comment":null,"club":null,"team":null,"image":"athlete-Bart-Swings-60787b453f7de5.00907222.jpg","birthYear":null,"facebook":null,"instagram":null,"minAge":null,"raceCount":147,"fullname":"Bart Swings","topTen":"10","bronze":"0","silver":"3","gold":"4","medalScore":"18","score":859.903438102628,"scoreShort":79.63600487051022,"scoreLong":780.2674332321178,"competitionCount":25,"bestDistance":"10000m Points\/Elimination"},{"idAthlete":1267,"firstname":"Joey","lastname":"Mantia","gender":"M","country":"United States of America","score":1482.3668188739332,"scoreShort":599.3805944581916,"scoreLong":882.9862244157414},{"idAthlete":1213,"firstname":"Francesca","lastname":"Lollobrigida","gender":"W","country":"Italy","score":1249.4311495760683,"scoreShort":182.65037745054562,"scoreLong":1066.7807721255222},{"idAthlete":1410,"firstname":"Andres Felipe","lastname":"Mu\u00f1oz","gender":"M","country":"Colombia","score":1212.6462006353472,"scoreShort":677.0707360876484,"scoreLong":535.5754645476989}]`);
     // initBestSkaters(bestSkaters);
 
+    for (let i = 0; i < topAmount; i++) {
+        $(".best-skaters").append(Profile.getPlaceholder(Profile.CARD));
+        $(".best-countries").append(Profile.getPlaceholder(Profile.CARD));
+    }
+
     function initGet(){
-        // get("hallOfFame").receive((succsess, bestSkaters) => {
-        getFile("/json/hall-of-fame.json").receive((succsess, bestSkaters) => {
-        // get("bestAthletes").receive((succsess, bestSkaters) => {
+        get("hallOfFame").receive((succsess, bestSkaters) => {
             if(succsess) {
                 clearBestSkaters();
                 initBestSkaters(bestSkaters);
@@ -453,8 +459,7 @@ include_once "api/imgAPI.php";
                 alert("An error occoured :/");
             }
         });
-        getFile("/json/best-countries.json").receive((succsess, countries) => {
-        // get("countries").receive((succsess, countries) => {
+        get("countries").receive((succsess, countries) => {
             if(succsess){
                 clearCountries();
                 initCountries(countries);
@@ -479,32 +484,25 @@ include_once "api/imgAPI.php";
     }
 
     
-    function initBestSkaters(bestSkaters, gray = false){
-        const topAmount = 5;
-
-        sortArray(bestSkaters, "score");
+    function initBestSkaters(bestSkaters){
         for (let i = 0; i < topAmount; i++) {
             const athlete = bestSkaters[i];
             const profile = athleteToProfile(athlete, Profile.CARD, true, i + 1);
+            profile.update = function() {this.grayOut = true};
             profile.appendTo(".best-skaters");
-            if(gray) {
-                profile.grayOut = true;
-            }
         }
         fameSlideshow.updateChildren();
     }
 
-    function initCountries(countries, gray = false){
+    function initCountries(countries){
         const topAmount = 5;
 
         sortArray(countries, "score");
         for (let i = 0; i < topAmount; i++) {
             const country = countries[i];
             const profile = countryToProfile(country, Profile.CARD, true, i + 1);
+            profile.update = function(){this.grayOut = true};
             profile.appendTo(".best-countries");
-            if(gray) {
-                profile.grayOut = true;
-            }
         }
         countrieSlideshow.updateChildren();
     }

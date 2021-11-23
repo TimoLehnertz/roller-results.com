@@ -357,7 +357,6 @@ function initSearchBar(){
         $(".search-bar__input").attr("placeholder", "Search");
     }
     searchTooltip = new Tooltip(".search-bar", `<div class="font color white"><p>Stuff you can find:</p><p><i class="far fa-dot-circle"></i>Athletes</p><p><i class="far fa-dot-circle"></i>Competitions</p><p><i class="far fa-dot-circle"></i>Countries</p><p><i class="far fa-dot-circle"></i>Competitions</p></div>`);
-    // new Tooltip(".search-bar", "1234");
 }
 
 let options = [];

@@ -5,7 +5,7 @@
  */
 function search(text, callback){
     $.ajax({
-        url: "/api?search=" + text,
+        url: "/api/index.php?search=" + text,
         dataType:  "text",
         success: (response) =>{
             if(isJson(response)){

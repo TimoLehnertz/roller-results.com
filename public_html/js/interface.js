@@ -137,10 +137,14 @@ function athleteDataToProfileData(athlete, useRank = false, alternativeRank = un
     //         case "bronze": trophy2 = trophy3; trophy3 = tmp; break;
     //     }
     // }
+    let name = athlete.firstname + " " +athlete.lastname;
+    if(athlete.firstname == undefined) {
+        name = "";
+    }
     const data = {
         type: "athlete",
         maximizePage: `/athlete?id=${athlete.id}${searchParam}`,
-        name: athlete.firstname + " " +athlete.lastname,
+        name,
         image: athlete.image != null ? "/img/uploads/" + athlete.image : null,
         left: {data: athlete.country, type: "countryFlag", link: `/country?id=${athlete.country}`, tooltip: athlete.country},
         right: {data: athlete.gender, type: "gender", tooltip: athlete.gender?.toLowerCase() == "w" ? "Female" : "Male"},
@@ -164,16 +168,16 @@ function athleteDataToProfileData(athlete, useRank = false, alternativeRank = un
             },
             medalScoreShort: {
                 description: "Points short:",
-                data: Math.round(athlete.medalScoreShort),
+                data: athlete.medalScoreShort,
                 tooltip: "Medal score (Gold=3pts, Silver=2pts, Bronze=1pt) only applied to distances < 1500m",
             },
             medalScoreLong: {
                 description: "Points long:",
-                data: Math.round(athlete.medalScoreLong),
+                data: athlete.medalScoreLong,
                 tooltip: "Medal score (Gold=3pts, Silver=2pts, Bronze=1pt) only applied to distances > 1500m"
             },
             sprinter: {
-                data: (athlete.medalScoreShort / (athlete.medalScoreLong + athlete.medalScore)),
+                data: athlete.medalScoreLong / athlete.medalScore,
                 description: "Best discipline",
                 description1: "Sprint",
                 description2: "Long",
@@ -441,7 +445,7 @@ function athleteFromResult(result) {
 }
 
 function getRaceTable(parent, race){
-    console.log(race)
+    console.log(race);
     const elem = $(`<div class="race"></div>`);
     const raceTable = $(`<div class="race-table">`);
     elem.append(pathFromRace(race));
@@ -599,7 +603,7 @@ function countryToProfileData(country, useRank = false, alternativeRank = undefi
         // right: country.country,
         trophy1, trophy2, trophy3,
         special: {
-            data: Math.round(country.gold) + "",
+            data: country.gold,
             tooltip: "Gold medals won on the selected types of competition (" + getUsedMedalsString() + ")",
             type: ElemParser.TEXT
         },
@@ -611,16 +615,16 @@ function countryToProfileData(country, useRank = false, alternativeRank = undefi
             },
             scoreShort: {
                 description: "Points short:",
-                data: Math.round(country.medalScoreShort),
+                data: country.medalScoreShort,
                 tooltip: "Medal score (Gold=3pts, Silver=2pts, Bronze=1pt) only applied to distances < 1500m"
             },
             scoreLong: {
                 description: "Points long:",
-                data: Math.round(country.medalScoreLong),
+                data: country.medalScoreLong,
                 tooltip: "Medal score (Gold=3pts, Silver=2pts, Bronze=1pt) only applied to distances > 1500m"
             },
             sprinter: {
-                data: (country.medalScoreLong / (country.medalScoreShort + country.medalScore)),
+                data: country.medalScoreLong / country.medalScore,
                 description: "Best discipline",
                 description1: "Sprint",
                 description2: "Long",
@@ -848,6 +852,7 @@ function getCompetitionElem(comp, isCountry, name) {
 }
 
 function getRaceElem(race) {
+    console.log(race);
     const head = $(`<div class="race flex align-center justify-space-between padding right"><span>${race.distance} ${race.trackStreet} ${race.category} ${race.gender}</span></div>`)
     const links = linksFromLinkString(race.link).length;
     if(links > 0){

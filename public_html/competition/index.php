@@ -82,7 +82,9 @@ foreach ($bestAthletes as $athlete) {
             </iframe>
         </div>
         <h2 class="races">Races</h2>
-        <div class="races-table alignment center"></div>
+        <div class="competition-list">
+            <div class="races-table alignment center competition"></div>
+        </div>
         <div class="stats">
             <h2 class="races">Statistics</h2>
             <div class="medal-stats" id="medals">
@@ -146,31 +148,35 @@ foreach ($bestAthletes as $athlete) {
             
             console.log(comp);
             comp.races.filter(race => race.resultCount > 0);
-            const table = new Table($(".races-table"), comp.races);
-            let orderBy = {column: "distance", up: true};
-            if(findGetParameter("trackStreet") !== null){
-                orderBy = {column: "trackStreet", up: findGetParameter("trackStreet") === "Road"};
-            }
+            // const table = new Table($(".races-table"), comp.races);
+            // let orderBy = {column: "distance", up: true};
+            // if(findGetParameter("trackStreet") !== null){
+            //     orderBy = {column: "trackStreet", up: findGetParameter("trackStreet") === "Road"};
+            // }
             
+            for (const race of comp.races) {
+                $(".races-table").append(getRaceElem(race));
+            }
 
-            table.setup({
-                rowLink: row => `/race?id=${row.idRace}`,
-                orderBy,
-                layout: {
-                    distance: {
-                        // allowSort: false
-                    },
-                    category: {},
-                    gender: {},
-                    trackStreet: {},
-                    link: {
-                        callback: (link) => getYtVideoElems(link),
-                        displayName: "Videos",
-                        allowSort: false
-                    },
-                }
-            });
-            table.init();
+            // table.setup({
+            //     rowLink: row => `/race?id=${row.idRace}`,
+            //     orderBy,
+            //     layout: {
+            //         distance: {
+            //             // allowSort: false
+            //             displayName: "Distance"
+            //         },
+            //         category: {displayName: "Category"},
+            //         gender: {displayName: "Gender"},
+            //         trackStreet: {displayName: "Circuit"},
+            //         link: {
+            //             callback: (link) => getYtVideoElems(link),
+            //             displayName: "Videos",
+            //             allowSort: false
+            //         },
+            //     }
+            // });
+            // table.init();
         </script>
     </div>
 </main>

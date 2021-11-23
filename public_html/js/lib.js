@@ -1959,7 +1959,7 @@ class Profile{
         }
     }
 
-    updateData(data){
+    updateData(data) {
         if(typeof data === 'object') {
             if("maximizePage" in data) {
                 this.maximizePage = data.maximizePage;
@@ -2123,6 +2123,9 @@ class Profile{
         if(this.maximizePage && this.minLod < Profile.MAX) {
             window.location = this.maximizePage;
             link = true;
+            setTimeout(() => {
+                this.decrementLod();
+            }, 100);
         }
         this.elem.find(".profile__minimize").css("display", "");
         if(this.secondary !== undefined){
@@ -2468,6 +2471,11 @@ function findGetParameter(parameterName) {
 function getMedal(color, amount, tooltip){
     let linkSimple = "/img/medals/" + color + "-medal-simple.svg";
     let linkBig = "/img/medals/" + color + "-medal.svg";
+    if(amount === undefined) return $(`<div class="medal gold">
+        <img class="medal__big" width="40" src="${linkBig}" alt="${color} medal">
+        <img class="medal__simple" width="40" src="${linkSimple}" alt="${color} medal">
+        <span class="medal__amount"></span>
+    </div>`);
     const elem = $(`<div class="medal ${color}">
         <img class="medal__big" width="40" src="${linkBig}" alt="${color} medal">
         <img class="medal__simple" width="40" src="${linkSimple}" alt="${color} medal">
@@ -2519,8 +2527,9 @@ function getRandomColor() {
     return color;
   }
 
-function sortArray(array, field, asc = true){
-    const mul = asc ? -1 : 1;
+function sortArray(array, field, desc = true, parse = false){
+
+    const mul = desc ? -1 : 1;
     array.sort((a, b) => {
         if(a[field] === undefined || b[field] === undefined){
             return 0;
@@ -2534,9 +2543,15 @@ function sortArray(array, field, asc = true){
         if(a[field] === null){
             return -mul;
         }
-        if(a[field] < b[field]){
+        let a1 = a[field]
+        let b1 = b[field];
+        if(parse) {
+            a1 = parseFloat(a1);
+            b1 = parseFloat(b1);
+        }
+        if(a1 < b1){
             return -mul;
-        } else if(a[field] > b[field]){
+        } else if(a1 > b1){
             return mul;
         } else{
             return 0

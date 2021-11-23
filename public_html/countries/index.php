@@ -80,8 +80,8 @@ echoRandWallpaper();
              */
             get("countryScores").receive((succsess, countries) => {
                 // $(() => {
-                    countryCompareElemAt($(".country-compare"), countries);
                     $(".country-compare").empty();
+                    countryCompareElemAt($(".country-compare"), countries);
                 // })
             });
 
@@ -103,14 +103,14 @@ echoRandWallpaper();
             /**
              * sprint
              */
-            sortArray(skateCountries, "medalScoreShort");
+            sortArray(skateCountries, "medalScoreShort", true, true);
             for (let i = 0; i < Math.min(topAmount, skateCountries.length); i++) {
                 const profile = countryToProfile(skateCountries[i], Profile.CARD, true, i + 1);
                 profile.update = function() {this.grayOut = true};
                 profile.appendTo(".slideshow.sprinters");
             }
 
-            sortArray(skateCountries, "medalScoreLong");
+            sortArray(skateCountries, "medalScoreLong", true, true);
 
             for (let i = 0; i < Math.min(topAmount, skateCountries.length); i++) {
                 const profile = countryToProfile(skateCountries[i], Profile.CARD, true, i + 1);

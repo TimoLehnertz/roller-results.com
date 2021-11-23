@@ -4,8 +4,6 @@ include_once $_SERVER["DOCUMENT_ROOT"]."/api/index.php";
 
 $comps = getAllCompetitions();
 
-// print_r($comps[0]);
-
 echoRandWallpaper();
 ?>
 <main class="main competitions-page">
