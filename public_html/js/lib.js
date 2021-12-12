@@ -934,6 +934,10 @@ class Dropdown{
             this.toggle();
             e.stopPropagation();
         });
+        $(this.dropDownElem).click((e) => {
+            // this.toggle();
+            e.stopPropagation();
+        });
     }
 
     toggle() {
@@ -1060,6 +1064,7 @@ class Dropdown{
 
     close(){
         if(this.unfolded){
+            // throw "moin";
             this.unfolded = false;
             const anim = this.closeAnimation();
             anim.targets = this.dropDownElem.get();
