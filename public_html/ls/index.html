@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://unpkg.com/p5ble@0.0.4/dist/p5.ble.js" type="text/javascript"></script>
+</head>
+<body>
+    Moin
+    <button onclick="connect()">Connect</button>
+</body>
+<script>
+    const serviceUuid = "ESP32_LED_Controll";
+
+    function connect() {
+        alert(1);
+        try {
+            navigator.bluetooth.requestDevice({
+                filters: [
+                    {namePrefix: serviceUuid}
+                ],
+                // optionalServices: ["battery_service", "device_information"],
+                optionalServices: [0xff0f],
+                // acceptAllDevices: true,
+            }).then((device) => {
+                alert("moin");
+            });
+        } catch(e) {
+            alert(e);
+        }
+    }
+    
+
+    // // Connect to the GATT server
+    // // We also get the name of the Bluetooth device here
+    // let deviceName = device.gatt.device.name;
+    // const server = await device.gatt.connect();
+
+    // // Getting the services we mentioned before through GATT server
+    // const batteryService = await server.getPrimaryService("battery_service");
+    // const infoService = await server.getPrimaryService("device_information");
+
+    // // Getting the current battery level
+    // const batteryLevelCharacteristic = await batteryService.getCharacteristic(
+    // "battery_level"
+    // );
+    // // Convert recieved buffer to number
+    // const batteryLevel = await batteryLevelCharacteristic.readValue();
+    // const batteryPercent = await batteryLevel.getUint8(0);
+</script>
+</html>

@@ -29,7 +29,8 @@ include_once "api/imgAPI.php";
 
 ?>
 <!-- geoInterpolate() -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.2.2/d3.min.js"></script>
+<script src="/js/d3.min.js"></script>
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.2.2/d3.min.js"></script> -->
 
 <!-- < type="text/javascript" src="/js/globe/third-party/Detector.js"></> -->
 <!-- < type="text/javascript" src="/js/globe/third-party/three.min.js"></> -->

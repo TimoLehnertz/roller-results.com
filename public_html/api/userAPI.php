@@ -5,17 +5,13 @@ include_once $_SERVER["DOCUMENT_ROOT"]."/includes/cookies.php";
 include_once "imgAPI.php";
 
 function isLoggedIn(){
-    if(isset($_COOKIE["cookie_accepted"])){
-        if($_COOKIE["cookie_accepted"]){
-            if(session_status() != PHP_SESSION_ACTIVE){
-                session_start();
-            }
-            if(isset($_SESSION["username"])){
-                return true;
-            }
-        }
+    if(!isset($_COOKIE["cookie_accepted"]) || !$_COOKIE["cookie_accepted"]) {
+        return false;
     }
-    return false;
+    if(session_status() != PHP_SESSION_ACTIVE){
+        session_start();
+    }
+    return isset($_SESSION["username"]);
 }
 
 function setUserRole($iduser, $idRole){
@@ -30,7 +26,7 @@ function getAllUsers(){
     return $users;
 }
 
-function updateUsers($newUsers){
+function updateUsers($newUsers) {
     $users = getAllUsers();
     foreach ($newUsers as $iduser => $changedUser) {
         $newUsers[$iduser]["changed"] = [];
@@ -139,6 +135,7 @@ function login($iduser, $rememberMe){
     $_SESSION["username"] = $user["username"];
     $_SESSION["email"] = $user["email"];
     $_SESSION["country"] = $user["registerCountry"];
+    $_SESSION["role"] = intval($user["idRole"]);
     if($rememberMe){
         $succsess = rememberMe();
         return $succsess;

@@ -208,27 +208,28 @@ include_once "../../../data/dbh.php";
 //     // exit();
 // }
 
-$handle = file_get_contents("https://gist.githubusercontent.com/mjoyce91/2eab2a932c57e010cceddcf9c8957ff8/raw/9f9c10abc895721179402c67c9a27ec2d319ffe1/country-colors.json", "r");
-$handle = preg_replace('/^.+\n/', '', $handle);
-var_dump($handle);
+// Start
+// $handle = file_get_contents("https://gist.githubusercontent.com/mjoyce91/2eab2a932c57e010cceddcf9c8957ff8/raw/9f9c10abc895721179402c67c9a27ec2d319ffe1/country-colors.json", "r");
+// $handle = preg_replace('/^.+\n/', '', $handle);
+// var_dump($handle);
 
-$json = json_decode($handle, true);
+// $json = json_decode($handle, true);
 
-$countries = [];
+// $countries = [];
 
-foreach ($json as $country) {
-    $countries[] = [
-        "name" => $country["name"],
-        "color" => $country["colors"][sizeof($country["colors"]) - 1]
-    ];
-}
+// foreach ($json as $country) {
+//     $countries[] = [
+//         "name" => $country["name"],
+//         "color" => $country["colors"][sizeof($country["colors"]) - 1]
+//     ];
+// }
 
-print_r($countries);
+// print_r($countries);
 
-foreach($countries as $country) {
-    $sql = "UPDATE `results`.`TbCountry` SET color = ? WHERE `name` = ?;";
-    var_dump(dbExecute($sql, "ss", $country["color"], $country["name"]));
-}
+// foreach($countries as $country) {
+//     $sql = "UPDATE `results`.`TbCountry` SET color = ? WHERE `name` = ?;";
+//     var_dump(dbExecute($sql, "ss", $country["color"], $country["name"]));
+// }
 
 ?>
 not in use

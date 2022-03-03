@@ -504,8 +504,8 @@ echoRandWallpaper();
                     const me = this;
                     function runOne(i) {
                         if(i >= me.docked.length) {
-                            console.log("input:");
-                            console.log(ids);
+                            // console.log("input:");
+                            // console.log(ids);
                             promise.callback(true, ids);
                             return;
                         }
@@ -691,9 +691,17 @@ echoRandWallpaper();
                 this.selectors = [];
                 this.initCanvas();
                 this.draw();
+                this.mouse = {x:0,y:0};
                 $(document).on("dragover", (e) => {this.drag(e)});
                 $(document).on("dragend", (e) => {this.draw(true)});
+                $(document).on("dragover", (e) => {this.updateMouse(e)});
                 // window.setInterval(() => this.draw, 1000);
+            }
+
+            updateMouse(e) {
+                const rect = e.target.getBoundingClientRect();
+                this.mouse.x = e.clientX - rect.left// + $(".graph").scrollLeft() / 2;
+                this.mouse.y = e.clientY - rect.top;
             }
 
             getAnalyticRow() {
@@ -709,10 +717,11 @@ echoRandWallpaper();
             drag(e) {
                 if(dragStartSelect === undefined) return;
                 if(dragStartSelect.row !== this) return;
-                this.mouse = {
-                    x: e.offsetX,
-                    y: e.offsetY,
-                }
+                // console.log(this.mouse);
+                // this.mouse = {
+                //     x: e.offsetX,
+                //     y: e.offsetY,
+                // }
                 if(this.mouse.y > 0 && this.mouse.y < this.canvas.height) {
                     this.draw();
                 }
@@ -732,6 +741,7 @@ echoRandWallpaper();
                  */
                 this.ctx.fillStyle = "blue";
                 this.ctx.clearRect(0, 0, 10000, 150);
+                if(this.mouse?.y < 0 || this.mouse?.y > this.canvas.height) return;
                 if(this.rowAfter !== undefined) {
                     for (const selector of this.rowAfter.selectors) {
                         let index = 0;
@@ -763,7 +773,7 @@ echoRandWallpaper();
 
             pointFromSelector(selector) {
                 return {
-                    x: selector.elem.position().left + selector.elem.width() / 2 + 7,
+                    x: selector.elem.position().left + selector.elem.width() / 2 + 7 + $(".graph").scrollLeft(),
                     y: this.remToPixels(2) - 8
                 }
             }
@@ -932,8 +942,8 @@ echoRandWallpaper();
                 return;
             }
             const analytics = getAnalytics();
-            console.log("saving analytics:");
-            console.log(analytics);
+            // console.log("saving analytics:");
+            // console.log(analytics);
             const public = ($(".analytics-public").is(":checked") ? "&public" : "");
             set("analytics&name=" + analyticsName + public, analytics).receive((res) => {
                 if(res?.length > 0) {
@@ -956,8 +966,8 @@ echoRandWallpaper();
                     $(".analytics-name").val(name);
                     const analytics = JSON.parse(preset.json);
                     clear()
-                    console.log("loading analytics:");
-                    console.log(analytics);
+                    // console.log("loading analytics:");
+                    // console.log(analytics);
                     for (const rowSettings of analytics) {
                         addRow().create(rowSettings);
                     }

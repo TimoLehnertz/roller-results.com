@@ -7,35 +7,41 @@ include_once $_SERVER["DOCUMENT_ROOT"]."/api/userAPI.php";
  */
 
 $defaultPermissions = [
-    0 => "defauilt",
-    50 =>"seeAdminPage",
-    90 => "configureAthletes",
+    0   => "default",
+    10  => "speaker",
+    50  =>"seeAdminPage",
+    90  => "configureAthletes",
     100 =>"managePermissions",
 ];
 
-function permissionsForUser($user){
+function permissionsForRole($role){
     /**
      * default permissions
      */
     global $defaultPermissions;
     $permissions = [];
-    if(is_null($user)){//all to false
-        foreach ($defaultPermissions as $key => $value) {
-            $permissions[$value] = false;
-        }
-        return $permissions;
-    }
-    $idRole = $user["idRole"];
+    // if(is_null($user)){//all to false
+    //     foreach ($defaultPermissions as $key => $value) {
+    //         $permissions[$value] = false;
+    //     }
+    //     return $permissions;
+    // }
+    // $idRole = $user["idRole"];
     foreach ($defaultPermissions as $key => $value) {
-        $permissions[$value] = $idRole >= $key;
+        $permissions[$value] = $role >= $key;
     }
     return $permissions;
 }
 
 function canI($permission){
-    $user = null;
-    if(isLoggedIn()){
-        $user = getUser($_SESSION["iduser"]);
+    // $user = null;
+    $p;
+    if(!isLoggedIn()){
+        // $user = getUser($_SESSION["iduser"]);
+        $p = permissionsForRole(0);
+    } else {
+        $p = permissionsForRole($_SESSION["role"]);
     }
-   return permissionsForUser($user)[$permission];
+    return $p[$permission];
+    // return permissionsForUser($user)[$permission];
 }

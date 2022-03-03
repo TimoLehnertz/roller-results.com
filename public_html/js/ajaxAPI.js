@@ -31,6 +31,7 @@ function ajaxError(message){
 }
 
 function isJson(text){
+    if(!text.replace) return false;
     return /^[\],:{}\s]*$/.test(text.replace(/\\["\\\/bfnrtu]/g, '@').
     replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g, ']').
     replace(/(?:^|:|,)(?:\s*\[)+/g, ''));
@@ -39,6 +40,39 @@ function isJson(text){
 /**
  * js API
  */
+function post(mode, data) {
+    const promise = {
+        receive: (callback) => {promise.callback = callback},
+        callback: () => {console.log("no callback")}
+    }
+    if(typeof data === "object") {
+        data = JSON.stringify(data);
+    }
+    let url = `/api/index.php?${mode}=1`;
+    $.ajax({
+        type: "POST",
+        url: url + getAjaxStateString(),
+        data,
+        dataType:  "text",
+        success: (response) =>{
+            if(!isJson(response)){
+                console.log("no json");
+                console.log(response);
+            }
+            if(isJson(response) && response.length > 0/* && !response.includes("error")*/){
+                promise.callback(true, JSON.parse(response));
+            } else{
+                console.log("Response from " + mode + " wasn't JSON");
+                promise.callback(false, null);
+            }
+        },
+        error: function(xhr, ajaxOptions, thrownError) {
+            promise.callback(false, null);
+            ajaxError(xhr + " " + ajaxOptions + " " + thrownError);
+        }
+    });
+    return promise;
+}
 
 /**
  * js get api
@@ -79,7 +113,7 @@ function get(property, data1, data2, data3){
             if(isJson(response) && response.length > 0/* && !response.includes("error")*/){
                 promise.callback(true, JSON.parse(response));
             } else{
-                console.log("Response from get" + property + " was empty");
+                console.log("Response from get" + property + " wasn't JSON");
                 promise.callback(false, null);
             }
         },

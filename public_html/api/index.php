@@ -19,6 +19,7 @@
 include_once $_SERVER["DOCUMENT_ROOT"]."/../data/dbh.php";
 include_once $_SERVER["DOCUMENT_ROOT"]."/includes/roles.php";
 include_once $_SERVER["DOCUMENT_ROOT"]."/api/userAPI.php";
+include_once $_SERVER["DOCUMENT_ROOT"]."/includes/roles.php";
 canI("managePermissions");
 
 /**
@@ -288,6 +289,15 @@ if(!isset($NO_GET_API)){
     } else if(isset($_GET["getanalytics"])) {
         echo json_encode(getAnalytics());
     }
+    else if(isset($_GET["searchAthletes"])) {
+        // var_dump(file_get_contents('php://input'));
+        $athletes = json_decode(file_get_contents('php://input'), true);
+        // print_r($athletes);
+        echo json_encode(searchAthletes($athletes));
+    } else if(isset($_GET["putAliases"])) {
+        $aliases = json_decode(file_get_contents('php://input'), true);
+        putAliases($aliases);
+    }
     /**
      * set api
      */
@@ -319,6 +329,74 @@ if(!isset($NO_GET_API)){
             addAnalytics($name, $public, $json);
         }
     }
+}
+
+function putAliases($aliases) {
+    if(!canI("speaker")) {
+        echo "You dont have permission to do that";
+        return;
+    }
+    if(!isset($aliases["aliasGroup"]) || !isset($aliases["aliases"]) || sizeof($aliases["aliases"]) <= 0) {
+        echo "invalid parameters!";
+        return;
+    }
+    $creator = $_SESSION["iduser"];
+    $res = query("SELECT * FROM TbAthleteAlias WHERE creator=? AND aliasGroup=?;", "is", $creator, $aliases["aliasGroup"]);
+    if(sizeof($res) > 0) {
+        echo "deleting old aliases";
+        dbExecute("DELETE FROM TbAthleteAlias WHERE creator=? AND aliasGroup=?;", "is", $creator, $aliases["aliasGroup"]);
+    }
+    echo "inserting";
+    $sql = "INSERT INTO TbAthleteAlias(idAthlete, alias, creator, aliasGroup, previous) VALUES ";
+    $delimiter = "";
+    $fillers = [];
+    $types = "";
+    foreach($aliases["aliases"] as $alias) {
+        $fillers[] = $alias["idAthlete"];
+        $fillers[] = $alias["alias"];
+        $fillers[] = $creator;
+        $fillers[] = $aliases["aliasGroup"];
+        $fillers[] = $alias["previous"];
+        $sql .= "$delimiter(?,?,?,?,?)";
+        $types .= "isiss";
+        $delimiter = ",";
+    }
+    $sql .= ";";
+    dbExecute($sql, $types, ...$fillers);
+    echo "Done";
+}
+
+function searchAthletes($athletes) {
+    if($athletes == NULL) return [];
+    $res = [];
+    foreach ($athletes as $athlete) {
+        $firstName = "";
+        $lastName = "";
+        $gender = "%";
+        $country = "%";
+        if(isset($athlete["firstName"])) {
+            $firstName = $athlete["firstName"];
+        }
+        if(isset($athlete["lastName"])) {
+            $lastName = $athlete["lastName"];;
+        }
+        if(isset($athlete["country"])) {
+            $country = $athlete["country"];;
+        }
+        if(isset($athlete["gender"])) {
+            $gender = strtolower($athlete["gender"]);
+            if($gender === "M" || $gender === "M" ) {
+                $gender = "M";
+            } else {
+                $gender = "W";
+            }
+        }
+        $result = [];
+        $result["search"] = $athlete;
+        $result["result"] = query("CALL sp_searchAthlete(?,?,?,?);", "ssss", $firstName, $lastName, $gender, $country);
+        $res[] = $result;
+    }
+    return $res;
 }
 
 function getAnalytics() {
