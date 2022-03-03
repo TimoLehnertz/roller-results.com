@@ -34,6 +34,7 @@ echo "<script>const id=$id</script>";
             window.location.href = "/index.php";
         }
         const profile = athleteToProfile(athlete, Profile.MAX);
+        profile.update();
         // profile.appendTo($("main"));
     });
     // scoreCallbacks.push(() => {

@@ -2370,7 +2370,7 @@ class Profile{
 
     get minimizeElem(){
         const elem = $(`<div class="profile__minimize"/>`);
-        const button = $(`<button class="btn border-only">Minimize</button>`);
+        const button = $(`<button class="btn only-text">Minimize</button>`);
         button.click((e) => {e.stopPropagation(); this.decrementLod()});
         elem.append(button);
         return elem;

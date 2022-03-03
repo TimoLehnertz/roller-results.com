@@ -224,9 +224,9 @@ function athleteDataToProfileData(athlete, useRank = false, alternativeRank = un
         update: function() {
             this.grayOut = true;
             // console.log("Updating athlete");
-            // console.log(athlete);
-            get("athlete", athlete.id).receive((succsess, newAthlete) => {
-                console.log(newAthlete);
+            const id = athlete.id | athlete.idAthlete;
+            get("athlete", id).receive((succsess, newAthlete) => {
+                // console.log(newAthlete);
                 if(succsess) {
                     this.grayOut = false;
                     this.updateData(athleteDataToProfileData(newAthlete, useRank));

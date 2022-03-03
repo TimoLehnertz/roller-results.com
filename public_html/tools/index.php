@@ -1,10 +1,20 @@
 <?php
+include_once "../includes/roles.php";
+include_once "../includes/error.php";
+if(!canI("configureAthletes")){
+    throwError($ERROR_NO_PERMISSION, "/index.php");
+} 
+
 include_once "../header.php";
 ?>
 <main class="athlete-search">
     <h1 class="align center">Competition tools</h1>
     <div class="error color red"></div>
+    <a href="/tools/speaker.php">Speaker Tools</a>
     <div>
+        <p>
+            JSON: [{alias,firstName,lastName,[gender],[country],[category],}]
+        </p>
         <textarea name="" id="" cols="30" rows="10" class="input">[{"firstName":"timo", "lastName": "Lehnertz", "alias":"001"}, {"firstName": "Felix", "lastName":"Rijhnen","country":"GER", "gender":"m", "alias":"002"}]
         </textarea>
         <button onclick="update()">Update</button>
@@ -35,8 +45,10 @@ include_once "../header.php";
      * Valid athlete properties:
      *  firstName,
      *  lastName,
+     *  gender,
      *  country,
-     *  category
+     *  category,
+     *  alias
      */
     function process(search) {
         post("searchAthletes", search).receive((succsess, res) => {

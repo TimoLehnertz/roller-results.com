@@ -22,6 +22,7 @@ echo "<script>let country = JSON.parse(`". json_encode($country) ."`);</script>"
 <main class="main country">
     <script>
         const profile = countryToProfile(country, Profile.MAX);
+        profile.update();
     </script>
 </main>
 <?php
