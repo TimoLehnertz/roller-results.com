@@ -2132,6 +2132,13 @@ class Profile{
     }
 
     initMax(){
+        if(this.openInNewTab) {
+            window.open(this.maximizePage, '_blank').focus();
+            while(this.lod > Profile.MIN) {
+                this.decrementLod();
+            }
+            return;
+        }
         let link = false;
         if(this.maximizePage && this.minLod < Profile.MAX) {
             window.location = this.maximizePage;
