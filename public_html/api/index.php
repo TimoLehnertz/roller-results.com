@@ -400,7 +400,11 @@ function putAliases($aliases) {
     $fillers = [];
     $types = "";
     foreach($aliases["aliases"] as $alias) {
-        $fillers[] = $alias["idAthlete"];
+        if(isset($alias["idAthlete"])) {
+            $fillers[] = $alias["idAthlete"];
+        } else {
+            $fillers[] = NULL;
+        }
         $fillers[] = $alias["alias"];
         $fillers[] = $creator;
         $fillers[] = $aliases["aliasGroup"];
@@ -422,14 +426,17 @@ function searchAthletes($athletes) {
         $lastName = "";
         $gender = "%";
         $country = "%";
+        if(isset($athlete["nation"])) {
+            $athlete["country"] = $athlete["nation"]; // alias nation for country
+        }
         if(isset($athlete["firstName"])) {
             $firstName = $athlete["firstName"];
         }
         if(isset($athlete["lastName"])) {
-            $lastName = $athlete["lastName"];;
+            $lastName = $athlete["lastName"];
         }
-        if(isset($athlete["country"])) {
-            $country = $athlete["country"];;
+        if(isset($athlete["country"]) ) {
+            $country = $athlete["country"];
         }
         if(isset($athlete["gender"])) {
             $gender = strtolower($athlete["gender"]);

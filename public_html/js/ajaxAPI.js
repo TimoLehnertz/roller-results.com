@@ -63,7 +63,7 @@ function post(mode, data) {
                 promise.callback(true, JSON.parse(response));
             } else{
                 console.log("Response from " + mode + " wasn't JSON");
-                promise.callback(false, null);
+                promise.callback(true, response);
             }
         },
         error: function(xhr, ajaxOptions, thrownError) {
@@ -155,6 +155,30 @@ function getFile(path){
         type: "GET",
         url : path,
         dataType:  "text",
+        success: (response) =>{
+            if(isJson(response) && response.length > 0){
+                promise.callback(true, JSON.parse(response));
+            } else{
+                promise.callback(true, response);
+            }
+        },
+        error: function(xhr, ajaxOptions, thrownError) {
+            promise.callback(false, null);
+            ajaxError(xhr + " " + ajaxOptions + " " + thrownError);
+        }
+    });
+    return promise;
+}
+
+function getAPI(url) {
+    const promise = {
+        receive: (callback) => {promise.callback = callback},
+        callback: () => {}
+    }
+    $.ajax({
+        type: "GET",
+        url : url,
+        // dataType:  "text",
         success: (response) =>{
             if(isJson(response) && response.length > 0){
                 promise.callback(true, JSON.parse(response));
