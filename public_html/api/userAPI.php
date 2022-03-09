@@ -166,7 +166,7 @@ function tryRememberMeLogin(){
     if(isLoggedIn()){
         return false;
     }
-    if(!isset($_COOKIE["rememberMe"])){
+    if(!isset($_COOKIE["rememberMe"])) {
         return false;
     }
     $split = explode("::::", $_COOKIE["rememberMe"]);
