@@ -2660,7 +2660,7 @@ function countryNameToCode(name){
     name = name.toLowerCase();
     for (const country of countries) {
         if(country.name.toLowerCase() === name){
-            return country.code;
+            return country.code.toLowerCase();
         }
     }
 }
