@@ -10,27 +10,27 @@ include_once "../api/index.php";
 <main class="speaker">
 <div class="form">
     <p class="margin bottom" >Get data from skateresults:</p>
-    <p>
+    <p class="flex mobile">
         <label for="event">Event:</label>
         <select id="event"><option value="-1">Loading...</option></select>
     </p>
-    <p>
+    <p class="flex mobile">
         <label for="ageGroup">Age group:</label>
         <select id="ageGroup" disabled><option value="-1"></option></select>
     </p>
-    <p>
+    <p class="flex mobile">
         <label for="competition">Competition:</label>
         <select id="competition" disabled><option value="-1"></option></select>
     </p>
-    <p>
+    <p class="flex mobile">
         <label for="round">Round:</label>
         <select id="round" disabled><option value="-1"></option></select>
     </p>
-    <p>
+    <p class="flex mobile">
         <label for="race">Race:</label>
         <select id="race" disabled><option value="-1"></option></select>
     </p>
-    <p>
+    <p class="flex mobile">
         <label for="history">History:</label>
         <select id="history">
 
