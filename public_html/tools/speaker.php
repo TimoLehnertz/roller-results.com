@@ -59,12 +59,26 @@ include_once "../api/index.php";
 <hr>
 <br>
 
+<div class="speaker-settings align center">
+    <label for="sort-method">Sort by</label>
+    <select id="sort-method">
+        <option value="startPos">Start pos</option>
+        <option value="medal">Medal(gold, silver, bronze)</option>
+        <option value="nation">Nation</option>
+        <option value="club">club</option>
+    </select>
+    <select id="sort-asc-desc">
+        <option value="asc">🔼 </option>
+        <option value="desc">🔽  </option>
+    </select>
+</div>
 <div class="result">
     <table class="speaker-table">
         <tr>
             <td>Start pos</td>
             <td>Athlete</td>
             <td>Country</td>
+            <td>Club</td>
             <td>Gold</td>
             <td>Silver</td>
             <td>Bronze</td>
@@ -77,6 +91,12 @@ include_once "../api/index.php";
 <script>
 
 const getUrl = "https://api.dev.skateresults.app/";
+
+let eventName;
+let ageGroupName;
+let competitionName;
+let roundName;
+let raceName;
 
 // Setup
 $(() => {
@@ -106,6 +126,7 @@ $("#event").change(() => {
     $('#race').prop("disabled", true);
     const event = $("#event").val();
     if(event === "-1") return;
+    eventName = $("#event option:selected" ).text();
     $('#ageGroup').empty();
     $('#ageGroup').append(`<option>Loading...</option>`);
     getAPI(getUrl + "events/" + event + "/age-groups").receive((succsess, response) => {
@@ -130,6 +151,7 @@ $("#ageGroup").change(() => {
     const event = $("#event").val();
     const ageGroup = $("#ageGroup").val();
     if(ageGroup === "-1" || event == "-1") return;
+    ageGroupName = $("#ageGroup option:selected" ).text();
     $('#competition').empty();
     $('#competition').append(`<option>Loading...</option>`);
     getAPI(getUrl + "events/" + event + "/age-groups/" + ageGroup + "/competitions").receive((succsess, response) => {
@@ -157,6 +179,7 @@ $("#competition").change(() => {
     const ageGroup = $("#ageGroup").val();
     const competition = $("#competition").val();
     if(ageGroup === "-1" || event == "-1" || competition == "-1") return;
+    competitionName = $("#competition option:selected" ).text();
     $('#round').empty();
     $('#round').append(`<option>Loading...</option>`);
     getAPI(getUrl + "events/" + event + "/age-groups/" + ageGroup + "/competitions/" + competition + "/rounds").receive((succsess, response) => {
@@ -184,6 +207,7 @@ $("#round").change(() => {
     const competition = $("#competition").val();
     const round = $("#round").val();
     if(ageGroup === "-1" || event == "-1" || competition == "-1" || round == "-1") return;
+    roundName = $("#round option:selected" ).text();
     $('#race').empty();
     $('#race').append(`<option>Loading...</option>`);
     getAPI(getUrl + "events/" + event + "/age-groups/" + ageGroup + "/competitions/" + competition + "/rounds/" + round + "/races").receive((succsess, response) => {
@@ -194,7 +218,7 @@ $("#round").change(() => {
             $("#race").append(`<option value="-1">Select</option>`);
             let i = 1;
             for (const race of response.items) {
-                $("#race").append(`<option value="${race.id}">${i} (${race.done ? "(done)" : "(no results)"})</option>`);
+                $("#race").append(`<option value="${race.id}">${i} ${race.done ? "(done)" : "(no results)"}</option>`);
                 i++;
             }
             if(response.items.length == 1) {
@@ -213,6 +237,8 @@ $("#race").change(() => {
     const round = $("#round").val();
     const race = $("#race").val();
     if(ageGroup === "-1" || event == "-1" || competition == "-1" || round == "-1" || race == "-1") return;
+    raceName = $("#race option:selected" ).text();
+    $(".result").prepend(`<div class="loading circle"/>`);
     getAPI(getUrl + "events/" + event + "/age-groups/" + ageGroup + "/competitions/" + competition + "/rounds/" + round + "/races/" + race).receive((succsess, response) => {
         if(succsess) {
             console.log(response);
@@ -232,11 +258,24 @@ $("#race").change(() => {
     });
 });
 
+$("#sort-method").change(() => {
+    display(lastAthletes);
+});
+
+$("#sort-asc-desc").change(() => {
+    display(lastAthletes);
+});
+
+
 $("#aliasGroup").change(() => {
     localStorage.setItem('speakerAliasGroup', $("#aliasGroup").val());
 });
 
+let lastAthletes;
+let lastAliases;
+
 function go() {
+    $(".loading").remove();
     let aliases = $("#idInput").val();
     if(aliases.length == 0) {
         alert("Please fill in JSON array of aliases");
@@ -255,63 +294,105 @@ function go() {
         alert("Please choose Alias Group!");
         return;
     }
+    $(".racePath").remove();
+    $(".result").prepend(`<div class="racePath"><hr><div class="path margin top bottom">
+        <span class="elem margin left right">${eventName}<span class="delimiter">></span></span>
+        <span class="elem margin left right">${ageGroupName}<span class="delimiter">></span></span>
+        <span class="elem margin left right">${competitionName}<span class="delimiter">></span></span>
+        <span class="elem margin left right">${roundName}<span class="delimiter">></span></span>
+        <span class="elem margin left right">${raceName}</span>
+        </div><hr></div>`);
     aliases = JSON.parse(aliases);
-    $(".speaker-table .row").remove();
+    
     post("aliasIds", {aliasGroup, aliases}).receive((succsess, athletes) => {
-        const table = $(".speaker-table");
-        for (let i = 0; i < athletes.length; i++) {
-            athletes[i].startPos = aliases[i].startPos;
-        }
-        athletes = sortArray(athletes, "startPos", false);
-
-        for (const athlete of athletes) {
-            const row = $(`<tr class="row">
-                <td>${athlete.startPos}</td>
-                <td class="profile-td"/>
-                <td class="country-td"/>
-                <td class="gold-td">0</td>
-                <td class="silver-td">0</td>
-                <td class="bronze-td">0</td>
-                <td class="sprinter-long-td"></td>
-                <td class="best-distance-td"></td>
-            </tr>`);
-            if(athlete.idAthlete) {
-                const profile = athleteToProfile(athlete, Profile.MIN);
-                profile.openInNewTab = true;
-    
-                profile.dataUpdated = (data) => {
-                    row.find(".gold-td").empty();
-                    row.find(".gold-td").append(data.athleteData.gold + "");
-                    row.find(".silver-td").empty();
-                    row.find(".silver-td").append(data.athleteData.silver + "");
-                    row.find(".bronze-td").empty();
-                    row.find(".bronze-td").append(data.athleteData.bronze + "");
-                    row.find(".sprinter-long-td").empty();
-                    let sprinter = data.athleteData.medalScoreLong / data.athleteData.medalScore;
-                    if(isNaN(sprinter)) sprinter = 0.5;
-                    row.find(".sprinter-long-td").append(ElemParser.parse({
-                        data: sprinter,
-                        description1: "Sprint",
-                        description2: "Long",
-                        type: "slider",
-                        tooltip: "Relation of Score short and long score"
-                    }));
-                    row.find(".best-distance-td").empty();
-                    row.find(".best-distance-td").append(data.athleteData.bestDistance || "-");
-                    row.find(".country-td").empty();
-                    row.find(".country-td").append(data.athleteData.country || "-");
-                }
-    
-                profile.update();
-                profile.appendTo(row.find(".profile-td"));
-            } else {
-                const previous = JSON.parse(athlete.previous);
-                row.find(".profile-td").append(`${previous.firstName || "-"} ${previous.lastName || "-"}`);
-                row.find(".country-td").append(`${previous.country || "-"}`);
+        if(succsess) {
+            for (let i = 0; i < athletes.length; i++) {
+                athletes[i].startPos = aliases[i].startPos;
+                athletes[i].previousJson = JSON.parse(athletes[i].previous);
+                athletes[i].club = athletes[i].previousJson.club;
+                athletes[i].country = athletes[i].previousJson.country;
             }
-            table.append(row);
+            lastAliases = aliases;
+            lastAthletes = athletes;
+            display(athletes);
+        } else {
+            alert("Invalid answer!");
         }
     });
+}
+
+function display(athletes) {
+    console.log(athletes);
+    const table = $(".speaker-table");
+    $(".speaker-table .row").remove();
+    const aliases = lastAliases;
+    const asc = $("#sort-asc-desc").val() != "asc";
+    const sortMethod = $("#sort-method").val();
+    if(sortMethod == "medal") {
+        athletes = sortArray(athletes, "gold", asc);
+        athletes = sortArray(athletes, "silver", asc);
+        athletes = sortArray(athletes, "bronze", asc);
+    }
+    if(sortMethod == "startPos") {
+        athletes = sortArray(athletes, "startPos", asc);
+    }
+    if(sortMethod == "nation") {
+        athletes = sortArray(athletes, "country", asc);
+    }
+    if(sortMethod == "club") {
+        athletes = sortArray(athletes, "club", asc);
+    }
+
+    for (const athlete of athletes) {
+        const row = $(`<tr class="row">
+            <td>${athlete.startPos}</td>
+            <td class="profile-td"/>
+            <td class="country-td"/>
+            <td class="club-td"/>
+            <td class="gold-td">0</td>
+            <td class="silver-td">0</td>
+            <td class="bronze-td">0</td>
+            <td class="sprinter-long-td"></td>
+            <td class="best-distance-td"></td>
+            </tr>`);
+        const previous = JSON.parse(athlete.previous);
+        if(athlete.idAthlete) {
+            const profile = athleteToProfile(athlete, Profile.MIN);
+            profile.openInNewTab = true;
+
+            profile.dataUpdated = (data) => {
+                row.find(".gold-td").empty();
+                row.find(".gold-td").append(data.athleteData.gold + "");
+                row.find(".silver-td").empty();
+                row.find(".silver-td").append(data.athleteData.silver + "");
+                row.find(".bronze-td").empty();
+                row.find(".bronze-td").append(data.athleteData.bronze + "");
+                row.find(".sprinter-long-td").empty();
+                let sprinter = data.athleteData.medalScoreLong / data.athleteData.medalScore;
+                if(isNaN(sprinter)) sprinter = 0.5;
+                row.find(".sprinter-long-td").append(ElemParser.parse({
+                    data: sprinter,
+                    description1: "Sprint",
+                    description2: "Long",
+                    type: "slider",
+                    tooltip: "Relation of Score short and long score"
+                }));
+                row.find(".best-distance-td").empty();
+                row.find(".best-distance-td").append(data.athleteData.bestDistance || "-");
+                row.find(".country-td").empty();
+                row.find(".country-td").append(data.athleteData.country || "-");
+            }
+
+            profile.update();
+            profile.appendTo(row.find(".profile-td"));
+        } else {
+            row.find(".profile-td").append(`${previous.firstName || "-"} ${previous.lastName || "-"}`);
+            row.find(".country-td").append(`${previous.country || "-"}`);
+        }
+        console.log()
+        row.find(".club-td").append(`${previous.club || "-"}`);
+        table.append(row);
+    }
 }
 </script>
 </main>
