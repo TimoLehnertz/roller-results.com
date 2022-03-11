@@ -8,7 +8,6 @@ include_once "../header.php";
 include_once "../api/index.php";
 ?>
 <main class="speaker">
-<div class="details hidden"></div>
 <div class="form">
     <p class="margin bottom" >Get data from skateresults:</p>
     <p>
@@ -30,6 +29,13 @@ include_once "../api/index.php";
     <p>
         <label for="race">Race:</label>
         <select id="race" disabled><option value="-1"></option></select>
+    </p>
+    <p>
+        <label for="history">History:</label>
+        <select id="history">
+
+        </select>
+        <button onclick="deleteHistory()">Delete</button>
     </p>
 </div>
 <br>
@@ -246,7 +252,9 @@ $("#race").change(() => {
                     alias: result.athlete.id
                 });
             }
+            lastRaceId = race + round + competition;
             $("#idInput").val(JSON.stringify(ids));
+            cachHistory = true;
             go();
         } else {
             alert(getUrl + " did not respond correctly!");
@@ -268,6 +276,7 @@ $("#aliasGroup").change(() => {
 
 let lastAthletes;
 let lastAliases;
+let lastRaceId;
 
 function go() {
     $(".loading").remove();
@@ -325,6 +334,7 @@ function getDetailContentFor(athlete) {
         <div class="loading circle"></div>
     </div>`);
     get("athleteMedals", athlete.idAthlete).receive((succsess, results) => {
+        console.log(results);
         elem.find(".loading").remove();
         if(!succsess) return;
         let idCompetition;
@@ -333,20 +343,26 @@ function getDetailContentFor(athlete) {
         let gold = 0;
         let silver = 0;
         let bronze = 0;
+        let disciplines = [];
         for (const result of results) {
             const newYear = new Date(result.startDate).getFullYear();
-            if(year != newYear) {
-                year = newYear;
-                elem.append(`<hr><p>${year}</p>`);
-            }
             if(idCompetition != result.idCompetition) {
                 elem.append(getCompetition());
                 gold = 0;
                 silver = 0;
                 bronze = 0;
+                disciplines = [];
                 idCompetition = result.idCompetition;
                 competition = result.type + " | " + result.location;
             }
+            if(year != newYear) {
+                year = newYear;
+                elem.append(`<hr><p>${year}</p>`);
+            }
+            disciplines.push({
+                discipline: result.distance,
+                place: result.place
+            });
             if(result.place == 1) gold++;
             if(result.place == 2) silver++;
             if(result.place == 3) bronze++;
@@ -356,10 +372,19 @@ function getDetailContentFor(athlete) {
 
         function getCompetition() {
             if(!competition) return $();
-            const elem =  $(`<div class="display flex"><span>${competition}</span></div>`);
-            elem.append(getMedal("gold", gold, gold + " Gold medals"));
-            elem.append(getMedal("silver", silver, silver + " Silver medals"));
-            elem.append(getMedal("bronze", bronze, bronze + " Bronze medals"));
+            const elem =  $(`<div class="display flex column align-end"></div>`);
+            const comp = $(`<div class="flex row"><span>${competition}</span></div>`);
+            comp.append(getMedal("gold", gold, gold + " Gold medals"));
+            comp.append(getMedal("silver", silver, silver + " Silver medals"));
+            comp.append(getMedal("bronze", bronze, bronze + " Bronze medals"));
+            elem.append(comp);
+            for (const discipline of disciplines) {
+                const disElem = $(`<div class="flex row justify-end"><span class="font size medium">${discipline.discipline}</span></div>`);
+                const p = discipline.place;
+                const m = p == 1 ? "gold": (p == 2 ? "silver" : "bronze");
+                disElem.append(getMedal(m));
+                elem.append(disElem);
+            }
             return elem;
         }
     });
@@ -367,19 +392,77 @@ function getDetailContentFor(athlete) {
 }
 
 function isRaceVisited(idRace) {
-    const history = localStorage.getItem('speakerHistory');
+    const history = sessionStorage.getItem('speakerHistory');
     for (const elem of history) {
         if(elem.idRace == idRace) return true;
     }
     return false;
 }
 
+let cachHistory = true;
+
+$("#history").change(() => {
+    const raceId = $("#history").val();
+    const history = JSON.parse(sessionStorage.getItem('speakerHistory'));
+    console.log(history);
+    for (const elem of history) {
+        if(elem.raceId == raceId) {
+            eventName = elem.eventName;
+            ageGroupName = elem.ageGroupName;
+            competitionName = elem.competitionName;
+            roundName = elem.roundName;
+            raceName = elem.raceName;
+            $("#idInput").val(JSON.stringify(elem.athletes));
+            lastRace = elem.raceId;
+            cachHistory = false;
+            go();
+            return;
+        }
+    }
+});
+
+$(updateHistory);
+
+function deleteHistory() {
+    sessionStorage.setItem('speakerHistory', "[]");
+    $("#history").empty();
+}
+
+function updateHistory() {
+    $("#history").empty();
+    const history = JSON.parse(sessionStorage.getItem('speakerHistory'));
+    if(!history) {
+        sessionStorage.setItem('speakerHistory', "[]");
+    }
+    $("#history").append(`<option value="-1">Select</option>`);
+    for (const elem of history.reverse()) {
+        $("#history").append(`<option value="${elem.raceId}">${elem.name}</option>`);
+    }
+}
+
 let detailsId;
 function display(athletes) {
+    const aliases = lastAliases;
+
+    if(cachHistory) {
+        const history = JSON.parse(sessionStorage.getItem('speakerHistory'));
+        history.push({
+            athletes,
+            aliases,
+            raceId: lastRaceId,
+            name: `${competitionName} ${roundName} ${raceName}`,
+            eventName,
+            ageGroupName,
+            competitionName,
+            roundName,
+            raceName
+        });
+        sessionStorage.setItem('speakerHistory', JSON.stringify(history));
+        updateHistory();
+    }
 
     const table = $(".speaker-table");
     $(".speaker-table .row").remove();
-    const aliases = lastAliases;
     const asc = $("#sort-asc-desc").val() != "asc";
     const sortMethod = $("#sort-method").val();
     if(sortMethod == "medal") {
@@ -423,6 +506,7 @@ function display(athletes) {
                     toggleDetailsOn($(this), getDetailContentFor(athlete));
                     $(".detail-toggle").text("+");
                     $(this).text("-");
+
                     detailsId = uid;
                 } else {
                     $(this).text("+");
@@ -479,11 +563,12 @@ function toggleDetailsOn(target, details) {
 }
 
 function showDetailsOn(target, detailsElem) {
-    $(".details").empty();
-    $(".details").append(detailsElem);
-    $(".details").removeClass("hidden");
-    const details = $(".details").detach();
-    target.parent().append(details);
+    detailsElem.addClass("details")
+    // $(".details").empty();
+    // $(".details").append(detailsElem);
+    // $(".details").removeClass("hidden");
+    // const details = $(".details").detach();
+    target.parent().append(detailsElem);
     detailsVisible = true;
 }
 

@@ -376,7 +376,7 @@ function getAthleteMedals($idAthlete) {
             JOIN `TbRace` `race` ON ((`race`.`id` = `res`.`idRace`)))
             JOIN `TbAthlete` `athlete` ON ((`athlete`.`id` = `res`.`idPerson`)))
             JOIN `TbCompetition` `comp` ON ((`comp`.`idCompetition` = `race`.`idCompetition`)))
-            WHERE athlete.id = ? AND res.place <= 3;", "i", $idAthlete);
+            WHERE athlete.id = ? AND res.place <= 3 ORDER BY startDate DESC;", "i", $idAthlete);
 }
 
 function getAthletesByAlias($aliasGroup, $aliases) {
