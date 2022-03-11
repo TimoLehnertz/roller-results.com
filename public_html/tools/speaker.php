@@ -31,6 +31,22 @@ include_once "../api/index.php";
         <select id="race" disabled><option value="-1"></option></select>
     </p>
     <p class="flex mobile">
+    <label for="aliasGroup">Alias group: </label>
+        <select id="aliasGroup">
+        <?php
+            $groups = getAliasGroups();
+            if(sizeof($groups) === 0) {
+                echo "<option value='-1234'>You dont have any alias groups Yet!</option>";
+            } else {
+                echo "<option value='-1234'>Select</option>";
+            }
+            foreach ($groups as $group) {
+                echo "<option value='".$group["aliasGroup"]."'>".$group["aliasGroup"]." (".$group["count"]." entries)</option>";
+            }
+        ?>
+        </select>
+    </p>
+    <p class="flex mobile">
         <label for="history">History:</label>
         <select id="history">
 
@@ -39,32 +55,8 @@ include_once "../api/index.php";
     </p>
 </div>
 <br>
-<label for="aliasGroup">Alias group: </label>
-<select id="aliasGroup">
-<?php
-    $groups = getAliasGroups();
-    if(sizeof($groups) === 0) {
-        echo "<option value='-1234'>You dont have any alias groups Yet!</option>";
-    } else {
-        echo "<option value='-1234'>Select</option>";
-    }
-    foreach ($groups as $group) {
-        echo "<option value='".$group["aliasGroup"]."'>".$group["aliasGroup"]." (".$group["count"]." entries)</option>";
-    }
-?>
-</select>
 <textarea class="hidden" id="idInput" cols="30" rows="10" placeholder="[001,002,...]">
-    [{"startPos":4,"rank":1,"alias":"Y7691WVNknxjamM0s5Pp-101"},
-    {"startPos":1,"rank":2,"alias":"Y7691WVNknxjamM0s5Pp-13"},
-    {"startPos":3,"rank":3,"alias":"Y7691WVNknxjamM0s5Pp-145"},
-    {"startPos":2,"rank":4,"alias":"Y7691WVNknxjamM0s5Pp-37"}]
 </textarea>
-<button class="go" onclick="go()">Go</button>
-
-<br>
-<br>
-<hr>
-<br>
 
 <div class="speaker-settings align center">
     <label for="sort-method">Sort by</label>
@@ -568,6 +560,7 @@ function showDetailsOn(target, detailsElem) {
     // $(".details").append(detailsElem);
     // $(".details").removeClass("hidden");
     // const details = $(".details").detach();
+    target.parent().css("position", "relative");
     target.parent().append(detailsElem);
     detailsVisible = true;
 }
