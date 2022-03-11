@@ -297,6 +297,8 @@ if(!isset($NO_GET_API)){
     } else if(isset($_GET["putAliases"])) {
         $aliases = json_decode(file_get_contents('php://input'), true);
         putAliases($aliases);
+    } else if(isset($_GET["getathleteMedals"])) {
+        echo json_encode(getAthleteMedals($_GET["getathleteMedals"]));
     }
     /**
      * Expecting:
@@ -365,6 +367,16 @@ function getAliasGroups() {
     //     $out []= $row["aliasGroup"];
     // }
     return $res;
+}
+
+function getAthleteMedals($idAthlete) {
+    return query(" SELECT *
+        FROM
+            (((`vResult` `res`
+            JOIN `TbRace` `race` ON ((`race`.`id` = `res`.`idRace`)))
+            JOIN `TbAthlete` `athlete` ON ((`athlete`.`id` = `res`.`idPerson`)))
+            JOIN `TbCompetition` `comp` ON ((`comp`.`idCompetition` = `race`.`idCompetition`)))
+            WHERE athlete.id = ? AND res.place <= 3;", "i", $idAthlete);
 }
 
 function getAthletesByAlias($aliasGroup, $aliases) {

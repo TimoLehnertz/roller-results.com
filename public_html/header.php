@@ -78,6 +78,9 @@ include_once "head.php";
                     <a href="/impressum"><i class="fas fa-book margin right"></i>Impressum</a>
                 </li>
                 <li>
+                    <a href="/calendar"><i class="fa-solid fa-calendar margin right"></i>Skate calendar</a>
+                </li>
+                <li>
                     <a href='/tools/index.php'><i class='fa-brands fa-teamspeak margin right'></i></i>Tools</a>
                 </li>
                 <?php

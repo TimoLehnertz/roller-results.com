@@ -8,6 +8,7 @@ include_once "../header.php";
 include_once "../api/index.php";
 ?>
 <main class="speaker">
+<div class="details hidden"></div>
 <div class="form">
     <p class="margin bottom" >Get data from skateresults:</p>
     <p>
@@ -77,6 +78,7 @@ include_once "../api/index.php";
         <tr>
             <td>Start pos</td>
             <td>Athlete</td>
+            <td>Details</td>
             <td>Country</td>
             <td>Club</td>
             <td>Gold</td>
@@ -106,7 +108,6 @@ $(() => {
         $("#aliasGroup").val(aliasGroup);
     }
     getAPI(getUrl + "events").receive((succsess, response) => {
-        console.log(response);
         if(succsess) {
             $("#event").empty();
             $("#event").append(`<option value="-1">Select</option>`);
@@ -130,7 +131,6 @@ $("#event").change(() => {
     $('#ageGroup').empty();
     $('#ageGroup').append(`<option>Loading...</option>`);
     getAPI(getUrl + "events/" + event + "/age-groups").receive((succsess, response) => {
-        console.log(response);
         if(succsess) {
             $('#ageGroup').prop("disabled", false);
             $("#ageGroup").empty();
@@ -155,7 +155,6 @@ $("#ageGroup").change(() => {
     $('#competition').empty();
     $('#competition').append(`<option>Loading...</option>`);
     getAPI(getUrl + "events/" + event + "/age-groups/" + ageGroup + "/competitions").receive((succsess, response) => {
-        console.log(response);
         if(succsess) {
             $('#competition').prop("disabled", false);
             $("#competition").empty();
@@ -183,7 +182,6 @@ $("#competition").change(() => {
     $('#round').empty();
     $('#round').append(`<option>Loading...</option>`);
     getAPI(getUrl + "events/" + event + "/age-groups/" + ageGroup + "/competitions/" + competition + "/rounds").receive((succsess, response) => {
-        console.log(response);
         if(succsess) {
             $('#round').prop("disabled", false);
             $("#round").empty();
@@ -211,7 +209,6 @@ $("#round").change(() => {
     $('#race').empty();
     $('#race').append(`<option>Loading...</option>`);
     getAPI(getUrl + "events/" + event + "/age-groups/" + ageGroup + "/competitions/" + competition + "/rounds/" + round + "/races").receive((succsess, response) => {
-        console.log(response);
         if(succsess) {
             $('#race').prop("disabled", false);
             $("#race").empty();
@@ -241,7 +238,6 @@ $("#race").change(() => {
     $(".result").prepend(`<div class="loading circle"/>`);
     getAPI(getUrl + "events/" + event + "/age-groups/" + ageGroup + "/competitions/" + competition + "/rounds/" + round + "/races/" + race).receive((succsess, response) => {
         if(succsess) {
-            console.log(response);
             const ids = [];
             for (const result of response.athletes) {
                 ids.push({
@@ -265,7 +261,6 @@ $("#sort-method").change(() => {
 $("#sort-asc-desc").change(() => {
     display(lastAthletes);
 });
-
 
 $("#aliasGroup").change(() => {
     localStorage.setItem('speakerAliasGroup', $("#aliasGroup").val());
@@ -321,8 +316,67 @@ function go() {
     });
 }
 
+function getDetailContentFor(athlete) {
+    if(!athlete.idAthlete) {
+        return $(`<div>No information for this athlete :("</div>`);
+    }
+    const elem = $(`<div class="font size bigger-medium">
+        <p class="font size big">${athlete.firstname} ${athlete.lastname}</p>
+        <div class="loading circle"></div>
+    </div>`);
+    get("athleteMedals", athlete.idAthlete).receive((succsess, results) => {
+        elem.find(".loading").remove();
+        if(!succsess) return;
+        let idCompetition;
+        let competition;
+        let year;
+        let gold = 0;
+        let silver = 0;
+        let bronze = 0;
+        for (const result of results) {
+            const newYear = new Date(result.startDate).getFullYear();
+            if(year != newYear) {
+                year = newYear;
+                elem.append(`<hr><p>${year}</p>`);
+            }
+            if(idCompetition != result.idCompetition) {
+                elem.append(getCompetition());
+                gold = 0;
+                silver = 0;
+                bronze = 0;
+                idCompetition = result.idCompetition;
+                competition = result.type + " | " + result.location;
+            }
+            if(result.place == 1) gold++;
+            if(result.place == 2) silver++;
+            if(result.place == 3) bronze++;
+
+        }
+        elem.append(getCompetition());
+
+        function getCompetition() {
+            if(!competition) return $();
+            const elem =  $(`<div class="display flex"><span>${competition}</span></div>`);
+            elem.append(getMedal("gold", gold, gold + " Gold medals"));
+            elem.append(getMedal("silver", silver, silver + " Silver medals"));
+            elem.append(getMedal("bronze", bronze, bronze + " Bronze medals"));
+            return elem;
+        }
+    });
+    return elem;
+}
+
+function isRaceVisited(idRace) {
+    const history = localStorage.getItem('speakerHistory');
+    for (const elem of history) {
+        if(elem.idRace == idRace) return true;
+    }
+    return false;
+}
+
+let detailsId;
 function display(athletes) {
-    console.log(athletes);
+
     const table = $(".speaker-table");
     $(".speaker-table .row").remove();
     const aliases = lastAliases;
@@ -347,6 +401,7 @@ function display(athletes) {
         const row = $(`<tr class="row">
             <td>${athlete.startPos}</td>
             <td class="profile-td"/>
+            <td class="details-td"/>
             <td class="country-td"/>
             <td class="club-td"/>
             <td class="gold-td">0</td>
@@ -355,7 +410,26 @@ function display(athletes) {
             <td class="sprinter-long-td"></td>
             <td class="best-distance-td"></td>
             </tr>`);
+        const uid = getUid();
         const previous = JSON.parse(athlete.previous);
+        const detailToggle = $(`<button class="detail-toggle">+</button>`);
+        detailToggle.click(function() {
+            if(toggleDetailsOn($(this), getDetailContentFor(athlete))) {// opened
+                $(".detail-toggle").text("+");
+                $(this).text("-");
+                detailsId = uid;
+            } else {// closed
+                if(uid !== detailsId) {
+                    toggleDetailsOn($(this), getDetailContentFor(athlete));
+                    $(".detail-toggle").text("+");
+                    $(this).text("-");
+                    detailsId = uid;
+                } else {
+                    $(this).text("+");
+                }
+            }
+        })
+        row.find(".details-td").append(detailToggle)
         if(athlete.idAthlete) {
             const profile = athleteToProfile(athlete, Profile.MIN);
             profile.openInNewTab = true;
@@ -389,10 +463,33 @@ function display(athletes) {
             row.find(".profile-td").append(`${previous.firstName || "-"} ${previous.lastName || "-"}`);
             row.find(".country-td").append(`${previous.country || "-"}`);
         }
-        console.log()
         row.find(".club-td").append(`${previous.club || "-"}`);
         table.append(row);
     }
+}
+
+let detailsVisible = false;
+function toggleDetailsOn(target, details) {
+    if(detailsVisible) {
+        hideDetails();
+    } else {
+        showDetailsOn(target, details);
+    }
+    return detailsVisible;
+}
+
+function showDetailsOn(target, detailsElem) {
+    $(".details").empty();
+    $(".details").append(detailsElem);
+    $(".details").removeClass("hidden");
+    const details = $(".details").detach();
+    target.parent().append(details);
+    detailsVisible = true;
+}
+
+function hideDetails() {
+    $(".details").addClass("hidden");
+    detailsVisible = false;
 }
 </script>
 </main>
