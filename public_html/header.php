@@ -77,10 +77,10 @@ include_once "head.php";
                 <li>
                     <a href="/impressum"><i class="fas fa-book margin right"></i>Impressum</a>
                 </li>
+                <li>
+                    <a href='/tools/index.php'><i class='fa-brands fa-teamspeak margin right'></i></i>Tools</a>
+                </li>
                 <?php
-                    if(canI("speaker")){
-                        echo "<li><a href='/tools/index.php'><i class='fa-brands fa-teamspeak margin right'></i></i>Speaker tools</a></li>";
-                    }
                     if(canI("seeAdminPage")){
                         echo "<li><a href='/admin/index.php'><i class='fas fa-shield-alt margin right'></i>Admin</a></li>";
                     }

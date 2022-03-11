@@ -319,7 +319,7 @@ if(!isset($NO_GET_API)){
             echo "Provide aliases attribute as array!";
             exit(0);
         }
-        echo json_encode(getAthletesByIds($search["aliasGroup"], $search["aliases"]));
+        echo json_encode(getAthletesByAlias($search["aliasGroup"], $search["aliases"]));
     }
     /**
      * set api
@@ -358,23 +358,28 @@ function getAliasGroups() {
     if(!isLoggedIn()) {
         return [];
     }
-    $res = query("SELECT aliasGroup FROM TbAthleteAlias WHERE creator = ? GROUP BY aliasGroup;", "i", $_SESSION["iduser"]);
-    $out = [];
-    foreach ($res as $row) {
-        $out []= $row["aliasGroup"];
-    }
-    return $out;
+    // $res = query("SELECT aliasGroup, count(*) as `count` FROM TbAthleteAlias WHERE creator = ? GROUP BY aliasGroup;", "i", $_SESSION["iduser"]);
+    $res = query("SELECT aliasGroup, count(*) as `count` FROM TbAthleteAlias GROUP BY aliasGroup;");
+    // $out = [];
+    // foreach ($res as $row) {
+    //     $out []= $row["aliasGroup"];
+    // }
+    return $res;
 }
 
-function getAthletesByIds($aliasGroup, $ids) {
+function getAthletesByAlias($aliasGroup, $aliases) {
     $idString = "";
     $delim = "";
-    for ($i=0; $i < sizeof($ids); $i++) { 
-        $idString .= "$delim".$ids[$i];
+    for ($i=0; $i < sizeof($aliases); $i++) {
+        if(is_array($aliases[$i])) {
+            $idString .= "$delim".$aliases[$i]["alias"];
+        } else {
+            $idString .= "$delim".$aliases[$i];
+        }
         $delim = ",";
     }
     $athletes = query("SELECT *
-        FROM vAthletePublic as athlete INNER JOIN TbAthleteAlias as alias ON alias.idAthlete = athlete.idAthlete
+        FROM TbAthleteAlias as alias LEFT JOIN vAthletePublic as athlete ON alias.idAthlete = athlete.idAthlete
         WHERE alias.aliasGroup = ? AND FIND_IN_SET(alias.alias,?);", "ss", $aliasGroup, $idString);
     return $athletes;
 }
@@ -384,8 +389,8 @@ function putAliases($aliases) {
         echo "You dont have permission to do that";
         return;
     }
-    if(!isset($aliases["aliasGroup"]) || !isset($aliases["aliases"]) || sizeof($aliases["aliases"]) <= 0) {
-        echo "invalid parameters!";
+    if(!isset($aliases["aliasGroup"]) || !isset($aliases["aliases"])) {
+        echo "invalid parameters! please provide aliasGroup, aliases";
         return;
     }
     $creator = $_SESSION["iduser"];

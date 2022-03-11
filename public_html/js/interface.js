@@ -130,13 +130,6 @@ function athleteDataToProfileData(athlete, useRank = false, alternativeRank = un
     if(athlete.gold > 0){
         amount++; color = "gold";
     }
-    // if(amount === 1){
-    //     let tmp = trophy2;
-    //     switch(color){
-    //         case "silver": trophy2 = trophy1; trophy1 = tmp; break;
-    //         case "bronze": trophy2 = trophy3; trophy3 = tmp; break;
-    //     }
-    // }
     let name = athlete.firstname + " " +athlete.lastname;
     if(athlete.firstname == undefined) {
         name = "";
@@ -202,12 +195,6 @@ function athleteDataToProfileData(athlete, useRank = false, alternativeRank = un
                 description: "Favorite discipline:",
                 tooltip: `The discipline ${athlete.firstname} got the most score points on`
             },
-            // raceCount: {
-            //     data: athlete.raceCount,
-            //     description: "Race count:",
-            //     // validate: () => athlete.topTen > 0,
-            //     tooltip: "Amount of races in the database (only activated competitions count)"
-            // },
             club: {
                 data: athlete.club,
                 description: "Club:",
@@ -234,7 +221,8 @@ function athleteDataToProfileData(athlete, useRank = false, alternativeRank = un
                     console.log("failed loading profile")
                 }
             });
-        }
+        },
+        athleteData: athlete
     };
     if(useRank){
         if(alternativeRank !== undefined){

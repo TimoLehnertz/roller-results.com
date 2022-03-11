@@ -1750,7 +1750,7 @@ class ElemParser{
         let desc1 = "1";
         let desc2 = "2";
         let value = 0.5
-        let desc = "slider";
+        let desc;
         if(meta.hasOwnProperty("description1")){
             desc1 = meta.description1;
         }
@@ -1765,7 +1765,9 @@ class ElemParser{
                 value = Math.min(Math.max(meta.data, 0), 1);
             }
         }
-        elem.append(`<div class="slider__header">${desc}</div`);
+        if(desc) {
+            elem.append(`<div class="slider__header">${desc}</div`);
+        }
         const body = $(`<div class="slider__body"></div>`);
         body.append(`<div class="slider__description text-align right margin">${desc1}</div>`);
         const slider = $(`<div class="slider__slider"></div>`);
@@ -1977,17 +1979,17 @@ class Profile{
             if("maximizePage" in data) {
                 this.maximizePage = data.maximizePage;
             }
-            if(data.hasOwnProperty("name")){
+            if(data.hasOwnProperty("name")) {
                 this.name = data.name;
                 this.elem.find(".profile__name").first().remove();
                 this.elem.prepend(this.nameElem);
             }
-            if(data.hasOwnProperty("left")){
+            if(data.hasOwnProperty("left")) {
                 this.left = data.left;
                 this.elem.find(".profile__left").first().remove();
                 this.elem.prepend(this.leftElem);
             }
-            if(data.hasOwnProperty("right")){
+            if(data.hasOwnProperty("right")) {
                 this.right = data.right;
                 this.elem.find(".profile__right").first().remove();
                 this.elem.prepend(this.rightElem);
@@ -2046,6 +2048,7 @@ class Profile{
         } else if(typeof data === 'string'){
             this.name = data;
         }
+        this.dataUpdated?.(data);
     }
 
     init(){
