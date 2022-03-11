@@ -1,9 +1,6 @@
 <?php
 include_once "../includes/roles.php";
 include_once "../includes/error.php";
-if(!canI("configureAthletes")){
-    throwError($ERROR_NO_PERMISSION, "/index.php");
-} 
 include_once "../api/index.php";
 include_once "../header.php";
 ?>
