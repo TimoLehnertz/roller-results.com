@@ -9,11 +9,12 @@ echoRandWallpaper();
 <main class="main competitions-page">
 
     <div class="top-site">
-        <h1>Competitions</h1>
-        <p>See all competitions</p>
+        
     </div>
     <svg xmlns="http://www.w3.org/2000/svg" fill="none" preserveAspectRatio="none" viewBox="0 0 1680 40" class="curvature" style="bottom: -1px;"><path d="M0 40h1680V30S1340 0 840 0 0 30 0 30z" fill="#ddd"></path></svg>
     <div class="comps">
+        <h1 class="align center font color gray size biggest">Competitions</h1>
+        <p class="align center font color gray size big">See all competitions</p>
         <?php
             if(sizeof($comps) > 0) {
                 $year = 0;
