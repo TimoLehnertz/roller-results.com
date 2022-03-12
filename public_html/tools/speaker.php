@@ -353,7 +353,8 @@ function getDetailContentFor(athlete) {
             }
             disciplines.push({
                 discipline: result.distance,
-                place: result.place
+                place: result.place,
+                idRace: result.idRace
             });
             if(result.place == 1) gold++;
             if(result.place == 2) silver++;
@@ -365,13 +366,13 @@ function getDetailContentFor(athlete) {
         function getCompetition() {
             if(!competition) return $();
             const elem =  $(`<div class="display flex column align-end"></div>`);
-            const comp = $(`<div class="flex row"><span>${competition}</span></div>`);
+            const comp = $(`<div class="flex row"><a target=”_blank” href="/competition/index.php?id=${idCompetition}">${competition}</a></div>`);
             comp.append(getMedal("gold", gold, gold + " Gold medals"));
             comp.append(getMedal("silver", silver, silver + " Silver medals"));
             comp.append(getMedal("bronze", bronze, bronze + " Bronze medals"));
             elem.append(comp);
             for (const discipline of disciplines) {
-                const disElem = $(`<div class="flex row justify-end"><span class="font size medium">${discipline.discipline}</span></div>`);
+                const disElem = $(`<div class="flex row justify-end"><a target=”_blank” href="/race/index.php?id=${discipline.idRace}" class="font size medium">${discipline.discipline}</a></div>`);
                 const p = discipline.place;
                 const m = p == 1 ? "gold": (p == 2 ? "silver" : "bronze");
                 disElem.append(getMedal(m));
