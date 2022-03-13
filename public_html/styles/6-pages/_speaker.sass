@@ -4,6 +4,30 @@
     align-items: center
     flex-direction: column
 
+    select
+        max-width: 8rem
+
+    .path
+        margin: 0.3rem !important
+
+    .form
+        z-index: 1000
+        position: sticky
+        top: 4rem
+        padding: 1rem
+        background: #3335
+        border-radius: 0.2rem
+        select
+            width: 8rem
+            text-overflow: elipses
+
+    // .profile .profile__name
+    //     font-size: 1rem
+
+    .profile__wrapper
+        margin-top: 0.1rem
+
+
     .form
         font-size: 1rem
         margin-left: auto
@@ -18,15 +42,16 @@
         width: 100%
 
     .speaker-table
+        padding-bottom: 10rem
         display: block;
         overflow-x: auto;
-        overflow-y: hidden
+        overflow-y: auto
         white-space: nowrap;
         // width: 100vw
         border-collapse: collapse
         td
             text-align: center
-            padding: 0.5rem
+            padding: 0.0rem 0.1rem
             font-size: 0.9rem
 
         td:not(:nth-child(1))
@@ -45,6 +70,7 @@
         border: 1px solid #000
         border-radius: 0.5rem
         padding: 1rem
+        z-index: 100
         // pointer-events: none
 
     .detail-toggle

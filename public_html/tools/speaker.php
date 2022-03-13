@@ -9,29 +9,8 @@ include_once "../api/index.php";
 ?>
 <main class="speaker">
 <div class="form">
-    <p class="margin bottom" >Get data from skateresults:</p>
-    <p class="flex mobile">
-        <label for="event">Event:</label>
-        <select id="event"><option value="-1">Loading...</option></select>
-    </p>
-    <p class="flex mobile">
-        <label for="ageGroup">Age group:</label>
-        <select id="ageGroup" disabled><option value="-1"></option></select>
-    </p>
-    <p class="flex mobile">
-        <label for="competition">Competition:</label>
-        <select id="competition" disabled><option value="-1"></option></select>
-    </p>
-    <p class="flex mobile">
-        <label for="round">Round:</label>
-        <select id="round" disabled><option value="-1"></option></select>
-    </p>
-    <p class="flex mobile">
-        <label for="race">Race:</label>
-        <select id="race" disabled><option value="-1"></option></select>
-    </p>
-    <p class="flex mobile">
-    <label for="aliasGroup">Alias group: </label>
+    <div class="flex align-center">
+        <label for="aliasGroup">Alias group:</label>
         <select id="aliasGroup">
         <?php
             $groups = getAliasGroups();
@@ -45,14 +24,19 @@ include_once "../api/index.php";
             }
         ?>
         </select>
-    </p>
-    <p class="flex mobile">
         <label for="history">History:</label>
         <select id="history">
-
+    
         </select>
-        <button onclick="deleteHistory()">Delete</button>
-    </p>
+    </div>
+    <select id="event"><option value="-1">Loading...</option></select>
+    <select id="ageGroup" disabled><option value="-1"></option></select>
+    <select id="competition" disabled><option value="-1"></option></select>
+    <select id="round" disabled><option value="-1"></option></select>
+    <select id="race" disabled><option value="-1"></option></select>
+    <br>
+    <br>
+    <!-- <button onclick="deleteHistory()">Delete</button> -->
 </div>
 <br>
 <textarea class="hidden" id="idInput" cols="30" rows="10" placeholder="[001,002,...]">
@@ -76,14 +60,25 @@ include_once "../api/index.php";
         <tr>
             <td>Start pos</td>
             <td>Athlete</td>
-            <td>Details</td>
+            <td>More</td>
             <td>Country</td>
             <td>Club</td>
-            <td>Gold</td>
-            <td>Silver</td>
-            <td>Bronze</td>
+            <td>
+                <div class="medal gold" style="width: 2rem; height: 2rem">
+                    <img class="medal__big" width="10" src="/img/medals/gold-medal.svg" alt="gold medal">
+                    <img class="medal__simple" width="10" src="/img/medals/gold-medal-simple.svg" alt="gold medal">
+                </div>
+            </td>
+            <td><div class="medal gold" style="width: 2rem; height: 2rem">
+                    <img class="medal__big" width="10" src="/img/medals/silver-medal.svg" alt="gold medal">
+                    <img class="medal__simple" width="10" src="/img/medals/silver-medal-simple.svg" alt="gold medal">
+                </div></td>
+            <td><div class="medal gold" style="width: 2rem; height: 2rem">
+                    <img class="medal__big" width="10" src="/img/medals/bronze-medal.svg" alt="gold medal">
+                    <img class="medal__simple" width="10" src="/img/medals/bronze-medal-simple.svg" alt="gold medal">
+                </div></td>
             <td>Best discipline</td>
-            <td>Favorite race</td>
+            <td>Fav. race</td>
         </tr>
     </table>
 </div>
@@ -255,11 +250,17 @@ $("#race").change(() => {
 });
 
 $("#sort-method").change(() => {
-    display(lastAthletes);
+    if(lastAthletes) {
+        cachHistory = false;
+        display(lastAthletes);
+    }
 });
 
 $("#sort-asc-desc").change(() => {
-    display(lastAthletes);
+    if(lastAthletes) {
+        cachHistory = false;
+        display(lastAthletes);
+    }
 });
 
 $("#aliasGroup").change(() => {
@@ -433,8 +434,12 @@ function updateHistory() {
     }
 }
 
+let updatedAthletes = 0;
 let detailsId;
-function display(athletes) {
+function display(athletes, noSort) {
+    if(!noSort) {
+        updatedAthletes = 0;
+    }
     const aliases = lastAliases;
 
     if(cachHistory) {
@@ -459,9 +464,15 @@ function display(athletes) {
     const asc = $("#sort-asc-desc").val() != "asc";
     const sortMethod = $("#sort-method").val();
     if(sortMethod == "medal") {
-        athletes = sortArray(athletes, "gold", asc);
-        athletes = sortArray(athletes, "silver", asc);
-        athletes = sortArray(athletes, "bronze", asc);
+        const mul = asc ? 1 : -1;
+        athletes.sort((a, b) => {
+            if(b.gold != a.gold) return (b.gold - a.gold) * mul;
+            if(b.silver != a.silver) return (b.silver - a.silver) * mul;
+            if(b.bronze != a.bronze) return (b.bronze - a.bronze) * mul;
+        });
+        // athletes = sortArray(athletes, "bronze", asc);
+        // athletes = sortArray(athletes, "silver", asc);
+        // athletes = sortArray(athletes, "gold", asc);
     }
     if(sortMethod == "startPos") {
         athletes = sortArray(athletes, "startPos", asc);
@@ -523,7 +534,7 @@ function display(athletes) {
                 if(isNaN(sprinter)) sprinter = 0.5;
                 row.find(".sprinter-long-td").append(ElemParser.parse({
                     data: sprinter,
-                    description1: "Sprint",
+                    description1: "Short",
                     description2: "Long",
                     type: "slider",
                     tooltip: "Relation of Score short and long score"
@@ -532,6 +543,16 @@ function display(athletes) {
                 row.find(".best-distance-td").append(data.athleteData.bestDistance || "-");
                 row.find(".country-td").empty();
                 row.find(".country-td").append(data.athleteData.country || "-");
+
+                if(!athlete.gold) {
+                    athlete.gold = data.athleteData.gold;
+                    athlete.silver = data.athleteData.silver;
+                    athlete.bronze = data.athleteData.bronze;
+                    updatedAthletes++;
+                    if(updatedAthletes == athletes.length && $("#sort-method").val() == "medal") {
+                        display(lastAthletes, true);
+                    }
+                }
             }
 
             profile.update();

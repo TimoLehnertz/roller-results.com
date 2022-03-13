@@ -149,7 +149,7 @@ function athleteDataToProfileData(athlete, useRank = false, alternativeRank = un
         },
         special: {
             data: athlete.gold + "",
-            tooltip: "Overall score | See settings to know how it works",
+            tooltip: "Gold medals on competitions declared in the settings (" + getUsedMedalsString() + ")",
             type: ElemParser.TEXT,
             validate: () => athlete.gold > 0
         },
