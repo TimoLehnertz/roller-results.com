@@ -49,6 +49,7 @@ include_once "../api/index.php";
         <option value="medal">Medal(gold, silver, bronze)</option>
         <option value="nation">Nation</option>
         <option value="club">club</option>
+        <option value="sprinter">Sprint / Long</option>
     </select>
     <select id="sort-asc-desc">
         <option value="asc">🔼 </option>
@@ -479,8 +480,8 @@ function display(athletes, noSort) {
     $(".speaker-table .row").remove();
     const asc = $("#sort-asc-desc").val() != "asc";
     const sortMethod = $("#sort-method").val();
+    const mul = asc ? 1 : -1;
     if(sortMethod == "medal") {
-        const mul = asc ? 1 : -1;
         athletes.sort((a, b) => {
             if(b.gold != a.gold) return (b.gold - a.gold) * mul;
             if(b.silver != a.silver) return (b.silver - a.silver) * mul;
@@ -498,6 +499,17 @@ function display(athletes, noSort) {
     }
     if(sortMethod == "club") {
         athletes = sortArray(athletes, "club", asc);
+    }
+    if(sortMethod == "sprinter") {
+        for (const iterator of athletes) {
+            
+            console.log(iterator.sprintLong);
+        }
+        athletes.sort((a, b) => {
+            if(isNaN(a.sprintLong)) a.sprintLong = 0.5;
+            if(isNaN(b.sprintLong)) b.sprintLong = 0.5;
+            return (b.sprintLong - a.sprintLong) * mul;
+        });
     }
 
     for (const athlete of athletes) {
@@ -564,8 +576,11 @@ function display(athletes, noSort) {
                     athlete.gold = data.athleteData.gold;
                     athlete.silver = data.athleteData.silver;
                     athlete.bronze = data.athleteData.bronze;
+                    // athlete.medalScoreLong = data.athleteData.medalScoreLong;
+                    // athlete.medalScore = data.athleteData.medalScore;
+                    athlete.sprintLong = data.athleteData.medalScoreLong / data.athleteData.medalScore
                     updatedAthletes++;
-                    if(updatedAthletes == athletes.length && $("#sort-method").val() == "medal") {
+                    if(updatedAthletes == athletes.length && ($("#sort-method").val() == "medal" || $("#sort-method").val() == "sprinter")) {
                         display(lastAthletes, true);
                     }
                 }
