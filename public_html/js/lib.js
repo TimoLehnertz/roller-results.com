@@ -2499,17 +2499,17 @@ function getEmptyMedal() {
     </div>`);
 }
 
-function getMedal(color, amount, tooltip){
+function getMedal(color, amount, tooltip, size = 40){
     let linkSimple = "/img/medals/" + color + "-medal-simple.svg";
     let linkBig = "/img/medals/" + color + "-medal.svg";
     if(amount === undefined) return $(`<div class="medal gold">
-        <img class="medal__big" width="40" src="${linkBig}" alt="${color} medal">
-        <img class="medal__simple" width="40" src="${linkSimple}" alt="${color} medal">
+        <img class="medal__big" width="${size}" src="${linkBig}" alt="${color} medal">
+        <img class="medal__simple" width="${size}" src="${linkSimple}" alt="${color} medal">
         <span class="medal__amount"></span>
     </div>`);
     const elem = $(`<div class="medal ${color}">
-        <img class="medal__big" width="40" src="${linkBig}" alt="${color} medal">
-        <img class="medal__simple" width="40" src="${linkSimple}" alt="${color} medal">
+        <img class="medal__big" width="${size}" src="${linkBig}" alt="${color} medal">
+        <img class="medal__simple" width="${size}" src="${linkSimple}" alt="${color} medal">
         <span class="medal__amount">${amount}</span>
     </div>`);
     new Tooltip(elem, tooltip || color);

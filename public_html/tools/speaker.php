@@ -24,7 +24,7 @@ include_once "../api/index.php";
             }
         ?>
         </select>
-        <label for="history">History:</label>
+        <label for="history">History(not live):</label>
         <select id="history">
     
         </select>
@@ -99,6 +99,14 @@ $(() => {
     let aliasGroup = localStorage.getItem('speakerAliasGroup');
     if(aliasGroup) {
         $("#aliasGroup").val(aliasGroup);
+    }
+    let sortMethod = localStorage.getItem('sortMethod');
+    if(sortMethod) {
+        $("#sort-method").val(sortMethod);
+    }
+    let sortDir = localStorage.getItem('sortDir');
+    if(sortDir) {
+        $("#sort-asc-desc").val(sortDir);
     }
     getAPI(getUrl + "events").receive((succsess, response) => {
         if(succsess) {
@@ -267,6 +275,14 @@ $("#aliasGroup").change(() => {
     localStorage.setItem('speakerAliasGroup', $("#aliasGroup").val());
 });
 
+$("#sort-method").change(() => {
+    localStorage.setItem('sortMethod', $("#sort-method").val());
+});
+
+$("#sort-asc-desc").change(() => {
+    localStorage.setItem('sortDir', $("#sort-asc-desc").val());
+});
+
 let lastAthletes;
 let lastAliases;
 let lastRaceId;
@@ -322,8 +338,8 @@ function getDetailContentFor(athlete) {
     if(!athlete.idAthlete) {
         return $(`<div>No information for this athlete :("</div>`);
     }
-    const elem = $(`<div class="font size bigger-medium">
-        <p class="font size big">${athlete.firstname} ${athlete.lastname}</p>
+    const elem = $(`<div class="">
+        <p class="font size bigger-medium">${athlete.firstname} ${athlete.lastname}</p>
         <div class="loading circle"></div>
     </div>`);
     get("athleteMedals", athlete.idAthlete).receive((succsess, results) => {
@@ -369,14 +385,14 @@ function getDetailContentFor(athlete) {
             const elem =  $(`<div class="display flex column align-end"></div>`);
             const comp = $(`<div class="flex row"><a target=”_blank” href="/competition/index.php?id=${idCompetition}">${competition}</a></div>`);
             comp.append(getMedal("gold", gold, gold + " Gold medals"));
-            comp.append(getMedal("silver", silver, silver + " Silver medals"));
-            comp.append(getMedal("bronze", bronze, bronze + " Bronze medals"));
+            comp.append(getMedal("silver", silver, silver + " Silver medals", 20));
+            comp.append(getMedal("bronze", bronze, bronze + " Bronze medals", 20));
             elem.append(comp);
             for (const discipline of disciplines) {
                 const disElem = $(`<div class="flex row justify-end"><a target=”_blank” href="/race/index.php?id=${discipline.idRace}" class="font size medium">${discipline.discipline}</a></div>`);
                 const p = discipline.place;
                 const m = p == 1 ? "gold": (p == 2 ? "silver" : "bronze");
-                disElem.append(getMedal(m));
+                disElem.append(getMedal(m, undefined, undefined, 20));
                 elem.append(disElem);
             }
             return elem;
