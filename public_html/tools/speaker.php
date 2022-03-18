@@ -244,7 +244,6 @@ $("#race").change(() => {
         if(succsess) {
             const ids = [];
             for (const result of response.athletes) {
-                console.log(result);
                 ids.push({
                     startPos: result.startPos,
                     rank: result.athlete.overallResult.rank,
@@ -348,7 +347,6 @@ function getDetailContentFor(athlete) {
         <div class="loading circle"></div>
     </div>`);
     get("athleteMedals", athlete.idAthlete).receive((succsess, results) => {
-        console.log(results);
         elem.find(".loading").remove();
         if(!succsess) return;
         let idCompetition;
@@ -419,7 +417,6 @@ let cachHistory = true;
 $("#history").change(() => {
     const raceId = $("#history").val();
     const history = JSON.parse(sessionStorage.getItem('speakerHistory'));
-    console.log(history);
     for (const elem of history) {
         if(elem.raceId == raceId) {
             eventName = elem.eventName;
@@ -459,8 +456,6 @@ let updatedAthletes = 0;
 let requestedAthletes = 0;
 let detailsId;
 function display(athletes, noSort) {
-    console.log("display");
-    console.log(athletes);
     requestedAthletes = 0;
     if(!noSort) {
         updatedAthletes = 0;
@@ -512,10 +507,6 @@ function display(athletes, noSort) {
         athletes = sortArray(athletes, "club", asc);
     }
     if(sortMethod == "sprinter") {
-        for (const iterator of athletes) {
-            
-            console.log(iterator.sprintLong);
-        }
         athletes.sort((a, b) => {
             if(isNaN(a.sprintLong)) a.sprintLong = 0.5;
             if(isNaN(b.sprintLong)) b.sprintLong = 0.5;
@@ -592,9 +583,9 @@ function display(athletes, noSort) {
                     athlete.bronze = data.athleteData.bronze || 0;
                     athlete.medalScoreLong = data.athleteData.medalScoreLong;
                     athlete.medalScore = data.athleteData.medalScore;
-                    athlete.sprintLong = data.athleteData.medalScoreLong / data.athleteData.medalScore
+                    athlete.sprintLong = data.athleteData.medalScoreLong / data.athleteData.medalScore;
+                    athlete.bestDistance = data.athleteData.bestDistance;
                     updatedAthletes++;
-                    // console.log(`${updatedAthletes}`)
                     if(updatedAthletes == requestedAthletes && ($("#sort-method").val() == "medal" || $("#sort-method").val() == "sprinter")) {
                         display(lastAthletes, true);
                     }
