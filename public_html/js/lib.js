@@ -1547,18 +1547,18 @@ class ElemParser{
         }
     }
 
-    static parseMeta(meta){
-        if(isDomElem(meta)){
+    static parseMeta(meta) {
+        if(isDomElem(meta)) {
             return meta;
         }
-        if(ElemParser.isValidMeta(meta)){
-            if(!meta.data){
+        if(ElemParser.isValidMeta(meta)) {
+            if(meta.data == undefined){
                 return false;
             }
             if(meta.data.length === 0 || meta.data === ""){
                 return false;
             }
-            if(meta.hasOwnProperty("type")){
+            if(meta.hasOwnProperty("type")) {
                 if(ElemParser.parser.hasOwnProperty(meta.type)){
                     const parsedElem = ElemParser.parser[meta.type](meta);
                     return parsedElem;
@@ -1880,7 +1880,7 @@ class ElemParser{
  *  _profile.sass
  */
 
-class Profile{
+class Profile {
 
     /**
      * constants - not to be changed
@@ -1933,6 +1933,7 @@ class Profile{
         this.score = score;
         this.minLod = minLod;
         this.lod = minLod;
+        this.maxLod = Profile.MAX;
         /**
          * default values
          */
@@ -2089,7 +2090,7 @@ class Profile{
     }
 
     incrementLod(){
-        if(this.lod < Profile.MAX && !this.grayedOut){
+        if(this.lod < this.maxLod && !this.grayedOut){
             this.closeAllOthers();
             this.elem.removeClass(this.lodClass);
             this.lod++;

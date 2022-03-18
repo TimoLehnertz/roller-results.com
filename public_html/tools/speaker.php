@@ -46,6 +46,7 @@ include_once "../api/index.php";
     <label for="sort-method">Sort by</label>
     <select id="sort-method">
         <option value="startPos">Start pos</option>
+        <option value="rank">Rank</option>
         <option value="medal">Medal(gold, silver, bronze)</option>
         <option value="nation">Nation</option>
         <option value="club">club</option>
@@ -60,6 +61,7 @@ include_once "../api/index.php";
     <table class="speaker-table">
         <tr>
             <td>Start pos</td>
+            <td>Rank</td>
             <td>Athlete</td>
             <td>More</td>
             <td>Country</td>
@@ -242,9 +244,10 @@ $("#race").change(() => {
         if(succsess) {
             const ids = [];
             for (const result of response.athletes) {
+                console.log(result);
                 ids.push({
                     startPos: result.startPos,
-                    rank: result.rank,
+                    rank: result.athlete.overallResult.rank,
                     alias: result.athlete.id
                 });
             }
@@ -322,6 +325,7 @@ function go() {
         if(succsess) {
             for (let i = 0; i < athletes.length; i++) {
                 athletes[i].startPos = aliases[i].startPos;
+                athletes[i].rank = aliases[i].rank;
                 athletes[i].previousJson = JSON.parse(athletes[i].previous);
                 athletes[i].club = athletes[i].previousJson.club;
                 athletes[i].country = athletes[i].previousJson.country;
@@ -452,8 +456,12 @@ function updateHistory() {
 }
 
 let updatedAthletes = 0;
+let requestedAthletes = 0;
 let detailsId;
 function display(athletes, noSort) {
+    console.log("display");
+    console.log(athletes);
+    requestedAthletes = 0;
     if(!noSort) {
         updatedAthletes = 0;
     }
@@ -494,6 +502,9 @@ function display(athletes, noSort) {
     if(sortMethod == "startPos") {
         athletes = sortArray(athletes, "startPos", asc);
     }
+    if(sortMethod == "rank") {
+        athletes = sortArray(athletes, "rank", asc);
+    }
     if(sortMethod == "nation") {
         athletes = sortArray(athletes, "country", asc);
     }
@@ -515,6 +526,7 @@ function display(athletes, noSort) {
     for (const athlete of athletes) {
         const row = $(`<tr class="row">
             <td>${athlete.startPos}</td>
+            <td>${athlete.rank}</td>
             <td class="profile-td"/>
             <td class="details-td"/>
             <td class="country-td"/>
@@ -547,6 +559,7 @@ function display(athletes, noSort) {
         })
         row.find(".details-td").append(detailToggle)
         if(athlete.idAthlete) {
+            requestedAthletes++;
             const profile = athleteToProfile(athlete, Profile.MIN);
             profile.openInNewTab = true;
 
@@ -559,6 +572,10 @@ function display(athletes, noSort) {
                 row.find(".bronze-td").append(data.athleteData.bronze + "");
                 row.find(".sprinter-long-td").empty();
                 let sprinter = data.athleteData.medalScoreLong / data.athleteData.medalScore;
+                if(athlete.idAthlete == 1136) {
+                    console.log(sprinter);
+                    // sprinter = 0.5;
+                }
                 if(isNaN(sprinter)) sprinter = 0.5;
                 row.find(".sprinter-long-td").append(ElemParser.parse({
                     data: sprinter,
@@ -573,14 +590,15 @@ function display(athletes, noSort) {
                 row.find(".country-td").append(data.athleteData.country || "-");
 
                 if(!athlete.gold) {
-                    athlete.gold = data.athleteData.gold;
-                    athlete.silver = data.athleteData.silver;
-                    athlete.bronze = data.athleteData.bronze;
+                    athlete.gold = data.athleteData.gold || 0;
+                    athlete.silver = data.athleteData.silver || 0;
+                    athlete.bronze = data.athleteData.bronze || 0;
                     // athlete.medalScoreLong = data.athleteData.medalScoreLong;
                     // athlete.medalScore = data.athleteData.medalScore;
                     athlete.sprintLong = data.athleteData.medalScoreLong / data.athleteData.medalScore
                     updatedAthletes++;
-                    if(updatedAthletes == athletes.length && ($("#sort-method").val() == "medal" || $("#sort-method").val() == "sprinter")) {
+                    // console.log(`${updatedAthletes}`)
+                    if(updatedAthletes == requestedAthletes && ($("#sort-method").val() == "medal" || $("#sort-method").val() == "sprinter")) {
                         display(lastAthletes, true);
                     }
                 }
@@ -589,8 +607,17 @@ function display(athletes, noSort) {
             profile.update();
             profile.appendTo(row.find(".profile-td"));
         } else {
-            row.find(".profile-td").append(`${previous.firstName || "-"} ${previous.lastName || "-"}`);
-            row.find(".country-td").append(`${previous.country || "-"}`);
+            athlete.gold = 0;
+            athlete.silver = 0;
+            athlete.bronze = 0;
+            const profile = new Profile({
+                name: `${previous.firstName || "-"} ${previous.lastName || "-"}`
+            });
+            profile.maxLod = Profile.MIN;
+            profile.grayOut = true;
+            profile.appendTo(row.find(".profile-td"));
+            // row.find(".profile-td").append(`${previous.firstName || "-"} ${previous.lastName || "-"}`);
+            // row.find(".country-td").append(`${previous.country || "-"}`);
         }
         row.find(".club-td").append(`${previous.club || "-"}`);
         table.append(row);
