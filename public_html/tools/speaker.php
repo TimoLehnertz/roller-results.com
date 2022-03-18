@@ -617,7 +617,7 @@ function display(athletes, noSort) {
             profile.grayOut = true;
             profile.appendTo(row.find(".profile-td"));
             // row.find(".profile-td").append(`${previous.firstName || "-"} ${previous.lastName || "-"}`);
-            // row.find(".country-td").append(`${previous.country || "-"}`);
+            row.find(".country-td").append(`${previous.country || "-"}`);
         }
         row.find(".club-td").append(`${previous.club || "-"}`);
         table.append(row);
