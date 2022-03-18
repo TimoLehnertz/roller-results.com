@@ -572,14 +572,15 @@ function display(athletes, noSort) {
                 row.find(".bronze-td").append(data.athleteData.bronze + "");
                 row.find(".sprinter-long-td").empty();
                 let sprinter = data.athleteData.medalScoreLong / data.athleteData.medalScore;
-                if(isNaN(sprinter)) sprinter = 0.5;
-                row.find(".sprinter-long-td").append(ElemParser.parse({
-                    data: sprinter,
-                    description1: "Short",
-                    description2: "Long",
-                    type: "slider",
-                    tooltip: "Relation of Score short and long score"
-                }));
+                if(!isNaN(sprinter)) {
+                    row.find(".sprinter-long-td").append(ElemParser.parse({
+                        data: sprinter,
+                        description1: "Short",
+                        description2: "Long",
+                        type: "slider",
+                        tooltip: "Relation of Score short and long score"
+                    }));
+                }
                 row.find(".best-distance-td").empty();
                 row.find(".best-distance-td").append(data.athleteData.bestDistance || "-");
                 row.find(".country-td").empty();
