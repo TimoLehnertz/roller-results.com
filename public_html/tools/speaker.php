@@ -36,10 +36,9 @@ include_once "../api/index.php";
     <select id="race" disabled><option value="-1"></option></select>
     <br>
     <br>
-    <!-- <button onclick="deleteHistory()">Delete</button> -->
 </div>
 <br>
-<textarea class="hidden" id="idInput" cols="30" rows="10" placeholder="[001,002,...]">
+<textarea style="display: none;" id="idInput" cols="30" rows="10" placeholder="[001,002,...]">
 </textarea>
 
 <div class="speaker-settings align center">
