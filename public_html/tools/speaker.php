@@ -572,10 +572,6 @@ function display(athletes, noSort) {
                 row.find(".bronze-td").append(data.athleteData.bronze + "");
                 row.find(".sprinter-long-td").empty();
                 let sprinter = data.athleteData.medalScoreLong / data.athleteData.medalScore;
-                if(athlete.idAthlete == 1136) {
-                    console.log(sprinter);
-                    // sprinter = 0.5;
-                }
                 if(isNaN(sprinter)) sprinter = 0.5;
                 row.find(".sprinter-long-td").append(ElemParser.parse({
                     data: sprinter,
@@ -593,8 +589,8 @@ function display(athletes, noSort) {
                     athlete.gold = data.athleteData.gold || 0;
                     athlete.silver = data.athleteData.silver || 0;
                     athlete.bronze = data.athleteData.bronze || 0;
-                    // athlete.medalScoreLong = data.athleteData.medalScoreLong;
-                    // athlete.medalScore = data.athleteData.medalScore;
+                    athlete.medalScoreLong = data.athleteData.medalScoreLong;
+                    athlete.medalScore = data.athleteData.medalScore;
                     athlete.sprintLong = data.athleteData.medalScoreLong / data.athleteData.medalScore
                     updatedAthletes++;
                     // console.log(`${updatedAthletes}`)
