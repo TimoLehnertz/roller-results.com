@@ -526,7 +526,7 @@ function display(athletes, noSort) {
     for (const athlete of athletes) {
         const row = $(`<tr class="row">
             <td>${athlete.startPos}</td>
-            <td>${athlete.rank}</td>
+            <td>${athlete.rank || "-"}</td>
             <td class="profile-td"/>
             <td class="details-td"/>
             <td class="country-td"/>
@@ -603,8 +603,11 @@ function display(athletes, noSort) {
                     }
                 }
             }
-
-            profile.update();
+            if(athlete.gold == undefined) {
+                profile.update();
+            } else {
+                profile.dataUpdated(profile.data);
+            }
             profile.appendTo(row.find(".profile-td"));
         } else {
             athlete.gold = 0;

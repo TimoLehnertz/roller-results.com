@@ -1976,6 +1976,7 @@ class Profile {
     }
 
     updateData(data) {
+        this.data = data;
         if(typeof data === 'object') {
             if("maximizePage" in data) {
                 this.maximizePage = data.maximizePage;
