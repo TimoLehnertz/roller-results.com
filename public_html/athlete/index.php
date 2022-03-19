@@ -30,17 +30,12 @@ echo "<script>const id=$id</script>";
 <script>
     const placeholder = athleteToProfile({}, Profile.MAX);
     get("athlete", id).receive((succsess, athlete) => {
-        if(!succsess ) {
+        if(!succsess) {
             window.location.href = "/index.php";
         }
         const profile = athleteToProfile(athlete, Profile.MAX);
         profile.update();
-        // profile.appendTo($("main"));
     });
-    // scoreCallbacks.push(() => {
-    //     profile.grayOut = true;
-        
-    // });
 </script>
 <?php
 include_once "../footer.php";
