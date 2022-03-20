@@ -187,7 +187,7 @@ include_once "api/imgAPI.php";
                     for you to check out.
                 </p> 
                 <p>
-                    Any support is appreciated and you can<br> ask us anything you want. See The <a href="/impressum/contact">Contact</a> <br>section for ways to reach out to us.
+                    Any support is appreciated and you can<br> ask us anything you want. See The <a href="/impressum/contact.php">Contact</a> <br>section for ways to reach out to us.
                 </p>
             </div>
         </div>
