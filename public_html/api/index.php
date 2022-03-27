@@ -232,6 +232,7 @@ if(!isset($NO_GET_API)){
             echo "invalid";
             exit(0);
         }
+        dbExecute("INSERT INTO TbLaserResults(remark) VALUE('moin');");
         insertLaserResult($data, $_GET["user"], $_GET["lname"]);
     }
     else if(isset($_GET["getteamAdvantageDetails"])){
