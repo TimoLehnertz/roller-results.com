@@ -226,7 +226,8 @@ if(!isset($NO_GET_API)){
         }
     }
     else if(isset($_GET["uploadResults"])){
-        $data = file_get_contents('php://input');
+        // $data = file_get_contents('php://input');
+        $data = "1";
         dbExec("INSERT INTO TbLaserResults(distance)VALUES(?);", "s", $data);
     }
     else if(isset($_GET["getteamAdvantageDetails"])){
