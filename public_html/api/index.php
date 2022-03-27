@@ -225,6 +225,10 @@ if(!isset($NO_GET_API)){
             echo("supply distance, maxplace and comps arguments!");
         }
     }
+    else if(isset($_GET["uploadResults"])){
+        $data = file_get_contents('php://input');
+        dbExec("INSERT INTO TbLaserResults(distance)VALUES(?);", "s", $data);
+    }
     else if(isset($_GET["getteamAdvantageDetails"])){
         if(isset($_GET["data"]) && isset($_GET["data1"])) {
             echo json_encode(getTeamAdvantageDetails($_GET["getteamAdvantageDetails"], $_GET["data"], $_GET["data1"]));

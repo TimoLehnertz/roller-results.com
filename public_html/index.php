@@ -173,6 +173,7 @@ include_once "api/imgAPI.php";
                                 <li class="top-five">Top 5 Countries<i class="fas fa-angle-double-right arrow-right"></i></li>
                                 <li class="mobile-only margin top">Swipe left to reveal countries</li>
                             </ul>
+                            
                         </div>
                     </a>
                 </div>
