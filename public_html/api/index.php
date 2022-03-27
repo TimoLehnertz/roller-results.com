@@ -230,7 +230,7 @@ if(!isset($NO_GET_API)){
         $data = json_decode(file_get_contents('php://input'), true);
         if(!isset($_GET["lname"]) || !isset($data["a"]) || !isset($data["d"]) || !isset($data["l"]) || !isset($_GET["user"])) {
             echo "invalid";
-            exit(0);
+            // exit(0);
         }
         dbExecute("INSERT INTO TbLaserResults(remark) VALUE('moin');");
         insertLaserResult($data, $_GET["user"], $_GET["lname"]);
