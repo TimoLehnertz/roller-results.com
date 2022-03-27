@@ -226,15 +226,12 @@ if(!isset($NO_GET_API)){
         }
     }
     else if(isset($_GET["uploadResults"])){
-        // dbExecute("INSERT INTO TbLaserResults(remark) VALUE(?);", "s", file_get_contents('php://input'));
         $data = json_decode(file_get_contents('php://input'), true);
-        // $data = json_decode($_GET["data"], true);
         var_dump($data);
         if(!isset($_GET["lname"]) || !isset($data["a"]) || !isset($data["d"]) || !isset($data["l"]) || !isset($_GET["user"])) {
             echo "invalid";
-            // exit(0);
+            exit(0);
         }
-        // dbExecute("INSERT INTO TbLaserResults(remark) VALUE('moin');");
         insertLaserResult($data, $_GET["user"], $_GET["lname"]);
     }
     else if(isset($_GET["getteamAdvantageDetails"])){
@@ -369,7 +366,7 @@ if(!isset($NO_GET_API)){
 }
 
 function insertLaserResult($result, $user, $lasername) {
-    $id = dbInsert("INSERT INTO TbLaserResults(distance,user,laserName,athlete)VALUES(?,?,?,?);", "iisi", $result["d"], $user, $lasername, $result["a"]);
+    $id = dbInsert("INSERT INTO TbLaserResults(distance,user,laserName,athlete)VALUES(?,?,?,?);", "iiss", $result["d"], $user, $lasername, $result["a"]);
     foreach ($result["l"] as $lap) {
         dbInsert("INSERT INTO TbLaserLap(triggerer,millis,laserResult)VALUES(?,?,?);", "iii", $lap["t"], $lap["ms"], $id);
     }
