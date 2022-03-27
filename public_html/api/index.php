@@ -228,7 +228,7 @@ if(!isset($NO_GET_API)){
     else if(isset($_GET["uploadResults"])){
         dbExecute("INSERT INTO TbLaserResults(remark) VALUE(?);", "s", file_get_contents('php://input'));
         $data = json_decode(file_get_contents('php://input'), true);
-        if(!isset($_GET["lname"]) || !isset($data["a"]) || !isset($data["s"]) || !isset($data["l"]) || !isset($_GET["user"])) {
+        if(!isset($_GET["lname"]) || !isset($data["a"]) || !isset($data["d"]) || !isset($data["l"]) || !isset($_GET["user"])) {
             echo "invalid";
             exit(0);
         }
