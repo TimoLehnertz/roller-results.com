@@ -227,7 +227,7 @@ if(!isset($NO_GET_API)){
     }
     else if(isset($_GET["uploadResults"])){
         $data = json_decode(file_get_contents('php://input'), true);
-        if(!isset(data["a"]) || !isset(data["s"]) || !isset(data["l"]) || !isset($_GET["user"]), || !isset($_GET["lname"])) {
+        if(!isset($_GET["lname"]) || !isset(data["a"]) || !isset(data["s"]) || !isset(data["l"]) || !isset($_GET["user"])) {
             echo "invalid";
             exit(0);
         }
