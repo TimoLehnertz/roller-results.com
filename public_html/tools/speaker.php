@@ -141,7 +141,7 @@ $("#event").change(() => {
             for (const ageGroup of response.items) {
                 $("#ageGroup").append(`<option value="${ageGroup.id}">${ageGroup.name} ${ageGroup.gender}</option>`);
             }
-            
+
         } else {
             alert(getUrl + " did not respond correctly!");
         }
@@ -549,6 +549,7 @@ function display(athletes, noSort) {
             }
         })
         row.find(".details-td").append(detailToggle)
+        console.log(athlete);
         if(athlete.idAthlete) {
             requestedAthletes++;
             const profile = athleteToProfile(athlete, Profile.MIN);
