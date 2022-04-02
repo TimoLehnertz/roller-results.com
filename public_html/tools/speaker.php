@@ -141,6 +141,7 @@ $("#event").change(() => {
             for (const ageGroup of response.items) {
                 $("#ageGroup").append(`<option value="${ageGroup.id}">${ageGroup.name} ${ageGroup.gender}</option>`);
             }
+            
         } else {
             alert(getUrl + " did not respond correctly!");
         }
