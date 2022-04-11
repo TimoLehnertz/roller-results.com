@@ -134,6 +134,9 @@ function athleteDataToProfileData(athlete, useRank = false, alternativeRank = un
     if(athlete.firstname == undefined) {
         name = "";
     }
+    if(!athlete.id) {
+        athlete.id = athlete.idAthlete; 
+    }
     const data = {
         type: "athlete",
         maximizePage: `/athlete?id=${athlete.id}${searchParam}`,
