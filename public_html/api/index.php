@@ -308,6 +308,11 @@ if(!isset($NO_GET_API)){
         putAliases($aliases);
     } else if(isset($_GET["getathleteMedals"])) {
         echo json_encode(getAthleteMedals($_GET["getathleteMedals"]));
+    } else if(isset($_GET["getcompRaces"])) {
+        echo json_encode(getCompRaces($_GET["getcompRaces"]));
+    }
+    else if(isset($_GET["getraceAthletes"])) {
+        echo json_encode(getRaceAthletes($_GET["getraceAthletes"]));
     }
     /**
      * Expecting:
@@ -363,6 +368,14 @@ if(!isset($NO_GET_API)){
             addAnalytics($name, $public, $json);
         }
     }
+}
+
+function getRaceAthletes($idRace) {
+    return query("SELECT * FROM vAthlete JOIN TbResult as res ON res.idPerson = vAthlete.idAthlete WHERE res.idRace = ?;", "i", $idRace);
+}
+
+function getCompRaces($idComp) {
+    return query("SELECT * FROM TbRace WHERE idCompetition = ? ORDER BY distance, category, gender;", "i", $idComp);
 }
 
 function insertLaserResult($result, $user, $lasername) {

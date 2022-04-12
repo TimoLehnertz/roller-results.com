@@ -113,6 +113,7 @@ function get(property, data1, data2, data3){
             if(isJson(response) && response.length > 0/* && !response.includes("error")*/){
                 promise.callback(true, JSON.parse(response));
             } else{
+                console.log(response);
                 console.log("Response from get" + property + " wasn't JSON");
                 promise.callback(false, null);
             }
