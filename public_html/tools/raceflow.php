@@ -98,20 +98,24 @@ $comps = getAllCompetitions();
         let place = 1;
         for (const athlete of athletes) {
             let draggable = "true";
+            let placeholder = "";
             if(place == athletes.length) {
                 place = "";
                 draggable = "false";
+                placeholder = "placeholder";
             }
-            if(athlete.finishPos == undefined) {
+            if(athlete.finishPos == undefined && athlete.idAthlete != undefined) {
                 athlete.finishPos = place;
             }
             const athleteElem = $(`
-            <div class="race-athlete" idAthlete="${athlete.idAthlete ?? -1}" draggable="${draggable}">
+            <div class="race-athlete ${placeholder}" idAthlete="${athlete.idAthlete ?? -1}" draggable="${draggable}">
                 <div class="position">${place}</div>
-                <div class="place">${athlete.finishPos}</div>
+                <div class="place">${athlete.finishPos ?? ""}</div>
                 <div class="first-name">${athlete.firstname ?? ""}</div>
                 <div class="last-name">${athlete.lastname ?? ""}</div>
             </div>`);
+            if(place == athletes.length) return;
+
             athleteElem.on("dragstart", dragstart);
             athleteElem.on("dragover",  dragover);
             athleteElem.on("dragleave ",dragleave);
@@ -160,7 +164,7 @@ $comps = getAllCompetitions();
         $(receiver).removeClass("drop-before");
         $(e.target).addClass("dragged");
         $(e.target).removeClass("dragging");
-        $(".race-athlete").each(function(i) {$(this).find(".position").text(i + 1)});
+        $(".race-athlete").not(".placeholder").each(function(i) {$(this).find(".position").text(i + 1)});
         setTimeout(function() {
             e.target.style.height = "2rem";
         }, 1);
