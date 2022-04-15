@@ -5,8 +5,8 @@ include_once "../api/index.php";
 include_once "../header.php";
 $comps = getAllCompetitions();
 ?>
-<main class="main">
-    <h1 class="align center margin top double">Race analytics</h1>
+<main class="main race-flow">
+    <h1 class="align center margin top double">Race flow</h1>
     <p>Choose race to analyze</p>
 
     <label for="compSelect">Competition:</label>
@@ -19,9 +19,19 @@ $comps = getAllCompetitions();
     </select>
     <label for="raceSelect">Race:</label>
     <select id="raceSelect"></select>
-    <table id="athleteTable"></table>
+    <label for="laps">Laps</label>
+    <input type="number" min="1" value="5" id="laps" onchange="changeLaps()">
+    <div class="time"></div>
+    <button class="btn blender alone" onclick="saveState()">Save race state</button>
+    <div id="athletes"></div>
 </main>
 <script>
+
+    const timeline = new Timeline();
+    timeline.onchange = handleTimelineChange;
+
+    $(".time").append(timeline.elem);
+
     let races = [];
     $("#compSelect").change(() => {
         $('#raceSelect').prop("disabled", true);
@@ -57,19 +67,18 @@ $comps = getAllCompetitions();
     });
 
     function initRace(race) {
-        get("raceAthletes", race.id).receive((succsess, athletes) => {
+        get("raceAthletes", race.id).receive((succsess, res) => {
             if(!succsess) {
                 alert("server error");
                 return;
             }
-            $("#athleteTable").empty();
-            $("#athleteTable").append("<tr><td>Current</td><td>Finish</td><td>First name</td><td>Last name</td><td>Country</td></tr>");
-            console.log(athletes);
-            let place = 1;
-            for (const athlete of athletes) {
-                $("#athleteTable").append(`<tr draggable="true" ondragstart="start()"  ondragover="dragover()"><td>${place}</td><td>${place}</td><td>${athlete.firstname}</td><td>${athlete.lastname}</td><td>${athlete.country}</td></tr>`);
-                place++;
-            }
+            athletes = res;
+            athletes.push({}); // placeholder at the end for dragging to last pos
+            timeline.removeAllKeyframes();
+            timeline.frame = timeline.lastFrame;
+            timeline.addKeyframe(athletes);
+            timeline.frame = timeline.startFrame;
+            updateAthletes();
         });
     }
     $(() => {
@@ -79,38 +88,105 @@ $comps = getAllCompetitions();
         }, 500);
     });
 
+    let athletes = [];
+
+    /**
+     * @param athletes: []
+     */
+    function updateAthletes() {
+        $("#athletes").empty();
+        let place = 1;
+        for (const athlete of athletes) {
+            let draggable = "true";
+            if(place == athletes.length) {
+                place = "";
+                draggable = "false";
+            }
+            if(athlete.finishPos == undefined) {
+                athlete.finishPos = place;
+            }
+            const athleteElem = $(`
+            <div class="race-athlete" idAthlete="${athlete.idAthlete ?? -1}" draggable="${draggable}">
+                <div class="position">${place}</div>
+                <div class="place">${athlete.finishPos}</div>
+                <div class="first-name">${athlete.firstname ?? ""}</div>
+                <div class="last-name">${athlete.lastname ?? ""}</div>
+            </div>`);
+            athleteElem.on("dragstart", dragstart);
+            athleteElem.on("dragover",  dragover);
+            athleteElem.on("dragleave ",dragleave);
+            athleteElem.on("dragend ",  dragend);
+            athleteElem.find(".first-name").before(getCountryFlagSimple(athlete.country, "2rem", "2rem", true));
+            $("#athletes").append(athleteElem);
+            place++;
+        }
+    }
+
+    function handleTimelineChange(value) {
+        athletes = value;
+        updateAthletes();
+    }
+
+    function saveState() {
+        timeline.addKeyframe(athletes);
+    }
+
     /**
      * Drag'n drop
      */
-    let row;
-    function start(){  
-        row = event.target; 
+    let receiver;
+    function dragstart(e) {
+        $(e.target).removeClass("dragged");
+        $(e.target).addClass("dragging");
+        setTimeout(function() {
+            e.target.style.height = "0";
+        }, 1);
     }
-    function dragover(){
-        let e = event;
-        e.preventDefault(); 
-        
-        let children= Array.from(e.target.parentNode.parentNode.children);
-        
-        if(children.indexOf(e.target.parentNode)>children.indexOf(row))
-            e.target.parentNode.after(row);
-        else
-            e.target.parentNode.before(row);
+
+    function dragleave(e) {
+        e.preventDefault();
+        $(this).removeClass("drop-before");
+    }
+
+    function dragover(e){
+        receiver = this;
+        $(this).addClass("drop-before");
+    }
+
+    function dragend(e) {
+        if(receiver == e.target) return;
+        $(e.target).detach();
+        $(receiver).before($(e.target));
+        $(receiver).removeClass("drop-before");
+        $(e.target).addClass("dragged");
+        $(e.target).removeClass("dragging");
+        $(".race-athlete").each(function(i) {$(this).find(".position").text(i + 1)});
+        setTimeout(function() {
+            e.target.style.height = "2rem";
+        }, 1);
+        resortAthletes();
+    }
+
+    function resortAthletes() {
+        const newAthletes = [];
+        $(".race-athlete").each(function(i) {
+            const idAthlete = $(this).attr("idAthlete");
+            if(idAthlete < 0) return;
+            for (const athlete of athletes) {
+                if(athlete.idAthlete == idAthlete) {
+                    newAthletes.push(athlete);
+                    break;
+                }
+            }
+        });
+        athletes = newAthletes;
+    }
+
+    function changeLaps() {
+        timeline.lastFrame = parseFloat($("#laps").val());
+        timeline.draw();
     }
 </script>
-<style>
-    table {
-        border-collapse: collapse;
-        -webkit-user-select: none; /* Safari */
-        -ms-user-select: none; /* IE 10+ and Edge */
-        user-select: none; /* Standard syntax */
-    }
-    td,tr,th {
-        border:1px solid black;
-        border-collapse: collapse;
-        cursor:all-scroll;
-    }
-</style>
 <?php
     include_once "../footer.php";
 ?>

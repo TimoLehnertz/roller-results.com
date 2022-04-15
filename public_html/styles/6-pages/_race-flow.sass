@@ -1,0 +1,65 @@
+.race-flow
+    .race-athlete
+        transition: height 0.1s
+        position: relative
+        height: 2rem
+        overflow: hidden
+        display: flex
+        justify-content: start
+        align-items: center
+        font-size: 1.1rem
+        background-color: #222222
+
+        *
+            line-height: 2rem
+            pointer-events: none
+
+        &:not(.dragging):nth-child(odd)
+            background-color: #111
+
+        .position, .place
+            width: 2rem
+
+        img
+            height: 1.5rem
+            width: 2.5rem
+
+        .first-name
+            margin-right: 0.5rem
+            font-size: 1.2rem
+            color: white
+
+        .last-name
+            color: #CCC;
+
+        &.drop-before
+            height: 2rem
+            overflow: visible
+
+            // *
+            //     margin-bottom: 2rem
+        
+        &.drop-before::before
+            content: ""
+            top: -0.1rem
+            left: 0.0rem
+            height: 0.2rem
+            width: 100%
+            position: absolute
+            background: #3294c2
+            box-shadow: 0px 0px 7px 3px rgba(50,148,194,0.6)
+            z-index: 100
+
+        &.dragged
+            animation: dragged 1s
+
+    @keyframes dragged
+        0%
+            background: inherit
+            box-shadow: 0px 0px 7px 3px rgba(50,148,194,0.0)
+        10%
+            background: #3294c2
+            box-shadow: 0px 0px 7px 3px rgba(50,148,194,0.6)
+        100%
+            background: inherit
+            box-shadow: 0px 0px 7px 3px rgba(50,148,194,0.0)
