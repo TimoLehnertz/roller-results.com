@@ -10,7 +10,13 @@
         font-size: 1.1rem
         background-color: #222222
 
-        *
+        &.unused
+            *
+                color: #555 !important
+            img
+                filter: brightness(30%)
+
+        *:not(.use)
             line-height: 2rem
             pointer-events: none
 
@@ -19,6 +25,9 @@
 
         .position, .place
             width: 2rem
+
+        .use
+            margin-right: 1rem
 
         img
             height: 1.5rem

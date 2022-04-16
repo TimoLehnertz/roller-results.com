@@ -2867,7 +2867,7 @@ class Keyframe {
 }
 
 class Timeline {
-    constructor(start = 0, end = 5, subframes = 9, fps = 0.3) {
+    constructor(start = 0, end = 5, subframes = 19, fps = 0.3) {
         this.startFrame = start;
         this.lastFrame = end;
         this.paddingTop = 18;

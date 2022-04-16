@@ -23,6 +23,8 @@ $comps = getAllCompetitions();
     <input type="number" min="1" value="5" id="laps" onchange="changeLaps()">
     <div class="time"></div>
     <button class="btn blender alone" onclick="saveState()">Save race state</button>
+    <button class="btn blender alone" onclick="uncheckAll()">Uncheck all</button>
+    <button class="btn blender alone" onclick="checkAll()">Check all</button>
     <div id="athletes"></div>
 </main>
 <script>
@@ -73,6 +75,9 @@ $comps = getAllCompetitions();
                 return;
             }
             athletes = res;
+            for (const athlete of athletes) {
+                athlete.use = true;
+            }
             athletes.push({}); // placeholder at the end for dragging to last pos
             timeline.removeAllKeyframes();
             timeline.frame = timeline.lastFrame;
@@ -109,12 +114,21 @@ $comps = getAllCompetitions();
             }
             const athleteElem = $(`
             <div class="race-athlete ${placeholder}" idAthlete="${athlete.idAthlete ?? -1}" draggable="${draggable}">
+                <input class="use" type="checkbox" ${athlete.use ? "checked" : ""}>
                 <div class="position">${place}</div>
                 <div class="place">${athlete.finishPos ?? ""}</div>
                 <div class="first-name">${athlete.firstname ?? ""}</div>
                 <div class="last-name">${athlete.lastname ?? ""}</div>
             </div>`);
             if(place == athletes.length) return;
+            const checkbox = athleteElem.find("input").change(function() {
+                athlete.use = checkbox.is(':checked');
+                if(athlete.use) {
+                    athleteElem.removeClass("unused");
+                } else {
+                    athleteElem.addClass("unused");
+                }
+            });
 
             athleteElem.on("dragstart", dragstart);
             athleteElem.on("dragover",  dragover);
@@ -189,6 +203,22 @@ $comps = getAllCompetitions();
     function changeLaps() {
         timeline.lastFrame = parseFloat($("#laps").val());
         timeline.draw();
+    }
+
+    function checkAll(check) {
+        $(".race-athlete").removeClass("unused");
+        $(".race-athlete input").prop( "checked", true);
+        for (const athlete of athletes) {
+            athlete.used = true;
+        }
+    }
+
+    function uncheckAll() {
+        $(".race-athlete").addClass("unused");
+        $(".race-athlete input").prop( "checked", false);
+        for (const athlete of athletes) {
+            athlete.used = false;
+        }
     }
 </script>
 <?php
