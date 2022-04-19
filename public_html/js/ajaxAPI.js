@@ -62,6 +62,7 @@ function post(mode, data) {
             if(isJson(response) && response.length > 0/* && !response.includes("error")*/){
                 promise.callback(true, JSON.parse(response));
             } else{
+                console.log(response);
                 console.log("Response from " + mode + " wasn't JSON");
                 promise.callback(true, response);
             }

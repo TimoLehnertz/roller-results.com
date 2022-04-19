@@ -16,7 +16,7 @@
             img
                 filter: brightness(30%)
 
-        *:not(.use)
+        *:not(.use):not(.inside-outside)
             line-height: 2rem
             pointer-events: none
 
@@ -28,10 +28,12 @@
 
         .use
             margin-right: 1rem
+            margin-left: 1rem
 
         img
             height: 1.5rem
             width: 2.5rem
+            margin-right: 1rem
 
         .first-name
             margin-right: 0.5rem
@@ -44,6 +46,9 @@
         &.drop-before
             height: 2rem
             overflow: visible
+
+        .inside-outside
+            margin-right: 1rem
 
             // *
             //     margin-bottom: 2rem

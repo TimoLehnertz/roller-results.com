@@ -2867,7 +2867,7 @@ class Keyframe {
 }
 
 class Timeline {
-    constructor(start = 0, end = 5, subframes = 19, fps = 0.3) {
+    constructor(start = 0, end = 2.5, subframes = 19, fps = 0.3) {
         this.startFrame = start;
         this.lastFrame = end;
         this.paddingTop = 18;
@@ -2974,10 +2974,12 @@ class Timeline {
 
     checkOnchange() {
         const activeKeyframe = this.getKeyframeBeforeFrame(this.playhead);
-        if(this.activeKeyframe != activeKeyframe && activeKeyframe != undefined) {
-            this.onchange(activeKeyframe.value);
-            this.activeKeyframe = activeKeyframe;
-        }
+        // if(this.activeKeyframe != activeKeyframe && activeKeyframe != undefined) {
+            if(activeKeyframe != undefined) {
+                this.onchange(activeKeyframe.value, this.activeKeyframe != activeKeyframe);
+                this.activeKeyframe = activeKeyframe;
+            }
+        // }
     }
 
     play() {
@@ -3025,7 +3027,7 @@ class Timeline {
         if(this.mousedown == undefined) return;
         if(this.dragType == "move") {
             this.pos.x = this.dragStartX + (this.mouse.x - this.mousedown.x) / (this.scale.x * this.canvas.width / this.size)
-        } 
+        }
         if(this.dragType == "frame") {
             this.playhead = this.frameFromX(this.mouse.x);
             this.playhead = Math.round(this.playhead * (this.subframes + 1)) / (this.subframes + 1);
@@ -3078,6 +3080,14 @@ class Timeline {
 
     get size() {
         return Math.max(this.startFrame, this.lastFrame) - Math.min(this.startFrame, this.lastFrame);
+    }
+
+    get keyValues() {
+        const values = [];
+        for (const k of this.keyframes) {
+            values.push(k.value);
+        }
+        return values;
     }
 
     /**

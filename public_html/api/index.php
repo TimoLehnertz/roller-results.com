@@ -310,9 +310,16 @@ if(!isset($NO_GET_API)){
         echo json_encode(getAthleteMedals($_GET["getathleteMedals"]));
     } else if(isset($_GET["getcompRaces"])) {
         echo json_encode(getCompRaces($_GET["getcompRaces"]));
+    } else if(isset($_GET["getcompRacesFlow"])) {
+        echo json_encode(getCompRacesFlow($_GET["getcompRacesFlow"]));
     }
     else if(isset($_GET["getraceAthletes"])) {
         echo json_encode(getRaceAthletes($_GET["getraceAthletes"]));
+    } else if(isset($_GET["overtakes"])) {
+        $overtakes = json_decode(file_get_contents('php://input'), true);
+        saveOvertakes($overtakes);
+    } else if(isset($_GET["getovertakes"])) {
+        echo json_encode(getOvertakes($_GET["getovertakes"]));
     }
     /**
      * Expecting:
@@ -370,12 +377,83 @@ if(!isset($NO_GET_API)){
     }
 }
 
+/**
+ * @param table: tableName
+ * @param colNames: array of column names
+ * @param insertTypes: string of insert types ("iiisii")
+ * @param rows: php array of rows (key inside row must be present in colNames)
+ */
+function arrayInsert($tableName, $colNames, $insertTypes, $rows) {
+    $sql = "INSERT INTO $tableName(";
+    $delim = "";
+    $types = "";
+    $vals = [];
+    foreach ($colNames as $col) {
+        $sql .= $delim."`".$col."`";
+        $delim = ",";
+    }
+    $sql.=")VALUES";
+    $delim = "";
+    $questions = "";
+    foreach ($colNames as $something) {
+        $questions .= $delim."?";
+        $delim = ",";
+    }
+    $delim = "";
+    foreach ($rows as $row) {
+        $sql.="$delim($questions)";
+        $types .= $insertTypes;
+        $delim = ",";
+        foreach ($colNames as $colName) {
+            $vals[] = $row[$colName];
+        }
+    }
+    $sql.=";";
+    dbInsert($sql, $types, ...$vals);
+}
+
+function getOvertakes($idrace) {
+    return query("SELECT * FROM TbPass WHERE race=? ORDER BY lap ASC, toPlace ASC;", "i", $idrace);
+}
+
+function saveOvertakes($overtakes) {
+    if(!isLoggedIn()) {
+        return;
+    }
+    if(!is_array($overtakes)) {
+        echo "Error: overtakes need to be an array";
+        return;
+    }
+    if(sizeof($overtakes) == 0) {
+        echo "Error: overtakes need to be filled";
+        return;
+    }
+    $idrace = $overtakes[0]["race"];
+    foreach ($overtakes as &$o) {
+        if(!isset($o["athlete"]) || !isset($o["race"]) || !isset($o["fromPlace"]) || !isset($o["toPlace"]) || !isset($o["lap"]) || !isset($o["insideOut"])) {
+            echo "Error";
+            return;
+        }
+        if($idrace != $o["race"]) {
+            echo "Error: invalid idRace";
+            return;
+        }
+       $o["creator"] = $_SESSION["iduser"];
+    }
+    dbExecute("DELETE FROM TbPass WHERE race=?;", "i", $idrace);
+    arrayInsert("TbPass", ["athlete", "race", "fromPlace", "toPlace", "lap", "insideOut", "creator"], "iiiidsi", $overtakes);
+}
+
 function getRaceAthletes($idRace) {
     return query("SELECT * FROM vAthlete JOIN TbResult as res ON res.idPerson = vAthlete.idAthlete WHERE res.idRace = ?;", "i", $idRace);
 }
 
 function getCompRaces($idComp) {
     return query("SELECT * FROM TbRace WHERE idCompetition = ? ORDER BY distance, category, gender;", "i", $idComp);
+}
+
+function getCompRacesFlow($idComp) {
+    return query("SELECT TbRace.*, count(pass.idPass) > 0 as `raceFlow` FROM TbRace LEFT JOIN TbPass as pass ON pass.race = TbRace.id WHERE idCompetition = ? GROUP BY TbRace.id ORDER BY distance, category, gender;", "i", $idComp);
 }
 
 function insertLaserResult($result, $user, $lasername) {

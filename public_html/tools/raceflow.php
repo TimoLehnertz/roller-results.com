@@ -23,16 +23,28 @@ $comps = getAllCompetitions();
     <input type="number" min="1" value="5" id="laps" onchange="changeLaps()">
     <div class="time"></div>
     <button class="btn blender alone" onclick="saveState()">Save race state</button>
-    <button class="btn blender alone" onclick="uncheckAll()">Uncheck all</button>
-    <button class="btn blender alone" onclick="checkAll()">Check all</button>
+    <button class="btn blender left" onclick="uncheckAll()">Uncheck all</button>
+    <button class="btn blender right" onclick="checkAll()">Check all</button>
+    <button class="btn blender alone" onclick="save()">Save to cloud</button>
     <div id="athletes"></div>
 </main>
 <script>
 
     const timeline = new Timeline();
     timeline.onchange = handleTimelineChange;
-
+    let currentRace;
+    let frameEdited = false;
+    let athletes = [];
+    
     $(".time").append(timeline.elem);
+
+    $(() => {
+        $("#compSelect").val(1).trigger("change");
+        setTimeout(() => {
+            $("#raceSelect").val(races[32].id).trigger("change");
+        }, 500);
+    });
+
 
     let races = [];
     $("#compSelect").change(() => {
@@ -41,7 +53,7 @@ $comps = getAllCompetitions();
         if(idComp === "-1") return;
         $('#raceSelect').empty();
         $('#raceSelect').append(`<option>Loading...</option>`);
-        get("compRaces", idComp).receive((succsess, resRaces) => {
+        get("compRacesFlow", idComp).receive((succsess, resRaces) => {
             if(!succsess) {
                 alert("Server error :(");
                 return;
@@ -51,7 +63,7 @@ $comps = getAllCompetitions();
             $('#raceSelect').prop("disabled", false);
             $("#raceSelect").append(`<option value="-1">Select</option>`);
             for (const race of races) {
-                $("#raceSelect").append(`<option value="${race.id}">${race.distance} ${race.category} ${race.gender}</option>`);
+                $("#raceSelect").append(`<option style="color: white; background-color: ${race.raceFlow == "1" ? "#014201" : "#1c1312"}" value="${race.id}">${race.distance} ${race.category} ${race.gender}</option>`);
             }
         });
     });
@@ -69,6 +81,9 @@ $comps = getAllCompetitions();
     });
 
     function initRace(race) {
+        $(".race-link").remove();
+        $(".time").before(`<a target="blank" class="race-link" href="/race/index.php?id=${race.id}">Race link</a>`);
+        currentRace = race;
         get("raceAthletes", race.id).receive((succsess, res) => {
             if(!succsess) {
                 alert("server error");
@@ -78,75 +93,180 @@ $comps = getAllCompetitions();
             for (const athlete of athletes) {
                 athlete.use = true;
             }
-            athletes.push({}); // placeholder at the end for dragging to last pos
+            console.log("fetched athletes:");
+            console.log(athletes);
+            // athletes.push({}); // placeholder at the end for dragging to last pos
             timeline.removeAllKeyframes();
             timeline.frame = timeline.lastFrame;
-            timeline.addKeyframe(athletes);
+            saveState();
             timeline.frame = timeline.startFrame;
-            updateAthletes();
+            updatePositions(getPositionsFromAthletes(athletes));
+
+            if(race.raceFlow == "1") {
+                get("overtakes", race.id).receive((succsess, overtakes) => {
+                    if(!succsess || currentRace != race) { // if another race gets fetched before completion or another error
+                        alert("error while fetching overtakes");
+                        return;
+                    }
+                    initOvertakes(overtakes);
+                });
+            }
         });
     }
-    $(() => {
-        $("#compSelect").val(1).trigger("change");
-        setTimeout(() => {
-            $("#raceSelect").val(races[1].id).trigger("change");
-        }, 500);
-    });
 
-    let athletes = [];
+    function getAthleteById(idAthlete) {
+        for (const athlete of athletes) {
+            if(athlete.idAthlete == idAthlete) {
+                return athlete;
+            }
+        }
+    }
+
+    function initOvertakes(overtakes) {
+        timeline.removeAllKeyframes();
+        let newAthletes = [];
+        for (const athlete of athletes) {
+            athlete.use = false; // gets set to true when actually used
+        }
+        let lap = overtakes[0].lap;
+        for (let i = 0; i <= overtakes.length; i++) {
+            const overtake = overtakes[i];
+            if(lap != overtake?.lap || i == overtakes.length) {
+                console.log("lap != overtake.lap. newAthletes:");
+                // Filling gaps
+                for (let n = 0; n < athletes.length; n++) {
+                    if(newAthletes[n] == undefined) {
+                        for (const athlete of athletes) {
+                            if(!newAthletes.includes(athlete)) {
+                                console.log("found");
+                                console.log(athlete);
+                                newAthletes[n] = athlete;
+                                break;
+                            }
+                        }
+                    }
+                    
+                }
+                console.log(newAthletes);
+                athletes = newAthletes;
+                newAthletes = [];
+                timeline.frame = lap;
+                const positions = getPositionsFromAthletes(athletes);
+                timeline.addKeyframe(positions);
+                lap = overtake?.lap;
+                if(i == overtakes.length) {
+                    break;
+                } else {
+                    for (const athlete of athletes) {
+                        athlete.use = false;
+                    }
+                }
+            }
+            const athlete = getAthleteById(overtake.athlete);
+            athlete.insideOut = overtake.insideOut;
+            athlete.use = true;
+            newAthletes[overtake.toPlace - 1] = athlete;
+            // athletes.splice(athletes.indexOf(athlete), 1);
+            // athletes.splice(overtake.toPlace - 1, 0, athlete);
+            // console.log(newAthletes);
+        }
+        // trigger update
+        frameEdited = true;
+        timeline.frame = 10000;
+        timeline.frame = 0;
+        console.log(athletes);
+    }
 
     /**
-     * @param athletes: []
+     * @param positions: [{
+     *  athlete: <athlete>
+     *  insideOut: <string>
+     * }]
      */
-    function updateAthletes() {
+    function updatePositions(positions) {
+        console.log("update");
+        console.log(positions);
         $("#athletes").empty();
         let place = 1;
-        for (const athlete of athletes) {
-            let draggable = "true";
-            let placeholder = "";
-            if(place == athletes.length) {
-                place = "";
-                draggable = "false";
-                placeholder = "placeholder";
-            }
+        for (const position of positions) {
+            const athlete = position.athlete;
             if(athlete.finishPos == undefined && athlete.idAthlete != undefined) {
                 athlete.finishPos = place;
             }
+            const use = position.use || position.use == undefined;
             const athleteElem = $(`
-            <div class="race-athlete ${placeholder}" idAthlete="${athlete.idAthlete ?? -1}" draggable="${draggable}">
-                <input class="use" type="checkbox" ${athlete.use ? "checked" : ""}>
+            <div class="race-athlete" idAthlete="${athlete.idAthlete ?? -1}" draggable="true">
+                <input class="use" type="checkbox" ${use ? "checked" : ""}>
                 <div class="position">${place}</div>
                 <div class="place">${athlete.finishPos ?? ""}</div>
+                <select class="inside-outside">
+                    <option value="-1">-</option>
+                    <option value="inside">Inside</option>
+                    <option value="ouside">Outside</option>
+                </select>
                 <div class="first-name">${athlete.firstname ?? ""}</div>
                 <div class="last-name">${athlete.lastname ?? ""}</div>
             </div>`);
-            if(place == athletes.length) return;
+            if(!use) {
+                athleteElem.addClass("unused");
+            }
+            const insideOut = athleteElem.find(".inside-outside");
+            if(position.insideOut != undefined) {
+                insideOut.val(position.insideOut);
+            }
             const checkbox = athleteElem.find("input").change(function() {
                 athlete.use = checkbox.is(':checked');
+                position.use = athlete.use;
                 if(athlete.use) {
                     athleteElem.removeClass("unused");
                 } else {
                     athleteElem.addClass("unused");
                 }
+                frameEdited = true;
+            });
+            insideOut.change(() => {
+                frameEdited = true;
+                athlete.insideOut = insideOut.val();
             });
 
             athleteElem.on("dragstart", dragstart);
             athleteElem.on("dragover",  dragover);
-            athleteElem.on("dragleave ",dragleave);
-            athleteElem.on("dragend ",  dragend);
+            athleteElem.on("dragleave", dragleave);
+            athleteElem.on("dragend",   dragend);
             athleteElem.find(".first-name").before(getCountryFlagSimple(athlete.country, "2rem", "2rem", true));
             $("#athletes").append(athleteElem);
             place++;
         }
+        const placeholer = $(`<div class="race-athlete placeholder"></div>`);
+        placeholer.on("dragover",  dragover);
+        placeholer.on("dragleave", dragleave);
+        $("#athletes").append(placeholer);
     }
 
-    function handleTimelineChange(value) {
-        athletes = value;
-        updateAthletes();
+    function handleTimelineChange(value, changed) {
+        if(changed || frameEdited) {
+            console.log("timeline changed. value:");
+            console.log(value);
+            positions = value;
+            frameEdited = false;
+            updatePositions(value);
+        }
     }
+
+    function getPositionsFromAthletes(athletes) {
+        positions = [];
+        for (const athlete of athletes) {
+            positions.push({
+                athlete,
+                use: athlete.use,
+                insideOut: athlete.insideOut ?? "-"
+            });
+        }
+        return positions;
+    };
 
     function saveState() {
-        timeline.addKeyframe(athletes);
+        timeline.addKeyframe(getPositionsFromAthletes(athletes));
     }
 
     /**
@@ -183,11 +303,14 @@ $comps = getAllCompetitions();
             e.target.style.height = "2rem";
         }, 1);
         resortAthletes();
+        frameEdited = true;
     }
 
     function resortAthletes() {
+        console.log("resorting");
+        console.log(athletes);
         const newAthletes = [];
-        $(".race-athlete").each(function(i) {
+        $(".race-athlete").not(".placeholder").each(function(i) {
             const idAthlete = $(this).attr("idAthlete");
             if(idAthlete < 0) return;
             for (const athlete of athletes) {
@@ -198,6 +321,7 @@ $comps = getAllCompetitions();
             }
         });
         athletes = newAthletes;
+        console.log(athletes);
     }
 
     function changeLaps() {
@@ -207,18 +331,51 @@ $comps = getAllCompetitions();
 
     function checkAll(check) {
         $(".race-athlete").removeClass("unused");
-        $(".race-athlete input").prop( "checked", true);
-        for (const athlete of athletes) {
-            athlete.used = true;
-        }
+        $(".race-athlete input").prop( "checked", true).trigger("change");
+        // for (const athlete of athletes) {
+        //     athlete.use = true;
+        // }
     }
 
     function uncheckAll() {
         $(".race-athlete").addClass("unused");
-        $(".race-athlete input").prop( "checked", false);
+        $(".race-athlete input").prop( "checked", false).trigger("change");
+        // for (const athlete of athletes) {
+        //     athlete.used = false;
+        // }
+    }
+
+    function save() {
+        const overtakes = [];
+        const athleteStates = {};
+        console.log(athletes);
         for (const athlete of athletes) {
-            athlete.used = false;
+            athleteStates[athlete.idAthlete] = {prevPlace: 0};
         }
+        for (const keyframe of timeline.keyframes) {
+            let place = 1;
+            for (const position of keyframe.value) {
+                if(!position.use) continue;
+                const athlete = position.athlete;
+                // console.log(position);
+                // console.log(athleteStates);
+                if(athlete.idAthlete == undefined) continue;
+                if(athleteStates[athlete.idAthlete].prevPlace == place) continue;
+                
+                overtakes.push({
+                    athlete: athlete.idAthlete,
+                    race: currentRace.id,
+                    fromPlace: athleteStates[athlete.idAthlete].prevPlace,
+                    toPlace: place,
+                    lap: keyframe.frame,
+                    insideOut: position.insideOut ?? "-"
+                });
+                place++;
+            }
+        }
+        console.log("saving:");
+        console.log(overtakes);
+        post("overtakes", overtakes);
     }
 </script>
 <?php
