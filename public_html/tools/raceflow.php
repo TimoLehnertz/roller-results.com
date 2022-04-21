@@ -7,25 +7,28 @@ $comps = getAllCompetitions();
 ?>
 <main class="main race-flow">
     <h1 class="align center margin top double">Race flow</h1>
-    <p>Choose race to analyze</p>
-
-    <label for="compSelect">Competition:</label>
-    <select id="compSelect">
-        <option value="-1">Select</option>
-        <?php
-        foreach ($comps as $comp) {
-            echo "<option value='".$comp["idCompetition"]."'>".date('Y', strtotime($comp["startDate"]))." ".$comp["type"]." ".$comp["location"]."</option>";
-        }?>
-    </select>
-    <label for="raceSelect">Race:</label>
-    <select id="raceSelect"></select>
-    <label for="laps">Laps</label>
-    <input type="number" min="1" value="5" id="laps" onchange="changeLaps()">
+    <div class="speaker">
+        <form class="form">
+            <!-- <p>Choose race to analyze</p> -->
+            <!-- <label for="compSelect">Competition:</label> -->
+            <select id="compSelect">
+                <option value="-1">Select</option>
+                <?php
+                foreach ($comps as $comp) {
+                    echo "<option value='".$comp["idCompetition"]."'>".date('Y', strtotime($comp["startDate"]))." ".$comp["type"]." ".$comp["location"]."</option>";
+                }?>
+            </select>
+            <!-- <label for="raceSelect">Race:</label> -->
+            <select id="raceSelect"></select>
+            <label for="laps">Laps</label>
+            <input type="number" min="1" value="5" id="laps" onchange="changeLaps()">
+        </form>
+    </div>
     <div class="time"></div>
-    <button class="btn blender alone" onclick="saveState()">Save race state</button>
-    <button class="btn blender left" onclick="uncheckAll()">Uncheck all</button>
+    <button class="btn blender left margin left" onclick="uncheckAll()">Uncheck all</button>
     <button class="btn blender right" onclick="checkAll()">Check all</button>
-    <button class="btn blender alone" onclick="save()">Save to cloud</button>
+    <button class="btn blender alone margin left triple" onclick="saveState()">Save race state</button>
+    <button class="btn blender alone save" onclick="save()">Save race to cloud</button>
     <div id="athletes"></div>
 </main>
 <script>
@@ -82,7 +85,7 @@ $comps = getAllCompetitions();
 
     function initRace(race) {
         $(".race-link").remove();
-        $(".time").before(`<a target="blank" class="race-link" href="/race/index.php?id=${race.id}">Race link</a>`);
+        $(".form").append(`<a target="blank" class="race-link" href="/race/index.php?id=${race.id}">Race link</a>`);
         currentRace = race;
         get("raceAthletes", race.id).receive((succsess, res) => {
             if(!succsess) {
@@ -93,9 +96,6 @@ $comps = getAllCompetitions();
             for (const athlete of athletes) {
                 athlete.use = true;
             }
-            console.log("fetched athletes:");
-            console.log(athletes);
-            // athletes.push({}); // placeholder at the end for dragging to last pos
             timeline.removeAllKeyframes();
             timeline.frame = timeline.lastFrame;
             saveState();
@@ -132,14 +132,11 @@ $comps = getAllCompetitions();
         for (let i = 0; i <= overtakes.length; i++) {
             const overtake = overtakes[i];
             if(lap != overtake?.lap || i == overtakes.length) {
-                console.log("lap != overtake.lap. newAthletes:");
                 // Filling gaps
                 for (let n = 0; n < athletes.length; n++) {
                     if(newAthletes[n] == undefined) {
                         for (const athlete of athletes) {
                             if(!newAthletes.includes(athlete)) {
-                                console.log("found");
-                                console.log(athlete);
                                 newAthletes[n] = athlete;
                                 break;
                             }
@@ -147,7 +144,6 @@ $comps = getAllCompetitions();
                     }
                     
                 }
-                console.log(newAthletes);
                 athletes = newAthletes;
                 newAthletes = [];
                 timeline.frame = lap;
@@ -166,15 +162,11 @@ $comps = getAllCompetitions();
             athlete.insideOut = overtake.insideOut;
             athlete.use = true;
             newAthletes[overtake.toPlace - 1] = athlete;
-            // athletes.splice(athletes.indexOf(athlete), 1);
-            // athletes.splice(overtake.toPlace - 1, 0, athlete);
-            // console.log(newAthletes);
         }
         // trigger update
         frameEdited = true;
         timeline.frame = 10000;
         timeline.frame = 0;
-        console.log(athletes);
     }
 
     /**
@@ -184,8 +176,6 @@ $comps = getAllCompetitions();
      * }]
      */
     function updatePositions(positions) {
-        console.log("update");
-        console.log(positions);
         $("#athletes").empty();
         let place = 1;
         for (const position of positions) {
@@ -216,7 +206,6 @@ $comps = getAllCompetitions();
             }
             const checkbox = athleteElem.find("input").change(function() {
                 athlete.use = checkbox.is(':checked');
-                position.use = athlete.use;
                 if(athlete.use) {
                     athleteElem.removeClass("unused");
                 } else {
@@ -245,11 +234,10 @@ $comps = getAllCompetitions();
 
     function handleTimelineChange(value, changed) {
         if(changed || frameEdited) {
-            console.log("timeline changed. value:");
-            console.log(value);
             positions = value;
             frameEdited = false;
             updatePositions(value);
+            resortAthletes();
         }
     }
 
@@ -266,7 +254,8 @@ $comps = getAllCompetitions();
     };
 
     function saveState() {
-        timeline.addKeyframe(getPositionsFromAthletes(athletes));
+        const positions = getPositionsFromAthletes(athletes);
+        timeline.addKeyframe(positions);
     }
 
     /**
@@ -307,8 +296,6 @@ $comps = getAllCompetitions();
     }
 
     function resortAthletes() {
-        console.log("resorting");
-        console.log(athletes);
         const newAthletes = [];
         $(".race-athlete").not(".placeholder").each(function(i) {
             const idAthlete = $(this).attr("idAthlete");
@@ -321,7 +308,6 @@ $comps = getAllCompetitions();
             }
         });
         athletes = newAthletes;
-        console.log(athletes);
     }
 
     function changeLaps() {
@@ -346,36 +332,43 @@ $comps = getAllCompetitions();
     }
 
     function save() {
+        $(".save").html(`<div class="loading circle small"></div>`);
         const overtakes = [];
         const athleteStates = {};
-        console.log(athletes);
         for (const athlete of athletes) {
             athleteStates[athlete.idAthlete] = {prevPlace: 0};
         }
         for (const keyframe of timeline.keyframes) {
-            let place = 1;
+            let place = 0;
             for (const position of keyframe.value) {
+                place++;
                 if(!position.use) continue;
                 const athlete = position.athlete;
-                // console.log(position);
-                // console.log(athleteStates);
                 if(athlete.idAthlete == undefined) continue;
                 if(athleteStates[athlete.idAthlete].prevPlace == place) continue;
-                
+                console.log(athlete);
                 overtakes.push({
                     athlete: athlete.idAthlete,
                     race: currentRace.id,
                     fromPlace: athleteStates[athlete.idAthlete].prevPlace,
                     toPlace: place,
                     lap: keyframe.frame,
-                    insideOut: position.insideOut ?? "-"
+                    insideOut: position.insideOut ?? "-",
+                    finishPlace: athlete.finishPos
                 });
-                place++;
             }
         }
-        console.log("saving:");
-        console.log(overtakes);
-        post("overtakes", overtakes);
+        // return;
+        post("overtakes", overtakes).receive((succsess, res) => {
+            $(".save").html(`Save race to cloud`);
+            if(succsess) {
+                setTimeout(() => {
+                    alert("Saved");
+                }, 100);
+            } else {
+                alert("Error: " + res);
+            }
+        });
     }
 </script>
 <?php

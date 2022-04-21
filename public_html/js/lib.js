@@ -2551,6 +2551,15 @@ function getUid(){
     return "a" + (uidCounter - 1);
 }
 
+function getPlaceColor(place) {
+    switch(place) {
+        case 1: return "#c28b1d";
+        case 2: return "#757575";
+        case 3: return "#8a450f";
+        default: return getRandomColor();
+    }
+}
+
 function getRandomColor() {
     var letters = '0123456789ABCDEF';
     var color = '#';
@@ -2867,7 +2876,7 @@ class Keyframe {
 }
 
 class Timeline {
-    constructor(start = 0, end = 2.5, subframes = 19, fps = 0.3) {
+    constructor(start = 0, end = 5, subframes = 19, fps = 0.065) {
         this.startFrame = start;
         this.lastFrame = end;
         this.paddingTop = 18;

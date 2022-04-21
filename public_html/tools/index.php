@@ -7,7 +7,8 @@ include_once "../header.php";
 <main class="main">
     <h1 class="align center margin top double">Roller Tools</h1>
     <ul class="align center font size big margin top triple">
-        <li><a href="raceflow.php">Race flow</a></li>
+        <li><a href="raceflow.php">Edit race flow</a></li>
+        <li><a href="view-raceflow.php"> View race flow</a></li>
         <li><a href="import.php">Import script</a></li>
         <?php
             if(canI("speaker")){

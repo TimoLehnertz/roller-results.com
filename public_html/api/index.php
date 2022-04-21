@@ -165,22 +165,29 @@ if(!isset($NO_GET_API)){
         } else{
             echo "error in api";
         }
-    }else if(isset($_GET["getallAthletes"])){
+    } else if(isset($_GET["getallAthletes"])){
         $res = getAllAthletes($scoreInfluences);
         if($res !== false){
             echo json_encode($res);
         } else{
             echo "error in api";
         }
-    }else if(isset($_GET["getcountryCodes"])){
+    } else if(isset($_GET["getcountryCodes"])){
         $res = getCountryCodes();
         if($res !== false){
             echo json_encode($res);
         } else{
             echo "error in api";
         }
-    }else if(isset($_GET["getallCompetitions"])){
+    } else if(isset($_GET["getallCompetitions"])){
         $res = getAllCompetitions();
+        if($res !== false){
+            echo json_encode($res);
+        } else{
+            echo "error in api";
+        }
+    } else if(isset($_GET["getallDistances"])){
+        $res = getAllDistances();
         if($res !== false){
             echo json_encode($res);
         } else{
@@ -320,6 +327,8 @@ if(!isset($NO_GET_API)){
         saveOvertakes($overtakes);
     } else if(isset($_GET["getovertakes"])) {
         echo json_encode(getOvertakes($_GET["getovertakes"]));
+    } else if(isset($_GET["getovertakesByDistance"])) {
+        echo json_encode(getOvertakesByDistance($_GET["getovertakesByDistance"]));
     }
     /**
      * Expecting:
@@ -412,6 +421,10 @@ function arrayInsert($tableName, $colNames, $insertTypes, $rows) {
     dbInsert($sql, $types, ...$vals);
 }
 
+function getOvertakesByDistance($distance) {
+    return query("SELECT * FROM TbPass JOIN TbRace ON TbRace.id = TbPass.race JOIN TbCompetition ON TbCompetition.idCompetition = TbRace.idCompetition WHERE distance=? ORDER BY race, lap ASC;", "s", $distance);
+}
+
 function getOvertakes($idrace) {
     return query("SELECT * FROM TbPass WHERE race=? ORDER BY lap ASC, toPlace ASC;", "i", $idrace);
 }
@@ -430,7 +443,7 @@ function saveOvertakes($overtakes) {
     }
     $idrace = $overtakes[0]["race"];
     foreach ($overtakes as &$o) {
-        if(!isset($o["athlete"]) || !isset($o["race"]) || !isset($o["fromPlace"]) || !isset($o["toPlace"]) || !isset($o["lap"]) || !isset($o["insideOut"])) {
+        if(!isset($o["athlete"]) || !isset($o["race"]) || !isset($o["fromPlace"]) || !isset($o["toPlace"]) || !isset($o["lap"]) || !isset($o["insideOut"]) || !isset($o["finishPlace"])) {
             echo "Error";
             return;
         }
@@ -441,7 +454,7 @@ function saveOvertakes($overtakes) {
        $o["creator"] = $_SESSION["iduser"];
     }
     dbExecute("DELETE FROM TbPass WHERE race=?;", "i", $idrace);
-    arrayInsert("TbPass", ["athlete", "race", "fromPlace", "toPlace", "lap", "insideOut", "creator"], "iiiidsi", $overtakes);
+    arrayInsert("TbPass", ["athlete", "race", "fromPlace", "toPlace", "lap", "insideOut", "creator", "finishPlace"], "iiiidsii", $overtakes);
 }
 
 function getRaceAthletes($idRace) {
@@ -801,7 +814,23 @@ function setRaceLinks($races){
     // $sql = "UPDATE TbRace SET link";
 }
 
+function getAllRaceFlowDistances(){
+    $res = query("SELECT distance from TbRace JOIN TbPass ON TbPass.race = TbRace.id GROUP BY distance;");
+    $out = [];
+    foreach ($res as $row) {
+        $out[] = $row["distance"];
+    }
+    return $out;
+}
 
+function getAllDistances(){
+    $res = query("SELECT distance from TbRace GROUP BY distance;");
+    $out = [];
+    foreach ($res as $row) {
+        $out[] = $row["distance"];
+    }
+    return $out;
+}
 
 function getAllCompetitions(){
     $res = query("call results.sp_getCompetitionsNew();");
