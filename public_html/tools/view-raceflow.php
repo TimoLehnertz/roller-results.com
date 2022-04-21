@@ -35,7 +35,7 @@ $distances = getAllRaceFlowDistances();
         if(distance == "-1") return;
         console.log(distance);
         $(".graph").empty();
-        $(".graph").append(`<canvas class="career__canvas" width="1920" height="700"></canvas>`);
+        $(".graph").append(`<canvas class="career__canvas" width="1920" height="${isMobile() ? "3000" : "700"}"></canvas>`);
 
         get("overtakesByDistance", distance).receive((succsess, overtakes) => {
             if(!succsess) {
