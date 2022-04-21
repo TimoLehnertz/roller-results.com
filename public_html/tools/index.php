@@ -10,6 +10,7 @@ include_once "../header.php";
         <li><a href="raceflow.php">Edit race flow</a></li>
         <li><a href="view-raceflow.php"> View race flow</a></li>
         <li><a href="import.php">Import script</a></li>
+        <li><a href="list-alias.php">List alias</a></li>
         <?php
             if(canI("speaker")){
                 echo "<li><a href='speaker.php'>Speaker tools 💪</a></li>";

@@ -16,13 +16,24 @@ include_once "../header.php";
             </p>
         </div>
     <?php }?>
-        <p>
-            JSON: [{alias,firstName,lastName,[gender],[nation],[category],}]
-        </p>
-        <textarea id="athletes" cols="30" rows="10" class="input">
-            [{"id":"Y7691WVNknxjamM0s5Pp-10","bib":444,"lastName":"Biro","firstName":"Hanna","club":"Tornado Team","team":"Hungary","nation":"HUN","event":"1CBRQqdJC0Qulu5vfL6g","ageGroup":"Y7691WVNknxjamM0s5Pp-353"}]
-        </textarea>
-        <button onclick="updateSearch()">Update</button>
+        <div class="flex">
+            <div>
+                <p>
+                    JSON: [{alias,firstName,lastName,[gender],[nation],[category],}]
+                </p>
+                <textarea id="athletes" cols="30" rows="10" class="input">
+                    [{"id":"Y7691WVNknxjamM0s5Pp-10","bib":444,"lastName":"Biro","firstName":"Hanna","club":"Tornado Team","team":"Hungary","nation":"HUN","event":"1CBRQqdJC0Qulu5vfL6g","ageGroup":"Y7691WVNknxjamM0s5Pp-353"}]
+                </textarea>
+                <button onclick="updateSearch()">Update</button>
+            </div>
+            <div>
+                <p>
+                    CSV: firstname;lastname;firstname;lastname
+                </p>
+                <textarea id="csvAthletes" cols="30" rows="10" class="input">Felix;Rijhnen;Bart;Swings</textarea>
+                <button onclick="updateCsvSearch()">Update</button>
+            </div>
+        </div>
         <br>
         <br>
     </div>
@@ -102,11 +113,26 @@ $("#event").change(() => {
 
 let athletes = [];
 
+function updateCsvSearch() {
+    $(".error").empty();
+    const text = $("#csvAthletes").val();
+    const athletes = [];
+    const split = text.split(';');
+    for (let i = 0; i < split.length; i+=2) {
+        athletes.push({
+            firstName: split[i].trim(),
+            lastName: split[i+1]?.trim()
+        });
+    }
+    process(athletes);
+}
+
 function updateSearch() {
     $(".error").empty();
-    const text = $(".input").val();
+    const text = $("#athletes").val();
     if(IsJson(text)) {
         const json = JSON.parse(text);
+        console.log(json);
         process(json);
     } else {
         $(".error").append(`Invalid JSON`);
@@ -299,8 +325,8 @@ function apply(aliasGroup) {
     console.log(athletes);
     for (const athlete of athletes) {
         if(!athlete.search.alias && !athlete.search.id) {
-            alert("No alias given for " + athlete.search.firstName + " " + athlete.search.lastName);
-            return;
+            // alert("No alias given for " + athlete.search.firstName + " " + athlete.search.lastName);
+            // return;
         }
         aliases.aliases.push({
             idAthlete: athlete.linkId != "-1" ? athlete.linkId : null,

@@ -476,6 +476,10 @@ function insertLaserResult($result, $user, $lasername) {
     }
 }
 
+function getAliasAthletes($aliasGroup) {
+    return query("SELECT TbAthlete.* FROM TbAthlete JOIN TbAthleteAlias ON TbAthleteAlias.idAthlete = TbAthlete.id WHERE TbAthleteAlias.aliasGroup=?;", "s", $aliasGroup);
+}
+
 function getAliasGroups() {
     if(!isLoggedIn()) {
         return [];
@@ -537,6 +541,9 @@ function putAliases($aliases) {
     $fillers = [];
     $types = "";
     foreach($aliases["aliases"] as $alias) {
+        if(!isset($alias["alias"])) {
+            $alias["alias"] = 0;
+        }
         if(isset($alias["idAthlete"])) {
             $fillers[] = $alias["idAthlete"];
         } else {
@@ -557,6 +564,7 @@ function putAliases($aliases) {
 
 function searchAthletes($athletes) {
     if($athletes == NULL) return [];
+    // print_r($athletes);
     $res = [];
     foreach ($athletes as $athlete) {
         $firstName = "";
@@ -585,6 +593,7 @@ function searchAthletes($athletes) {
         }
         $result = [];
         $result["search"] = $athlete;
+        // echo $lastName;
         $result["result"] = query("CALL sp_searchAthlete(?,?,?,?);", "ssss", $firstName, $lastName, $gender, $country);
         $res[] = $result;
     }
