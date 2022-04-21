@@ -430,7 +430,7 @@ function getOvertakes($idrace) {
 }
 
 function saveOvertakes($overtakes) {
-    if(!isLoggedIn()) {
+    if(!canI("speaker")) {
         return;
     }
     if(!is_array($overtakes)) {
