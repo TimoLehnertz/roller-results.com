@@ -71,7 +71,7 @@ include_once "../header.php";
 </main>
 <script>
 
-const getUrl = "https://api.dev.skateresults.app/";
+const getUrl = "https://api.skateresults.app/";
 
 // Setup
 $(() => {
@@ -124,7 +124,7 @@ function updateCsvSearch() {
             lastName: split[i+1]?.trim()
         });
     }
-    process(athletes);
+    process(athletes);  
 }
 
 function updateSearch() {
@@ -196,11 +196,11 @@ function updateUI() {
         let match = false;
         if(search.result.length > 1) {
             if(parseFloat(search.result[0].priority) > parseFloat(search.result[1].priority)) {
-                search.result[0].isBest = true;
+                search.result[0].isBest = search.result[0].priority > 2;
                 search.linkId = search.result[0].id;
             }
         } else if(search.result.length === 1) {
-            search.result[0].isBest = true;
+            search.result[0].isBest = search.result[0].priority > 2;
             search.linkId = search.result[0].id;
         }
         if(search.result.length > 0 && search.result[0].isBest) {

@@ -87,7 +87,8 @@ include_once "../api/index.php";
 
 <script>
 
-const getUrl = "https://api.dev.skateresults.app/";
+// const getUrl = "https://api.dev.skateresults.app/"; // Devolopment
+const getUrl = "https://api.skateresults.app/"; // production
 
 let eventName;
 let ageGroupName;
