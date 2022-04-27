@@ -32,7 +32,7 @@ echo "<script>const id = '$countryName';</script>";
             if(!succsess || athletes.length === 0) {
                 window.location.href = "/index.php";
             }
-            console.log(athletes);
+            // console.log(athletes);
             $(".loading.circle").remove();
             $(".amount").text(" (" + athletes.length + ")");
             const table = new Table($(".athletes"), athletes);
