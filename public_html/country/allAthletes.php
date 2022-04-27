@@ -32,11 +32,12 @@ echo "<script>const id = '$countryName';</script>";
             if(!succsess || athletes.length === 0) {
                 window.location.href = "/index.php";
             }
+            console.log(athletes);
             $(".loading.circle").remove();
             $(".amount").text(" (" + athletes.length + ")");
             const table = new Table($(".athletes"), athletes);
             table.setup({
-                rowLink: row => `/athlete?id=${row.idAthlete}`,
+                rowLink: row => `/athlete?id=${row.id}`,
                 layout: {
                     idAthlete: {
                         use: false
