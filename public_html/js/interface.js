@@ -817,7 +817,7 @@ function getCompetitionListElem(competitions, isCountry, name) {
 function getCompetitionElem(comp, isCountry, name) {
     const getter = isCountry ? "countryRacesFromCompetition" : "athleteRacesFromCompetition";
     /**
-        Head
+     * Head
      */
     const head = $(`<div class="flex justify-start align-center"><div>${comp.raceYear} ${comp.type} ${comp.location}</div></div>`);
     const right = $(`<div class="flex justify-end flex-grow"></div>`);

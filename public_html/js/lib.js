@@ -435,9 +435,7 @@ class DateSlider {
 /**
  * simple Accordion
  */
-class Accordion{
-
-    // static registered = [];
+class Accordion {
 
     constructor(head, body, setup = {}){
         this.extended = false;
@@ -448,7 +446,7 @@ class Accordion{
         this.oncollapse = (head, body) => true;
         this.onextend = (head, body) => true;
 
-        this.head = ElemParser.parse(head);
+        this.head = head;
         this.body = ElemParser.parse(body);
         this.setup(setup);
         this.init();
@@ -464,7 +462,7 @@ class Accordion{
      * 
      * @param {{}} setup setup object
      */
-    setup(setup){
+    setup(setup) {
         if(setup === undefined){
             return false;
         }
@@ -476,62 +474,57 @@ class Accordion{
         }
     }
 
-    init(){
-        this.elem = $(`<div class="accordion"><div class="accordion__head"></div><div class="accordion__body"></div></div>`);
+    init() {
+        this.elem = $(`<div class="accordion"><div class="accordion__head flex justify-start"></div><div class="accordion__body"></div></div>`);
+        this.info = $(`<div class="margin left right">+</div>`);
+        this.elem.find(".accordion__head").append(this.info);
         this.elem.find(".accordion__head").append(this.head);
         this.elem.find(".accordion__body").append(this.body);
         this.body.css("display", "none");
+        if(!isMobile()) {
+
+            this.body.css("margin-left", "3rem");
+        }
+        this.head.css("width", "100%");
         this.head.click(() => {
             this.toggle();
         });
-        if(this.extended){
+        if(this.extended) {
             this.extend();
         } else{
             this.collapse();
         }
-        // this.element.parents().each((i, e) => {
-        //     if(Accordion.registered.hasOwnProperty(e)){
-        //         Accordion.registered[e].
-        //         return;
-        //     }
-        // });
-        // register()
     }
 
-    toggle(){
-        if(this.extended){
+    toggle() {
+        if(this.extended) {
             this.collapse();
         } else{
             this.extend();
         }
     }
 
-    extend(){
+    extend() {
         if(this.onextend(this.head, this.body, this.status) === false){
             return false;
         }
-        // this.body.css("height", "");
+        this.info.text("-");
         this.body.css("display", "block");
         this.body.parent().addClass("extended");
         this.extended = true;
     }
 
-    collapse(){
+    collapse() {
         if(this.oncollapse(this.head, this.body, this.status) === false){
             return false;
         }
-        // this.body.css("height", "0");
+        this.info.text("+");
         this.body.css("display", "none");
-        // window.setTimeout(() => {this.body.css("display", "none")}, 90);
         this.body.parent().removeClass("extended");
         this.extended = false;
     }
 
-    // register(){
-    //     Accordion.registered[this.elem] = this;
-    // }
-
-    get element(){
+    get element() {
         return this.elem;
     }
 }
