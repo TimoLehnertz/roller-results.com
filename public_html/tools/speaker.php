@@ -34,6 +34,7 @@ include_once "../api/index.php";
     <select id="competition" disabled><option value="-1"></option></select>
     <select id="round" disabled><option value="-1"></option></select>
     <select id="race" disabled><option value="-1"></option></select>
+    <button class="btn blender alone" onclick="refresh()">Refresh</button>
     <br>
     <br>
 </div>
@@ -118,11 +119,50 @@ $(() => {
             for (const event of response.items) {
                 $("#event").append(`<option value="${event.id}">${event.name} ${event.dateBegin}</option>`);
             }
+            let savedEvent = localStorage.getItem('speakerEvent');
+            if(savedEvent) {
+                $("#event").val(savedEvent).trigger("change");
+            }
         } else {
             alert(getUrl + " did not respond correctly!");
         }
     });
 });
+
+let eventFetched = () => {};
+let ageGroupFetched = () => {};
+let competitionFetched = () => {};
+let roundFetched = () => {};
+let raceFetched = () => {};
+
+function refresh() {
+    const event = $("#event").val();
+    const ageGroup = $("#ageGroup").val();
+    const competition = $("#competition").val();
+    const round = $("#round").val();
+    const race = $("#race").val();
+
+    if(event === "-1") return;
+    $("#event").trigger("change");
+    eventFetched = () => {
+        $("#ageGroup").val(ageGroup).trigger("change");
+    }
+
+    if(ageGroup === "-1") return;
+    ageGroupFetched = () => {
+        $("#competition").val(competition).trigger("change");
+    }
+
+    if(competition === "-1") return;
+    competitionFetched = () => {
+        $("#round").val(round).trigger("change");
+    }
+
+    if(round === "-1") return;
+    roundFetched = () => {
+        $("#race").val(race).trigger("change");
+    }
+}
 
 $("#event").change(() => {
     $('#ageGroup').prop("disabled", true);
@@ -134,6 +174,7 @@ $("#event").change(() => {
     eventName = $("#event option:selected" ).text();
     $('#ageGroup').empty();
     $('#ageGroup').append(`<option>Loading...</option>`);
+    localStorage.setItem('speakerEvent', event);
     getAPI(getUrl + "events/" + event + "/age-groups").receive((succsess, response) => {
         if(succsess) {
             $('#ageGroup').prop("disabled", false);
@@ -142,7 +183,8 @@ $("#event").change(() => {
             for (const ageGroup of response.items) {
                 $("#ageGroup").append(`<option value="${ageGroup.id}">${ageGroup.name} ${ageGroup.gender}</option>`);
             }
-
+            eventFetched();
+            eventFetched = () => {};
         } else {
             alert(getUrl + " did not respond correctly!");
         }
@@ -170,6 +212,8 @@ $("#ageGroup").change(() => {
             if(response.items.length == 1) {
                 $("#competition").val(response.items[0].id).change();
             }
+            ageGroupFetched();
+            ageGroupFetched = () => {};
         } else {
             alert(getUrl + " did not respond correctly!");
         }
@@ -197,6 +241,8 @@ $("#competition").change(() => {
             if(response.items.length == 1) {
                 $("#round").val(response.items[0].id).change();
             }
+            competitionFetched();
+            competitionFetched = () => {};
         } else {
             alert(getUrl + " did not respond correctly!");
         }
@@ -226,6 +272,8 @@ $("#round").change(() => {
             if(response.items.length == 1) {
                 $("#race").val(response.items[0].id).change();
             }
+            roundFetched();
+            roundFetched = () => {};
         } else {
             alert(getUrl + " did not respond correctly!");
         }
@@ -255,6 +303,8 @@ $("#race").change(() => {
             $("#idInput").val(JSON.stringify(ids));
             cachHistory = true;
             go();
+            raceFetched();
+            raceFetched = () => {};
         } else {
             alert(getUrl + " did not respond correctly!");
         }

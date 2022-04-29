@@ -482,7 +482,6 @@ class Accordion {
         this.elem.find(".accordion__body").append(this.body);
         this.body.css("display", "none");
         if(!isMobile()) {
-
             this.body.css("margin-left", "3rem");
         }
         this.head.css("width", "100%");
