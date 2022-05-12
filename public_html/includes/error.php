@@ -19,7 +19,6 @@ $ERROR_NO_PWD_MATCH = "NoPwdMatch";
 $ERROR_USERNAME_TAKEN = "UsernameTaken";
 $ERROR_EMAIL_TAKEN = "EmailTaken";
 $ERROR_WRONG_CREDENTIALS = "WrongCredentials";
-$ERROR_WRONG_PASSWORD = "WrongPassword";
 $ERROR_NO_PERMISSION = "NoPermission";
 
 $ERROR_MAPPING = [
@@ -34,7 +33,6 @@ $ERROR_MAPPING = [
     $ERROR_USERNAME_TAKEN => "That username is already taken :(",
     $ERROR_EMAIL_TAKEN => "You already have an account on that email",
     $ERROR_WRONG_CREDENTIALS => "Username or password is incorrect try again",
-    $ERROR_WRONG_PASSWORD => "Incorrect password. Try again",
 ];
 
 function getErrormessage($errorCode){
