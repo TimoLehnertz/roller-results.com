@@ -26,7 +26,7 @@ if(sizeof($result) == 0){
  */
 $passwordHash = $result[0]["pwdHash"];
 if(!password_verify($password, $passwordHash)){
-    throwError($ERROR_WRONG_PASSWORD, "/login/index.php?user=$username");
+    throwError($ERROR_WRONG_CREDENTIALS, "/login/index.php?user=$username");
 }
 
 $email = $result[0]["email"];
