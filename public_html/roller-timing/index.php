@@ -57,14 +57,15 @@ function send() {
     writer.write(text);
 }
 
+
 async function connectSerial() {
     const port = await navigator.serial.requestPort();
     console.log(port);
-
+    
     await port.open({baudRate: 115200});
-
+    
     connected = true;
-
+    
     // reader
     const textDecocder = new TextDecoderStream();
     const readableStreamClosed = port.readable.pipeTo(textDecocder.writable);
@@ -74,16 +75,29 @@ async function connectSerial() {
     const textEncoder = new TextEncoderStream();
     const writeableStreamClosed = textEncoder.readable.pipeTo(port.writable);
     writer = textEncoder.writable.getWriter();
-
+    
+    let recLine = "";
     while(true) {
         const { value, done } = await reader.read();
         if(done) {
             reader.releaseLock();
             break;
         }
-        console.log(value);
+        // console.log(value);
+        for (let i = 0; i < value.length; i++) {
+            const c = value.charAt(i);
+            console.log(c);
+            recLine += c;
+            if(c == '\n' || c == '\r') {
+                recLine = recLine.trim();
+                console.log()
+                if(recLine.length > 0) {
+                    processSerial(recLine);
+                }
+                recLine = "";
+            }
+        }
         document.getElementById("console").innerText += value;
-        processSerial(value.trim());
     }
 }
 
@@ -98,7 +112,7 @@ setInterval(() => {
 let reflected = false;
 
 function processSerial(line) {
-    // console.log(line.charAt(0));
+    console.log(line);
     if(line.charAt(0) == 'R') {
         $("body")
         reflected = true;
@@ -109,8 +123,10 @@ function processSerial(line) {
         $(".info").text("reflected");
     }
     if(line.charAt(0) == 'T') {
-        console.log("time");
+        // console.log("time");
+        console.log(line);
         triggerLap(line.substring(1, line.length));
+        console.log(line);
     }
 }
 </script>
