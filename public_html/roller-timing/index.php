@@ -64,11 +64,11 @@ function connectBLE() {
 console.log('Requesting Bluetooth Device...');
 //   navigator.bluetooth.requestDevice({filters: [{name: "Roller timing"}]})
     navigator.bluetooth.requestDevice({
-            acceptAllDevices: true,
+            // acceptAllDevices: true,
             // optionalServices: ['d50bb140-15c2-4839-8a31-efbc497861fa']
-            // filters: [{services: ['2d1bf2d6-caf3-4328-b7c5-f2fcd14b2f4c']}]
+            filters: [{services: ['2d1bf2d6-caf3-4328-b7c5-f2fcd14b2f4c']}],
             // filters: [{namePrefix: 'MyESP32'}],
-            optionalServices: ['4992aa40-60c9-43bd-b24f-d702b6270cce', 'af400827-2509-4c21-bb20-d22bb2f0321a', 'd50bb140-15c2-4839-8a31-efbc497861fa', '2d1bf2d6-caf3-4328-b7c5-f2fcd14b2f4c']
+            // optionalServices: ['4992aa40-60c9-43bd-b24f-d702b6270cce', 'af400827-2509-4c21-bb20-d22bb2f0321a', 'd50bb140-15c2-4839-8a31-efbc497861fa', '2d1bf2d6-caf3-4328-b7c5-f2fcd14b2f4c']
     })
 
 //   navigator.bluetooth.requestDevice({acceptAllDevices: true})
