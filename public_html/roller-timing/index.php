@@ -16,6 +16,10 @@ body {
     background-color: #111;
 }
 
+td {
+    font-size: 3rem;
+}
+
 .blender {
     padding: 1rem;
     background: #666;
@@ -23,22 +27,23 @@ body {
 }
 </style>
 <body id="body">
-    <h1>Roller timing</h1>
+    <h1 class="align center">Roller timing</h1>
     <div class="flex">
-        <button class="bnt blender left" onclick="connectSerial()">USB</button>
-        <button class="bnt blender right" onclick="connectBLE()">Bluetooth</button>
+        <p>Connect Roller timing with USB cable</p>
+        <p>Use Chrome</p>
+        <button class="bnt blender left connect-btn" onclick="connectSerial()">Connect</button>
+        <!-- <button class="bnt blender right" onclick="connectBLE()">Bluetooth</button> -->
     </div>
-    <details>
-        <summary>Serial Console</summary>
-        <div id="console"></div>
-    </details>
     <div class="info"></div>
+    <hr>
     <h2>Times</h2>
-    <table id="time-table">
-        <tr>
-            <td>lap</td><td>time</td>
-        </tr>
-    </table>
+    <div class="flex">
+        <table id="time-table">
+            <tr class="first-row">
+                <td>lap</td><td>time</td>
+            </tr>
+        </table>
+    </div>
 </body>
 <script>
 
@@ -139,21 +144,38 @@ function send() {
     writer.write(text);
 }
 
+let port;
+let reaer;
+
 async function connectSerial() {
-    const port = await navigator.serial.requestPort();
+    if(!("serial" in navigator)) {
+        alert("Please use Chrome or Opera browser");
+        return;
+    }
+    if(connected) {
+        connected = false;
+        window.setTimeout(() => {
+            // reader.releaseLock();
+            port.close();
+            $(".connect-btn").text("Connect")
+        }, 100);
+        return;
+    }
+    port = await navigator.serial.requestPort({ filters: [{ usbVendorId : 0x1A86 }]});
     console.log(port);
     await port.open({baudRate: 115200});
-    connected = true;
     // reader
     const textDecocder = new TextDecoderStream();
     const readableStreamClosed = port.readable.pipeTo(textDecocder.writable);
-    const reader = textDecocder.readable.getReader();
+    reader = textDecocder.readable.getReader();
     // writer
     const textEncoder = new TextEncoderStream();
     const writeableStreamClosed = textEncoder.readable.pipeTo(port.writable);
     writer = textEncoder.writable.getWriter();
     let recLine = "";
-    while(true) {
+    connected = true;
+    $(".connect-btn").text("Disconnect");
+    while(connected) {
         const { value, done } = await reader.read();
         if(done) {
             reader.releaseLock();
@@ -170,7 +192,6 @@ async function connectSerial() {
                 recLine = "";
             }
         }
-        document.getElementById("console").innerText += value;
     }
 }
 
@@ -194,7 +215,12 @@ function processSerial(line) {
 let lap = 0;
 
 function triggerLap(time) {
-    $("#time-table").append(`<tr><td>${lap++}</td><td>${time}</td></tr>`);
+    time = parseInt(time);
+    const s = parseInt(time / 1000);
+    let ms = time % 1000;
+    if(ms < 100 && ms >= 10) ms = "0"+ms;
+    if(ms < 10) ms = "00"+ms;
+    $(".first-row").after(`<tr><td>${lap++}</td><td>${s}:${ms}</td></tr>`);
 }
 
 function updateStatus(isReflected) {
