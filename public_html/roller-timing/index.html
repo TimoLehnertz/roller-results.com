@@ -5,19 +5,51 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/styles/main.css?v=1.1">
-    <script src="/js/jquery-3.5.1.js"></script>
+    <script src="jquery-3.5.1.js"></script>
     <title>Roller-timing</title>
 </head>
 <style>
 * {
     color: white;
+    font-family: 'Courier New', Courier, monospace;
 }
+
+h1 {
+    font-size: 2.5rem;
+}
+
+.align.center {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    justify-content: space-evenly;
+}
+
 body {
+    padding: 2rem;
     background-color: #111;
+}
+
+tr:nth-child(odd) {
+    background-color: #333;
+}
+
+tr {
+    border-bottom: 1px solid #777;
+}
+
+table {
+    border-collapse: collapse;
 }
 
 td {
     font-size: 3rem;
+    padding: 0.5rem;
+}
+
+.flex {
+    display: flex;
+    align-items: center;
 }
 
 .blender {
