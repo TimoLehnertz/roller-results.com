@@ -2,13 +2,14 @@
 // $allowedOrigins = array("api.jquery.com");
 $allowedOrigins = [
     'https://api.jquery.com',
+    'polar.com',
  ];
   
  if(in_array($_SERVER['HTTP_ORIGIN'], $allowedOrigins))
  {
   $http_origin = $_SERVER['HTTP_ORIGIN'];
  } else {
-  $http_origin = "https://example.com";
+  $http_origin = "null";
  }
  header("Access-Control-Allow-Origin: $http_origin");
 /**
