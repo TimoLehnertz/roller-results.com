@@ -1,17 +1,11 @@
 <?php
-// $allowedOrigins = array("api.jquery.com");
 $allowedOrigins = [
     'https://api.jquery.com',
     'https://flow.polar.com',
  ];
-  
- if(in_array($_SERVER['HTTP_ORIGIN'], $allowedOrigins))
- {
-  $http_origin = $_SERVER['HTTP_ORIGIN'];
- } else {
-  $http_origin = "null";
+ if(in_array($_SERVER['HTTP_ORIGIN'], $allowedOrigins)) {
+     header("Access-Control-Allow-Origin: ".$_SERVER['HTTP_ORIGIN']);
  }
- header("Access-Control-Allow-Origin: $http_origin");
 /**
  * Php api for interacting with the database
  * 
