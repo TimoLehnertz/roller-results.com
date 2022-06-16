@@ -1,5 +1,9 @@
 <?php
-header("Access-Control-Allow-Origin: jquery.com");
+$allowedOrigins = array("jquery.com", "site2.com");
+foreach ($allowedOrigins as $origin) {
+    header("Access-Control-Allow-Origin: $origin");
+    header("Access-Control-Allow-Headers: $origin");
+}
 /**
  * Php api for interacting with the database
  * 
