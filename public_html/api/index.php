@@ -2,7 +2,7 @@
 // $allowedOrigins = array("api.jquery.com");
 $allowedOrigins = [
     'https://api.jquery.com',
-    'polar.com',
+    'https://polar.com',
  ];
   
  if(in_array($_SERVER['HTTP_ORIGIN'], $allowedOrigins))
