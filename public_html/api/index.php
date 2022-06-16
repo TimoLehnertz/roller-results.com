@@ -1100,6 +1100,10 @@ function getCountry($name){
     return [];
 }
 
+function getTeam($name) {
+    return query("SELECT TbTeam.*, GROUP_CONCAT(TbTeamMember.athlete) as members FROM TbTeam INNER JOIN TbTeamMember ON idTeam = team WHERE `name`=? GROUP BY idTeam;", "s", $name)[0];
+}
+
 function getCountries() {
     global $scoreInfluences;
     global $usedMedals;
@@ -1213,6 +1217,7 @@ function athleteFromResult($result){
  * 
  * Search syntax
  * 
+ * <team> searching for names of persons
  * <name> searching for names of persons
  * <type> searching for competiotions by type
  * <year> year of competition
@@ -1229,7 +1234,7 @@ function search($name){
      */
     $year = substr($name, 0, 4);
     $competition = null;
-    if(is_numeric($year)){
+    if(is_numeric($year)) {
         $competitions = query("CALL sp_searchYear(?);", "i", intval($year));
         if(sizeof($competitions) > 0){
             $competition = $competitions[0];
@@ -1242,7 +1247,19 @@ function search($name){
                 "type" => "competition"
             ];
         }
-    } else{
+    } else {
+        /**
+         * Team
+         */
+        $teams = query("CALL sp_searchTeams(?)", "s", $name);
+        foreach ($teams as $key => $teams) {
+            $results[] = [
+                "id" => $teams["name"],
+                "name" => $teams["name"],
+                "priority" => 4,
+                "type" => "team"
+            ];
+        }
         /**
          * Competition location
          */

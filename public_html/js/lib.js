@@ -533,7 +533,7 @@ class Accordion {
  * Dependencies: 
  *  JQuery.js
  */
-class Slideshow{
+class Slideshow {
     /**
      * @param {dom elem} elem dom element
      */
@@ -622,17 +622,20 @@ class Slideshow{
         this.lastMoveTime = Date.now();
     }
 
-    up(){
+    up() {
+        console.log("not dragging");
         this.pressed = false;
         this.x = this.elem.get()[0].scrollLeft;
         this.update();
-        window.setTimeout(() => this.dragging = 0, 50);
+        window.setTimeout(() => {this.dragging = 0; Slideshow.dragging = false;}, 50);
     }
 
-    move(e){
+    move(e) {
         if(!this.pressed){
             return;
         }
+        Slideshow.dragging = true;
+        console.log("dragging");
         this.dragging++;
         const now = Date.now();
         const page = Slideshow.getPageFromEvent(e);
@@ -2082,7 +2085,7 @@ class Profile {
         }
     }
 
-    incrementLod(){
+    incrementLod() {
         if(this.lod < this.maxLod && !this.grayedOut){
             this.closeAllOthers();
             this.elem.removeClass(this.lodClass);
@@ -2128,7 +2131,12 @@ class Profile {
         }
     }
 
-    initMax(){
+    initMax() {
+        if(Slideshow.dragging) {
+            this.decrementLod();
+            return;
+        }
+        if(Slideshow.dragging) return;
         if(this.openInNewTab) {
             window.open(this.maximizePage, '_blank').focus();
             while(this.lod > Profile.MIN) {

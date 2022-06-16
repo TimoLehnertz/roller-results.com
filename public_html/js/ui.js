@@ -403,6 +403,7 @@ function closeSearchBar(){
 }
 
 function updateSearchBar(data){
+    console.log(data);
     if(data?.length > 0) {
         searchTooltip.close();
     }
@@ -453,6 +454,7 @@ function iconFromSearch(option) {
     switch(option.type) {
         case "competition": return $(`<i class="fas fa-map-marker-alt result__left"></i>`);
         case "person": return  $(`<i class="fas fa-user result__left"></i>`);
+        case "team": return  $(`<i class="fas fa-people-group result__left"></i>`);
         case "country": const code = countryNameToCode(option.name); if(code !== null) {return $(`<img class="result__left" src="/img/countries/${code}.svg">`);} else{return $()};
     }
 }
