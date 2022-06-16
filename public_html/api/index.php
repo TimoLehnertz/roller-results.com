@@ -1,5 +1,5 @@
 <?php
-header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Origin: jquery.com");
 /**
  * Php api for interacting with the database
  * 
