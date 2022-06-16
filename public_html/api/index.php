@@ -1,5 +1,5 @@
 <?php
-$allowedOrigins = array("jquery.com", "site2.com");
+$allowedOrigins = array("jquery.com");
 foreach ($allowedOrigins as $origin) {
     header("Access-Control-Allow-Origin: $origin");
     header("Access-Control-Allow-Headers: $origin");
