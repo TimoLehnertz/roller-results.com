@@ -2086,7 +2086,7 @@ class Profile {
     }
 
     incrementLod() {
-        if(this.lod < this.maxLod && !this.grayedOut){
+        if(this.lod < this.maxLod && !this.grayedOut) {
             this.closeAllOthers();
             this.elem.removeClass(this.lodClass);
             this.lod++;
@@ -2105,7 +2105,7 @@ class Profile {
             if(Profile.expanded.indexOf(this) === -1){
                 Profile.expanded.push(this);//add to expanded
             }
-            this.scollIntoView();
+            // this.scollIntoView();
         }
     }
 
