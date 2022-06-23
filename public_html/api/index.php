@@ -254,6 +254,7 @@ if(!isset($NO_GET_API)){
     else if(isset($_GET["uploadTriggers"]) && isset($_GET["user"])){
         $data = json_decode(file_get_contents('php://input'), true);
         insertTrigger($data, $_GET["user"]);
+        echo "inserted triggers";
     }
     else if(isset($_GET["getteamAdvantageDetails"])){
         if(isset($_GET["data"]) && isset($_GET["data1"])) {
