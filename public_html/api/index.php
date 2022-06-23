@@ -252,9 +252,7 @@ if(!isset($NO_GET_API)){
         insertLaserResult($data, $_GET["user"], $_GET["lname"]);
     }
     else if(isset($_GET["uploadTriggers"]) && isset($_GET["user"])){
-        $data = json_decode(file_get_contents('php://input'), true);
-        insertTrigger($data, $_GET["user"]);
-        echo "inserted triggers";
+        insertTrigger(file_get_contents('php://input'), $_GET["user"]);
     }
     else if(isset($_GET["getteamAdvantageDetails"])){
         if(isset($_GET["data"]) && isset($_GET["data1"])) {
@@ -486,9 +484,7 @@ function getCompRacesFlow($idComp) {
 
 function insertTrigger($triggers, $user) {
     $lastTime = 0;
-    echo $triggers;
     foreach (explode(",", $triggers) as $trigger) {
-        echo $trigger;
         if($lastTime != 0) {
             $time = intval($trigger) - $lastTime;
             dbInsert("INSERT INTO `results`.`TbTrigger` (`user`,`time`)VALUES(?,?);", "ii", $user, $time);
