@@ -251,6 +251,10 @@ if(!isset($NO_GET_API)){
         }
         insertLaserResult($data, $_GET["user"], $_GET["lname"]);
     }
+    else if(isset($_GET["uploadTriggers"]) && isset($_GET["user"])){
+        $data = json_decode(file_get_contents('php://input'), true);
+        insertTrigger($data, $_GET["user"]);
+    }
     else if(isset($_GET["getteamAdvantageDetails"])){
         if(isset($_GET["data"]) && isset($_GET["data1"])) {
             echo json_encode(getTeamAdvantageDetails($_GET["getteamAdvantageDetails"], $_GET["data"], $_GET["data1"]));
@@ -477,6 +481,17 @@ function getCompRaces($idComp) {
 
 function getCompRacesFlow($idComp) {
     return query("SELECT TbRace.*, count(pass.idPass) > 0 as `raceFlow` FROM TbRace LEFT JOIN TbPass as pass ON pass.race = TbRace.id WHERE idCompetition = ? GROUP BY TbRace.id ORDER BY distance, category, gender;", "i", $idComp);
+}
+
+function insertTrigger($triggers, $user) {
+    $lastTime = 0;
+    foreach (explode(",", $triggers) as $trigger) {
+        if($lastTime != 0) {
+            $time = intval($trigger) - $lastTime;
+            dbInsert("INSERT INTO `results`.`TbTrigger` (`user`,`time`)VALUES(?,?);", "ii", $user, $time);
+        }
+        $lastTime = intval($trigger);
+    }
 }
 
 function insertLaserResult($result, $user, $lasername) {
