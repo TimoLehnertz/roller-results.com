@@ -487,6 +487,7 @@ function getCompRacesFlow($idComp) {
 function insertTrigger($triggers, $user) {
     $lastTime = 0;
     foreach (explode(",", $triggers) as $trigger) {
+        echo $trigger;
         if($lastTime != 0) {
             $time = intval($trigger) - $lastTime;
             dbInsert("INSERT INTO `results`.`TbTrigger` (`user`,`time`)VALUES(?,?);", "ii", $user, $time);
