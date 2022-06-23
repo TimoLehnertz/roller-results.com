@@ -486,6 +486,7 @@ function getCompRacesFlow($idComp) {
 
 function insertTrigger($triggers, $user) {
     $lastTime = 0;
+    echo $triggers;
     foreach (explode(",", $triggers) as $trigger) {
         echo $trigger;
         if($lastTime != 0) {
