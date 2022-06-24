@@ -865,6 +865,10 @@ function getAllDistances(){
     return $out;
 }
 
+function getAllTimes() {
+    return query("SELECT * FROM TbTrigger;");
+}
+
 function getAllCompetitions(){
     $res = query("call results.sp_getCompetitionsNew();");
     if(sizeof($res) > 0){
