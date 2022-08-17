@@ -34,9 +34,18 @@ $mapsKey = "AIzaSyAZriMrsCFOsEEAKcRLxdtI6V8b9Fbfd-c";
 $bestAthletes = getCompAthleteMedals($idComp);
 $bestCountries = getCompCountryMedals($idComp);
 
-$bestCountry = $bestCountries[0]["country"];
-$bestAthlete = $bestAthletes[0]["fullname"];
-$bestAthleteId = $bestAthletes[0]["idAthlete"];
+$bestCountry = "-";
+$bestAthlete = "-";
+$bestAthleteId = "";
+if(sizeof($bestCountries) > 0) {
+    $bestCountry = $bestCountries[0]["country"];
+}
+if(sizeof($bestAthletes) > 0) {
+    $bestAthlete = $bestAthletes[0]["fullname"];
+}
+if(sizeof($bestAthletes) > 0) {
+    $bestAthleteId = $bestAthletes[0]["idAthlete"];
+}
 
 $athleteCount = sizeof($bestAthletes);
 $countryCount = sizeof($bestCountries);
@@ -58,7 +67,7 @@ foreach ($bestAthletes as $athlete) {
     </div>
     <svg xmlns="http://www.w3.org/2000/svg" fill="none" preserveAspectRatio="none" viewBox="0 0 1680 40" class="curvature" style="bottom: -1px;"><path d="M0 40h1680V30S1340 0 840 0 0 30 0 30z" fill="#ddd"></path></svg>
     <div class="content">
-        <h1 class="align center"><?= translateCompType($comp["type"])." | ".$comp["location"]." ".$comp["raceYear"]?></h1>
+        <h1 class="align center headline"><?= translateCompType($comp["type"])." | ".$comp["location"]." ".$comp["raceYear"]?></h1>
         <div class="date">
             <i class="fas fa-calendar-alt margin right"></i><?= $date?>
         </div>
@@ -133,6 +142,10 @@ foreach ($bestAthletes as $athlete) {
             </div>
         </div>
         <script>
+            console.log(comp)
+            if(!comp.checked) {
+                $(".headline").append(getUncheckedElem());
+            }
             $(".bronzem").each(function() {
                 $(this).append(getMedal("bronze", 3, false));
             });
