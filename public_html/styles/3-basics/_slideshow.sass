@@ -18,3 +18,28 @@
         bottom: 0
         right: 0
         // pointer-events: none
+
+    .right-btn
+        right: 0
+        position: absolute
+
+    &.moved::after
+        opacity: 0
+
+    &::after
+        content: '>'
+        right: 2rem
+        top: 35%
+        font-size: 5rem
+        position: absolute
+        z-index: 100
+        opacity: 1
+        transition: opacity 0.2s
+        animation: from-right infinite alternate 1s
+
+@keyframes from-right
+    from
+        transform: translateX(0rem)
+    to
+        transform: translateX(2rem)
+

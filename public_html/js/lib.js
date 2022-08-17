@@ -550,7 +550,7 @@ class Slideshow {
         this.updateChildren();
     }
 
-    init(){
+    init() {
         this.elem.addClass("slideshow");
         // this.clickCatcher = $(`<div class="click-catcher"></div>`);
         // this.elem.append(this.clickCatcher);
@@ -564,13 +564,16 @@ class Slideshow {
         this.elem.get()[0].addEventListener('mouseleave', (e) => this.leave(e));
         this.elem.get()[0].addEventListener('touchenter', (e) => this.enter(e));
         this.elem.get()[0].addEventListener('touchleave', (e) => this.leave(e));
+
+        // this.rightBtn = $(`<button class="right-btn">Moin</button>`);
+        // this.elem.append(this.rightBtn);
     }
 
-    remove(){
+    remove() {
         this.elem.empty();
     }
 
-    update(){
+    update() {
         if(!this.pressed){
             // alert(this.x + this.velX * 10800);
             anime({
@@ -582,6 +585,7 @@ class Slideshow {
         } else{
             this.elem.get()[0].scrollLeft = this.x;
         }
+        this.elem.toggleClass("moved", this.x > 10)
     }
 
     getClosest(add){
@@ -609,7 +613,7 @@ class Slideshow {
         }
     }
 
-    down(e){
+    down(e) {
         this.pressed = true;
         this.dragging = 0;
         this.x = this.elem.get()[0].scrollLeft;
