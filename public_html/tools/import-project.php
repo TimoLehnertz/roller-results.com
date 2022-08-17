@@ -58,7 +58,7 @@ function echoAliasSelect() {
         <br>
         <p>Here anybody can upload results from any competition.<br>
         Note: after you uploaded results they will appear as <span class="code">unchecked</span>
-        We will review them and set them to <span class="code">checked</span> when they are correct</p>
+        We will review them and set them to <span class="code">checked</span> when they are correct.</p>
         <br>
         <p>
             We don't have results like on paper.
@@ -69,18 +69,21 @@ function echoAliasSelect() {
         <br>
         <p>You will need a unique identification number per athlete to upload results. In case you only upload one competition the start number will be sufficient. But we recomment something thats more long term like the license number or similar.</p>
         <br>
-        <p>Linking athletes</p>
+        <p>Linking athletes:</p>
         <p>You will be asked to link your athletes to our athletes. On the left hand side you will see the information that you provided in your file.
             The right hand side shows all skaters that we think match your input.
             If the correct skater doesnt appear search it using the search function at the top and link it manually.<br>
             Manually finding an id:<br> To find the id of a skater on roller results go to his profile and check the url at the top of your browsers window. <br>
             https://www.roller-results.com/athlete/?id=<span class="code">1973</span>&search1=bart%20sw => 1973 is the id<br><br>
-            Furthermore there is the option to create a new Skater. Please ony create new skaters when you are sure that they do not appear on roller results yet!</p>
+            <img style="width: 80%; height: auto; margin-left: 10%;" src="/img/alias-explenation.JPG" alt="alias image">
+            Furthermore there is the option to create a new Skater. Please ony create new skaters when you are sure that they do not appear on roller results yet!
+            Nessesary informations are: firstname, lastname and country.
+        </p>
         <br>
-        <img style="width: 80%; height: auto; margin-left: 10%;" src="/img/alias-explenation.JPG" alt="alias image">
         <p>
-            <span class="font size bigger-medium">Important:</span>
-            When you at the upload step please take your time to check every race with its results to ensure that we your results get approved
+            <span class="font size bigger-medium">Important:</span><br>
+            When you at the upload step please take your time to check every race with its results to ensure that we your results get approved. <br><br>
+            please report bugs to <span class="code">Roller.results@gmail.com</span>
         </p>
     </div>
     <div class="section dark">
