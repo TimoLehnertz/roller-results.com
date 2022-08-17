@@ -54,15 +54,15 @@ echo "<script>const id = '$countryName';</script>";
                     country: {
                         displayName: "Country",
                     },
-                    score: {
-                        displayName: "Score",
-                    },
-                    scoreShort: {
-                        displayName: "Sprint score"
-                    },
-                    scoreLong: {
-                        displayName: "Long score"
-                    }
+                    // score: {
+                    //     displayName: "Score",
+                    // },
+                    // scoreShort: {
+                    //     displayName: "Sprint score"
+                    // },
+                    // scoreLong: {
+                    //     displayName: "Long score"
+                    // }
                 },
                 useAnimations: false
             });
