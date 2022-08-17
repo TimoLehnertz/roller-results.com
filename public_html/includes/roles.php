@@ -8,26 +8,16 @@ include_once $_SERVER["DOCUMENT_ROOT"]."/api/userAPI.php";
 
 $defaultPermissions = [
     0   => "default",
-    5  => "uploadResults",
+    5   => "uploadResults",
     10  => "speaker",
-    50  =>"seeAdminPage",
+    50  => "seeAdminPage",
     90  => "configureAthletes",
-    100 =>"managePermissions",
+    100 => "managePermissions",
 ];
 
 function permissionsForRole($role){
-    /**
-     * default permissions
-     */
     global $defaultPermissions;
     $permissions = [];
-    // if(is_null($user)){//all to false
-    //     foreach ($defaultPermissions as $key => $value) {
-    //         $permissions[$value] = false;
-    //     }
-    //     return $permissions;
-    // }
-    // $idRole = $user["idRole"];
     foreach ($defaultPermissions as $key => $value) {
         $permissions[$value] = $role >= $key;
     }
@@ -43,6 +33,7 @@ function canI($permission){
     } else {
         $p = permissionsForRole($_SESSION["role"]);
     }
+    if(!isset($p[$permission])) return false;
     return $p[$permission];
     // return permissionsForUser($user)[$permission];
 }

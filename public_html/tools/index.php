@@ -15,7 +15,7 @@ include_once "../header.php";
             if(canI("speaker")){
                 echo "<li><a href='speaker.php'>Speaker tools</a></li>";
             }
-            if(!canI("uploadResults")) {
+            if(canI("uploadResults")) {
                 echo "<li><a href='import-project.php'><span class='code'>New</span> Upload results</a></li>";
             }
         ?>

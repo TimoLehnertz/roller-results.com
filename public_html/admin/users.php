@@ -1,7 +1,8 @@
 <?php
+// exit();
 include_once "../includes/roles.php";
 include_once "../includes/error.php";
-if(!canI("managePermissions")){
+if(!canI("managePermissions")) {
     throwError($ERROR_NO_PERMISSION);
 }
 
@@ -25,7 +26,7 @@ if(isset($_POST["submit-users"])){
             $newUsers[$iduser][$prop] = $value;
         }
     }
-    if(updateUsers($newUsers)){
+    if(updateUsers($newUsers)) {
         header("location: /admin/users.php");
         exit();
     }
@@ -36,12 +37,12 @@ include_once "../header.php";
 ?>
 <main class="main">
     <h1>Manage Users</h1>
-    <form action="#" method="POST">
-        <table>
-            <?php
+    <table>
+        <?php
                 echo "<tr><td>id</td><td>username</td><td>email</td><td>registerCountry</td><td>role</td><tr>";
                 if(sizeof($users) > 0){
                     foreach ($users as $key => $user) {
+                        echo "<form action='#' method='POST'>";
                         $userData = [
                             "username" => $user["username"],
                             "email" => $user["email"],
@@ -65,13 +66,15 @@ include_once "../header.php";
                                 }
                                 echo "</select>";
                             echo "</td>";
+                            echo "<td>";
+                            echo "<button class='btn slide vertical default' name='submit-users' type='submit'>Submit change</button>";
+                            echo "</td>";
                         echo "</tr>";
+                        echo "</form>";
                     }
                 }
             ?>
         </table>
-        <button class="btn slide vertical default" name="submit-users" type="submit">Submit changes</button>
-    </form>
 </main>
 <?php
 include_once "../footer.php";
