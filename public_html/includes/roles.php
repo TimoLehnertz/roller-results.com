@@ -8,6 +8,7 @@ include_once $_SERVER["DOCUMENT_ROOT"]."/api/userAPI.php";
 
 $defaultPermissions = [
     0   => "default",
+    5  => "uploadResults",
     10  => "speaker",
     50  =>"seeAdminPage",
     90  => "configureAthletes",

@@ -7,6 +7,9 @@ include_once "../header.php";
 if(!isLoggedIn()) {
     throwError($ERROR_LOGIN_MISSING, "/tools/index.php");
 }
+if(!canI("uploadResults")) {
+    throwError($ERROR_NO_PERMISSION, "/tools/index.php");
+}
 
 function echoCompsSelect() {
     $comps = getAllCompetitions();
