@@ -3,7 +3,7 @@ include_once "../includes/roles.php";
 include_once "../includes/error.php";
 if(!canI("speaker")){
     throwError($ERROR_NO_PERMISSION, "/tools/index.php");
-} 
+}
 include_once "../header.php";
 include_once "../api/index.php";
 ?>
