@@ -80,7 +80,7 @@ function sortAthletes(athletes){
 
 function updateAllAthleteProfiles() {
     for (const profile of Profile.allProfiles) {
-        if(profile.type === "athlete" && !profile.grayedOut){
+        if(profile.type === "athlete" && !profile.grayedOut) {
             profile.update();
         }
     }
@@ -88,13 +88,13 @@ function updateAllAthleteProfiles() {
 
 function updateAllCountryProfiles() {
     for (const profile of Profile.allProfiles) {
-        if(profile.type === "country" && !profile.grayedOut){
+        if(profile.type === "country" && !profile.grayedOut) {
             profile.update();
         }
     }
 }
 
-function athleteDataToProfileData(athlete, useRank = false, alternativeRank = undefined){
+function athleteDataToProfileData(athlete, useRank = false, alternativeRank = undefined) {
     let trophy1 = {
         data: getMedal("silver", athlete.silver, athlete.silver +" Silver medals | Used competitions: " + getMedalComps()),
         type: ElemParser.DOM,
@@ -131,6 +131,9 @@ function athleteDataToProfileData(athlete, useRank = false, alternativeRank = un
         amount++; color = "gold";
     }
     let name = athlete.firstname + " " +athlete.lastname;
+    if(!athlete.checked) {
+        name += " (unchecked)";
+    }
     if(athlete.firstname == undefined) {
         name = "";
     }
@@ -305,7 +308,8 @@ function athleteDataToProfileData(athlete, useRank = false, alternativeRank = un
     };
 }
 
-function preprocessTime(time){
+function preprocessTime(time) {
+    if(time === undefined) return "00:00:00.000";
     const list = time.split(/[.:]+/);
     let timeString = "";
     let delimiter = "";
@@ -363,11 +367,14 @@ function athleteToProfile(athlete, minLod = Profile.MIN, useRank = false, altern
     //     //     }
     //     // });
     // }
+    if(athlete.needsUpdate) {
+        profile.update();
+    }
     allAthleteProfiles.push(profile);
     return profile;
 }
 
-function pathFromRace(r){
+function pathFromRace(r) {
     return $(`
     <div class="path">
         <a href="/year?id=${r.raceYear}" class="elem">${r.raceYear}<span class="delimiter"> > </span></a>
@@ -383,7 +390,7 @@ function linksFromLinkString(string){
     }
     let links = string.split(";");
     for (let i = 0; i < links.length; i++) {
-            links[i] = links[i].split("v=")[1]?.split("&")[0];
+        links[i] = links[i].split("v=")[1]?.split("&")[0];
     }
     // let links = string.split("https://www.youtube.com/watch?v=");
     // for (let i = 0; i < links.length; i++) {
@@ -435,8 +442,7 @@ function athleteFromResult(result) {
     return athlete;
 }
 
-function getRaceTable(parent, race){
-    console.log(race);
+function getRaceTable(parent, race) {
     const elem = $(`<div class="race"></div>`);
     const raceTable = $(`<div class="race-table">`);
     elem.append(pathFromRace(race));
@@ -447,7 +453,7 @@ function getRaceTable(parent, race){
     const results = [];
     for (const result of race.results) {
         if(places.includes(result.place)) {
-            results[results.length -1].athletes.push(athleteFromResult(result));
+            results[results.length - 1].athletes.push(athleteFromResult(result));
         } else {
             result.athletes = [athleteFromResult(result)];
             results.push(result);
@@ -455,14 +461,19 @@ function getRaceTable(parent, race){
         }
     }
     race.results = results;
+    console.log("parsed results");
+    console.log(JSON.parse(JSON.stringify(race.results)));
 
     for (const result of race.results) {
+        if(result.time !== undefined) {
+            result.timeDate = result.time;
+        }
         if(result.timeDate !== null) {
             result.time = preprocessTime(result.timeDate);
         }
         result.profiles = profilesElemFromResult(result);
         result.place = {
-            data: result.place,
+            data: parseInt(result.place),
             alignment: "center",
             type: "place"
         };
@@ -481,7 +492,7 @@ function getRaceTable(parent, race){
             time: {
                 displayName: "Time",
                 allowSort: true,
-                use: race.results[0].time !== null
+                use: race.results[0]?.time !== null
             },
             country: {
                 displayName: "Country",
@@ -498,7 +509,9 @@ function getRaceTable(parent, race){
     return table;
 }
 
-function profilesElemFromResult(result){
+function profilesElemFromResult(result) {
+    // console.log("profile from result");
+    // console.log(JSON.parse(JSON.stringify(result)));
     const elem = {
         data: [],
         type: "list",
@@ -750,7 +763,7 @@ function countryToProfileData(country, useRank = false, alternativeRank = undefi
                 athleteButton.hide();
                 let count = 0;
                 let overflow = false;
-                console.log(athletes);
+                // console.log(athletes);
                 for (const athlete of athletes) {
                     const profile = athleteToProfile(athlete, Profile.MIN, false, 0, false);
                     profile.appendTo(allAthletesElem.find(".athlete-list-big"));
@@ -819,6 +832,7 @@ function getCompetitionElem(comp, isCountry, name) {
     /**
      * Head
      */
+    // const year = comp.startDate.split("-")[0];
     const head = $(`<div class="flex justify-start align-center"><div>${comp.raceYear} ${comp.type} ${comp.location}</div></div>`);
     const right = $(`<div class="flex justify-end flex-grow"></div>`);
     if(comp.bronzeMedals !== undefined) {
@@ -893,10 +907,28 @@ function getRaceDelimiter(text) {
     return $(`<div class="race align center delimiter">${text}</div>`);
 }
 
-function getRaceElem(race) {
+function getUncheckedElem() {
+    const elem = $(`<span class="code font color red">Unchecked</span>`);
+    new Tooltip(elem, "This data has been uploaded by the comunity and is not validated yet");
+    return elem;
+}
+
+/**
+ * 
+ * @param {*} race Race object
+ * @param {*} results optional results object. if not given this will be fetched from the backend
+ * @returns 
+ */
+function getRaceElem(race, results) {
+    if(results !== undefined) {
+        race.results = results;
+    }
     const head = $(`<div class="race flex align-center justify-space-between padding right ${race.gender}"><span>${race.distance} ${race.trackStreet} ${race.category} ${race.gender}</span></div>`)
+    if(!race.checked) {
+        head.append(getUncheckedElem());
+    }
     const links = linksFromLinkString(race.link).length;
-    if(links > 0){
+    if(links > 0) {
         for (let i = 0; i < links; i++) {
             head.find("span").append(`<i class="fab fa-youtube margin left"></i>`);
         }
@@ -912,14 +944,19 @@ function getRaceElem(race) {
         {
             onextend: (head, body1, status) => {
                 body1.addClass("race--max");
-                if(!status.fetched){
-                    get("race", race.id).receive((succsess, race) => {
-                        body1.find(".loading").remove();
-                        if(!succsess){
-                            return;
-                        }
+                if(!status.fetched) {
+                    if(results !== undefined) {
                         getRaceTable(body1, race);
-                    });
+                        body1.find(".loading").remove();
+                    } else {
+                        get("race", race.id).receive((succsess, race) => {
+                            body1.find(".loading").remove();
+                            if(!succsess) {
+                                return;
+                            }
+                            getRaceTable(body1, race);
+                        });
+                    }
                     status.fetched = true;
                 }
             }

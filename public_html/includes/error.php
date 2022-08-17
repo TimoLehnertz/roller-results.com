@@ -20,6 +20,7 @@ $ERROR_USERNAME_TAKEN = "UsernameTaken";
 $ERROR_EMAIL_TAKEN = "EmailTaken";
 $ERROR_WRONG_CREDENTIALS = "WrongCredentials";
 $ERROR_NO_PERMISSION = "NoPermission";
+$ERROR_LOGIN_MISSING = "NoLogin";
 
 $ERROR_MAPPING = [
     $ERROR_NO_ID => "Please provide an Id",
@@ -33,6 +34,7 @@ $ERROR_MAPPING = [
     $ERROR_USERNAME_TAKEN => "That username is already taken :(",
     $ERROR_EMAIL_TAKEN => "You already have an account on that email",
     $ERROR_WRONG_CREDENTIALS => "Username or password is incorrect try again",
+    $ERROR_LOGIN_MISSING => "You need to be logged in to visit see page",
 ];
 
 function getErrormessage($errorCode){

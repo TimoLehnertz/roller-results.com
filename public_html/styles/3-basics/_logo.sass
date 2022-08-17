@@ -158,7 +158,7 @@ svg
         @for $bubble from 1 through 20
             $top: (($bubble % 4) * 25) + 10
             &:nth-of-type(#{$bubble})
-                top: $top+%
+                top: $top+1%
                 animation: move-#{$bubble} infinite
                 animation-duration: (random(2000) + 3000) + ms
                 animation-delay: #{$bubble * 400 + random(10)}ms
@@ -166,7 +166,7 @@ svg
 
 @for $bubble from 1 through 20
     $width: (random(4))
-    $translate: -(random(300) + 200) + %
+    $translate: -(random(300) + 200) + 1%
     @keyframes move-#{$bubble}
         0%
             opacity: 1
@@ -191,4 +191,4 @@ svg
 @keyframes random-translate
     @for $i from 1 through 10
         #{($i * 10)}%
-            transform: translateX((random(10) - 5) + %)
+            transform: translateX((random(10) - 5) + 1%)

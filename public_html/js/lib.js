@@ -733,7 +733,7 @@ class Slideshow {
 // }
 
 class Tooltip {
-    constructor(parent, tip, settings){
+    constructor(parent, tip, settings) {
         this.parent = $(parent);
         this.tip = tip || "<Tooltip>";
         /**
@@ -1845,6 +1845,33 @@ class ElemParser{
     }
 }
 
+class LoadingBar {
+    constructor() {
+        this.elem = $(`<div class="loading-bar"/>`);
+        this.bar = $(`<div class="loading-bar-bar"/>`);
+        this.elem.append(this.bar);
+        window.requestAnimationFrame(() => {this.update()});
+        this.start = new Date();
+        this.divider = 1000;
+        this.running = true;
+    }
+    
+    update() {
+        const timePassed = new Date().getTime() - this.start.getTime();
+        const progress = 1 / (0.5 + (timePassed / this.divider));
+        this.bar.css("width", ((1 - progress) * 100) + "%");
+        // console.log(((1 - progress) * 100) + "%");
+        if(this.running) {
+            window.requestAnimationFrame(() => {this.update()});
+        }
+    }
+
+    remove() {
+        this.running = false;
+        this.elem.remove();
+    }
+}
+
 /**
  * Profile
  * Generic profile class to deal with all kinds of profiles
@@ -2670,7 +2697,7 @@ function numberAnimate(setup){
 /**
  * countries
  */
-function countryNameToCode(name){
+function countryNameToCode(name) {
     name = name.toLowerCase();
     for (const country of countries) {
         if(country.name.toLowerCase() === name){

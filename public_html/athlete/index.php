@@ -30,6 +30,7 @@ echo "<script>const id=$id</script>";
 <script>
     const placeholder = athleteToProfile({}, Profile.MAX);
     get("athlete", id).receive((succsess, athlete) => {
+        console.log(athlete)
         if(!succsess) {
             window.location.href = "/index.php";
         }

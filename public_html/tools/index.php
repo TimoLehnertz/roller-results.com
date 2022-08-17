@@ -13,9 +13,10 @@ include_once "../header.php";
         <li><a href="list-alias.php">List alias</a></li>
         <?php
             if(canI("speaker")){
-                echo "<li><a href='speaker.php'>Speaker tools 💪</a></li>";
+                echo "<li><a href='speaker.php'>Speaker tools</a></li>";
             }
         ?>
+        <li><a href='import-project.php'><span class="code">New</span> Upload results</a></li>
     </ul>
 </main>
 <script>

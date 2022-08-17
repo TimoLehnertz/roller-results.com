@@ -135,6 +135,7 @@ $body-2-b: $bg
 
     .profile__name, .profile__image, .profile__special
         display: block
+        text-overflow: ellipsis
 
     .profile__primary, .profile__maximize
         display: none
@@ -575,7 +576,7 @@ $body-2-b: $bg
 
 @media only screen and (max-width: 45rem)
 
-    .profile.min, .profile.card,
+    .profile.min, .profile.card
         width: 95vw !important
 
     .profile.max
