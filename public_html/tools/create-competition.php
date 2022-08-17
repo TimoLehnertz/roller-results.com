@@ -4,8 +4,8 @@ include_once "../includes/error.php";
 include_once "../api/index.php";
 include_once "../header.php";
 
-if(!isLoggedIn()) {
-    throwError($ERROR_LOGIN_MISSING, "/tools/index.php");
+if(!canI("uploadResults")) {
+    throwError($ERROR_NO_PERMISSION, "/tools/index.php");
 }
 if(isset($_POST["submit"])) {
     $succsess = addCompetition($_POST["name"], $_POST["city"], $_POST["country"], $_POST["latitude"], $_POST["longitude"], $_POST["type"], $_POST["startDate"], $_POST["endDate"], $_POST["description"]);

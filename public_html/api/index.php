@@ -348,6 +348,10 @@ if(!isset($NO_GET_API)){
         // print_r($athletes);
         echo json_encode(searchAthletes($athletes, $aliasGruop));
     } else if(isset($_GET["putAliases"])) {
+        if(!canI("uploadResults")) {
+            echo "No permission";
+            exit();
+        }
         $aliases = json_decode(file_get_contents('php://input'), true);
         putAliases($aliases);
     } else if(isset($_GET["getathleteMedals"])) {
@@ -433,8 +437,8 @@ if(!isset($NO_GET_API)){
  *  time
  */
 function createResults($results) {
-    if(!isLoggedIn()) {
-        echo "you need to be logged in";
+    if(!canI("uploadResults")) {
+        echo "No permission";
         exit();
     }
     $types = "";
@@ -469,8 +473,8 @@ function createResults($results) {
 }
 
 function createRace($distance, $isRelay, $gender, $category, $trackRoad, $idCompetition) {
-    if(!isLoggedIn()) {
-        echo "you need to be logged in";
+    if(!canI("uploadResults")) {
+        echo "No permission";
         exit();
     }
     $checked = canI("managePermissions");
