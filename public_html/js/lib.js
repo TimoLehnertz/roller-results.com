@@ -576,12 +576,12 @@ class Slideshow {
     update() {
         if(!this.pressed){
             // alert(this.x + this.velX * 10800);
-            anime({
-                targets: this.elem.get()[0],
-                scrollLeft: this.getClosest(this.velX * 100),
-                duration: (1000 / this.fps) * 30,
-                easing: 'easeOutQuint'
-            });
+            // anime({
+            //     targets: this.elem.get()[0],
+            //     scrollLeft: this.getClosest(this.velX * 100),
+            //     duration: (1000 / this.fps) * 30,
+            //     easing: 'easeOutQuint'
+            // });
         } else{
             this.elem.get()[0].scrollLeft = this.x;
         }
