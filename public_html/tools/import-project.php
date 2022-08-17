@@ -94,7 +94,7 @@ function echoAliasSelect() {
     <div class="section light">
         <h2 class="align center">Step 2: <span class="font size medium margin left">Alias</span></h2>
         <br>
-        <p>Select Alias
+        <p>Select Alias Group:
             <?php echoAliasSelect();?><br><br>
             <label for="newAliasName">Create new</label>
             <input id="newAliasName" type="text" class="aliasGroupName" list="existingAlias">

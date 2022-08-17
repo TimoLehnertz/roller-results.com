@@ -52,10 +52,10 @@ $actual_link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https"
         <!-- chart.js -->
         <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.bundle.js"></script>
 
-        <script src="/js/ajaxAPI.js"></script>
-        <script src="/js/lib.js?v=1.1"></script>
-        <script src="/js/ui.js"></script>
-        <script src="/js/interface.js"></script>
+        <script src="/js/ajaxAPI.js?v=1.0"></script>
+        <script src="/js/lib.js?v=1.2"></script>
+        <script src="/js/ui.js?v=1.0"></script>
+        <script src="/js/interface.js?v=1.0"></script>
         <script src="/js/html2canvas/html2canvas.js" defer></script>
         <script>
             <?php echo "const phpUId = '".uniqid($_SERVER["SERVER_NAME"], true)."';";?>

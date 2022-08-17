@@ -587,12 +587,7 @@ function getAliasGroups() {
     if(!isLoggedIn()) {
         return [];
     }
-    // $res = query("SELECT aliasGroup, count(*) as `count` FROM TbAthleteAlias WHERE creator = ? GROUP BY aliasGroup;", "i", $_SESSION["iduser"]);
-    $res = query("SELECT aliasGroup, count(*) as `count` FROM TbAthleteAlias GROUP BY aliasGroup;");
-    // $out = [];
-    // foreach ($res as $row) {
-    //     $out []= $row["aliasGroup"];
-    // }
+    $res = query("SELECT aliasGroup, count(*) as `count` FROM TbAthleteAlias WHERE creator=? GROUP BY aliasGroup;", "i", $_SESSION["iduser"]);
     return $res;
 }
 
