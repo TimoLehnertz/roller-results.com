@@ -756,7 +756,7 @@ function validateObject(object, settings, i) {
             const propertySettings = settings[property];
             let value = object[property];
             // alert required but empty
-            if(value === undefined || value === null) {
+            if((value === undefined || value === null) && propertySettings !== "timeOrNull") {
                 console.log(object)
                 return parseErrorAt(i, property + " required");
             }
