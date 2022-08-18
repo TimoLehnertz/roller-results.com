@@ -4,7 +4,7 @@ include_once $_SERVER["DOCUMENT_ROOT"]."/../data/dbh.php";
 include_once $_SERVER["DOCUMENT_ROOT"]."/includes/cookies.php";
 include_once "imgAPI.php";
 
-function isLoggedIn(){
+function isLoggedIn() {
     if(!isset($_COOKIE["cookie_accepted"]) || !$_COOKIE["cookie_accepted"]) {
         return false;
     }

@@ -27,9 +27,9 @@ if($ipInfo) {
 }
 
 $user = null;
-// if(isLoggedIn()) {
-//     $user = $_SESSION["iduser"];
-// }
+if(isLoggedIn()) {
+    // $user = $_SESSION["iduser"];
+}
 
 dbExecute("INSERT INTO `results`.`TbLog`
 (`userId`,
