@@ -33,7 +33,7 @@ $actual_link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https"
         <meta property="og:description" content="Roller skating results and analysis">
         <meta property="og:type" content="profile" />
 
-        <link rel="icon" type="image/png" href="/img/logo.PNG">
+        <link rel="icon" type="image/png" href="/img/logo/rr.png">
         <link rel="stylesheet" href="/styles/main.css?v=1.3">
         <!-- GOOGLE fonts -->
         <link rel="preconnect" href="https://fonts.gstatic.com">
