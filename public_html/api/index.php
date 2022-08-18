@@ -500,7 +500,7 @@ function getRaceDescription($year, $event, $distance, $gender, $category) {
             }
             echo "#".$res["place"].": $fullname, ".$res["country"]."$time\n";
             // echo "#".$res["place"].": $fullname, ".$res["country"]."   |   Time: ".$res["time"]."\n";
-            echo "       + Athlete: www.roller-results.com/athlete?id=".$res["idAthlete"]."\n";
+            echo "       + Athlete: https://www.roller-results.com/athlete?id=".$res["idAthlete"]."\n";
             // echo "-------------------------------------------\n";
             $i++;
         }
@@ -508,7 +508,7 @@ function getRaceDescription($year, $event, $distance, $gender, $category) {
         if(sizeof($results) > $maxResults) {
             echo "All ".sizeof($results)." results can be found at: www.roller-results.com/race/index.php?id=".$race["id"];
         } else {
-            echo "Full results at: www.roller-results.com/race/index.php?id=".$race["id"];
+            echo "Full results at: https://www.roller-results.com/race/index.php?id=".$race["id"];
         }
         // echo "</pre>";
     } else {
