@@ -257,14 +257,28 @@ if(!isset($NO_GET_API)){
     } else if(isset($_GET["get500mData"])){
         echo json_encode(get500mData());
     }
-    else if(isset($_GET["getteamAdvantage"])){
+    /**
+    * Year: year of competition
+    * distance: distance
+    * gender: Woman / Men
+    * round: must be either final empty
+    * event: World games / World Championship / European Championship / Youth Olympic Games
+    * category: Junior / Senior
+    */
+   else if(isset($_GET["getRaceDescription"])) {
+       if(!isset($_GET["year"]) || !isset($_GET["distance"]) || !isset($_GET["gender"]) || !isset($_GET["event"]) || !isset($_GET["category"])) {
+           echo "Parameter missing!";
+           exit();
+       }
+       if(isset($_GET["round"]) && $_GET["round"] != "Final") exit();
+       echo getRaceDescription($_GET["year"], $_GET["event"], $_GET["distance"], $_GET["gender"], $_GET["category"]);
+   } else if(isset($_GET["getteamAdvantage"])){
         if(isset($_GET["data"]) && isset($_GET["data1"])) {
             echo json_encode(getTeamAdvantage($_GET["getteamAdvantage"], $_GET["data"], $_GET["data1"]));
         } else {
             echo("supply distance, maxplace and comps arguments!");
         }
-    }
-    else if(isset($_GET["uploadResults"])){
+    } else if(isset($_GET["uploadResults"])){
         $data = json_decode(file_get_contents('php://input'), true);
         var_dump($data);
         if(!isset($_GET["lname"]) || !isset($data["a"]) || !isset($data["d"]) || !isset($data["l"]) || !isset($_GET["user"])) {
@@ -425,6 +439,92 @@ if(!isset($NO_GET_API)){
             addAnalytics($name, $public, $json);
         }
     }
+}
+
+function getRaceDescription($year, $event, $distance, $gender, $category) {
+    $dbEvent = "";
+    if($event == "World games") $dbEvent = "World Games"; // db name
+    if($event == "World Championship") $dbEvent = "WM"; // db name
+    if($event == "European Championship") $dbEvent = "EM"; // db name
+    if($event == "Youth Olympic Games") $dbEvent = "Youth Olympic Games"; // db name
+    $dbDistance = "%$distance%";
+    if($gender == "Men") {
+        $dbGender = "m";
+    } else {
+        $dbGender = "w";
+    }
+    $races = query("SELECT * FROM TbRace as race JOIN TbCompetition as comp ON comp.idCompetition=race.idCompetition
+    WHERE year(comp.startDate)=? AND
+    comp.type LIKE ? AND
+    race.distance LIKE ? AND
+    race.gender LIKE ? AND
+    race.category LIKE ?;", "sssss", $year, $dbEvent, $dbDistance, $dbGender, $category);
+    if(sizeof($races) > 0) {
+        $race = $races[0];
+        $results = getRaceResults($race["id"]);
+        // echo "<pre>";
+        echo "The Inline Speedskating $event of $year were held in ".$race["location"].", ".$race["country"].".\nLocation: http://www.google.com/maps/place/".$race["latitude"].",".$race["longitude"]."\nResults for $distance $category $gender:\n";
+        echo "\n---------------------------------------------------------------------------------------------------------------------------\n";
+        $maxResults = 10;
+        $i = 0;
+        foreach ($results as $res) {
+            if($i >= $maxResults) break;
+            $fullname = $res["firstname"]." ".$res["lastname"];
+            if(strlen($fullname) < 10) {
+                $tabs = "\t\t\t\t";
+            } else if(strlen($fullname) < 17) {
+                $tabs = "\t\t\t";
+            }
+            else if(strlen($fullname) < 24) {
+                $tabs = "\t\t";
+            }
+            else if(strlen($fullname) < 31) {
+                $tabs = "\t";
+            }
+            if($res["place"] < 10) {
+                $res["place"] = "0".$res["place"];
+            }
+            if($i != 0) {
+                echo "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - \n";
+            }
+            $time = "";
+            if($res["time"] != NULL) {
+                $dateTime = DateTime::createFromFormat('H:i:s.v', $res["time"]);
+                if($dateTime->format("H") > 0) {
+                    $time = "   |   ".$dateTime->format("H.i.s.v");
+                } else if ($dateTime->format("i") > 0){
+                    $time = "   |   ".$dateTime->format("i.s.v");
+                } else {
+                    $time = "   |   ".$dateTime->format("s.v");
+                }
+            }
+            echo "#".$res["place"].": $fullname, ".$res["country"]."$time\n";
+            // echo "#".$res["place"].": $fullname, ".$res["country"]."   |   Time: ".$res["time"]."\n";
+            echo "       + Athlete: www.roller-results.com/athlete?id=".$res["idAthlete"]."\n";
+            // echo "-------------------------------------------\n";
+            $i++;
+        }
+        echo "---------------------------------------------------------------------------------------------------------------------------\n\n";
+        if(sizeof($results) > $maxResults) {
+            echo "All ".sizeof($results)." results can be found at: www.roller-results.com/race/index.php?id=".$race["id"];
+        } else {
+            echo "Full results at: www.roller-results.com/race/index.php?id=".$race["id"];
+        }
+        // echo "</pre>";
+    } else {
+        echo "Results can be found at www.roller-results.com";
+    }
+}
+
+function spacesAfterText($text, $maxSize) {
+    $tabs = "";
+    $len = strlen($text);
+    // $len = floor($len / $spacesPerTab) * $spacesPerTab;
+    while($len < $maxSize) {
+        $tabs .= " ";
+        $len++;
+    }
+    return $text.$tabs;
 }
 
 /**
