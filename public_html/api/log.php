@@ -5,7 +5,7 @@ if(!isset($_GET["uId"]) || !isset($_GET["currentPage"])) {
 }
 
 include_once $_SERVER["DOCUMENT_ROOT"]."/../data/dbh.php";
-include_once $_SERVER["DOCUMENT_ROOT"]."/api/userApi.php";
+include_once $_SERVER["DOCUMENT_ROOT"]."/api/userAPI.php";
 
 $uId = $_GET["uId"];
 
@@ -28,7 +28,7 @@ if($ipInfo) {
 
 $user = null;
 if(isLoggedIn()) {
-    // $user = $_SESSION["iduser"];
+    $user = $_SESSION["iduser"];
 }
 
 dbExecute("INSERT INTO `results`.`TbLog`
