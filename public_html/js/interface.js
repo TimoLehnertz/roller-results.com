@@ -939,7 +939,7 @@ function getRaceElem(race, results) {
     if(race.place !== undefined){
         head.append(getPlaceElem(race.place));
     }
-    
+
     const acRace = new Accordion(head, $("<div class='loading circle'></div>"),
         {
             onextend: (head, body1, status) => {
@@ -950,6 +950,7 @@ function getRaceElem(race, results) {
                         body1.find(".loading").remove();
                     } else {
                         get("race", race.id).receive((succsess, race) => {
+                            console.log("loaded race with id ", race.id, race);
                             body1.find(".loading").remove();
                             if(!succsess) {
                                 return;

@@ -42,6 +42,22 @@ function echoAliasSelect() {
 }
 // print_r($comps);
 ?>
+<script>
+    const iduser = <?php 
+        if(isLoggedIn()) {
+            echo $_SESSION["iduser"];
+        } else {
+            echo "undefined";
+        }
+    ?>;
+    const isAdmin = <?php
+        if(canI("managePermissions")) {
+            echo "true";
+        } else {
+            echo "false";
+        }
+    ?>;
+</script>
 <style>
     .create-new input {
         max-width: 8rem;
@@ -134,6 +150,10 @@ function echoAliasSelect() {
 </main>
 <script>
 
+$(window).bind('beforeunload', function(){
+  return 'Are you sure you want to leave? Not uploaded data will be lost';
+});
+
 $(() => {
     const idCompetition = sessionStorage.getItem('importScriptIdCompetition');
     if(idCompetition !== undefined) {
@@ -147,11 +167,28 @@ $(() => {
     }
 });
 
+let allCountries = [];
+get("countries").receive((succsess, res) => {
+    if(succsess) {
+        allCountries = res;
+        allCountries.sort((a,b) => a.country.localeCompare(b.country));
+    }
+    // console.log(countries);
+})
+
 compChanged();
 aliasChanged();
 
 let existingRaces = undefined;
 let existingCompetition = undefined;
+
+function getCountrySelect() {
+    const elem = $(`<select/>`);
+    for (const country of allCountries) {
+        elem.append(`<option value="${country.country}">${country.country}</option>`);
+    }
+    return elem;
+}
 
 function compChanged() {
     const idCompetition = $(".comps-select").val();
@@ -214,6 +251,7 @@ function updateSearch() {
  *  alias
  */
 function process(search, aliasGroup) {
+    $(".preview").empty();
     const loadingBar = new LoadingBar();
     $(".preview").append(loadingBar.elem);
     post("searchAthletes", {aliasGroup, athletes}).receive((succsess, res) => {
@@ -235,8 +273,14 @@ function updateUI() {
     let odd = true;
     let found = 0;
     let unsafe = 0;
+    for (const athlete of athletes) {
+        athlete.sureness = 0;
+        for (const result of athlete.result) {
+            athlete.sureness = Math.max(athlete.sureness, result.priority);
+        }
+    }
+    athletes.sort((a, b) => a.sureness - b.sureness);
     for (const search of athletes) {
-        console.log("athlete");
         odd = !odd;
         const row = $(`<div class="select-row" ${odd ? "style='background-color: #AAA'" : ""}></div>`);
 
@@ -247,6 +291,7 @@ function updateUI() {
             <span class="last-name">${search.search.lastName   || "-"}</span>
             <span class="gender">${search.search.gender        || "-"}</span>
             <span class="country">${search.search.country      || "-"}</span>
+            <span class="country">${search.search.category     || "-"}</span>
         </div>`);
 
         
@@ -270,7 +315,7 @@ function updateUI() {
                 search.linkId = search.result[0].id;
             }
         } else if(search.result.length === 1) {
-            search.result[0].isBest = search.result[0].priority > 2;
+            search.result[0].isBest = search.result[0].priority >= 2;
             search.linkId = search.result[0].id;
         }
         if(search.result.length > 0 && search.result[0].isBest) {
@@ -287,15 +332,7 @@ function updateUI() {
         search.createNew = search.result.length === 0;
         search.newAthlete = JSON.parse(JSON.stringify(search.search));
         const uiId = id;
-        
-        // empty radio
-        // results.append(`<div class="res padding top bottom">
-        //     <input id="${uiId}-1" type="radio" name="${uiId}" ${match ? "" : "checked"} value="-1">
-        //     <label for="${uiId}-1">
-        //         <div>No selection</div>
-        //     </label>
-        // </div>`);
-        
+    
         for (const athlete of search.result) {
             const athleteUid = getUid();
             const res = $(`<div class="res">
@@ -327,7 +364,7 @@ function updateUI() {
         // create adder
         results.append(`<div class="create-new res ${search.result.length > 0 ? "" : "best"}">
             <input id="${uiId}-1" type="radio" name="${uiId}" ${search.result.length > 0 ? "" : "checked"} value="-1">
-            <label for="${uiId}-1">
+            <label id="${uiId}-label-create" for="${uiId}-1">
                 <div class="create-new-inputs">Create new: 
                     <input tooltip="AthleteID" placeholder="AthleteID" name="alias" id="${uiId}-alias" value="${search.search.alias}">
                     <input tooltip="First name" placeholder="First name" name="firstName" id="${uiId}-firstName" value="${search.search.firstName}">
@@ -336,12 +373,15 @@ function updateUI() {
                         <option value="m" ${search.search.gender === "m" ? "selected" : ""}>Male</option>
                         <option value="w" ${search.search.gender === "w" ? "selected" : ""}>Female</option>
                     </select>
-                    <input tooltip="Country" placeholder="Country" name="country" id="${uiId}-country" value="${search.search.country || ""}">
                     <input tooltip="Club" placeholder="Club" name="club" id="${uiId}-club" value="${search.search.club || ""}">
                     <input tooltip="Team" placeholder="Team" name="team" id="${uiId}-team" value="${search.search.team || ""}">
                 </div>
             </label>
         </div>`);
+        const countryElem = getCountrySelect();
+        countryElem.attr("id", `${uiId}-country`);
+        countryElem.val(search.search.country);
+        results.find(`#${uiId}-label-create`).append(countryElem);
         // add listeners
         function updateAthleteSearch() {
             const idAthlete = results.find(`#${uiId}-link-manually`).val();
@@ -369,6 +409,9 @@ function updateUI() {
         results.find(".create-new-inputs input").on("change", function() {
             search.newAthlete[$(this).attr("name")] = $(this).val();
         });
+        countryElem.on("change", function() {
+            search.newAthlete["country"] = countryElem.val();
+        });
         // results.find(".create-new-inputs").trigger("change");
         results.find("input[type='radio']").on("change", () => {
             search.linkId = $(`input:radio[name="${uiId}"]:checked`).val();
@@ -381,8 +424,9 @@ function updateUI() {
         id++;
     }
     $(".preview").append(`<button class="btn default" onclick="update()">Save athletes</button>`);
+    // $(".preview").append(`<button class="btn default" onclick="update()"></button>`);
     window.setTimeout(() => {
-        // alert(`Found ${found} / ${athletes.length} Athletes. ${unsafe} not sure.`);
+        alert(`Found ${found} / ${athletes.length} Athletes. ${unsafe} not sure.`);
     }, 100);
 }
 
@@ -535,6 +579,7 @@ function initStep5() {
 function compareObjects(left, right) {
     for (const key in left) {
         if (Object.hasOwnProperty.call(left, key)) {
+            if(Array.isArray(left[key])) continue; //dont compare arrays
             if(left[key] !== right[key]) return false;
         }
     }
@@ -679,41 +724,93 @@ function initiateResults(loadedResults) {
             country: result.country,
             club: result.club,
             team: result.team,
+            category: result.category,
         })
     }
     const aliasGroup = $(".alias-select").val();
     process(athletes, aliasGroup);
 }
 
-function initRaces(results) {
-    $(".races-to-add").empty();
-    const idCompetition = $(".comps-select").val();
-    // if(idCompetition === "-1234") return alert("Please select Competition");
+
+function objectExistsInArr(a, arr) {
+    for (const b of arr) {
+        if(compareObjects(a, b)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+function raceFromResult(result) {
     let race = {
         distance: "",
         category: "",
         gender: "",
         isRelay: "",
         trackRoad: "",
-    };
-    let raceResults = []; // results of currently processed race
-    for (const result of results) {
-        if(!compareObjects(race, result)) { // new race
-            if(race.distance !== "") {
-                // saveRace(race, raceResults, idCompetition, (id) => saveResults(raceResults, id));
-                addRaceToQue(race, raceResults, idCompetition);
-                raceResults = [];
-            }
-            takeFromRight(race, result);
-        }
-        raceResults.push(result);
+        results: []
     }
-    // if(raceResults.length > 0) saveRace(race, raceResults, idCompetition, (id) => saveResults(raceResults, id)); // saving last race
-    if(raceResults.length > 0) addRaceToQue(race, raceResults, idCompetition);
+    takeFromRight(race, result);
+    return race;
+}
+
+function raceByResult(result, races) {
+    for (const race of races) {
+        if(compareObjects(race, result)) return race;
+    }
+    return false;
+}
+
+function initRaces(results) {
+    let quedRaces = [];
+    $(".races-to-add").empty();
+    const idCompetition = $(".comps-select").val();
+    // if(idCompetition === "-1234") return alert("Please select Competition");
+    for (const result of results) {
+        if(!objectExistsInArr(raceFromResult(result), quedRaces)) { // new race
+            const race = raceFromResult(result);
+            if(race.distance !== "") {
+                quedRaces.push(race);
+                race.results.push(result);
+            }
+        } else {
+            const race = raceByResult(result, quedRaces);
+            race.results.push(result);
+        }
+    }
+    // console.log("adding races: ", quedRaces);
+    quedRaces = quedRaces.sort((a,b) => a.category.localeCompare(b.category));
+    quedRaces = quedRaces.sort((a,b) => a.gender.localeCompare(b.gender));
+    quedRaces = quedRaces.sort((a,b) => a.distance.localeCompare(b.distance));
+    for (const race of quedRaces) {
+        race.results = race.results.sort((a,b) => parseInt(a.place) - parseInt(b.place));
+        addRaceToQue(race, race.results, idCompetition)
+    }
+}
+
+function findExistingRace(race) {
+    let testRace = {
+        distance: "",
+        category: "",
+        gender: "",
+        trackRoad: "",
+    }
+    // console.log("existing races:", existingRaces);
+    // console.log("race:", race);
+    takeFromRight(testRace, race);
+    for (const existing of existingRaces) {
+        existing.trackRoad = existing.trackStreet;
+        if(compareObjects(testRace, existing)) {
+            // console.log("existing:", testRace, existing);
+            return existing;
+        }
+    }
+    return undefined;
 }
 
 function addRaceToQue(race, results, idCompetition) {
     race = JSON.parse(JSON.stringify(race));
+    race.trackStreet = race.trackRoad;
     race.checked = true; // remove unchecked flag for this area
     race.raceYear = existingCompetition.startDate.split("-")[0];
     race.location = existingCompetition.location;
@@ -723,16 +820,51 @@ function addRaceToQue(race, results, idCompetition) {
     uploadBtn.click(() => {
         $(".upload-bnt").attr("disabled", true); // disable all other upload buttons to prevent multiple failures
         saveRace(race, idCompetition, (insertId) => {
+            console.log("uploading results:(raceid, results)", insertId, results);
             saveResults(results, insertId, (succsess) => {
                 $(".upload-bnt").attr("disabled", false); // enable buttons regardless of succsess
                 if(succsess) {
+                    console.log("uploaded results");
                     raceElem.remove();
                     updateExistingRaces();
+                } else {
+                    alert("could not upload results");
                 }
             });
         });
     });
-    raceElem.find(".race").append(uploadBtn);
+    const existing = findExistingRace(race);
+    if(existing === undefined) {
+        raceElem.find(".race").append(uploadBtn);
+    } else {
+        raceElem.find(".race").append(`<a class="existing-warning code color red" target="blank" href="/race/index.php?id=${existing?.id}">Existing</a>`);
+        if(isAdmin || iduser == race.creator) {
+            const delBtn = $(`<button class="btn blender alone">Delete Existing</button>`);
+            delBtn.click((e) => {
+                deleteRace(existing, () => {
+                    delBtn.remove();
+                    raceElem.find(".race .existing-warning").remove();
+                    raceElem.find(".race").append(uploadBtn);
+                });
+                e.preventDefault();
+                e.stopPropagation();
+            });
+            raceElem.find(".race").append(delBtn);
+        }
+    }
+}
+
+function deleteRace(race, callback) {
+    if(!confirm(`Are you sure to delete the race with id ${race.id}(${race.distance} ${race.gender} ${race.category})?`)) return;
+    get("deleteRace", race.id).receive((succsess, res) => {
+        if(!succsess) return alert("error occoured while deleting race " + race.id);
+        if(res == true) {
+            updateExistingRaces();
+            callback();
+        } else {
+            alert(res);
+        }
+    });
 }
 
 /**

@@ -26,7 +26,7 @@ function search(text, callback){
  * @param {text} message message to display
  */
 function ajaxError(message){
-    // alert("axax error occoured: " + message);
+    console.log("axax error occoured: " + message);
     console.log("ajax error");
 }
 

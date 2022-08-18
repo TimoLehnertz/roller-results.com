@@ -337,6 +337,8 @@ if(!isset($NO_GET_API)){
         }
     } else if(isset($_GET["getselectPresets"])) {
         echo json_encode(getSelectPresets());
+    } else if(isset($_GET["getdeleteRace"])) {
+        deleteRace(intval($_GET["getdeleteRace"]));
     } else if(isset($_GET["getdeleteSelectPreset"]) && isset($_GET["presetName"])) {
          $presetName = $_GET["presetName"];
          if(doIOwnSelectPreset($presetName)) {
@@ -357,6 +359,11 @@ if(!isset($NO_GET_API)){
     else if(isset($_GET["searchAthletes"])) {
         // var_dump(file_get_contents('php://input'));
         $input = json_decode(file_get_contents('php://input'), true);
+        if(!isset($input["athletes"]) || !isset($input["aliasGroup"])) {
+            var_dump($input);
+            echo "invalid input";
+            exit(0);
+        }
         $athletes = $input["athletes"];
         $aliasGruop = $input["aliasGroup"];
         // print_r($athletes);
@@ -568,7 +575,9 @@ function createResults($results) {
         $fillers []= $checked;
     }
     $sql .= ";";
-
+    echo "creating results to database";
+    echo $sql;
+    var_dump($fillers);
     return dbInsert($sql, $types, ...$fillers);
 }
 
@@ -1261,6 +1270,23 @@ function getAthleteRacesFromCompetition($idathlete, $idcompetition){
     } else {
         return [];
     }
+}
+
+function deleteRace($id) {
+    if(!isLoggedIn()) {
+        echo "You need to be logged in";
+        return false;
+    }
+    $iduser = $_SESSION["iduser"];
+    $race = getRace($id);
+    $admin = canI("managePermissions");
+    if(!$admin || ($race["creator"] != $iduser)) {
+        echo "you dont have the permission to do that!";
+        return false;
+    }
+    dbExecute("CALL sp_deleteRace(?)", "i", $id);
+    echo "true";
+    return true;
 }
 
 function getAthleteCompetitions($idathlete){
