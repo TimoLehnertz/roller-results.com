@@ -506,7 +506,7 @@ function getRaceDescription($year, $event, $distance, $gender, $category) {
         }
         echo "---------------------------------------------------------------------------------------------------------------------------\n\n";
         if(sizeof($results) > $maxResults) {
-            echo "All ".sizeof($results)." results can be found at: www.roller-results.com/race/index.php?id=".$race["id"];
+            echo "All ".sizeof($results)." results can be found at: https://www.roller-results.com/race/index.php?id=".$race["id"];
         } else {
             echo "Full results at: https://www.roller-results.com/race/index.php?id=".$race["id"];
         }
