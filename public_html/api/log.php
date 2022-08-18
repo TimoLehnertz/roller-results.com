@@ -25,15 +25,21 @@ if($ipInfo) {
     $loc = $ipInfo["country"].", ".$ipInfo["state"].", ".$ipInfo["city"];
 }
 
+$user = null;
+if(isset($_SESSION["iduser"])) {
+    $user = $_SESSION["iduser"];
+}
+
 dbExecute("INSERT INTO `results`.`TbLog`
 (`userId`,
 `from`,
 `to`,
 `ip`,
 `location`,
-`device`)
+`device`,
+`user`)
 VALUES
-(?,?,?,?,?,?);", "ssssss", $uId, $lastPage, $currentPage, $ip, $loc, $device);
+(?,?,?,?,?,?,?);", "ssssssi", $uId, $lastPage, $currentPage, $ip, $loc, $device, $user);
 
 
 function ip_info($ip = NULL, $purpose = "location", $deep_detect = TRUE) {

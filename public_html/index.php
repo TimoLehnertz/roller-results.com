@@ -40,7 +40,7 @@ include_once "api/imgAPI.php";
     <div class="message">
         <h1 class="headline">Where Inline Speedskating results come alive</h1>
         <p>
-            Explore <b class="font color white">90 Years</b> of Roller skating <b class="font color white">results</b> and <b class="font color white">videos</b>. Review, compare and analize your data with thousands of <b class="font color white">skaters</b> arround the globe. 
+            Explore <b class="font color white">90 Years</b> of Inline Speedskating <b class="font color white">results</b> and <b class="font color white">videos</b>. Review, compare and analize your data with thousands of <b class="font color white">skaters</b> arround the globe. 
         </p>
     </div>
     <div id="container" class="globe"></div>
