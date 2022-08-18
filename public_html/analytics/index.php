@@ -12,7 +12,7 @@ echoRandWallpaper();
     <div class="dark section no-shadow">
         <h1 class="flex mobile font size biggest">Analytics</h1>
         <p class="align center font size big color light margin top double">
-            The tool to dig deep into Speed-skating data
+            The tool to dig deep into Inline Speedskating data
         </p>
     </div>
     <div class="light section">

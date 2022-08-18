@@ -5,6 +5,7 @@ if(!isset($_GET["uId"]) || !isset($_GET["currentPage"])) {
 }
 
 include_once $_SERVER["DOCUMENT_ROOT"]."/../data/dbh.php";
+include_once $_SERVER["DOCUMENT_ROOT"]."/api/userApi.php";
 
 $uId = $_GET["uId"];
 
@@ -26,7 +27,7 @@ if($ipInfo) {
 }
 
 $user = null;
-if(isset($_SESSION["iduser"])) {
+if(isLoggedIn()) {
     $user = $_SESSION["iduser"];
 }
 
