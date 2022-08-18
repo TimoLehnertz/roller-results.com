@@ -1,7 +1,3 @@
-/**
- * logging script to see traffic
- */
-
 const uidSessionName = "uId";
 const lastPageSessionName = "lastPage";
 
@@ -20,7 +16,6 @@ function makeNew() {
     window.sessionStorage.removeItem(lastPageSessionName);
 }
 
-
 function getLastPage() {
     return window.sessionStorage.getItem(lastPageSessionName);
 }
@@ -30,7 +25,6 @@ function getCurrentPage() {
 }
 
 function postLog() {
-    // console.log(uId)
     const lastPage = getLastPage();
     let lastPageQuery = "";
     if(lastPage) {
@@ -38,10 +32,7 @@ function postLog() {
     }
     $.ajax(`/api/log.php?uId=${uId}${lastPageQuery}&currentPage=${getCurrentPage()}`, {
         method: "GET",
-        // data: data,
-        // data: JSON.stringify(data),
         success: (response) => {
-            // console.log(response);
         },
         error: function(xhr, ajaxOptions, thrownError) {
             console.log("log failed");
