@@ -316,7 +316,7 @@ function updateUI() {
             }
         }
         // create custom custom link
-        results.append(`<div class="link-new res padding top bottom">
+        results.append(`<div class="link-new res">
             <input class="custom-linker" id="${uiId}-2" type="radio" name="${uiId}" value="-2">
             <label for="${uiId}-2">
                 Link manually
@@ -325,7 +325,7 @@ function updateUI() {
             </label>
         </div>`);
         // create adder
-        results.append(`<div class="create-new res padding top bottom ${search.result.length > 0 ? "" : "best"}">
+        results.append(`<div class="create-new res ${search.result.length > 0 ? "" : "best"}">
             <input id="${uiId}-1" type="radio" name="${uiId}" ${search.result.length > 0 ? "" : "checked"} value="-1">
             <label for="${uiId}-1">
                 <div class="create-new-inputs">Create new: 
