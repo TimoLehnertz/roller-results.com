@@ -44,8 +44,8 @@ include_once "api/imgAPI.php";
         </p>
     </div>
     <div id="container" class="globe"></div>
+    <div class="dates" style="height: 170px"></div>
     <div class="lower">
-        <div class="dates" style="height: 170px"></div>
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" preserveAspectRatio="none" viewBox="0 0 1680 40" class="curvature" style="bottom: -1px;"><path d="M0 40h1680V30S1340 0 840 0 0 30 0 30z" fill="#ddd"></path></svg>
         <div class="content">
             <div class="amounts">
@@ -205,6 +205,7 @@ include_once "api/imgAPI.php";
             </div>
             <div class="light section align center">
                 <h2>And the best is yet to come:<br>it's all free and open source!</h2>
+                <button class="btn only-text" onclick="easterEgg()"><img src="/img/easter-egg.png" style="max-width: 2rem"></button>
                 <p>
                     We commit this site to the amazing inline speedskating comunity!
                 </p>
@@ -219,6 +220,20 @@ include_once "api/imgAPI.php";
         </div>
     </div>
 </main>
+<script>
+    $(easterEgg);
+    function easterEgg() {
+        $(".lower").css("display", "none");
+        $(".footer").css("display", "none");
+        $(".message").css("display", "none");
+        $(".globe").addClass("center");
+        if(isMobile()) {
+            $(".dates").css("transform", "translateY(-15rem)");
+        } else {
+            $(".dates").css("transform", "translateY(20rem)");
+        }
+    }
+</script>
 <script type="module">
 
     let overlayOpened = false;
@@ -255,6 +270,8 @@ include_once "api/imgAPI.php";
 
     globe.animate();
     globe.initSurfaceDots();
+
+    
 
     // overlay.on("hover", (e) => e.stopPropagation())
 
