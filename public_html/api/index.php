@@ -576,10 +576,11 @@ function createResults($results) {
         $fillers []= $checked;
     }
     $sql .= ";";
-    echo "creating results to database";
-    echo $sql;
-    var_dump($fillers);
-    return dbInsert($sql, $types, ...$fillers);
+    if(dbInsert($sql, $types, ...$fillers) == false) {
+        echo "false";
+    } else {
+        echo "true";
+    }
 }
 
 function createRace($distance, $isRelay, $gender, $category, $trackRoad, $idCompetition) {

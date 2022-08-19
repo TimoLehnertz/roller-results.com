@@ -146,6 +146,7 @@ function echoAliasSelect() {
     <div class="section dark">
         <h2 class="align center">Step 5:<span class="font size medium margin left">Upload</span></h2>
         <br>
+        <div class="loading-placeholder"></div>
         <p class="remove-me-on-athlete-finish">Save athletes to proceed</p>
         <div class="race-preview flex mobile align-start">
             <div>
@@ -264,7 +265,16 @@ function updateSearch() {
 function process(search, aliasGroup) {
     $(".preview").empty();
     const loadingBar = new LoadingBar();
+    let remaining = parseInt(athletes.length / 4);
+    $(".preview").append(`<p>This will take about <span class="remaining"></span> seconds</p>`)
     $(".preview").append(loadingBar.elem);
+    let interval = window.setInterval(() => {
+        $(".preview").find(".remaining").text(remaining);
+        remaining--;
+        if(remaining < 0) {
+            window.clearInterval(interval);
+        }
+    }, 1000);
     post("searchAthletes", {aliasGroup, athletes}).receive((succsess, res) => {
         console.log("got athlete matches from server:");
         log(res);
@@ -278,23 +288,25 @@ function process(search, aliasGroup) {
     });
 }
 
+function hideUnrelevant() {
+    for (const athlete of athletes) {
+        const matched = athlete.linkId != "-1234" && typeof athlete.linkId === "number";
+        if(matched) {
+            athlete.guiElem.css("display", "none");
+        }
+    }
+}
+
 function updateUI() {
     $(".preview").empty();
-    const hideUnrelevalt = $(`<button class="btn blender alone">Hide matched</button>`);
+    const hideBtn = $(`<button class="btn blender alone">Hide matched</button>`);
     const showUnrelevalt = $(`<button class="btn blender alone">Show all</button>`);
     $(".preview").append(`<div class="sticky buttons"></div>`);
-    $(".preview").find(".buttons").append(hideUnrelevalt);
+    $(".preview").find(".buttons").append(hideBtn);
     $(".preview").find(".buttons").append(showUnrelevalt);
 
-    hideUnrelevalt.click(() => {
-        for (const athlete of athletes) {
-            console.log(typeof athlete.linkId);
-            const matched = athlete.linkId != "-1234" && typeof athlete.linkId === "number";
-            console.log(matched);
-            if(matched) {
-                athlete.guiElem.css("display", "none");
-            }
-        }
+    hideBtn.click(() => {
+        hideUnrelevant();
     });
     showUnrelevalt.click(() => {
         for (const athlete of athletes) {
@@ -462,14 +474,12 @@ function updateUI() {
         id++;
     }
     if(canUploadResults) {
-        $(".preview").append(`<button class="btn default" onclick="update()">Save athletes</button>`);
+        $(".preview").append(`<button class="save-athletes-btn btn default" onclick="update()">Save athletes</button>`);
     } else {
         $(".preview").append(`<h2 class="margin top">Contact us at <span class="code padding left right">roller.results@gmail.com</span> to get accsess to this tool</h2>`);
     }
     // $(".preview").append(`<button class="btn default" onclick="update()"></button>`);
-    window.setTimeout(() => {
-        // alert(`Found ${found} / ${athletes.length} Athletes. ${unsafe} not sure.`);
-    }, 100);
+    $(".preview").prepend(`<p>Found ${found} / ${athletes.length} Athletes. ${unsafe} not sure.</p>`)
 }
 
 function getGenderImg(gender) {
@@ -591,14 +601,17 @@ function apply(aliasGroup) {
         if(alias.createNew) error = false;
         if(error) {
             console.log(alias);
-            alert(`${i1}th Athlete has no id`);
+            alert(`Athlete #${i1} has no id`);
             return;
         }
         i1++;
     }
-    $("main").append(`<div class="loading circle"/>`);
+    const bar = new LoadingBar();
+    $("main").append(bar.elem);
+    $(".save-athletes-btn").attr("disabled", true);
     post("putAliases", aliases).receive((succsess, res) => {
-        $(".loading").remove();
+        bar.remove();
+        $(".save-athletes-btn").attr("disabled", false);
         if(succsess) {
             // alert("Succsess");
             // $(".preview").empty();
@@ -613,6 +626,7 @@ function apply(aliasGroup) {
 }
 
 function initStep5() {
+    hideUnrelevant();
     $(".existing-races").empty();
     $(".existing-races").append(getRacesElem(existingRaces));
     // push linked athletes into results
@@ -669,8 +683,10 @@ function saveResults(results, idRace, callback) {
         result.idRace = idRace;
     }
     post("createResults", results).receive((succsess, response) => {
-        callback(succsess);
         if(!succsess) return alert("Error while uploading results");
+        if(response != true) return alert("Error while uploading results");
+        console.log("createResults - response:", response);
+        callback(succsess);
     });
 }
 
@@ -821,9 +837,16 @@ function raceByResult(result, races) {
 }
 
 function uploadAllRaces() {
+    $(".upload-all-btn").attr("disabled", true); // disable all other upload buttons to prevent multiple failures
+    $(".upload-bnt").attr("disabled", true); // disable all other upload buttons to prevent multiple failures
+    const bar = new LoadingBar()
+    $(".loading-placeholder").append(bar.elem);
     for (const race of allQuedRaces) {
         uploadRace(race);
     }
+    bar.remove();
+    $(".upload-bnt").attr("disabled", false);
+    $(".upload-all-btn").attr("disabled", false);
     allQuedRaces = [];
 }
 
@@ -831,10 +854,15 @@ function initRaces(results) {
     let quedRaces = [];
     allQuedRaces = [];
     $(".races-to-add").empty();
-    $(".races-to-add").append(`<button onclick="uploadAllRaces()">Upload all races</button>`);
+    $(".races-to-add").append(`<button class="upload-all-btn btn blender alone" onclick="uploadAllRaces()">Upload all races</button>`);
     const idCompetition = $(".comps-select").val();
     // if(idCompetition === "-1234") return alert("Please select Competition");
     for (const result of results) {
+        // preprocessing
+        result.distance = result.distance.toLowerCase();
+        result.category = result.category.toLowerCase();
+        result.gender = result.gender.toLowerCase();
+        result.trackRoad = result.trackRoad.toLowerCase();
         if(!objectExistsInArr(raceFromResult(result), quedRaces)) { // new race
             const race = raceFromResult(result);
             if(race.distance !== "") {
@@ -847,8 +875,8 @@ function initRaces(results) {
         }
     }
     // console.log("adding races: ", quedRaces);
-    quedRaces = quedRaces.sort((a,b) => a.category.localeCompare(b.category));
     quedRaces = quedRaces.sort((a,b) => a.gender.localeCompare(b.gender));
+    quedRaces = quedRaces.sort((a,b) => a.category.localeCompare(b.category));
     quedRaces = quedRaces.sort((a,b) => a.distance.localeCompare(b.distance));
     console.log("parsed races:");
     log(quedRaces);
@@ -878,7 +906,7 @@ function findExistingRace(race) {
     return undefined;
 }
 
-function uploadRace(race) {
+function uploadRace(race, callback) {
     if(race.results == undefined) {
         log(race);
         return alert("no results for race");
@@ -892,6 +920,9 @@ function uploadRace(race) {
         saveResults(race.results, insertId, (succsess) => {
             $(".upload-bnt").attr("disabled", false); // enable buttons regardless of succsess
             if(succsess) {
+                if(callback != undefined) {
+                    callback();
+                }
                 console.log("uploaded results");
                 race?.raceElem?.remove();
                 updateExistingRaces();
@@ -902,9 +933,23 @@ function uploadRace(race) {
     });
 }
 
+function checkRaceForDoubleAthletes(race) {
+    let idAthletes = [];
+    let doublicates = [];
+    for (const result of race.results) {
+        if(idAthletes.includes(result.idAthlete)) {
+            console.log("found doublicate id in race: ", race, result.idAthlete);
+            doublicates.push(result);
+        }
+        idAthletes.push(result.idAthlete);
+    }
+    return doublicates;
+}
+
 let allQuedRaces = [];
 
 function addRaceToQue(race, idCompetition) {
+    let doublicates = checkRaceForDoubleAthletes(race);
     race = JSON.parse(JSON.stringify(race));
     race.trackStreet = race.trackRoad;
     race.checked = true; // remove unchecked flag for this area
@@ -913,7 +958,7 @@ function addRaceToQue(race, idCompetition) {
     const raceElem = getRaceElem(JSON.parse(JSON.stringify(race)), JSON.parse(JSON.stringify(race.results))); // copying results to prevent it from changing on gui side
     race.raceElem = raceElem;
     $(".races-to-add").append(raceElem);
-    const uploadBtn = $(`<button class="upload-bnt btn blender alone margin left">Upload</button>`);
+    const uploadBtn = $(`<button class="upload-bnt btn blender alone margin left">Upload(${race.results.length})</button>`);
     uploadBtn.click((e) => {
         uploadRace(race);
         e.preventDefault();
@@ -921,10 +966,10 @@ function addRaceToQue(race, idCompetition) {
         allQuedRaces.splice(allQuedRaces.indexOf(race), 1);
     });
     const existing = findExistingRace(race);
-    if(existing === undefined) {
+    if(existing === undefined && doublicates.length == 0) {
         raceElem.find(".race.flex").append(uploadBtn);
         allQuedRaces.push(race);
-    } else {
+    } else if(existing !== undefined) {
         raceElem.find(".race").append(`<a class="existing-warning code color red" target="blank" href="/race/index.php?id=${existing?.id}">Existing</a>`);
         if(isAdmin || iduser == race.creator) {
             const delBtn = $(`<button class="btn blender alone">Delete Existing</button>`);
@@ -932,14 +977,24 @@ function addRaceToQue(race, idCompetition) {
                 deleteRace(existing, () => {
                     delBtn.remove();
                     raceElem.find(".race .existing-warning").remove();
-                    raceElem.find(".race").append(uploadBtn);
-                    allQuedRaces.push(race);
+                    if(doublicates.length == 0) {
+                        raceElem.find(".race").append(uploadBtn);
+                        allQuedRaces.push(race);
+                    }
                 });
                 e.preventDefault();
                 e.stopPropagation();
             });
             raceElem.find(".race").append(delBtn);
         }
+    } else { // doublicate athletes
+        let doublicateString = "";
+        for (const doublicate of doublicates) {
+            doublicateString += `firstname: ${doublicate.firstName}, lastname: ${doublicate.firstName}, id: ${doublicate.idAthlete}, place: ${doublicate.place}<br>`;
+        }
+        const warningId = getUid();
+        raceElem.find(".race").append(`<a id="${warningId}" class="existing-warning code color red" target="blank">Doublicate athlete</span>`);
+        new Tooltip("#" + warningId, doublicateString);
     }
 }
 
