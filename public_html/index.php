@@ -221,13 +221,15 @@ include_once "api/imgAPI.php";
     </div>
 </main>
 <script>
+    // $(easterEgg);
     function easterEgg() {
         $(".lower").css("display", "none");
         $(".footer").css("display", "none");
+        $(".header").css("display", "none");
         $(".message").css("display", "none");
         $(".globe").addClass("center");
         if(isMobile()) {
-            $(".dates").css("transform", "translateY(-15rem)");
+            $(".dates").css("transform", "translateY(-10rem)");
         } else {
             $(".dates").css("transform", "translateY(20rem)");
         }
