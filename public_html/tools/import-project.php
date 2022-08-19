@@ -161,9 +161,9 @@ function echoAliasSelect() {
 </main>
 <script>
 
-$(window).bind('beforeunload', function(){
-  return 'Are you sure you want to leave? Not uploaded data will be lost';
-});
+// $(window).bind('beforeunload', function(){
+//   return 'Are you sure you want to leave? Not uploaded data will be lost';
+// });
 
 $(() => {
     const idCompetition = sessionStorage.getItem('importScriptIdCompetition');
@@ -280,6 +280,28 @@ function process(search, aliasGroup) {
 
 function updateUI() {
     $(".preview").empty();
+    const hideUnrelevalt = $(`<button class="btn blender alone">Hide matched</button>`);
+    const showUnrelevalt = $(`<button class="btn blender alone">Show all</button>`);
+    $(".preview").append(`<div class="sticky buttons"></div>`);
+    $(".preview").find(".buttons").append(hideUnrelevalt);
+    $(".preview").find(".buttons").append(showUnrelevalt);
+
+    hideUnrelevalt.click(() => {
+        for (const athlete of athletes) {
+            console.log(typeof athlete.linkId);
+            const matched = athlete.linkId != "-1234" && typeof athlete.linkId === "number";
+            console.log(matched);
+            if(matched) {
+                athlete.guiElem.css("display", "none");
+            }
+        }
+    });
+    showUnrelevalt.click(() => {
+        for (const athlete of athletes) {
+            athlete.guiElem.css("display", "block");
+        }
+    });
+
     let id = 0;
     let odd = true;
     let found = 0;
@@ -291,18 +313,22 @@ function updateUI() {
         }
     }
     athletes.sort((a, b) => a.sureness - b.sureness);
+    let i = 1;
     for (const search of athletes) {
         odd = !odd;
         const row = $(`<div class="select-row" ${odd ? "style='background-color: #AAA'" : ""}></div>`);
-
+        search.guiElem = row;
         row.append(
         `<div class="prev-info">
-            <span class="alias">${search.search.alias          || "-"}</span>
-            <span class="first-name">${search.search.firstName || "-"}</span> | 
-            <span class="last-name">${search.search.lastName   || "-"}</span>
-            <span class="gender">${search.search.gender        || "-"}</span>
-            <span class="country">${search.search.country      || "-"}</span>
-            <span class="country">${search.search.category     || "-"}</span>
+            <div>
+                <span class="alias">${search.search.alias          || "-"}</span>
+                <span class="first-name">${search.search.firstName || "-"}</span> | 
+                <span class="last-name">${search.search.lastName   || "-"}</span>
+                <span class="gender">${search.search.gender        || "-"}</span>
+                <span class="country">${search.search.country      || "-"}</span>
+                <span class="country">${search.search.category     || "-"}</span>
+            </div>
+            <div>#${i}</div>
         </div>`);
 
         
@@ -432,6 +458,7 @@ function updateUI() {
         });
         row.append(results);
         $(".preview").append(row);
+        i++;
         id++;
     }
     if(canUploadResults) {
@@ -441,7 +468,7 @@ function updateUI() {
     }
     // $(".preview").append(`<button class="btn default" onclick="update()"></button>`);
     window.setTimeout(() => {
-        alert(`Found ${found} / ${athletes.length} Athletes. ${unsafe} not sure.`);
+        // alert(`Found ${found} / ${athletes.length} Athletes. ${unsafe} not sure.`);
     }, 100);
 }
 
@@ -554,6 +581,21 @@ function apply(aliasGroup) {
         }
         i++;
     }
+    let i1 = 1;
+    for (const alias of aliases.aliases) {
+        const idAthlete = alias.idAthlete;
+        let error = false;
+        if(idAthlete == "-1") error = true;
+        if(idAthlete == undefined) error = true;
+        if(idAthlete == null) error = true;
+        if(alias.createNew) error = false;
+        if(error) {
+            console.log(alias);
+            alert(`${i1}th Athlete has no id`);
+            return;
+        }
+        i1++;
+    }
     $("main").append(`<div class="loading circle"/>`);
     post("putAliases", aliases).receive((succsess, res) => {
         $(".loading").remove();
@@ -638,6 +680,7 @@ function saveRace(race, idCompetition, callback) {
     post("createRace", race).receive((succsess, response) => {
         // response: {id: 24628} (id of inserted race)
         if(!succsess) return alert("Error occured while uploading race");
+        if(response.id == undefined) return alert("Error occured while uploading race");
         callback(response.id);
     });
 }
@@ -777,9 +820,18 @@ function raceByResult(result, races) {
     return false;
 }
 
+function uploadAllRaces() {
+    for (const race of allQuedRaces) {
+        uploadRace(race);
+    }
+    allQuedRaces = [];
+}
+
 function initRaces(results) {
     let quedRaces = [];
+    allQuedRaces = [];
     $(".races-to-add").empty();
+    $(".races-to-add").append(`<button onclick="uploadAllRaces()">Upload all races</button>`);
     const idCompetition = $(".comps-select").val();
     // if(idCompetition === "-1234") return alert("Please select Competition");
     for (const result of results) {
@@ -798,9 +850,11 @@ function initRaces(results) {
     quedRaces = quedRaces.sort((a,b) => a.category.localeCompare(b.category));
     quedRaces = quedRaces.sort((a,b) => a.gender.localeCompare(b.gender));
     quedRaces = quedRaces.sort((a,b) => a.distance.localeCompare(b.distance));
+    console.log("parsed races:");
+    log(quedRaces);
     for (const race of quedRaces) {
         race.results = race.results.sort((a,b) => parseInt(a.place) - parseInt(b.place));
-        addRaceToQue(race, race.results, idCompetition)
+        addRaceToQue(race, idCompetition);
     }
 }
 
@@ -824,34 +878,52 @@ function findExistingRace(race) {
     return undefined;
 }
 
-function addRaceToQue(race, results, idCompetition) {
+function uploadRace(race) {
+    if(race.results == undefined) {
+        log(race);
+        return alert("no results for race");
+    }
+    const idCompetition = $(".comps-select").val();
+    console.log("uploading race:");
+    log(race);
+    $(".upload-bnt").attr("disabled", true); // disable all other upload buttons to prevent multiple failures
+    saveRace(race, idCompetition, (insertId) => {
+        console.log("uploading results:(raceid, results)", insertId, results);
+        saveResults(race.results, insertId, (succsess) => {
+            $(".upload-bnt").attr("disabled", false); // enable buttons regardless of succsess
+            if(succsess) {
+                console.log("uploaded results");
+                race?.raceElem?.remove();
+                updateExistingRaces();
+            } else {
+                alert("could not upload results");
+            }
+        });
+    });
+}
+
+let allQuedRaces = [];
+
+function addRaceToQue(race, idCompetition) {
     race = JSON.parse(JSON.stringify(race));
     race.trackStreet = race.trackRoad;
     race.checked = true; // remove unchecked flag for this area
     race.raceYear = existingCompetition.startDate.split("-")[0];
     race.location = existingCompetition.location;
-    const raceElem = getRaceElem(race, JSON.parse(JSON.stringify(results))); // copying results to prevent it from changing on gui side
+    const raceElem = getRaceElem(JSON.parse(JSON.stringify(race)), JSON.parse(JSON.stringify(race.results))); // copying results to prevent it from changing on gui side
+    race.raceElem = raceElem;
     $(".races-to-add").append(raceElem);
     const uploadBtn = $(`<button class="upload-bnt btn blender alone margin left">Upload</button>`);
-    uploadBtn.click(() => {
-        $(".upload-bnt").attr("disabled", true); // disable all other upload buttons to prevent multiple failures
-        saveRace(race, idCompetition, (insertId) => {
-            console.log("uploading results:(raceid, results)", insertId, results);
-            saveResults(results, insertId, (succsess) => {
-                $(".upload-bnt").attr("disabled", false); // enable buttons regardless of succsess
-                if(succsess) {
-                    console.log("uploaded results");
-                    raceElem.remove();
-                    updateExistingRaces();
-                } else {
-                    alert("could not upload results");
-                }
-            });
-        });
+    uploadBtn.click((e) => {
+        uploadRace(race);
+        e.preventDefault();
+        e.stopPropagation();
+        allQuedRaces.splice(allQuedRaces.indexOf(race), 1);
     });
     const existing = findExistingRace(race);
     if(existing === undefined) {
-        raceElem.find(".race").append(uploadBtn);
+        raceElem.find(".race.flex").append(uploadBtn);
+        allQuedRaces.push(race);
     } else {
         raceElem.find(".race").append(`<a class="existing-warning code color red" target="blank" href="/race/index.php?id=${existing?.id}">Existing</a>`);
         if(isAdmin || iduser == race.creator) {
@@ -861,6 +933,7 @@ function addRaceToQue(race, results, idCompetition) {
                     delBtn.remove();
                     raceElem.find(".race .existing-warning").remove();
                     raceElem.find(".race").append(uploadBtn);
+                    allQuedRaces.push(race);
                 });
                 e.preventDefault();
                 e.stopPropagation();

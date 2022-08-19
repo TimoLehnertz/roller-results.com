@@ -231,6 +231,7 @@ if(!isset($NO_GET_API)){
     } else if(isset($_GET["createRace"])) {
         $race = json_decode(file_get_contents('php://input'), true);
         if(!isset($race["distance"]) || !isset($race["isRelay"]) || !isset($race["gender"]) || !isset($race["category"]) || !isset($race["trackRoad"]) || !isset($race["idCompetition"])) {
+            print_r($race);
             echo "invalid race";
             exit();
         }
@@ -1006,7 +1007,7 @@ function setRaceLinks($races){
                 }
                 $newLinks = [];
                 if($newRace["link"]){
-                    var_dump($newRace["link"]);
+                    // var_dump($newRace["link"]);
                     $newLinks = explode(";", $newRace["link"]);
                     // $newLinks = $newRace["link"];
                 }
@@ -1017,7 +1018,7 @@ function setRaceLinks($races){
                     continue;
                 }
 
-                var_dump($newLinks);
+                // var_dump($newLinks);
 
                 $insertLink = $oldRace["link"];
                 $changed = false;
@@ -1041,7 +1042,7 @@ function setRaceLinks($races){
             }
         }
     }
-    var_dump($new);
+    // var_dump($new);
     foreach ($new as $idRace => $link) {
         dbExecute("UPDATE TbRace SET link = ? WHERE id = ?;", "si", $link, $idRace);
     }

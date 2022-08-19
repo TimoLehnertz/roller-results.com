@@ -889,8 +889,9 @@ function getRacesElem(races, body) {
     }
     let trackStreet = "";
     let distance = "";
+    races = races.sort((a,b)=>a.trackStreet.localeCompare(b.trackStreet));
     for (const race of races) {
-        if(trackStreet !== race.trackStreet) {
+        if(trackStreet.toLowerCase() !== race.trackStreet.toLowerCase()) {
             trackStreet = race.trackStreet;
             body.append(getRaceDelimiter(`<h2>${trackStreet}<h2>`));
         }
