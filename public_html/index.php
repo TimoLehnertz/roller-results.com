@@ -74,13 +74,17 @@ include_once "api/imgAPI.php";
             <div class="light section">
                 <div class="flex mobile">
                     <ul>
-                        <h2>Professional analytics tool</h2>
+                        <h2>Professional analytic tools</h2>
                         <li>Use your our graphical query tool to gain full access to the database</li>
                         <li>Chain queries to make complex analytics</li>
                         <li>Log in to save and share your ideas</li>
-                        <li>Compare countries, skaters and more</li>
+                        <li><a href="analytics">Anayltics</a></li>
+                        <li><a href="articles/500m">Specific 500m analytics</a></li>
+                        <li><a href="articles/teamAdvantage">Team analytics</a></li>
                     </ul>
-                    <img src="img/analytics.JPG" alt="analytics preview" style="max-height: 45vh; ">
+                    <a href="analytics">
+                        <img src="img/analytics.JPG" alt="analytics preview" style="max-height: 55vh; ">
+                    </a>
                 </div>
             </div>
             <div class="dark section flex mobile">
@@ -236,11 +240,11 @@ include_once "api/imgAPI.php";
 
     let container = document.getElementById( 'container' );
     let globe = new DAT.Globe( container );
-    
+
     let miniGlobeContainer = document.getElementById('mini-globe');
     let miniGlobe = new DAT.Globe(miniGlobeContainer);
     miniGlobe.animate();
-    miniGlobe.initSurfaceDots();
+    // miniGlobe.initSurfaceDots();
 
     const overlay = $(
         `<div class="overlay">
