@@ -222,6 +222,7 @@ include_once "api/imgAPI.php";
 </main>
 <script>
     // $(easterEgg);
+    
     function easterEgg() {
         $(".lower").css("display", "none");
         $(".footer").css("display", "none");
