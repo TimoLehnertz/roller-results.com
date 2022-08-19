@@ -607,17 +607,14 @@ function apply(aliasGroup) {
         i1++;
     }
     const bar = new LoadingBar();
-    $("main").append(bar.elem);
+    $(".loading-placeholder").append(bar.elem);
     $(".save-athletes-btn").attr("disabled", true);
     post("putAliases", aliases).receive((succsess, res) => {
         bar.remove();
         $(".save-athletes-btn").attr("disabled", false);
         if(succsess) {
-            // alert("Succsess");
-            // $(".preview").empty();
             $(".remove-me-on-athlete-finish").hide();
             initStep5();
-            // $(".race-preview").append(`<button class="btn" onclick="uploadRaces()">Upload</button>`)
         } else {
             alert("An error occured");
         }
@@ -629,20 +626,39 @@ function initStep5() {
     hideUnrelevant();
     $(".existing-races").empty();
     $(".existing-races").append(getRacesElem(existingRaces));
-    // push linked athletes into results
-    for (const result of results) {
-        // find missing ids
-        if(result.idAthlete === undefined) {
-            for (const athlete of athletes) {
-                if(athlete.search.alias == result.athleteID) {
-                    result.idAthlete = athlete.linkId;
+
+    // relinking athletes
+    const aliasGroup = $(".alias-select").val();
+    console.log("relinking athletes");
+    get("aliasGroup", aliasGroup).receive((succsess, aliases) => {
+        console.log("allAliases:",aliases);
+        if(!succsess) {
+            alert("Could not relink results to new athletes");
+            return;
+        }
+        for (const result of results) {
+            for (const alias of aliases) {
+                if(result.athleteID == alias.alias) {
+                    result.idAthlete = alias.idAthlete;
                     break;
                 }
             }
         }
-        result.needsUpdate = true;
-    }
-    initRaces(results);
+        // push linked athletes into results
+        let errors = [];
+        for (const result of results) {
+            // find missing ids
+            if(result.idAthlete === undefined || typeof result.idAthlete !== "number") {
+                errors.push(result);
+            }
+            result.needsUpdate = true;
+        }
+        if(errors.length > 0) {
+            console.log("results without athletes: ", errors);
+            alert(errors.length + " results dont have athlete ids! check console for details");
+        }
+        initRaces(results);
+    });
 }
 
 /**
@@ -683,8 +699,11 @@ function saveResults(results, idRace, callback) {
         result.idRace = idRace;
     }
     post("createResults", results).receive((succsess, response) => {
-        if(!succsess) return alert("Error while uploading results");
-        if(response != true) return alert("Error while uploading results");
+        if(!succsess || response != true) {
+            callback(false);
+            alert("Error while uploading results");
+            return;
+        }
         console.log("createResults - response:", response);
         callback(succsess);
     });
@@ -851,6 +870,7 @@ function uploadAllRaces() {
 }
 
 function initRaces(results) {
+    console.log("initiating races from results:", results);
     let quedRaces = [];
     allQuedRaces = [];
     $(".races-to-add").empty();
@@ -878,7 +898,7 @@ function initRaces(results) {
     quedRaces = quedRaces.sort((a,b) => a.gender.localeCompare(b.gender));
     quedRaces = quedRaces.sort((a,b) => a.category.localeCompare(b.category));
     quedRaces = quedRaces.sort((a,b) => a.distance.localeCompare(b.distance));
-    console.log("parsed races:");
+    console.log("initiated races:");
     log(quedRaces);
     for (const race of quedRaces) {
         race.results = race.results.sort((a,b) => parseInt(a.place) - parseInt(b.place));
@@ -927,7 +947,13 @@ function uploadRace(race, callback) {
                 race?.raceElem?.remove();
                 updateExistingRaces();
             } else {
-                alert("could not upload results");
+                deleteRace(race, (succsess) => {
+                    if(succsess) {
+                        alert("removed race with invalid results");
+                    } else {
+                        alert("Could not remove race with invalid results. empty race remaining!");
+                    }
+                });
             }
         });
     });
@@ -936,6 +962,7 @@ function uploadRace(race, callback) {
 function checkRaceForDoubleAthletes(race) {
     let idAthletes = [];
     let doublicates = [];
+    let news = [];
     for (const result of race.results) {
         if(idAthletes.includes(result.idAthlete)) {
             console.log("found doublicate id in race: ", race, result.idAthlete);
@@ -1004,9 +1031,10 @@ function deleteRace(race, callback) {
         if(!succsess) return alert("error occoured while deleting race " + race.id);
         if(res == true) {
             updateExistingRaces();
-            callback();
+            callback(true);
         } else {
             alert(res);
+            callback(false);
         }
     });
 }

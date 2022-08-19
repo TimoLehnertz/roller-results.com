@@ -167,8 +167,9 @@ if(!isset($NO_GET_API)){
         } else{
             echo "error in api";
         }
-    }
-    else if(isset($_GET["getathleteCareer"])){
+    } else if(isset($_GET["getaliasGroup"])) {
+        echo json_encode(getAliasGroup($_GET["getaliasGroup"]));
+    } else if(isset($_GET["getathleteCareer"])){
         $res = getAthleteCareer($_GET["getathleteCareer"]);
         if($res !== false){
             echo json_encode($res);
@@ -731,6 +732,10 @@ function getAthletesByAlias($aliasGroup, $aliases) {
         FROM TbAthleteAlias as alias LEFT JOIN vAthletePublic as athlete ON alias.idAthlete = athlete.idAthlete
         WHERE alias.aliasGroup = ? AND FIND_IN_SET(alias.alias,?);", "ss", $aliasGroup, $idString);
     return $athletes;
+}
+
+function getAliasGroup($aliasGroup) {
+    return query("SELECT * FROM TbAthleteAlias WHERE aliasGroup = ?", "s", $aliasGroup);
 }
 
 function putAliases($aliases) {

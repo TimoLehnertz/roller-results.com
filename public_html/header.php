@@ -78,7 +78,10 @@ include_once "head.php";
                     <a href='/tools/index.php'><i class="fa fa-solid fa-toolbox margin right"></i>Tool box</a>
                 </li>
                 <li>
-                    <a href="/calendar"><i class="fa fa-solid fa-calendar margin right"></i>Skate calendar</a>
+                    <a href='/skate-map.php'><i class="fa fa-solid fa-map margin right"></i>Skate map</a>
+                </li>
+                <li>
+                    <a href="/calendar"><i class="fa fa-solid fa-calendar margin right"></i>Calendar</a>
                 </li>
                 <?php
                 if(canI("seeAdminPage")) {

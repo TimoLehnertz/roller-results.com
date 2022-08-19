@@ -1856,7 +1856,7 @@ class LoadingBar {
         this.elem.append(this.bar);
         window.requestAnimationFrame(() => {this.update()});
         this.start = new Date();
-        this.divider = 1000;
+        this.divider = 5000;
         this.running = true;
     }
     
