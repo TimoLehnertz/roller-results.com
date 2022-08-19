@@ -82,7 +82,7 @@ include_once "api/imgAPI.php";
                         <li><a href="articles/500m">Specific 500m analytics</a></li>
                         <li><a href="articles/teamAdvantage">Team analytics</a></li>
                     </ul>
-                    <a href="analytics">
+                    <a href="analytics" class="no-underline">
                         <img src="img/analytics.JPG" alt="analytics preview" style="max-height: 55vh; ">
                     </a>
                 </div>
