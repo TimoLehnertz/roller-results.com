@@ -1,13 +1,44 @@
 <?php
 // include_once "../includes/roles.php";
 // include_once "../includes/error.php";
-include_once "../api/index.php";
-include_once "../header.php";
+include_once "../../api/index.php";
+include_once "../../header.php";
 $comps = getAllCompetitions();
+echoRandWallpaper();
 ?>
-<main class="main race-flow">
-    <h1 class="align center margin top double">Race flow</h1>
-    <div class="speaker">
+<main class="main competition-page analytics race-flow">
+    <div class="top-site"></div>
+    <svg style="margin-bottom: 0; position: relative; transform: translateY(85%); z-index: -1;" xmlns="http://www.w3.org/2000/svg" fill="none" preserveAspectRatio="none" viewBox="0 0 1680 40" class="curvature" style="bottom: -1px;"><path d="M0 40h1680V30S1340 0 840 0 0 30 0 30z" fill="#ddd"></path></svg>
+    <svg style="margin-bottom: 0; position: relative; top: 0px; z-index: 1;" xmlns="http://www.w3.org/2000/svg" fill="none" preserveAspectRatio="none" viewBox="0 0 1680 40" class="curvature" style="bottom: -1px;"><path d="M0 40h1680V30S1340 0 840 0 0 30 0 30z" fill="#151515"></path></svg>
+    <div class="dark section no-shadow">
+        <h1 class="font size biggest">Race flow editor<i class="fa fa-solid fa-pencil margin left"></i></h1>
+        <p class="align center font size big color light margin top double">
+            Analyze and compare every overtake that happened during races
+        </p>
+    </div>
+    <div class="light section">
+        <br>
+        <h2>Quick Tips</h2>
+        <p class="font size big">Controlls<i class="fa fa-solid fa-gamepad margin left font color black"></i></p>
+        <ul>
+            <li>Drag the the Timeline's dark section to move the blue cursor</li>
+            <li>Drag the the Timeline's lighter section to move arround</li>
+            <li>Hover the Timeline and use the scrollwheel to zoom in and out</li>
+            <li>Click the yellow keyframes to place the cursor on top</li>
+            <li>Drag and drop athletes to change their order</li>
+            <li>Use the checkboxes to select wich athletes you will be looking on</li>
+        </ul>
+        <br>
+        <p class="font size big">Getting started<i class="fa fa-solid fa-play margin left font color black"></i></p>
+        <ul>
+            <li>Select the competition and race to analyze</li>
+            <li>Find a video of the race</li>
+            <li>For every overtake you see in the video move the cursor to the aproximate lapcount, arrange the athletes order and hit <span class="code">Save race state</span></li>
+            <li>When you are done be sure to click <span class="code">Save race to cloud to save your progress</span></li>
+            <li>See your graps the <a href="/tools/race-flow">Race flow</a> page</li>
+        </ul>
+    </div>
+    <div class="dark section">
         <form class="form">
             <!-- <p>Choose race to analyze</p> -->
             <!-- <label for="compSelect">Competition:</label> -->
@@ -23,13 +54,14 @@ $comps = getAllCompetitions();
             <label for="laps">Laps</label>
             <input type="number" min="1" value="5" id="laps" onchange="changeLaps()">
         </form>
+        <h3 class="align center font color light">Timeline</h3>
+        <div class="time"></div>
+        <button class="btn blender left margin left" onclick="uncheckAll()">Uncheck all</button>
+        <button class="btn blender right" onclick="checkAll()">Check all</button>
+        <button class="btn blender alone margin left triple" onclick="saveState()">Save race state</button>
+        <button class="btn blender alone save" onclick="save()">Save race to cloud</button>
+        <div id="athletes"></div>
     </div>
-    <div class="time"></div>
-    <button class="btn blender left margin left" onclick="uncheckAll()">Uncheck all</button>
-    <button class="btn blender right" onclick="checkAll()">Check all</button>
-    <button class="btn blender alone margin left triple" onclick="saveState()">Save race state</button>
-    <button class="btn blender alone save" onclick="save()">Save race to cloud</button>
-    <div id="athletes"></div>
 </main>
 <script>
 
@@ -372,5 +404,5 @@ $comps = getAllCompetitions();
     }
 </script>
 <?php
-    include_once "../footer.php";
+    include_once "../../footer.php";
 ?>

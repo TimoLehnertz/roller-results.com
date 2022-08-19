@@ -4,9 +4,9 @@ include_once "../includes/error.php";
 include_once "../api/index.php";
 include_once "../header.php";
 
-if(!canI("uploadResults")) {
-    throwError($ERROR_NO_PERMISSION, "/tools/index.php");
-}
+// if(!canI("uploadResults")) {
+//     throwError($ERROR_NO_PERMISSION, "/tools/index.php");
+// }
 
 function echoCompsSelect() {
     $comps = getAllCompetitions();
@@ -57,6 +57,14 @@ function echoAliasSelect() {
             echo "false";
         }
     ?>;
+
+    const canUploadResults = <?php
+        if(canI("uploadResults")) {
+            echo "true";
+        } else {
+            echo "false";
+        }
+    ?>;
 </script>
 <style>
     .create-new input {
@@ -72,6 +80,9 @@ function echoAliasSelect() {
     <div class="section light">
         <h1 class="align center margin top triple">Roller results Import procedure</h1>
         <br>
+        <?php if(!canI("uploadResults")) { ?>
+            <h2 class="margin top bottom">Contact us at <span class="code padding left right">roller.results@gmail.com</span> to get full accsess to this tool!</h2>
+        <?php }?>
         <p>Here anybody can upload results from any competition.<br>
         Note: after you uploaded results they will appear as <span class="code">unchecked</span>
         We will review them and set them to <span class="code">checked</span> when they are correct.</p>
@@ -221,7 +232,7 @@ function updateExistingRaces() {
 }
 
 function aliasChanged() {
-    $("#fileUpload").attr("disabled", $(".alias-select").val() == "-1234");
+    $("#fileUpload").attr("disabled", $(".alias-select").val() == "-1234" || $(".alias-select").val() == null);
     if($(".alias-select").val() != "-1234") {
         sessionStorage.setItem('importScriptAliasGroup', $(".alias-select").val());
     }
@@ -423,7 +434,11 @@ function updateUI() {
         $(".preview").append(row);
         id++;
     }
-    $(".preview").append(`<button class="btn default" onclick="update()">Save athletes</button>`);
+    if(canUploadResults) {
+        $(".preview").append(`<button class="btn default" onclick="update()">Save athletes</button>`);
+    } else {
+        $(".preview").append(`<h2 class="margin top">Contact us at <span class="code padding left right">roller.results@gmail.com</span> to get accsess to this tool</h2>`);
+    }
     // $(".preview").append(`<button class="btn default" onclick="update()"></button>`);
     window.setTimeout(() => {
         alert(`Found ${found} / ${athletes.length} Athletes. ${unsafe} not sure.`);
@@ -480,6 +495,7 @@ function createAlias() {
     if($(`.alias-select option[value='${newAlias}']`).length > 0) return alert("Alias name taken");
     $(".alias-select").append(`<option value="${newAlias}">${newAlias}</option>${$("#newAliasName").val()}`);
     $(".alias-select").val(newAlias);
+    aliasChanged();
 }
 
 function checkNewAthlete(athlete, i) {

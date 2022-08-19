@@ -4,10 +4,12 @@ include_once "../includes/error.php";
 include_once "../api/index.php";
 include_once "../header.php";
 
-if(!canI("uploadResults")) {
-    throwError($ERROR_NO_PERMISSION, "/tools/index.php");
-}
+
 if(isset($_POST["submit"])) {
+    if(!canI("uploadResults")) {
+        throwError($ERROR_NO_PERMISSION, "/tools/index.php");
+        exit(0);
+    }
     $succsess = addCompetition($_POST["name"], $_POST["city"], $_POST["country"], $_POST["latitude"], $_POST["longitude"], $_POST["type"], $_POST["startDate"], $_POST["endDate"], $_POST["description"]);
     if($succsess) {
         echo "<h2>".$_POST["name"]." has been added succsessfully</h2>";
@@ -63,7 +65,11 @@ if(isset($_POST["submit"])) {
             <input type="text" name="description" id="description"  placeholder="description">
         </p>
         <br>
-        <input type="submit" value="Create" name="submit" class="btn default">
+        <?php if(canI("uploadResults")) { ?>
+            <input type="submit" value="Create" name="submit" class="btn default">
+        <?php } else { ?>
+            <p>Contact us at <span class="code padding left right">roller.results@gmail.com</span> to get accsess to this tool</p>
+        <?php }?>
     </form>
 </div>
 

@@ -4,9 +4,7 @@ include_once "../header.php";
 echoRandWallpaper();
 ?>
 <main class="main competition-page analytics">
-    <div class="top-site">
-        <!-- <h1 class="title">Advantages for sprint teams</h1> -->
-    </div>
+    <div class="top-site"></div>
     <svg style="margin-bottom: 0; position: relative; transform: translateY(85%); z-index: -1;" xmlns="http://www.w3.org/2000/svg" fill="none" preserveAspectRatio="none" viewBox="0 0 1680 40" class="curvature" style="bottom: -1px;"><path d="M0 40h1680V30S1340 0 840 0 0 30 0 30z" fill="#ddd"></path></svg>
     <svg style="margin-bottom: 0; position: relative; top: 0px; z-index: 1;" xmlns="http://www.w3.org/2000/svg" fill="none" preserveAspectRatio="none" viewBox="0 0 1680 40" class="curvature" style="bottom: -1px;"><path d="M0 40h1680V30S1340 0 840 0 0 30 0 30z" fill="#151515"></path></svg>
     <div class="dark section no-shadow">
@@ -20,7 +18,7 @@ echoRandWallpaper();
             <div class="presets font">
                 <h2>Presets</h2>
                 <p></p>
-                <p>Create your own presets! Make shure to be logged in and check public if you want to share them</p>
+                <p>Create your own presets! Make sure to be logged in and check public if you want to share them</p>
                 <p>Load presets from others to experiment with the features.</p>
                 <p>
                     <select>

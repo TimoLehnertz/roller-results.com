@@ -72,6 +72,18 @@ include_once "api/imgAPI.php";
                 </p>
             </div>
             <div class="light section">
+                <div class="flex mobile">
+                    <ul>
+                        <h2>Professional analytics tool</h2>
+                        <li>Use your our graphical query tool to gain full access to the database</li>
+                        <li>Chain queries to make complex analytics</li>
+                        <li>Log in to save and share your ideas</li>
+                        <li>Compare countries, skaters and more</li>
+                    </ul>
+                    <img src="img/analytics.JPG" alt="analytics preview" style="max-height: 45vh; ">
+                </div>
+            </div>
+            <div class="dark section flex mobile">
                 <h2>500+ Videos</h2>
                 <ul>
                     <li>
@@ -82,19 +94,28 @@ include_once "api/imgAPI.php";
                     </li>
                 </ul>
             </div>
+            <div class="light section flex mobile">
+                <ul>
+                    <li><h2>Roller results helmet camera</h2></li>
+                    <li>Live HD video transmission from within the race</li>
+                    <li>Tested at Arena Geisingen international</li>
+                    <li>Closer than ever before</li>
+                </ul>
+                <iframe width="560" height="315" src="https://www.youtube.com/embed/mbBqht0JtGE" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
             <div class="dark section globe-section">
-                <h2>Roller globe</h2>
                 <div class="globe-flex">
                     <div>
-                        <h3 class="margin bottom">Wondered what that globe with its lines stands for?</h3>
+                        <h2>Roller globe</h2>
                         <ul>
+                            <h3 class="margin bottom">Ever wondered what that globe with its lines stands for?</h3>
                             <li>Every line represents a country wich participated in a competition</li>
-                            <li>Hover the lines to see who what and where</li>
+                            <li>Hover the lines to see who traveled where and when</li>
                             <li>Drag the timeline to travel back and forth in time</li>
                         </ul>
-                        <p class="margin top triple">It shows the connectivity and network wich unites us skaters</p>
                     </div>
-                    <img src="/img/globe/globe.jpg" alt="globe preview">
+                    <div id="mini-globe"></div>
+                    <!-- <img src="/img/globe/globe.jpg" alt="globe preview"> -->
                 </div>
             </div>
             <div class="light section">
@@ -213,8 +234,13 @@ include_once "api/imgAPI.php";
 
     import { DAT } from "/js/globe/globe.js";
 
-    var container = document.getElementById( 'container' );
-    var globe = new DAT.Globe( container );
+    let container = document.getElementById( 'container' );
+    let globe = new DAT.Globe( container );
+    
+    let miniGlobeContainer = document.getElementById('mini-globe');
+    let miniGlobe = new DAT.Globe(miniGlobeContainer);
+    miniGlobe.animate();
+    miniGlobe.initSurfaceDots();
 
     const overlay = $(
         `<div class="overlay">

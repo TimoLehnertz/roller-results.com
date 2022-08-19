@@ -5,6 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
 </head>
+<style>
+    button {
+
+    }
+    button:hover {
+        background: white;
+        color: black;
+    }
+</style>
 <body>
     <label for="position">in position</label>
     <input type="number" id="position" value="2">
@@ -25,6 +34,7 @@
 </body>
 <script>
 
+document.body.style.background = "green";
 function rand(ran) {
     const rand = Math.random() * ran * 2;
     return rand - ran;
@@ -32,16 +42,16 @@ function rand(ran) {
 
 function inPosition() {
     console.log("position")
-    var audio = new Audio('sounds/inposition.m4a');
+    var audio = new Audio('sounds/ready.mp3');
     audio.play();
     document.body.style.background = "red";
 }
 
 function set1() {
     console.log("set")
-    var audio = new Audio('sounds/set.m4a');
+    var audio = new Audio('sounds/set.mp3');
     audio.play();
-    document.body.style.background = "orange";
+    document.body.style.background = "yellow";
 }
 
 function shot() {

@@ -280,7 +280,7 @@ if(!isset($NO_GET_API)){
         }
     } else if(isset($_GET["uploadResults"])){
         $data = json_decode(file_get_contents('php://input'), true);
-        var_dump($data);
+        // var_dump($data);
         if(!isset($_GET["lname"]) || !isset($data["a"]) || !isset($data["d"]) || !isset($data["l"]) || !isset($_GET["user"])) {
             echo "invalid";
             exit(0);
@@ -360,7 +360,7 @@ if(!isset($NO_GET_API)){
         // var_dump(file_get_contents('php://input'));
         $input = json_decode(file_get_contents('php://input'), true);
         if(!isset($input["athletes"]) || !isset($input["aliasGroup"])) {
-            var_dump($input);
+            // var_dump($input);
             echo "invalid input";
             exit(0);
         }
@@ -1072,9 +1072,9 @@ function getAllTimes() {
 }
 
 function addCompetition($name, $city, $country, $latitude, $longitude, $type, $startDate, $endDate, $description) {
-    if(!isLoggedIn()) {
-        echo "You need to be logged in";
-        return false;
+    if(!canI("uploadResults")) {
+        echo "You dont have permission to do that";
+        exit(0);
     }
     $creator = $_SESSION["iduser"];
     $checked = canI("managePermissions");

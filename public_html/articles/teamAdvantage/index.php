@@ -1,6 +1,6 @@
 <?php
-include_once "../../../api/index.php";
-include_once "../../../header.php";
+include_once "../../api/index.php";
+include_once "../../header.php";
 echoRandWallpaper();
 
 ?>
@@ -184,5 +184,5 @@ echoRandWallpaper();
     </script>
 </main>
 <?php
-include_once "../../../footer.php";
+include_once "../../footer.php";
 ?>

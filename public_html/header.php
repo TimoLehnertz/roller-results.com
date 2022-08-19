@@ -75,19 +75,19 @@ include_once "head.php";
                     <a href="/analytics"><i class="fas fa-binoculars margin right"></i>Analytics</a>
                 </li>
                 <li>
-                    <a href="/impressum"><i class="fas fa-book margin right"></i>Impressum</a>
+                    <a href='/tools/index.php'><i class="fa fa-solid fa-toolbox margin right"></i>Tool box</a>
                 </li>
                 <li>
-                    <a href="/calendar"><i class="fa-solid fa-calendar margin right"></i>Skate calendar</a>
-                </li>
-                <li>
-                    <a href='/tools/index.php'><i class='fa-brands fa-teamspeak margin right'></i></i>Tools</a>
+                    <a href="/calendar"><i class="fa fa-solid fa-calendar margin right"></i>Skate calendar</a>
                 </li>
                 <?php
-                    if(canI("seeAdminPage")){
-                        echo "<li><a href='/admin/index.php'><i class='fas fa-shield-alt margin right'></i>Admin</a></li>";
-                    }
+                if(canI("seeAdminPage")) {
+                    echo "<li><a href='/admin/index.php'><i class='fas fa-shield-alt margin right'></i>Admin</a></li>";
+                }
                 ?>
+                <!-- <li>
+                    <a href="/impressum"><i class="fas fa-book margin right"></i>Impressum</a>
+                </li> -->
             </ul>
         </nav>
         <div class="profile-section">
