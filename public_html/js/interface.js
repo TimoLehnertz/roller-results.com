@@ -271,11 +271,11 @@ function athleteDataToProfileData(athlete, useRank = false, alternativeRank = un
          */
         console.log(this);
         // updateCareer
-        const careerElem = $(`<div id="${idCareer}"><h2 class="section__header">Career</h2></div>`);
+        const careerElem = $(`<div id="${idCareer}"></div>`);
         wrapper.append(careerElem);
         this.loadCareer = function() {
             careerElem.empty();
-            careerElem.append(`<div class="loading"></div>`);
+            careerElem.append(`<h2 class="section__header">Career</h2><p class="margin left double">Used competitions: ${getUsedMedalsString()}</p><div class="loading"></div>`);
             get("athleteCareer", athlete.id).receive((succsess, career) => {
                 careerElem.find(".loading").remove();
                 if(succsess && career.length !== 0){
