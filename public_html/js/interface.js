@@ -227,6 +227,7 @@ function athleteDataToProfileData(athlete, useRank = false, alternativeRank = un
                     console.log("failed loading profile")
                 }
             });
+            this.loadCareer?.();
         },
         athleteData: athlete
     };
@@ -251,7 +252,7 @@ function athleteDataToProfileData(athlete, useRank = false, alternativeRank = un
      * 
      * 
      */
-    function profileInit(wrapper, athlete){
+    function profileInit(wrapper, athlete) {
         /**
          * Navigation
          */
@@ -268,16 +269,22 @@ function athleteDataToProfileData(athlete, useRank = false, alternativeRank = un
         /**
          * Career
          */
-        const careerElem = $(`<div id="${idCareer}"><h2 class="section__header">Career</h2><div class="loading"></div></div>`);
+        console.log(this);
+        // updateCareer
+        const careerElem = $(`<div id="${idCareer}"><h2 class="section__header">Career</h2></div>`);
         wrapper.append(careerElem);
-        get("athleteCareer", athlete.id).receive((succsess, career) => {
-            careerElem.find(".loading").remove();
-            if(succsess && career.length !== 0){
-                careerGraphAt(careerElem, career);
-            } else{
-                careerElem.append(`<p class="margin left double">${athlete.fullname} didnt competed in wolrd championships yet</p>`);
-            }
-        });
+        this.loadCareer = function() {
+            careerElem.empty();
+            careerElem.append(`<div class="loading"></div>`);
+            get("athleteCareer", athlete.id).receive((succsess, career) => {
+                careerElem.find(".loading").remove();
+                if(succsess && career.length !== 0){
+                    careerGraphAt(careerElem, career);
+                } else{
+                    careerElem.append(`<p class="margin left double">${athlete.fullname} didnt competed in wolrd championships yet</p>`);
+                }
+            });
+        }
 
         /**
          * best times

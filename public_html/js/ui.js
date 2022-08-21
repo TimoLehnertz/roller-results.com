@@ -296,7 +296,7 @@ function getUsedMedalsString() {
     return used;
 }
 
-function applyMedals(updateAthletes){
+function applyMedals(updateAthletes) {
     let dbUsedMedals = "";
     let del = "";
     for (const compName in settingCompetitions) {
@@ -309,12 +309,9 @@ function applyMedals(updateAthletes){
         }
     }
     ajaxState["usedMedals"] = dbUsedMedals;
-    if(updateAthletes){
+    if(updateAthletes) {
         updateAllAthleteProfiles();
         updateAllCountryProfiles();
-        // for (const profile of Profile.allProfiles) {
-        //     profile.update();
-        // }
     }
     updateStorage();
     for (const callback of medalCallbacks) {

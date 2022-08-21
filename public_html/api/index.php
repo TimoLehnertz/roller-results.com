@@ -35,7 +35,7 @@ canI("managePermissions");
 /**
  * setup
  */
-$scoreInfluences = "WM,1,World Games,1,EM,0.2"; // @todo
+$scoreInfluences = "WM,World Games,EM,0.2"; // @todo
 $usedMedals = "WM,World Games";
 
 /**
@@ -1131,11 +1131,11 @@ function getCountryCareer($country){
 }
 
 function getAthleteCareer($idAthlete){
-    global $scoreInfluences;
-    $res = query("CALL sp_athleteCareer(?, ?);", "is", $idAthlete, $scoreInfluences);
-    if(sizeof($res) > 0){
+    global $usedMedals;
+    $res = query("CALL sp_athleteCareer(?, ?);", "is", $idAthlete, $usedMedals);
+    if(sizeof($res) > 0) {
         return $res;
-    } else{
+    } else {
         return [];
     }
 }
