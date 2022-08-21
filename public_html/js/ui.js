@@ -158,7 +158,7 @@ function initSettings(){
             const comp = settingCompetitions[type];
             let icon = undefined;
             if(comp.icon) {
-                icon = $(`<i class="fas ${comp.icon}"></i>`)
+                icon = $(`<i class="fas ${comp.icon}" style="color: #444; text-shadow: none"></i>`)
             }
             list.push({
                 element: {
