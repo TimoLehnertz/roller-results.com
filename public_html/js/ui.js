@@ -224,23 +224,25 @@ function initSettings(){
     list.push({
         element: {
             type: "list",
-            data: [{
-                type:"input",
-                inputType: "button",
-                data: 1,
-                attributes: {
-                    value: "Apply"
-                },
-                style: {
-                    padding: "1rem",
-                    background: "transparent"
-                },
-                onclick: () => {
-                    applyScores(true);
-                    settingsDropdown.close();
-                    return true;
-                }
-            }, {
+            data: [
+            //     {
+            //     type:"input",
+            //     inputType: "button",
+            //     data: 1,
+            //     attributes: {
+            //         value: "Apply"
+            //     },
+            //     style: {
+            //         padding: "1rem",
+            //         background: "transparent"
+            //     },
+            //     onclick: () => {
+            //         applyScores(true);
+            //         settingsDropdown.close();
+            //         return true;
+            //     }
+            // },
+            {
                 type:"input",
                 inputType: "button",
                 data: 1,

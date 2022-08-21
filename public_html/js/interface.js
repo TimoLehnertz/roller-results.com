@@ -276,6 +276,10 @@ function athleteDataToProfileData(athlete, useRank = false, alternativeRank = un
         this.loadCareer = function() {
             careerElem.empty();
             careerElem.append(`<h2 class="section__header">Career</h2><p class="margin left double">Used competitions: ${getUsedMedalsString()}</p><div class="loading"></div>`);
+            if(getUsedMedalsString().length == 0) {
+                careerElem.append(getSettingsAdvice(`${athlete.firstname}'s career`));
+                return;
+            }
             get("athleteCareer", athlete.id).receive((succsess, career) => {
                 careerElem.find(".loading").remove();
                 if(succsess && career.length !== 0){
@@ -632,7 +636,7 @@ function countryToProfileData(country, useRank = false, alternativeRank = undefi
             scoreShort: {
                 description: "Points short:",
                 data: country.medalScoreShort,
-                tooltip: "Medal score (Gold=3pts, Silver=2pts, Bronze=1pt) only applied to distances < 1500m"
+                tooltip: "Medal score (Gold=3pts, Silver=2pts, Bronze=1pt) only applied to distances <p 1500m"
             },
             scoreLong: {
                 description: "Points long:",
@@ -663,7 +667,6 @@ function countryToProfileData(country, useRank = false, alternativeRank = undefi
         secondaryData: country,
         update: function() {
             this.grayOut = true;
-            console.log("updating country");
             get("country", country.country).receive((succsess, newCountry) => {
                 if(succsess) {
                     this.grayOut = false;
@@ -683,6 +686,7 @@ function countryToProfileData(country, useRank = false, alternativeRank = undefi
                     console.log("failed loading country " + country.country);
                 }
             });
+            this.updateCareer?.();
         }
     };
     if(useRank) {
@@ -742,7 +746,14 @@ function countryToProfileData(country, useRank = false, alternativeRank = undefi
         allAthletesElem.append(athleteButton);
         
         let maxDisplay = max;
+        const settingsAdviceAthletes = getSettingsAdvice(` ${country.country}'s athletes`);
+        if(getUsedMedalsString().length == 0) {
+            wrapper.append(settingsAdviceAthletes);
+        }
         get("countryAthletes", country.country, 5).receive((succsess, athletes) => {
+            if(getUsedMedalsString().length > 0) {
+                settingsAdviceAthletes.remove();
+            }
             const profiles = [];
             let i = 0;
             for (const athlete of athletes) {
@@ -790,16 +801,22 @@ function countryToProfileData(country, useRank = false, alternativeRank = undefi
         /**
          * Career
          */
-        const careerElem = $(`<div id="${idCareer}"><h2 class="section__header">Career</h2><div class="loading"></div></div>`);
+        const careerElem = $(`<div id="${idCareer}"></div></div>`);
         wrapper.append(careerElem);
-        get("countryCareer", country.country).receive((succsess, career) => {
-            careerElem.find(".loading").remove();
-            if(succsess && career.length !== 0){
-                careerGraphAt(careerElem, career);
-            } else{
-                // careerElem.append(`<p class="margin left double">${athlete.fullname} didnt competed in wolrd championships yet</p>`);
+        this.updateCareer = function() {
+            careerElem.empty();
+            careerElem.append(`<h2 class="section__header">Career</h2><p class="margin left double">Used competitions: ${getUsedMedalsString()}</p><div class="loading">`);
+            if(getUsedMedalsString().length == 0) {
+                careerElem.append(getSettingsAdvice(` ${country.country}'s career`));
+                return;
             }
-        });
+            get("countryCareer", country.country).receive((succsess, career) => {
+                careerElem.find(".loading").remove();
+                if(succsess && career.length !== 0) {
+                    careerGraphAt(careerElem, career);
+                }
+            });
+        }
 
          /**
          * best times
@@ -824,6 +841,10 @@ function countryToProfileData(country, useRank = false, alternativeRank = undefi
             }
         });
     };
+}
+
+function getSettingsAdvice(text) {
+    return $(`<p class="margin left double flex justify-start">Select competition types in the <img class="margin left right half" style="max-height: 1.5rem" src="/img/settings.svg" alt="Settings"> to see ${text}</p>`);
 }
 
 function getCompetitionListElem(competitions, isCountry, name) {

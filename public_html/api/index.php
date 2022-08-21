@@ -1120,9 +1120,9 @@ function getAllAthletes($influences){
 }
 
 function getCountryCareer($country){
-    global $scoreInfluences;
+    global $usedMedals;
     // $res = query("CALL sp_countryCareer(?, ?);", "ss", $country, $scoreInfluences);
-    $res = query("CALL sp_countryCareerNew(?, ?);", "ss", $country, $scoreInfluences);
+    $res = query("CALL sp_countryCareerNew(?, ?);", "ss", $country, $usedMedals);
     if(sizeof($res) > 0){
         return $res;
     } else{
