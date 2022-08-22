@@ -118,8 +118,8 @@ include_once "api/imgAPI.php";
                             <li>Drag the timeline to travel back and forth in time</li>
                         </ul>
                     </div>
-                    <div id="mini-globe"></div>
-                    <!-- <img src="/img/globe/globe.jpg" alt="globe preview"> -->
+                    <!-- <div id="mini-globe"></div> -->
+                    <img src="/img/globe/globe.jpg" alt="globe preview">
                 </div>
             </div>
             <div class="light section">
@@ -222,7 +222,7 @@ include_once "api/imgAPI.php";
 </main>
 <script>
     // $(easterEgg);
-    
+
     function easterEgg() {
         $(".lower").css("display", "none");
         $(".footer").css("display", "none");
@@ -258,9 +258,11 @@ include_once "api/imgAPI.php";
     let container = document.getElementById( 'container' );
     let globe = new DAT.Globe( container );
 
-    let miniGlobeContainer = document.getElementById('mini-globe');
-    let miniGlobe = new DAT.Globe(miniGlobeContainer);
-    miniGlobe.animate();
+    // let miniGlobeContainer = document.getElementById('mini-globe');
+    // let miniGlobe = new DAT.Globe(miniGlobeContainer);
+    // window.setInterval(() => {
+    //     miniGlobe.render();
+    // }, 100);
     // miniGlobe.initSurfaceDots();
 
     const overlay = $(
