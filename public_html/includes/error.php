@@ -21,6 +21,7 @@ $ERROR_EMAIL_TAKEN = "EmailTaken";
 $ERROR_WRONG_CREDENTIALS = "WrongCredentials";
 $ERROR_NO_PERMISSION = "NoPermission";
 $ERROR_LOGIN_MISSING = "NoLogin";
+$INVALID_ARGUMENTS = "InvalidArgs";
 
 $ERROR_MAPPING = [
     $ERROR_NO_ID => "Please provide an Id",
@@ -35,6 +36,7 @@ $ERROR_MAPPING = [
     $ERROR_EMAIL_TAKEN => "You already have an account on that email",
     $ERROR_WRONG_CREDENTIALS => "Username or password is incorrect try again",
     $ERROR_LOGIN_MISSING => "You need to be logged in to visit see page",
+    $INVALID_ARGUMENTS => "You or your browser provided invalid Arguments",
 ];
 
 function getErrormessage($errorCode){

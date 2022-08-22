@@ -1,12 +1,14 @@
 <?php
 
 include_once "../api/userAPI.php";
+include_once "../includes/error.php";
 
 if(!isset($_POST["logout-submit"])){
-    header("location: /index.php");
+    throwError($INVALID_ARGUMENTS);
+    // header("location: /index.php");
     exit();
 } else{
     logout();
-    header("location: /index.php");
+    header("location: /index.php?logoutComplete");
     exit(0);
 }
