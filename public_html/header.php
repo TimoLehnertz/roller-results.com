@@ -83,6 +83,9 @@ include_once "head.php";
                 <li>
                     <a href="/calendar"><i class="fa fa-solid fa-calendar margin right"></i>Calendar</a>
                 </li>
+                <li>
+                    <a href="/music"><i class="fa fa-solid fa-music margin right"></i>Music</a>
+                </li>
                 <?php
                 if(canI("seeAdminPage")) {
                     echo "<li><a href='/admin/index.php'><i class='fas fa-shield-alt margin right'></i>Admin</a></li>";
