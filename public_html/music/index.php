@@ -14,6 +14,7 @@ echoRandWallpaper();
         </p>
     </div>
     <div class="light section">
+        <a class="font size big margin top bottom align center" href="https://open.spotify.com/playlist/28xsMoErMAb4Fhl1YXi4x4?si=cf919d28151c4363&pt=eece9b1a2a713dc41063a22ed9ae7a8d"><i class="fa-solid fa-arrow-right-to-bracket"></i>Playlist betreten</a>
         <iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/28xsMoErMAb4Fhl1YXi4x4?utm_source=generator" width="100%" height="380" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
     </div>
 </main>
