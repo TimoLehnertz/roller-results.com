@@ -290,9 +290,32 @@ function getUsedMedalsString() {
         if (Object.hasOwnProperty.call(settingCompetitions, compName)) {
             const comp = settingCompetitions[compName];
             if(comp.useMedals) {
-                used += del + comp.dbName;
+                used += `${del} <span class="font color orange">${comp.displayName}</span>`;
                 del = ", ";
             }
+        }
+    }
+    return used;
+}
+
+function getUsedMedalsStringOred() {
+    let used = "";
+    let del = "";
+    let usedComps = [];
+    for (const compName in settingCompetitions) {
+        if (Object.hasOwnProperty.call(settingCompetitions, compName)) {
+            const comp = settingCompetitions[compName];
+            if(comp.useMedals) {
+                usedComps.push(comp);
+            }
+        }
+    }
+    for (let i = 0; i < usedComps.length; i++) {
+        used += `${del} <span class="font color orange">${usedComps[i].displayName}</span>`;
+        if(i == usedComps.length - 2) {
+            del = " or ";
+        } else {
+            del = ", ";
         }
     }
     return used;

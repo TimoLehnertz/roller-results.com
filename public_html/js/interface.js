@@ -285,7 +285,7 @@ function athleteDataToProfileData(athlete, useRank = false, alternativeRank = un
                 if(succsess && career.length !== 0){
                     careerGraphAt(careerElem, career);
                 } else{
-                    careerElem.append(`<p class="margin left double">${athlete.fullname} didnt competed in wolrd championships yet</p>`);
+                    careerElem.append(`<p class="margin left double">${athlete.firstname} didnt competed in ${getUsedMedalsStringOred()} yet</p>`);
                 }
             });
         }
@@ -299,7 +299,7 @@ function athleteDataToProfileData(athlete, useRank = false, alternativeRank = un
             if(succsess && times.length !== 0){
                 bestTimesAt(bestTimesElem, times)
             } else{
-                bestTimesElem.append(`<p class="margin left double">There are no records for ${athlete.fullname} in the database yet :(</p>`)
+                bestTimesElem.append(`<p class="margin left double">There are no records for ${athlete.firstname} in the database yet.</p>`)
             }
         });
         wrapper.append(bestTimesElem);
@@ -313,7 +313,7 @@ function athleteDataToProfileData(athlete, useRank = false, alternativeRank = un
             if(succsess && competitions.length !== 0){
                 compElem.append(getCompetitionListElem(competitions, false, athlete.id));
             } else{
-                compElem.append(`<p class="margin left double">${athlete.fullname} didn't compete in any of our listed races yet :(</p>`)
+                compElem.append(`<p class="margin left double">${athlete.firstname} didn't compete in any of our listed races yet</p>`)
             }
         });
     };
