@@ -162,8 +162,8 @@ function rememberMe(){
     return true;
 }
 
-function tryRememberMeLogin(){
-    if(isLoggedIn()){
+function tryRememberMeLogin() {
+    if(isLoggedIn()) {
         return false;
     }
     if(!isset($_COOKIE["rememberMe"])) {

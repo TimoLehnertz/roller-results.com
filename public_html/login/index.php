@@ -6,9 +6,9 @@ include_once "../api/userAPI.php";
 include_once "../includes/error.php";
 
 
-
 if(isLoggedIn()){
     returnHome();
+    exit(0);
 }
 
 $username = "";

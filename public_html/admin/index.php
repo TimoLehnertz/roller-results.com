@@ -23,6 +23,8 @@ include_once "../header.php";
     <a href="/admin/dev/import.php">import helper</a>
     <br>
     <a href="/admin/dev/ytSearch.php">ytSearch</a>
+    <br>
+    <a href="/admin/pwHashGenerator.php">Pw hash generator</a>
 </main>
 <?php
 include_once "../footer.php";
