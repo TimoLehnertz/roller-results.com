@@ -1171,7 +1171,7 @@ function getCountryAthletes($country, $limit) {
 }
 
 function getAthleteAmount(){
-    $res = query("SELECT count(*) as amount FROM vAthletePublic;");
+    $res = query("SELECT count(*) as amount FROM TbAthlete;");
     if(sizeof($res) > 0){
         return $res[0]["amount"];
     } else{
@@ -1189,7 +1189,7 @@ function getCountryAmount(){
 }
 
 function getResultAmount(){
-    $res = query("SELECT count(*) as amount FROM vResult;");
+    $res = query("SELECT count(*) as amount FROM TbResult;");
     if(sizeof($res) > 0){
         return $res[0]["amount"];
     } else{
@@ -1198,7 +1198,7 @@ function getResultAmount(){
 }
 
 function getRaceAmount(){
-    $res = query("SELECT count(*) as amount FROM vRace;");
+    $res = query("SELECT count(*) as amount FROM TbRace;");
     if(sizeof($res) > 0){
         return $res[0]["amount"];
     } else{
@@ -1207,7 +1207,7 @@ function getRaceAmount(){
 }
 
 function getCompetitionAmount(){
-    $res = query("SELECT count(*) as amount FROM vCompetitionSmall;");
+    $res = query("SELECT count(*) as amount FROM TbCompetition;");
     if(sizeof($res) > 0){
         return $res[0]["amount"];
     } else{

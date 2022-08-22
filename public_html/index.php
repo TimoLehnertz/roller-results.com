@@ -321,7 +321,7 @@ include_once "api/imgAPI.php";
     //     }
     // });
 
-    getFile("/json/worldMovement.json").receive((succsess, response) => {
+    getFile("/json/worldMovement1.json").receive((succsess, response) => {
     // get("worldMovement").receive((succsess, response) => {
         if(!succsess) {
             console.log("worldMovement error");
