@@ -3,11 +3,23 @@
 const scoreCallbacks = [];
 const medalCallbacks = [];
 
+const defaultCompSettings =  {
+    worlds: {dbName: "WM",                          displayName: "Worlds",                  influence: 1,   useMedals: true, icon: "fas fa-globe"},
+    worldGames: {dbName: "World Games",             displayName: "World games",             influence: 1,   useMedals: true, icon: "fas fa-globe"},
+    yog: {dbName: "Youth Olympic Games",            displayName: "Youth Olympic Games",     influence: 0, useMedals: false, icon: "fas fa-globe"},
+    euros: {dbName: "EM",                           displayName: "Euros",                   influence: 0.2, useMedals: false, icon: "fas fa-globe-europe"},
+    combined: {dbName: "Combined",                  displayName: "Worlds / Euros Combined", influence: 0, useMedals: false, icon: "fas fa-globe-europe"},
+    universade: {dbName: "Universade",              displayName: "Universade",              influence: 0, useMedals: false, icon: "fas fa-graduation-cap"},
+    cadetsChallenge: {dbName: "Cadets Challenge",   displayName: "Cadets Challenge",        influence: 0,useMedals: false, icon: "fas fa-award"}
+}
+
+let settingCompetitions = defaultCompSettings;
+let settingsDropdown;
+
 $(() => {
     $(".search-bar__input").on("input", searchChange);
-    // initIndexLogo();
-    initSearchBar();
     initHeader();
+    initSearchBar();
     initNav();
     initSettings();
 });
@@ -56,18 +68,7 @@ function initHeader(){
     });
 }
 
-const defaultCompSettings =  {
-    worlds: {dbName: "WM",                          displayName: "Worlds",                  influence: 1,   useMedals: true, icon: "fas fa-globe"},
-    worldGames: {dbName: "World Games",             displayName: "World games",             influence: 1,   useMedals: true, icon: "fas fa-globe"},
-    yog: {dbName: "Youth Olympic Games",            displayName: "Youth Olympic Games",     influence: 0, useMedals: false, icon: "fas fa-globe"},
-    euros: {dbName: "EM",                           displayName: "Euros",                   influence: 0.2, useMedals: false, icon: "fas fa-globe-europe"},
-    combined: {dbName: "Combined",                  displayName: "Worlds / Euros Combined", influence: 0, useMedals: false, icon: "fas fa-globe-europe"},
-    universade: {dbName: "Universade",              displayName: "Universade",              influence: 0, useMedals: false, icon: "fas fa-graduation-cap"},
-    cadetsChallenge: {dbName: "Cadets Challenge",   displayName: "Cadets Challenge",        influence: 0,useMedals: false, icon: "fas fa-award"}
-}
 
-
-let settingCompetitions = defaultCompSettings;
 loadStorage();
 
 function getMedalCount() {
@@ -109,7 +110,6 @@ function updateStorage() {
     sessionStorage.setItem("settingCompetitions", JSON.stringify(settingCompetitions));
 }
 
-let settingsDropdown;
 
 function initSettings(){
     /**
@@ -267,7 +267,7 @@ function initSettings(){
      * init
      */
     settingsDropdown = new Dropdown($(".settings-toggle"), list, {customClass: "settings-dropdown"});
-    settingsDropdown.elem.find(".data-dropdown").css("left", "-10rem");
+    // settingsDropdown.elem.find(".data-dropdown").css("left", "-13rem");
 }
 
 function resetSettings() {
@@ -480,42 +480,3 @@ function iconFromSearch(option) {
         case "country": const code = countryNameToCode(option.name); if(code !== null) {return $(`<img class="result__left" src="/img/countries/${code}.svg">`);} else{return $()};
     }
 }
-
-
-// function initIndexLogo(){
-//     const logo = $(".index .logo");
-//     if(logo.length === 0){
-//         return; // not indexpage
-//     }
-//     window.onscroll = update;
-//     window.onresize = update;
-
-//     function update(){
-//         const max = (window.innerWidth / 2) - (logo.width() / 1.25);
-//         let offset = Math.min((logo.offset().top - window.scrollY - 50) * 5 / Math.min(window.scrollY / 100, 1), max);
-//         const progress = (max - offset) / max;
-//         if(isMobile()){
-//             offset = max;
-//             // console.log("mobile")
-//         }
-//         $("#logo-filter").attr("stdDeviation", 4 - progress * 2);
-//         if(progress < 0.9 && !isMobile()){
-//             logo.css("width", `${(1 - progress) * 8 + 4}rem`);
-//             logo.css("height", `${(1 - progress) * 4 + 2}rem`);
-//         } else if(!isMobile()){
-//             logo.css("width", ``);
-//             logo.css("height", ``);
-//         }
-//         logo.offset({left: offset});
-//     }
-//     // window.setTimeout(update, 2000)
-//     if(isMobile()){
-//         logo.css("position", "relative");
-//         console.log(logo.css("position"))
-//         logo.css("width", `12rem`);
-//         logo.css("height", `6rem`);
-//         console.log(logo.css("width"));
-//     }
-//     update();
-//     update();
-// }

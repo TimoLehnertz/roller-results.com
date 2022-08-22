@@ -10,7 +10,7 @@ include_once "head.php";
                     <div class="line2"></div>
                     <div class="line3"></div>
                 </div>
-                <a href="/index.php">
+                <a class="index-link" href="/index.php">
                     <?php
                         if(!isset($indexPage)){
                             // include "logo.html";

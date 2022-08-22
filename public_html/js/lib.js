@@ -627,7 +627,6 @@ class Slideshow {
     }
 
     up() {
-        console.log("not dragging");
         this.pressed = false;
         this.x = this.elem.get()[0].scrollLeft;
         this.update();
@@ -639,7 +638,6 @@ class Slideshow {
             return;
         }
         Slideshow.dragging = true;
-        console.log("dragging");
         this.dragging++;
         const now = Date.now();
         const page = Slideshow.getPageFromEvent(e);
@@ -857,7 +855,7 @@ class Dropdown{
          * anime.js objects are used
          * factory functions
          */
-        this.openAnimation = (bounds) => {
+        this.openAnimation = () => {
             return  {
                 transformOrigin: "top",
                 rotateX: ["-20deg", 0],
@@ -907,15 +905,17 @@ class Dropdown{
     /**
      * init (caled last by constructor)
      */
-    init(){
+    init() {
         this.dropDownElem = $(`<div class="${Dropdown.dropdownClass} ${this.customClass != undefined ? this.customClass : ""}"></div>`);
         // this.dropDownElem.append(this.content);
         /**
-         * Css beeing defined in _dropdown.sass
+         * Css is defined in _dropdown.sass
          */
         $(this.elem).append(this.dropDownElem);
         this.dropDownElem.css("display", "none");
-        $(this.elem).css("position", "relative");//Relative for alowing absolute placement inside
+        if($(this.elem).css("position") != "absolute") {
+            $(this.elem).css("position", "relative");//Relative for alowing absolute placement inside
+        }
         this.initEvents();
         if(Dropdown.allDropDowns.indexOf(this) === -1){
             Dropdown.allDropDowns.push(this);
@@ -955,14 +955,14 @@ class Dropdown{
             this.parentObj = undefined;
             this.dropDownElem.css("display", "block");
             this.load(this.content);
-            const bounds = Dropdown.getFullBounds(this.dropDownElem);
-            const anim = this.openAnimation(bounds);
+            // const bounds = Dropdown.getFullBounds(this.dropDownElem);
+            const anim = this.openAnimation();
             anim.targets = this.dropDownElem.get();
             anime(anim);
         }
     }
 
-    load(object){
+    load(object) {
         this.dropDownElem.empty();
         // this.dropDownElem.find(`div.${Dropdown.nameClass}`).css("display", "none");
         if(Array.isArray(object)){
@@ -980,13 +980,13 @@ class Dropdown{
                 this.dropDownElem.append(elem)
             }
             const bounds = Dropdown.getFullBounds(this.dropDownElem);
-            anime({
-                targets: this.dropDownElem.get(),
-                width: bounds.width + 20,
-                height: bounds.height,
-                duration: 50,
-                easing: "easeOutSine"
-            });
+            // anime({
+            //     targets: this.dropDownElem.get(),
+            //     width: bounds.width + 20,
+            //     height: bounds.height,
+            //     duration: 50,
+            //     easing: "easeOutSine"
+            // });
         } else{
             throw new Error();
         }
@@ -1093,7 +1093,7 @@ class Dropdown{
     //     }
     // }
 
-    static getFullBounds(elem){
+    static getFullBounds(elem) {
         const elemCpy = $(elem).clone();
         elemCpy.find(".tooltiptext").remove();
         elemCpy.css("display", "block");
@@ -1133,6 +1133,8 @@ class Table{
 
     constructor(elem, data, name){
         this.data = data;
+        // console.log("data:", JSON.parse(JSON.stringify(data)));
+        // this.data = JSON.parse(JSON.stringify(data));
         this.elem = elem;
         this.name = name;
         this.initiated = false;
@@ -1147,7 +1149,7 @@ class Table{
      *      layout
      * @param {{}} params 
      */
-    setup(params){
+    setup(params) {
         /**
          * Rowlink should be a callback wich takes a row and returns a url to wich the row should create a link
          */
@@ -1202,7 +1204,7 @@ class Table{
     /**
      * returns false if not set and {column: "name", up: true / false} if given
      */
-    getInitialSort(){
+    getInitialSort() {
         if(this.orderBy == undefined){
             return false;
         } else{
@@ -1210,8 +1212,8 @@ class Table{
         }
     }
 
-    init(){
-        if(!this.initiated){
+    init() {
+        if(!this.initiated) {
             let initialSort = this.getInitialSort();
             if(initialSort !== false){
                 this.initiated = true;// to prevent recursion as sort calls this function
@@ -1226,7 +1228,7 @@ class Table{
                 translateX: [-50, 0],
                 opacity: [0, 1],
                 duration: 50,
-                delay: anime.stagger(10), // increase delay by 100ms for each elements.
+                delay: anime.stagger(10), // increase delay by 10ms for each elements.
                 easing: "easeOutCubic",
                 complete: () => {
                     $(`.${Table.class} tr`).css("transform", "");
@@ -1295,14 +1297,18 @@ class Table{
         return table;
     }
 
-    sort(column, up, noInit){
+    sort(column, up, noInit) {
         const mul = up ? -1 : 1
-        this.data.sort(function(a, b){
+        this.data.sort(function(a, b) {
             if(a[column] == undefined){
                 return mul;
             }
             if(b[column] == undefined){
                 return -mul;
+            }
+            if(typeof a[column] == "object" && a[column]["data"] !== undefined) {
+                if(a[column]["data"] < b[column]["data"]) { return 1 * mul;}
+                if(a[column]["data"] > b[column]["data"]) { return -1 * mul;}
             }
             if(a[column] < b[column]) { return 1 * mul;}
             if(a[column] > b[column]) { return -1 * mul;}
@@ -1319,7 +1325,7 @@ class Table{
         return $(this.elem).find(".index-" + index);
     }
 
-    getTableHead(){
+    getTableHead() {
         const head = $(`<tr class="${Table.headClass}"></tr>`);
         let count = 0;
         for (const td of this.usedColumns) {
@@ -1535,7 +1541,7 @@ class ElemParser{
         ElemParser.parser[type] = parser;
     }
 
-    static parse(elem){
+    static parse(elem) {
         if(typeof elem === 'object'){
             return ElemParser.finishElem(ElemParser.parseMeta(elem), elem);
         } else if(elem !== undefined && elem !== null){
@@ -1596,7 +1602,6 @@ class ElemParser{
             }
         }
         if(meta?.change) {
-            // console.log(meta?.change);
             $(elem).change(function(e) {
                 if($(this).find("input[type='checkbox']").length !== 0){
                     meta.change(e, $(this).find("input").is(":checked"));
@@ -1864,7 +1869,6 @@ class LoadingBar {
         const timePassed = new Date().getTime() - this.start.getTime();
         const progress = 1 / (0.5 + (timePassed / this.divider));
         this.bar.css("width", ((1 - progress) * 100) + "%");
-        // console.log(((1 - progress) * 100) + "%");
         if(this.running) {
             window.requestAnimationFrame(() => {this.update()});
         }

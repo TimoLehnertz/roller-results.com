@@ -269,7 +269,6 @@ function athleteDataToProfileData(athlete, useRank = false, alternativeRank = un
         /**
          * Career
          */
-        console.log(this);
         // updateCareer
         const careerElem = $(`<div id="${idCareer}"></div>`);
         wrapper.append(careerElem);
@@ -472,8 +471,6 @@ function getRaceTable(parent, race) {
         }
     }
     race.results = results;
-    console.log("parsed results");
-    console.log(JSON.parse(JSON.stringify(race.results)));
 
     for (const result of race.results) {
         if(result.time !== undefined) {
@@ -497,9 +494,10 @@ function getRaceTable(parent, race) {
     }
     
     const table = new Table(raceTable, race.results);
+    // console.log(JSON.parse(JSON.stringify(race.results)));
     table.setup({
         layout: {
-            place: {allowSort: false, displayName: "Place"},
+            place: {allowSort: true, displayName: "Place"},
             time: {
                 displayName: "Time",
                 allowSort: true,
@@ -672,7 +670,6 @@ function countryToProfileData(country, useRank = false, alternativeRank = undefi
                     this.grayOut = false;
                     this.updateData(countryToProfileData(newCountry));
                     const slideshow = this.elem.find(".country-skater-slideshow").first();
-                    console.log(slideshow);
                     get("countryAthletes", country.country, 5).receive((succsess, athletes) => {
                         slideshow.empty();
                         let i = 0;

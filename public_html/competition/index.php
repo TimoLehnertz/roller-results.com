@@ -142,7 +142,7 @@ foreach ($bestAthletes as $athlete) {
             </div>
         </div>
         <script>
-            console.log(comp)
+            // console.log(comp)
             if(!comp.checked) {
                 $(".headline").append(getUncheckedElem());
             }
