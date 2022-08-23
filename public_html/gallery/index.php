@@ -15,10 +15,10 @@ if(isset($_GET["path"])) {
     $relativePath = str_replace("../", "", $_GET["path"]);
     $relativePath = str_replace("\\", "", $relativePath);
     $path = $_SERVER["DOCUMENT_ROOT"].$pathFromRoot."/".$relativePath;
-    // if(!file_exists($path)) {
-    //     $path = $_SERVER["DOCUMENT_ROOT"].$pathFromRoot;
-    //     $relativePath = ""; // relative path from gallery
-    // }
+    if(!file_exists($path)) {
+        $path = $_SERVER["DOCUMENT_ROOT"].$pathFromRoot;
+        $relativePath = ""; // relative path from gallery
+    }
 }
 $backPath = dirname($relativePath);
 ?>
