@@ -14,7 +14,7 @@ $relativePath = ""; // relative path from gallery
 if(isset($_GET["path"])) {
     $relativePath = str_replace("../", "", $_GET["path"]);
     $relativePath = str_replace("\\", "", $relativePath);
-    $path = $_SERVER["DOCUMENT_ROOT"]."/gallery/".$pathFromRoot;
+    $path = $_SERVER["DOCUMENT_ROOT"].$pathFromRoot;
     if(!file_exists($path)) {
         $path = $_SERVER["DOCUMENT_ROOT"]."/gallery/";
         $relativePath = ""; // relative path from gallery
@@ -39,6 +39,7 @@ $backPath = dirname($relativePath);
         <a href="/gallery#files">Gallery</a>
         <span class="delimiter margin left right half">></span>
         <?php
+        echo $_SERVER["DOCUMENT_ROOT"];
             $folders = explode("/", $relativePath);
             $tmpPath = "";
             $i = 0;
