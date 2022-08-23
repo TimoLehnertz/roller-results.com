@@ -7,7 +7,7 @@ echoRandWallpaper();
 
 
 
-$pathFromRoot = "../nas-share";
+$pathFromRoot = "/gallery/nas-share";
 
 $path = $_SERVER["DOCUMENT_ROOT"].$pathFromRoot;
 $relativePath = ""; // relative path from gallery
