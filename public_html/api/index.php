@@ -104,8 +104,12 @@ if(!isset($NO_GET_API)){
         } else{
             echo "error in api";
         }
-    } else if(isset($_GET["search"])){
-        $res = search($_GET["search"]);
+    } else if(isset($_GET["search"])) {
+        $allowed = "Athlates";
+        if(isset($_GET["allowed"])) {
+            $allowed = $_GET["allowed"];
+        }
+        $res = search($_GET["search"], $allowed);
         if($res !== false){
             echo json_encode($res);
         } else{
@@ -151,8 +155,19 @@ if(!isset($NO_GET_API)){
         } else{
             echo "error in api";
         }
-    }
-    else if(isset($_GET["getcountryBestTimes"])){
+    } else if(isset($_GET["getputAthleteImage"]) && isset($_GET["data"])){
+        if(putAthleteImage($_GET["getputAthleteImage"], $_GET["data"])) {
+            echo "true";
+        } else {
+            echo "false";
+        }
+    } else if(isset($_GET["getremoveAthleteImage"]) && isset($_GET["data"])){
+        if(removeAthleteImage($_GET["getremoveAthleteImage"], $_GET["data"])) {
+            echo "true";
+        } else {
+            echo "false";
+        }
+    } else if(isset($_GET["getcountryBestTimes"])){
         $res = getCountryBestTimes($_GET["getcountryBestTimes"]);
         if($res !== false){
             echo json_encode($res);
@@ -357,8 +372,9 @@ if(!isset($NO_GET_API)){
        }
     } else if(isset($_GET["getanalytics"])) {
         echo json_encode(getAnalytics());
-    }
-    else if(isset($_GET["searchAthletes"])) {
+    } else if(isset($_GET["getimgAthletes"])) {
+        echo json_encode(getImgAthletes($_GET["getimgAthletes"]));
+    } else if(isset($_GET["searchAthletes"])) {
         // var_dump(file_get_contents('php://input'));
         $input = json_decode(file_get_contents('php://input'), true);
         if(!isset($input["athletes"]) || !isset($input["aliasGroup"])) {
@@ -448,6 +464,25 @@ if(!isset($NO_GET_API)){
             addAnalytics($name, $public, $json);
         }
     }
+}
+
+function putAthleteImage($imgPath, $idAthlete) {
+    if(!isLoggedIn()) return false;
+    if(sizeof(getAthlete($idAthlete)) == 0) return false;
+    $existing = query("SELECT count(*) as count FROM TbAthleteHasImage WHERE athlete=? AND image=?;", "is", $idAthlete, $imgPath);
+    if($existing[0]["count"] > 0) {
+        return false;
+    }
+    return dbExecute("INSERT INTO TbAthleteHasImage(athlete, image, creator) VALUES (?,?,?);", "isi", $idAthlete, $imgPath, $_SESSION["iduser"]);
+}
+
+function removeAthleteImage($imgPath, $idAthlete) {
+    if(!isLoggedIn()) return false;
+    return dbExecute("DELETE FROM TbAthleteHasImage WHERE creator=? AND image=? AND athlete=?", "isi", $_SESSION["iduser"], $imgPath, $idAthlete);
+}
+
+function getImgAthletes($imgPath) {
+    return query("SELECT TbAthleteHasImage.*, TbAthlete.firstname, TbAthlete.lastname, TbAthlete.id FROM TbAthleteHasImage JOIN TbAthlete ON TbAthlete.id = TbAthleteHasImage.athlete WHERE TbAthleteHasImage.image = ?;", "s", $imgPath);
 }
 
 function getRaceDescription($year, $event, $distance, $gender, $category) {
@@ -1089,6 +1124,16 @@ function addCompetition($name, $city, $country, $latitude, $longitude, $type, $s
     return dbExecute("INSERT INTO TbCompetition(`name`, `location`, `country`, `latitude`, `longitude`, `type`, `startDate`, `endDate`, `description`, `creator`, `checked`, `raceYear`, `raceYearNum`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?);", "sssssssssiiii", $name, $city, $country, $latitude, $longitude, $type, $startDate, $endDate, $description, $creator, $checked, $year, $year);
 }
 
+function getUsersAnalytics() {
+    if(!isLoggedIn()) return [];
+    return query("SELECT * FROM Tb_analyticsPreset WHERE `owner` = ?;", "i", $_SESSION["iduser"]);
+}
+
+function getUsersCompetitions() {
+    if(!isLoggedIn()) return;
+    return query("SELECT * FROM TbCompetition WHERE creator = ?;", "i", $_SESSION["iduser"]);
+}
+
 function getAllCompetitions(){
     $res = query("call results.sp_getCompetitionsNew();");
     if(sizeof($res) > 0){
@@ -1489,8 +1534,11 @@ function athleteFromResult($result){
  * <location> location of competition
  * <country> country
  * 
+ * allowed: <string> Year,Team,Competition,Athlete,Country
+ * 
  */
-function search($name){
+function search($name, $allowed) {
+    $allowed = explode(",", $allowed);
     $name = trim($name);//remove whitespaces at front and end
     $results = [];
     setMaxResultSize(10);
@@ -1499,7 +1547,7 @@ function search($name){
      */
     $year = substr($name, 0, 4);
     $competition = null;
-    if(is_numeric($year)) {
+    if(is_numeric($year) && in_array("Year", $allowed)) {
         $competitions = query("CALL sp_searchYear(?);", "i", intval($year));
         if(sizeof($competitions) > 0){
             $competition = $competitions[0];
@@ -1516,59 +1564,67 @@ function search($name){
         /**
          * Team
          */
-        $teams = query("CALL sp_searchTeams(?)", "s", $name);
-        foreach ($teams as $key => $teams) {
-            $results[] = [
-                "id" => $teams["name"],
-                "name" => $teams["name"],
-                "priority" => 4,
-                "type" => "team"
-            ];
-        }
-        /**
-         * Competition location
-         */
-        $competitionName = $name;
-        $competitions = query("CALL sp_searchCompetitionLocation(?)", "s", $competitionName);
-        foreach ($competitions as $key => $competition) {
-            $results[] = [
-                "id" => $competition["idCompetition"],
-                "name" => $competition["type"]." ".$competition["location"]." ".$competition["raceYear"],
-                "priority" => 2,
-                "type" => "competition"
-            ];
-        }
-        /**
-         * persons names
-         */
-        $results = array_merge($results, searchPersons($name));
-        /**
-         * competitionTypes
-         */
-        $names = explode("  ", $name);
-        foreach ($names as $key => $value) {
-            $competitions = query("CALL sp_searchCompetitionType(?)", "s", $value);
-            foreach ($competitions as $key => $competition) {
+        if(in_array("Team", $allowed)) {
+            $teams = query("CALL sp_searchTeams(?)", "s", $name);
+            foreach ($teams as $key => $teams) {
                 $results[] = [
-                    "id" => $competition["idCompetition"],
-                    "name" => $competition["type"]." ".$competition["location"]." ".$competition["raceYear"],
-                    "priority" => 1,
-                    "type" => "competition"
+                    "id" => $teams["name"],
+                    "name" => $teams["name"],
+                    "priority" => 4,
+                    "type" => "team"
                 ];
             }
         }
         /**
+         * Competition location
+         */
+        if(in_array("Competition", $allowed)) {
+            $competitionName = $name;
+            $competitions = query("CALL sp_searchCompetitionLocation(?)", "s", $competitionName);
+            foreach ($competitions as $key => $competition) {
+                $results[] = [
+                    "id" => $competition["idCompetition"],
+                    "name" => $competition["type"]." ".$competition["location"]." ".$competition["raceYear"],
+                    "priority" => 2,
+                    "type" => "competition"
+                ];
+            }
+            $names = explode("  ", $name);
+            foreach ($names as $key => $value) {
+                $competitions = query("CALL sp_searchCompetitionType(?)", "s", $value);
+                foreach ($competitions as $key => $competition) {
+                    $results[] = [
+                        "id" => $competition["idCompetition"],
+                        "name" => $competition["type"]." ".$competition["location"]." ".$competition["raceYear"],
+                        "priority" => 1,
+                        "type" => "competition"
+                    ];
+                }
+            }
+        }
+        /**
+         * persons names
+         */
+        if(in_array("Athlete", $allowed)) {
+            $results = array_merge($results, searchPersons($name));
+        }
+        /**
+         * competitionTypes
+         */
+        /**
          * countries
          */
-        foreach ($names as $key => $value) {
-            $countries = query("CALL sp_searchCountry(?)", "s", $value);
-            foreach ($countries as $key => $country) {
-                $results[] = [
-                    "id" => $country["country"],
-                    "name" => $country["country"],
-                    "priority" => 3,
-                    "type" => "country"
-                ];
+        if(in_array("Country", $allowed)) {
+            foreach ($names as $key => $value) {
+                $countries = query("CALL sp_searchCountry(?)", "s", $value);
+                foreach ($countries as $key => $country) {
+                    $results[] = [
+                        "id" => $country["country"],
+                        "name" => $country["country"],
+                        "priority" => 3,
+                        "type" => "country"
+                    ];
+                }
             }
         }
     }

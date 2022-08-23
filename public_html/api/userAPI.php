@@ -190,3 +190,14 @@ function tryRememberMeLogin() {
     $succsess = login($iduser, true);
     return $succsess;
 }
+
+function setAthleteProfile($idAthlete) {
+    if(!isLoggedIn()) return false;
+    if(sizeof(getAthlete($idAthlete)) == 0) return false;
+    return dbExecute("UPDATE TbUser SET athlete = ? WHERE iduser = ?", "ii", $idAthlete, $_SESSION["iduser"]);
+}
+
+function removeAthleteProfile() {
+    if(!isLoggedIn()) return false;
+    return dbExecute("UPDATE TbUser SET athlete = NULL WHERE iduser = ?", "i", $_SESSION["iduser"]);
+}

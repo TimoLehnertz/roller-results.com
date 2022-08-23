@@ -3,11 +3,12 @@
  * @param {text} text 
  * @param {callback(succsess, response)} callback
  */
-function search(text, callback){
+function search(text, allowed, callback) {
+    console.log("/api/index.php?search=" + text + "&allowed=" + allowed);
     $.ajax({
-        url: "/api/index.php?search=" + text,
+        url: "/api/index.php?search=" + text + "&allowed=" + allowed,
         dataType:  "text",
-        success: (response) =>{
+        success: (response) => {
             if(isJson(response)){
                 callback(true, JSON.parse(response));
             } else{

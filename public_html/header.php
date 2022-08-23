@@ -37,8 +37,8 @@ include_once "head.php";
                     echo "<script>$(() => {alert('". getErrormessage($_GET["error"]) ."'); window.location = removeParams('error');})</script>";
                 }
             ?>
-            <input class="search-bar__input" type="text" autocomplete="off" placeholder="Search for Athletes / countries / locations..." value="<?=$search?>">
-            <div class="search-bar__options"></div>
+            <input class="search-bar__input" type="text" autocomplete="off" placeholder="Search for athletes / countries / locations / Events / Years..." value="<?=$search?>">
+            <div class="search-bar__options" id="search-bar__options__header"></div>
         </div>
         <div class="header__right">
             <?php if($loggedIn){ ?>
@@ -100,17 +100,19 @@ include_once "head.php";
             </ul>
         </nav>
         <div class="profile-section">
-            <!-- <div class="hider hider2"></div> -->
-            <?php if($loggedIn){
-                echo "<p>".$user["username"]."</p>";
-                ?>
-                <form action='/logout/index.php' method='POST'>
-                    <button class="btn slide signup-btn default" name="logout-submit" value="1" type="submit"><i class="fas fa-sign-out-alt margin right"></i>Log out</button>
-                </form>
-            <?php } else { ?>
-                <a class="btn default" href="/signup">Sign up</a>
-                <a class="btn default" href="/login">log in</a>
-            <?php } ?>
+            <div class="flex column justify-start align-start gap">
+                <?php if($loggedIn){
+                    echo "<p class='font size big'><i class='fa fa-solid fa-user margin right'></i>".$user["username"]."</p>";
+                    echo "<a class='btn default font color white' href='/profile'>Your profile</a>";
+                    ?>
+                    <form action='/logout/index.php' method='POST'>
+                        <button class="btn slide signup-btn default" name="logout-submit" value="1" type="submit"><i class="fas fa-sign-out-alt margin right"></i>Log out</button>
+                    </form>
+                <?php } else { ?>
+                    <a class="btn default" href="/signup">Sign up</a>
+                    <a class="btn default" href="/login">log in</a>
+                <?php } ?>
+            </div>
         </div>
         <div class="hider"></div>
     </header>

@@ -402,12 +402,12 @@ function searchChange(e){
     e.stopPropagation();
     const text = $(".search-bar__input").val();
     if(text.length == 0){
-        $(".search-bar__options").empty();
+        $("#search-bar__options__header").empty();
         return;
     }
     lastSearch = text;
-    search(text, (succsess, data) => {
-        if(succsess){
+    search(text, ["Year","Team","Competition","Athlete","Country"], (succsess, data) => {
+        if(succsess) {
             options = data;
             updateSearchBar(data);
         } else{
@@ -429,7 +429,7 @@ function updateSearchBar(data){
     if(data?.length > 0) {
         searchTooltip.close();
     }
-    const optionsElem = $(".search-bar__options");
+    const optionsElem = $("#search-bar__options__header");
     optionsElem.empty();
     if(data !== undefined){
         data = sortSearch(data);
@@ -437,7 +437,7 @@ function updateSearchBar(data){
         return;
     }
     for (const option of data) {
-        optionsElem.append(elemFromSearchOption(option));
+        optionsElem.append(elemFromSearchOption(option, true));
     }
 }
 
@@ -450,13 +450,14 @@ function sortSearch(search){
     return search;
 }
 
-function elemFromSearchOption(option){
+function elemFromSearchOption(option, useLinks, callback) {
+    if(!isFunction(callback)) callback = () => {};
     const elem = $(
-    `<a href="${linkFromOption(option)}" class="search__option">
+    `<${useLinks ? "a" : "p"} href="${linkFromOption(option)}" class="search__option">
         <span class="search__name">${option.name}</span>
-    </a>`);
+    </${useLinks ? "a" : "p"}>`);
     elem.prepend(iconFromSearch(option));
-    elem.click(() => {optionClicked(option)});
+    elem.click(() => {callback(option);});
     return elem;
 }
 
@@ -467,11 +468,6 @@ function linkFromOption(option){
     return `/${option.type}?id=${option.id}`;
 }
 
-function optionClicked(option){
-    // console.log("clicked");
-    // console.log(option);
-}
-
 function iconFromSearch(option) {
     switch(option.type) {
         case "competition": return $(`<i class="fas fa-map-marker-alt result__left"></i>`);
@@ -479,4 +475,73 @@ function iconFromSearch(option) {
         case "team": return  $(`<i class="fas fa-people-group result__left"></i>`);
         case "country": const code = countryNameToCode(option.name); if(code !== null) {return $(`<img class="result__left" src="/img/countries/${code}.svg">`);} else{return $()};
     }
+}
+
+function hintFromAllowedSearch(allowed) {
+    let out = "";
+    let delimiter = "";
+    for (const string of allowed) {
+        switch(string) {
+            case "Athlete": out += delimiter + "Athletes"; break;
+            case "Team": out += delimiter + "Teams"; break;
+            case "Competition": out += delimiter + "Events"; break;
+            case "Country": out += delimiter + "Countries"; break;
+            case "Year": out += delimiter + "Years"; break;
+        }
+        delimiter = " / ";
+    }
+    return out;
+}
+
+class SearchBarSmall {
+    constructor(allowed, useLinks, callback) {
+        this.useLinks = useLinks ?? false;
+        this.allowed = allowed;
+        this.lastResults = [];
+        if(!isFunction(callback)) callback = () => {};
+        this.callback = callback;
+        this.elem = $(`<div class="search-bar"></div>`);
+        this.input = $(`<input type="text" class="search-bar__input" placeholder="Search for ${hintFromAllowedSearch(allowed)}">`);
+        this.options = $(`<div class="search-bar__options flex column align-start"></div>`);
+        this.input.on("input", (e) => this.handleChange(e));
+        this.elem.append(this.input);
+        this.elem.append(this.options);
+        $("body").click(() => this.options.empty());
+        this.input.keyup((e) => {
+            if(e.keyCode !== 13) return;
+            if(this.lastResults.length == 0) return;
+            if(this.useLinks) {
+                window.location = linkFromOption(this.lastResults[0]);
+            }
+            this.options.empty();
+            this.callback(this.lastResults[0]);
+        });
+    }
+
+    handleChange(e) {
+        e.stopPropagation();
+        const text = this.input.val();
+        if(text.length == 0){
+            this.options.empty();
+            return;
+        }
+        search(text, this.allowed, (succsess, data) => {
+            if(!succsess) return;
+            data = sortSearch(data, this.allowed);
+            this.updateSearchBar(data);
+            this.lastResults = data;
+        });
+    }
+
+    updateSearchBar(data) {
+        this.options.empty();
+        if(data === undefined) return;
+        for (const option of data) {
+            this.options.append(elemFromSearchOption(option, this.useLinks, (option) => {this.options.empty(); this.callback(option)}));
+        }
+    }
+}
+
+function isFunction(functionToCheck) {
+    return functionToCheck && {}.toString.call(functionToCheck) === '[object Function]';
 }

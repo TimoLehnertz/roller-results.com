@@ -1125,7 +1125,7 @@ class Dropdown{
  * }
  */
 
-class Table{
+class Table {
 
     static class = "data-table";
     static headClass = "data-table__head";
@@ -1954,7 +1954,7 @@ class Profile {
      * }
      * @param {Number} score 
      */
-    constructor(data, minLod = Profile.MIN, score = Profile.DEFAULT_SCORE){
+    constructor(data, minLod = Profile.MIN, score = Profile.DEFAULT_SCORE) {
         /**
          * idprofile
          */

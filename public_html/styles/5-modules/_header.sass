@@ -73,73 +73,6 @@
         .org
             // color: $c
 
-    .search-bar
-        display: grid
-        grid-template-columns: 50px auto
-        transition: border 0.2s
-        border-radius: 7px
-        border-top-left-radius: 0
-        border-top-right-radius: 0
-        background: #DDD
-        transition: box-shadow 0.1s
-        position: relative
-        // z-index: -100
-        // border: 4px solid $header-color
-        border-bottom: none
-        border-top: none
-        
-        &:focus-within
-            background-color: #FFF
-            box-shadow: 3px 2px 15px 5px #0004
-
-            background: linear-gradient(180deg, #ececec 0%, rgba(255,255,255,1) 25%, #e1eeff 100%)
-
-            border-color: $c
-
-
-    .search-bar__options
-        grid-column-start: 1
-        grid-column-end: 3
-        max-height: 400px
-        overflow: auto
-
-    .search__option
-        padding: 10px
-        margin: 0 20px
-        text-decoration: none
-        display: flex
-        align-items: center
-        color: #333
-
-        &:hover
-            background-color: #EEE
-
-    .result__left
-        width: 20px
-        margin-right: 10px
-
-
-    .search__option + .search__option
-        // border-top: 1px solid #AAA
-
-    .search-bar__icon
-        margin: 15px
-        background: transparent
-        border-radius: 0
-        transition: border-radius 0.2s, background 0.1s
-
-        &:hover
-            background: #CCC
-            border-radius: 50%
-
-
-    .search-bar__input
-        width: 100%
-        height: 4rem
-        border: none
-        background: transparent
-        outline: none
-
     .header__right
         display: flex
         justify-content: space-evenly
@@ -205,7 +138,7 @@
                 display: none
 
         .search-bar__input
-            width: 65vw
+            // width: 65vw !important
             text-overflow: ellipsis
 
         .header__right
@@ -229,3 +162,77 @@
 
             &::hover
                 border-radius: 50%
+
+
+
+.search-bar
+    display: grid
+    grid-template-columns: 50px auto
+    transition: border 0.2s
+    border-radius: 7px
+    border-top-left-radius: 0
+    border-top-right-radius: 0
+    background: #DDD
+    transition: box-shadow 0.1s
+    position: relative
+    // z-index: -100
+    // border: 4px solid $header-color
+    border-bottom: none
+    border-top: none
+    
+    &:focus-within
+        background-color: #FFF
+        box-shadow: 3px 2px 15px 5px #0004
+
+        background: linear-gradient(180deg, #ececec 0%, rgba(255,255,255,1) 25%, #e1eeff 100%)
+
+        border-color: $c
+
+
+    .search-bar__options
+        grid-column-start: 1
+        grid-column-end: 3
+        max-height: 400px
+        overflow: auto
+
+    .search__option
+        padding: 10px
+        margin: 0 20px
+        text-decoration: none
+        display: flex
+        align-items: center
+        color: #333
+
+        &:hover
+            background-color: #EEE
+
+    .result__left
+        width: 20px
+        margin-right: 10px
+
+
+    .search__option + .search__option
+        // border-top: 1px solid #AAA
+
+    .search-bar__icon
+        margin: 15px
+        background: transparent
+        border-radius: 0
+        transition: border-radius 0.2s, background 0.1s
+
+        &:hover
+            background: #CCC
+            border-radius: 50%
+
+
+    .search-bar__input
+        width: 100%
+        min-width: 50vw
+        height: 4rem
+        border: none
+        background: transparent
+        outline: none
+    
+    @media only screen and (max-width: 800px)
+        .search-bar__input
+            width: 70vw !important
