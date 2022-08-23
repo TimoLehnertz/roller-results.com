@@ -15,10 +15,10 @@ if(isset($_GET["path"])) {
     $relativePath = str_replace("../", "", $_GET["path"]);
     $relativePath = str_replace("\\", "", $relativePath);
     $path = $_SERVER["DOCUMENT_ROOT"].$pathFromRoot."/".$relativePath;
-    if(!file_exists($path)) {
-        $path = $_SERVER["DOCUMENT_ROOT"].$pathFromRoot;
-        $relativePath = ""; // relative path from gallery
-    }
+    // if(!file_exists($path)) {
+    //     $path = $_SERVER["DOCUMENT_ROOT"].$pathFromRoot;
+    //     $relativePath = ""; // relative path from gallery
+    // }
 }
 $backPath = dirname($relativePath);
 ?>
@@ -69,7 +69,7 @@ $backPath = dirname($relativePath);
             $imgFiles = [];
             foreach ($dir as $file) {
                 $filePath = $path."/".$file;
-                if(!file_exists($filePath)) continue;
+                // if(!file_exists($filePath)) continue;
                 $pathinfo = pathinfo($filePath);
                 $name = $pathinfo["filename"];
                 if($name === "." || strlen($name) == 0) continue;
@@ -79,7 +79,7 @@ $backPath = dirname($relativePath);
             }
             foreach ($dir as $file) {
                 $filePath = $path."/".$file;
-                if(!file_exists($filePath)) continue;
+                // if(!file_exists($filePath)) continue;
                 $pathinfo = pathinfo($filePath);
                 $isDir = is_dir($filePath);
                 $name = $pathinfo["filename"];
