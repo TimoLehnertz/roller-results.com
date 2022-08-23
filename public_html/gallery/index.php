@@ -151,7 +151,7 @@ function showImage(image, first) {
     if(first) {
         $(".img-display img").remove();
     }
-    currentimgPath = `http://img.roller-results.com/public/${relativePath}/${image}`;
+    currentimgPath = `https://img.roller-results.com/public/${relativePath}/${image}`;
     // currentimgPath = `/gallery/nas-share/${relativePath}/${image}`;
     $(".name").text(image);
     let isLoaded = false;
