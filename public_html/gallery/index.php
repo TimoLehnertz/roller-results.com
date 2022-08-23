@@ -60,8 +60,11 @@ $backPath = dirname($relativePath);
     <div class="light section files">
         <a class="folder" href='/gallery?path=<?=$backPath ?>#files'>Back</a>
         <?php
-        echo $path;
+            echo $path;
             $dir = scandir($path);
+            if(!file_exists($dir)) {
+                echo "doesnt exist";
+            }
             // print_r($dir);
             $imgFiles = [];
             foreach ($dir as $file) {
