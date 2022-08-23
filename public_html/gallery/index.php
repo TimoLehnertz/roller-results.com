@@ -60,6 +60,7 @@ $backPath = dirname($relativePath);
     <div class="light section files">
         <a class="folder" href='/gallery?path=<?=$backPath ?>#files'>Back</a>
         <?php
+        echo $path;
             $dir = scandir($path);
             // print_r($dir);
             $imgFiles = [];
