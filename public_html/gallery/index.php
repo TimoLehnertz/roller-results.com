@@ -60,16 +60,12 @@ $backPath = dirname($relativePath);
     <div class="light section files">
         <a class="folder" href='/gallery?path=<?=$backPath ?>#files'>Back</a>
         <?php
-            echo $path;
             $dir = scandir($path);
-            if(!file_exists($dir)) {
-                echo "doesnt exist";
-            }
             // print_r($dir);
             $imgFiles = [];
             foreach ($dir as $file) {
                 $filePath = $path."/".$file;
-                // if(!file_exists($filePath)) continue;
+                if(!file_exists($filePath)) continue;
                 $pathinfo = pathinfo($filePath);
                 $name = $pathinfo["filename"];
                 if($name === "." || strlen($name) == 0) continue;
@@ -79,7 +75,7 @@ $backPath = dirname($relativePath);
             }
             foreach ($dir as $file) {
                 $filePath = $path."/".$file;
-                // if(!file_exists($filePath)) continue;
+                if(!file_exists($filePath)) continue;
                 $pathinfo = pathinfo($filePath);
                 $isDir = is_dir($filePath);
                 $name = $pathinfo["filename"];
@@ -91,7 +87,6 @@ $backPath = dirname($relativePath);
                 if($isDir) continue;
                 if(!in_array($extension, $allowedExtensions)) continue;
                 echo "<button class='btn no-style file' onclick='showImage(\"$file\", true)'><i class='fa fa-solid fa-image'></i>$name</button>";
-                // echo "<img style='max-width: 10rem;' src='getImg.php?path=/gallery/".$relativePath."/".$file."&size=100'>";
                 $imgFiles []= $file;
             }
         ?>
