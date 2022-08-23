@@ -61,11 +61,11 @@ $backPath = dirname($relativePath);
         <a class="folder" href='/gallery?path=<?=$backPath ?>#files'>Back</a>
         <?php
             $dir = scandir($path);
-            print_r($dir);
+            // print_r($dir);
             $imgFiles = [];
             foreach ($dir as $file) {
                 $filePath = $path."/".$file;
-                // if(!file_exists($filePath)) continue;
+                if(!file_exists($filePath)) continue;
                 $pathinfo = pathinfo($filePath);
                 $name = $pathinfo["filename"];
                 if($name === "." || strlen($name) == 0) continue;
@@ -75,7 +75,7 @@ $backPath = dirname($relativePath);
             }
             foreach ($dir as $file) {
                 $filePath = $path."/".$file;
-                // if(!file_exists($filePath)) continue;
+                if(!file_exists($filePath)) continue;
                 $pathinfo = pathinfo($filePath);
                 $isDir = is_dir($filePath);
                 $name = $pathinfo["filename"];
@@ -83,7 +83,7 @@ $backPath = dirname($relativePath);
                 if(isset($pathinfo["extension"])) {
                     $extension = $pathinfo["extension"];
                 }
-                $allowedExtensions = ["JPG", "PNG"];
+                $allowedExtensions = ["JPG", "PNG", "jpg"];
                 if($isDir) continue;
                 if(!in_array($extension, $allowedExtensions)) continue;
                 echo "<button class='btn no-style file' onclick='showImage(\"$file\", true)'><i class='fa fa-solid fa-image'></i>$name</button>";
