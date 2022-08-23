@@ -7,7 +7,7 @@ echoRandWallpaper();
 
 
 
-$pathFromRoot = "/gallery/nas-share";
+$pathFromRoot = "/gallery/nas-share/public";
 
 $path = $_SERVER["DOCUMENT_ROOT"].$pathFromRoot;
 $relativePath = ""; // relative path from gallery
@@ -142,17 +142,39 @@ function addPerson(id, name) {
 
 let currentimgPath = undefined;
 
+let loadedImages = [];
+
 function showImage(image, first) {
     console.log(image);
     current = image;
     const path = relativePath + "/" + image;
-    lastUid = getUid();
     if(first) {
         $(".img-display img").remove();
     }
-    currentimgPath = `/gallery/nas-share/${relativePath}/${image}`;
-    $(".name").text(image)
-    $(".img-display").prepend(`<img id="${lastUid}" onclick="hidePersons()" src="${currentimgPath}">`);
+    currentimgPath = `http://img.roller-results.com/public/${relativePath}/${image}`;
+    // currentimgPath = `/gallery/nas-share/${relativePath}/${image}`;
+    $(".name").text(image);
+    let isLoaded = false;
+    let imgElem;
+    for (const loadedImage of loadedImages) {
+        if(loadedImage.image == image) {
+            imgElem = loadedImage.imgElem;
+            imgElem.css("display", "block");
+            isLoaded = true;
+            lastUid = imgElem.attr("id");
+            break;
+        }
+    }
+    if(!isLoaded) {
+        lastUid = getUid();
+        imgElem = $(`<img id="${lastUid}" onclick="hidePersons()" src="${currentimgPath}">`);
+        loadedImages.push({
+            image,
+            imgElem
+        });
+    }
+    imgElem.prependTo($(".img-display"));
+    // $(".img-display").prepend(imgElem);
     $(".img-display").addClass("visible");
     $(".person-array").empty();
     updatePersons();
@@ -201,7 +223,9 @@ function next() {
             showImage(images[i + 1]);
             removal.addClass("vanish-to-left");
             window.setTimeout(() => {
-                removal.remove();
+                // removal.detach();
+                removal.css("display", "none");
+                removal.removeClass("vanish-to-left");
             }, 500);
             return;
         }
@@ -216,7 +240,10 @@ function prev() {
             console.log("go")
             removal.addClass("vanish-to-right");
             window.setTimeout(() => {
-                removal.remove();
+                // removal.detach();
+                removal.css("display", "none");
+                removal.removeClass("vanish-to-right");
+                // removal.remove();
             }, 500);
             return;
         }
