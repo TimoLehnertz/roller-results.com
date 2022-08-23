@@ -99,7 +99,7 @@ $backPath = dirname($relativePath);
     echo "const relativePath = \"$relativePath\";";
     $isLogged = isLoggedIn() ? "true" : "false";
     echo "const isLoggedIn = $isLogged;";
-    if($isLogged) {
+    if(isLoggedIn()) {
         echo "const iduser = ".$_SESSION["iduser"].";";
     }
 ?>
@@ -124,7 +124,11 @@ $(() => {
     const searchBar = new SearchBarSmall(["Athlete"], false, (option) => {
         addPerson(option.id, option.name);
     });
-    $(".add-athlete-search").append(searchBar.elem);
+    if(isLoggedIn) {
+        $(".add-athlete-search").append(searchBar.elem);
+    } else {
+        $(".add-athlete-search").append(`<br><br><p><a href="/login">log in</a> to mark athletes</p>`);
+    }
 });
 
 function addPerson(id, name) {
