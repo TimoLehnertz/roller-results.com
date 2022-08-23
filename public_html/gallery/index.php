@@ -61,7 +61,7 @@ $backPath = dirname($relativePath);
         <a class="folder" href='/gallery?path=<?=$backPath ?>#files'>Back</a>
         <?php
             $dir = scandir($path);
-            // print_r($dir);
+            print_r($dir);
             $imgFiles = [];
             foreach ($dir as $file) {
                 $filePath = $path."/".$file;
