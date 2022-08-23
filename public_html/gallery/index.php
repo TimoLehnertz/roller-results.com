@@ -109,7 +109,7 @@ $(() => {
     $(".img-display").append(`<button class="prev" onclick="prev()"><i class="fa fa-solid fa-angle-left"></i></button>`);
     $(".img-display").append(`<div class="name"></div>`);
     $(".img-display").append(`<button class="close-btn" onclick="hideImage()"><i class="fa fa-solid fa-circle-xmark"></i>X</button>`);
-})
+});
 
 function showImage(image, first) {
     console.log(image);
