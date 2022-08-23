@@ -16,7 +16,7 @@ if(isset($_GET["path"])) {
     $relativePath = str_replace("\\", "", $relativePath);
     $path = $_SERVER["DOCUMENT_ROOT"].$pathFromRoot;
     if(!file_exists($path)) {
-        $path = $_SERVER["DOCUMENT_ROOT"]."/gallery/";
+        $path = $_SERVER["DOCUMENT_ROOT"].$pathFromRoot;
         $relativePath = ""; // relative path from gallery
     }
 }
@@ -39,7 +39,6 @@ $backPath = dirname($relativePath);
         <a href="/gallery#files">Gallery</a>
         <span class="delimiter margin left right half">></span>
         <?php
-        echo $_SERVER["DOCUMENT_ROOT"];
             $folders = explode("/", $relativePath);
             $tmpPath = "";
             $i = 0;
@@ -122,7 +121,7 @@ function showImage(image, first) {
         $(".img-display img").remove();
     }
     $(".name").text(image)
-    $(".img-display").prepend(`<img id="${lastUid}" src="/gallery/${relativePath}/${image}">`);
+    $(".img-display").prepend(`<img id="${lastUid}" src="/gallery/nas-share/${relativePath}/${image}">`);
     $(".img-display").addClass("visible");
 }
 
