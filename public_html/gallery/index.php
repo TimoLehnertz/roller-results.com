@@ -65,7 +65,7 @@ $backPath = dirname($relativePath);
             $imgFiles = [];
             foreach ($dir as $file) {
                 $filePath = $path."/".$file;
-                if(!file_exists($filePath)) continue;
+                // if(!file_exists($filePath)) continue;
                 $pathinfo = pathinfo($filePath);
                 $name = $pathinfo["filename"];
                 if($name === "." || strlen($name) == 0) continue;
@@ -75,7 +75,7 @@ $backPath = dirname($relativePath);
             }
             foreach ($dir as $file) {
                 $filePath = $path."/".$file;
-                if(!file_exists($filePath)) continue;
+                // if(!file_exists($filePath)) continue;
                 $pathinfo = pathinfo($filePath);
                 $isDir = is_dir($filePath);
                 $name = $pathinfo["filename"];
