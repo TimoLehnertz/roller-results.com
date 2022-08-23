@@ -5,12 +5,16 @@ include_once "../api/index.php";
 include_once "../header.php";
 echoRandWallpaper();
 
-$path = $_SERVER["DOCUMENT_ROOT"]."/gallery/";
+
+
+$pathFromRoot = "../nas-share";
+
+$path = $_SERVER["DOCUMENT_ROOT"].$pathFromRoot;
 $relativePath = ""; // relative path from gallery
 if(isset($_GET["path"])) {
     $relativePath = str_replace("../", "", $_GET["path"]);
     $relativePath = str_replace("\\", "", $relativePath);
-    $path = $_SERVER["DOCUMENT_ROOT"]."/gallery/".$relativePath;
+    $path = $_SERVER["DOCUMENT_ROOT"]."/gallery/".$pathFromRoot;
     if(!file_exists($path)) {
         $path = $_SERVER["DOCUMENT_ROOT"]."/gallery/";
         $relativePath = ""; // relative path from gallery
