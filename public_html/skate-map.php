@@ -9,7 +9,7 @@ echoRandWallpaper();
     </div>
     <svg xmlns="http://www.w3.org/2000/svg" fill="none" preserveAspectRatio="none" viewBox="0 0 1680 40" class="curvature" style="bottom: -1px;"><path d="M0 40h1680V30S1340 0 840 0 0 30 0 30z" fill="#ddd"></path></svg>
     <div class="light section no-shadow">
-        <h1 class="headline">Inline Speedskate Ttack map</h1>
+        <h1 class="headline">Inline Speedskate track map - <span class="font color orange">Beta</span></h1>
         <div class="flex">
             <div id="map" style="width: 500px; height: 400px;"></div>
             <!-- <iframe

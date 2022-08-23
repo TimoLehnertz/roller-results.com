@@ -8,6 +8,7 @@
     width: 100%
     z-index: 100
     margin-bottom: 1rem
+    z-index: 10000000000
 
     &::before
         content: ""
@@ -29,6 +30,7 @@
         // height: 100%
         text-decoration: none
         z-index: 1
+        z-index: 10000000000
 
         .wrapper
             border-radius: 1rem
@@ -43,6 +45,8 @@
             padding: 0 1rem
             background: #555
             flex-direction: row
+            position: absolute
+            z-index: 10000000000
 
             > *:not(:first-child)
                 margin-left: 0.5rem
@@ -142,6 +146,13 @@
         height: 4rem
         z-index: 1
 
+    .burger
+        position: relative
+        z-index: 10000000000
+
+        &.toggle .line1, &.toggle .line3
+            background: white
+
     @media only screen and (max-width: 800px)
         .header
             font-size: 1rem
@@ -154,9 +165,8 @@
 
         .header__left
             position: absolute
-            // max-width: 3rem
+            z-index: 10000000000
             left: 0
-            // width: 100%
             
             .wrapper
                 flex-direction: row
@@ -166,12 +176,17 @@
                 background: none
                 left: 0
                 position: absolute
+                z-index: 10000000000
             
             & > a
                 display: none
 
             .burger
-                // margin-left: 3.5rem
+                position: relative
+                z-index: 10000000000
+
+                &.toggle .line1, &.toggle .line3
+                    background: white
 
             .burger div
                 background: #333

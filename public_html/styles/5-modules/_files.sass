@@ -1,0 +1,121 @@
+.files
+    .folder, .file
+        padding: 0.5rem
+        display: block
+        border-top: 1px solid #5f6368
+        width: 100%
+        display: flex
+        justify-content: start
+        align-items: center
+        
+        &:first-child
+            border-top: none
+
+        i
+            margin-right: 1rem
+            color: #5f6368
+            text-shadow: none
+
+        &::before
+            display: none
+
+.absolute
+    position: absolute
+    top: 0
+    left: 0
+    rght: 0
+    bottom: 0
+
+.img-display
+    position: sticky
+    top: 0
+    // max-width: 80vh
+    width: calc(100vw - 20rem)
+    margin-left: 10rem
+    min-height: 45vw
+    background: $bg
+    z-index: 1000000000000
+    opacity: 0
+    transition: opacity 0.2s
+    pointer-events: none
+    // height: 0
+
+    img
+        // margin-left: 2rem
+        position: absolute
+        top: 0
+        left: 0
+        right: 0
+        width: calc(100vw - 20rem)
+        // width: calc(100vw - 20rem)
+        height: auto
+
+    .close-btn
+        position: absolute
+        top: 1rem
+        right: 1rem
+        background: #0000
+        color: white
+        border: none
+        font-size: 2rem
+
+    .prev, .next
+        position: absolute
+        font-size: 5rem
+        background: #0000
+        border: none
+        top: 50%
+        color: white
+    
+    .prev
+        left: 1rem
+
+    .next
+        right: 1rem
+
+    .name
+        position: absolute
+        text-align: center
+        left: 0
+        right: 0
+        top: 1rem
+        color: white
+        font-size: 1.5rem
+
+    &.visible
+        opacity: 1
+        pointer-events: all
+        outline: 8000px solid #000B
+
+.vanish-to-left
+    animation: vanish-to-left 0.4s 0.0s ease-in forwards
+
+.vanish-to-right
+    animation: vanish-to-right 0.4s 0.0s ease-in forwards
+
+@media screen and (max-width: 50rem)
+    .img-display
+        margin-left: 0
+        width: 100vw
+        top: 0
+        img
+            width: 100vw
+
+    .visible
+        outline: none !important
+
+@keyframes vanish-to-left
+    from
+        transform: translateX(0)
+        opacity: 1
+    to
+        transform: translateX(-200%)
+        opacity: 0
+
+@keyframes vanish-to-right
+    from
+        transform: translateX(0)
+        opacity: 1
+    to
+        transform: translateX(200%)
+        opacity: 0

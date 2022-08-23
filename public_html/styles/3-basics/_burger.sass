@@ -6,9 +6,10 @@
         height: 3px
         background-color: #FFF
         margin: 0.53rem
-        transition: all 0.1s ease-out
+        transition: all 0.3s ease-in-out
         transform: translateX(0)
         box-shadow: 1px 1px 3px 0px rgba(0,0,0,0.6)
+        transform-origin: right
         
     &:hover .line1
         transform: translateY(-3px)
@@ -18,7 +19,7 @@
 
 
     &.toggle .line1
-        transform-origin: right
+        // transform-origin: right
         transform: translateX(-4px) rotate(-45deg)
 
     &.toggle .line2
@@ -26,5 +27,5 @@
         transform: rotate(-45deg)
 
     &.toggle .line3
-        transform-origin: right
+        // transform-origin: right
         transform: translateX(-4px) rotate(45deg)

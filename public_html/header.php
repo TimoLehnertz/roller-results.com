@@ -84,6 +84,9 @@ include_once "head.php";
                     <a href="/calendar"><i class="fa fa-solid fa-calendar margin right"></i>Calendar</a>
                 </li>
                 <li>
+                    <a href="/gallery"><i class="fa fa-solid fa-images margin right"></i>Gallery</a>
+                </li>
+                <li>
                     <a href="/music"><i class="fa fa-solid fa-music margin right"></i>Music</a>
                 </li>
                 <?php
