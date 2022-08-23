@@ -83,6 +83,60 @@ function echoAliasSelect() {
         <?php if(!canI("uploadResults")) { ?>
             <h2 class="margin top bottom">Contact us at <span class="code padding left right">roller.results@gmail.com</span> to get full accsess to this tool!</h2>
         <?php }?>
+        <a href="/tools/import-preset.xlsx">Download link</a> for the format preset <br>
+            <h2>Format:</h2>
+            <ul>
+                <li>Distance:
+                        Distance of race.
+                        please remove dots / kommas if possible.
+                        Examples: 500m,
+                        100m,
+                        5000m Points
+                        10000m Elimination<hr></li>
+                <li>isRelay:
+                        Put 1 or 0
+                        1: race is a relay
+                        0: race is no relay
+                        this helps us with some stuff in the database <hr></li>
+                <li>gender:
+                        m/w
+                        m: Male
+                        w: Female
+                <hr></li>
+                <li>category:
+                    category of race:
+                    Please use the standart english names if possible. Examples:
+                    Youth, Junior, Senior, Masters
+                <hr></li>
+                <li>youtubeLink: Optional youtube link if you happen to have them. If there are multiple you can seperate them by ;<hr></li>
+                <li>trackRoad: Value: Track/Road
+                        Track: track races
+                        Road: Road circuit<hr></li>
+                <li>athleteID: The Unique id of that skater that will not change. Best would be a license number or similar.
+                    Start number is fine too but more work for multiple races<hr></li>
+                <li>firstName: firstname<hr></li>
+                <li>lastname: lastname<hr></li>
+                <li>country: Country of residence of the skater
+                        Use English names.
+                        Examples:
+                        Italy, Switzerland, Belgium<hr></li>
+                <li>club: Skaters club<hr></li>
+                <li>Team: Skaters team. Example: Powerslide, Bont skate<hr></li>
+                <li>Place: Numeric place<hr></li>
+                <li>points: If points race put scored points here<hr></li>
+                <li>remark: Remarks like warnings, dns etc.<hr></li>
+                <li>time: Time of finish. 
+                        We use a standarized time format for beeing able to compare times.
+                        Format: hh:mm:ss.uuu
+                        h: hours
+                        m: minutes
+                        s: seconds
+                        u: microseconds
+                        use trailing zeros
+
+                        If you cant get this format just leave it empty. Times aren't the main focus anyway :)</li>
+            </ul>
+        <br><br><hr><br><br>
         <p>Here anybody can upload results from any competition.<br>
         Note: after you uploaded results they will appear as <span class="code">unchecked</span>
         We will review them and set them to <span class="code">checked</span> when they are correct.</p>

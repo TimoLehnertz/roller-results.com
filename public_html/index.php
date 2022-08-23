@@ -64,8 +64,19 @@ include_once "api/imgAPI.php";
                 <br><span><b>Inline speedskating</b> has no central point for results collection</span><br>
                 <br><span style="color: #222">We're here to fix that!</span>
             </p>
-
-            <div class="dark section align center">
+            <div class="dark section align center" style="background-color: #3b0d20">
+                <h2 class="font">Call for action!</h2>
+                <p class="font size big">By the comunity for the comunity!</p>
+                <br>
+                <p>
+                    If you can get results from somewhere and could get them into this format it would mean a lot.<br>We will upload all results that will be send by the comunity
+                </p>
+                <br>
+                <h3>Our format: <a href="/tools/import-preset.xlsx">Download link</a></h2>
+                <h3>please read the documentation <a href="/tools/import-project.php">here</a></h3>
+                <img src="/img/rr-format.jpg" style="width: 100%">
+            </div>
+            <div class="dark section align center padding top bottom quintuple">
                 <h2>Results from as far back as 1935!</h2>
                 <p>
                     we have dug up the internet for every bit of skating result so you dont need to
