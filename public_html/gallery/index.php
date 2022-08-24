@@ -68,7 +68,7 @@ $backPath = dirname($relativePath);
                     if(!file_exists($filePath)) continue;
                     $pathinfo = pathinfo($filePath);
                     $name = $pathinfo["filename"];
-                    if($name === "."  || $name == "#recycle" || strlen($name) == 0) continue;
+                    if($name === "." || $name === "@eaDir"  || $name == "#recycle" || strlen($name) == 0) continue;
                     if(is_dir($filePath)) {
                         echo "<a class='folder' href='/gallery?path=".$relativePath."/".$name."#files'><i class='fa fa-solid fa-folder'></i>$name</a>";
                     }
