@@ -144,17 +144,15 @@
     animation: vanish-to-right 0.4s 0.0s ease-in forwards
 
 .top-3-images
-    display: flex
-    flex-direction: row
-    justify-content: space-evenly
-    align-items: center
+    display: grid
+    grif-template-columns: 1fr 1fr 1fr
 
     img
-        width: 30%
+        width: 100%
         transition: transform 0.2s
     
     img:hover
-        transform: scale(1.2)
+        transform: scale(1.3)
 
 @media screen and (max-width: 50rem)
     .img-display
@@ -168,10 +166,7 @@
         outline: none !important
 
     .top-3-images
-        flex-direction: column
-        
-        img
-            width: 90%
+        grif-template-columns: 1fr
 
 @keyframes vanish-to-left
     from
