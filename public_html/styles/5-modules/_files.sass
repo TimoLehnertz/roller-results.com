@@ -28,7 +28,7 @@
 
 .img-display
     // overflow-x: hidden
-    // overflow-y: visible
+    // overflow-y: hidden
     position: sticky
     top: 0
     // max-width: 80vh
@@ -41,6 +41,18 @@
     transition: opacity 0.2s
     pointer-events: none
     // height: 0
+
+    i
+        background: #3336
+        transition: background 0.2s
+        border-radius: 50%
+        width: 1.3em
+        height: 1.3em
+        text-align: center
+        line-height: 1.3em
+
+        &:hover
+            background: #4285f4
 
     img
         // margin-left: 2rem
@@ -98,7 +110,7 @@
 
     .prev, .next
         position: absolute
-        font-size: 5rem
+        font-size: 3rem
         background: #0000
         border: none
         top: 50%
@@ -115,9 +127,10 @@
         text-align: center
         left: 0
         right: 0
-        top: 1rem
+        // bottom: 0
+        top: 0.2rem
         color: white
-        font-size: 1.5rem
+        font-size: 0.8rem
 
     &.visible
         opacity: 1

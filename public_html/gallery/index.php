@@ -14,6 +14,8 @@ $relativePath = ""; // relative path from gallery
 if(isset($_GET["path"])) {
     $relativePath = str_replace("../", "", $_GET["path"]);
     $relativePath = str_replace("\\", "", $relativePath);
+    $relativePath = str_replace("//", "/", $relativePath);
+    $relativePath = str_replace("//", "/", $relativePath);
     $path = $_SERVER["DOCUMENT_ROOT"].$pathFromRoot."/".$relativePath;
     if(!file_exists($path)) {
         $path = $_SERVER["DOCUMENT_ROOT"].$pathFromRoot;
@@ -112,8 +114,8 @@ $(() => {
     $(".img-display").append(`<button class="next" onclick="next()"><i class="fa fa-solid fa-angle-right"></i></button>`);
     $(".img-display").append(`<button class="prev" onclick="prev()"><i class="fa fa-solid fa-angle-left"></i></button>`);
     $(".img-display").append(`<div class="name"></div>`);
-    $(".img-display").append(`<button class="close-btn" onclick="hideImage()"><i class="fa fa-solid fa-circle-xmark"></i>X</button>`);
-    $(".img-display").append(`<button class="toggle-persons" onclick="showPersons()"><i class="fa fa-solid fa-user margin right"></i>Persons <span class="person-amount"></span></button>`);
+    $(".img-display").append(`<button class="close-btn" onclick="hideImage()"><i class="fa font bold">X</i></button>`);
+    $(".img-display").append(`<button class="toggle-persons" onclick="showPersons()"><i class="fa fa-solid fa-user margin right"></i><span class="code padding left right font color a">New</span>Persons <span class="person-amount"></span></button>`);
     $(".img-display").append(`<div class="persons">
         <button class="btn no-style close-persons-btn" onclick="hidePersons()">X</button>
         <p>Who is on this image?</p>
@@ -178,6 +180,18 @@ function showImage(image, first) {
     $(".img-display").addClass("visible");
     $(".person-array").empty();
     updatePersons();
+    updatePrevNext();
+}
+
+function updatePrevNext() {
+    $(".next").css("display", "block");
+    $(".prev").css("display", "block");
+    for (let i = 0; i < images.length; i++) {
+        if(images[i] != current) continue;
+        if(i == 0) $(".prev").css("display", "none");
+        if(i == images.length - 1) $(".next").css("display", "none");
+        return;
+    }
 }
 
 function updatePersons() {
