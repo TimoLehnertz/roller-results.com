@@ -313,8 +313,8 @@ function athleteDataToProfileData(athlete, useRank = false, alternativeRank = un
                     // console.log(images);
                     flexElem.append(`<img src="${images[loadedAmount].image}" alt="${loadedAmount + 1}th Image of ${athlete.firstname}">`);
                 }
+                $(".load-more-btn").remove();
                 if(loadedAmount < images.length) {
-                    galleryElem.find(".load-more-btn").remove();
                     const loadMoreBtn = $(`<button class="load-more-btn btn blender alone">Load more</button>`);
                     loadMoreBtn.click(() => {load(10)});
                     flexElem.append(loadMoreBtn);
