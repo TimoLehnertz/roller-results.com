@@ -87,6 +87,9 @@ include_once "head.php";
                     <a href="/gallery"><i class="fa fa-solid fa-images margin right"></i>Gallery</a>
                 </li>
                 <li>
+                    <a href="/blog"><i class="fa fa-brands fa-stack-exchange margin right"></i></i>Blog</a>
+                </li>
+                <li>
                     <a href="/music"><i class="fa fa-solid fa-music margin right"></i>Music</a>
                 </li>
                 <?php
