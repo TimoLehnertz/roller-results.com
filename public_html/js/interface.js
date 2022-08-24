@@ -299,17 +299,28 @@ function athleteDataToProfileData(athlete, useRank = false, alternativeRank = un
             galleryElem.find(".loading").remove();
             if(!succsess) return galleryElem.append(`<p class="font color red>Error occoured while fetching ${athlete.firstname} images. Try again later</p>"`);
             if(images.length == 0) {
-                galleryElem.append(`<p class="margin left double">${athlete.firstname} didnt got tagged in any photos yet. Head ofer to the <a href="/gallery">gallery</a> and tag ${athlete.gender.toLowerCase() == "m" ? "him" : "her"}.</p>`);
+                console.log(athlete);
+                galleryElem.append(`<p class="margin left double">${athlete.firstname} didnt got tagged in any photos yet. Head ofer to the <a href="/gallery">gallery</a> and tag ${athlete?.gender?.toLowerCase() == "m" ? "him" : "her"}.</p>`);
                 return;
             }
             const flexElem = $(`<div class="top-3-images"></div>`);
             console.log(images);
-            let i = 0;
-            for (const image of images) {
-                flexElem.append(`<img src="${image.image}" alt="Image of ${athlete.firstname}">`);
-                i++;
-                if(i >= 3) break; // only show top 3
+            let loadedAmount = 0;
+            const load = function(amount) {
+                const loadUntil = loadedAmount + amount;
+                for (loadedAmount; loadedAmount < loadUntil && loadedAmount < images.length; loadedAmount++) {
+                    // console.log("loading image nr ", loadedAmount);
+                    // console.log(images);
+                    flexElem.append(`<img src="${images[loadedAmount].image}" alt="${loadedAmount + 1}th Image of ${athlete.firstname}">`);
+                }
+                if(loadedAmount < images.length) {
+                    galleryElem.find(".load-more-btn").remove();
+                    const loadMoreBtn = $(`<button class="load-more-btn btn blender alone">Load more</button>`);
+                    loadMoreBtn.click(() => {load(10)});
+                    flexElem.append(loadMoreBtn);
+                }
             }
+            load(3);
             galleryElem.append(flexElem);
         });
 
