@@ -169,7 +169,7 @@ function showImage(image, first) {
     }
     if(!isLoaded) {
         lastUid = getUid();
-        imgElem = $(`<img id="${lastUid}" onclick="hidePersons()" src="${currentimgPath}">`);
+        imgElem = $(`<img id="${lastUid}" onclick="hidePersons()" draggable="false" src="${currentimgPath}">`);
         loadedImages.push({
             image,
             imgElem
