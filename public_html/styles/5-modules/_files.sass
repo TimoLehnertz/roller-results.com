@@ -143,6 +143,19 @@
 .vanish-to-right
     animation: vanish-to-right 0.4s 0.0s ease-in forwards
 
+.top-3-images
+    display: flex
+    flex-direction: row
+    justify-content: space-evenly
+    align-items: center
+
+    img
+        width: 30%
+        transition: transform 0.2s
+    
+    img:hover
+        transform: scale(1.2)
+
 @media screen and (max-width: 50rem)
     .img-display
         margin-left: 0
@@ -153,6 +166,12 @@
 
     .visible
         outline: none !important
+
+    .top-3-images
+        flex-direction: column
+        
+        img
+            width: 90%
 
 @keyframes vanish-to-left
     from

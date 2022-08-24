@@ -303,11 +303,11 @@ if(!isset($NO_GET_API)){
             exit(0);
         }
         insertLaserResult($data, $_GET["user"], $_GET["lname"]);
-    }
-    else if(isset($_GET["uploadTriggers"]) && isset($_GET["user"])){
+    } else if(isset($_GET["uploadTriggers"]) && isset($_GET["user"])){
         insertTrigger(file_get_contents('php://input'), $_GET["user"]);
-    }
-    else if(isset($_GET["getteamAdvantageDetails"])){
+    } else if(isset($_GET["getathleteImages"])){
+        echo json_encode(getAthleteImages($_GET["getathleteImages"]));
+    } else if(isset($_GET["getteamAdvantageDetails"])){
         if(isset($_GET["data"]) && isset($_GET["data1"])) {
             echo json_encode(getTeamAdvantageDetails($_GET["getteamAdvantageDetails"], $_GET["data"], $_GET["data1"]));
         } else {
@@ -558,6 +558,10 @@ function getRaceDescription($year, $event, $distance, $gender, $category) {
     } else {
         echo "Results can be found at www.roller-results.com";
     }
+}
+
+function getAthleteImages($idAthlete) {
+    return query("SELECT athlete, image, creator, rowCreated FROM TbAthleteHasImage WHERE athlete = ?;", "i", $idAthlete);
 }
 
 function spacesAfterText($text, $maxSize) {

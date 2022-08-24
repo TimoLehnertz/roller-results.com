@@ -168,7 +168,7 @@ function athleteDataToProfileData(athlete, useRank = false, alternativeRank = un
             medalScoreShort: {
                 description: "Points short:",
                 data: athlete.medalScoreShort,
-                tooltip: "Medal score (Gold=3pts, Silver=2pts, Bronze=1pt) only applied to distances < 1500m",
+                tooltip: "Medal score (Gold=3pts, Silver=2pts, Bronze=1pt) only applied to distances <p 1500m",
             },
             medalScoreLong: {
                 description: "Points long:",
@@ -257,11 +257,13 @@ function athleteDataToProfileData(athlete, useRank = false, alternativeRank = un
          * Navigation
          */
         const idCareer = getUid();
+        const idGallery = getUid();
         const idBestTimes = getUid();
         const idCompetitions = getUid();
 
         const nav = $(`<div class="profile-navigation">
             <a href="#${idCareer}">Career</a>
+            <a href="#${idGallery}">Gallery</a>
             <a href="#${idBestTimes}">Best times</a>
             <a href="#${idCompetitions}">Competitions</a>
         </div>`);
@@ -269,12 +271,11 @@ function athleteDataToProfileData(athlete, useRank = false, alternativeRank = un
         /**
          * Career
          */
-        // updateCareer
         const careerElem = $(`<div id="${idCareer}"></div>`);
         wrapper.append(careerElem);
         this.loadCareer = function() {
             careerElem.empty();
-            careerElem.append(`<h2 class="section__header">Career</h2><p class="margin left double">Used competitions: ${getUsedMedalsString()}</p><div class="loading"></div>`);
+            careerElem.append(`<h2 class="section__header">Career</h2><p class="margin left double">Used competitions: ${getUsedMedalsString()}</p><div class="loading circle"></div>`);
             if(getUsedMedalsString().length == 0) {
                 careerElem.append(getSettingsAdvice(`${athlete.firstname}'s career`));
                 return;
@@ -288,6 +289,29 @@ function athleteDataToProfileData(athlete, useRank = false, alternativeRank = un
                 }
             });
         }
+        /**
+         * Gallery
+         */
+        const galleryElem = $(`<div id="${idGallery}"></div>`);
+        galleryElem.append(`<h2 class="section__header">Gallery</h2><div class="loading circle"><br><br></div>`);
+        wrapper.append(galleryElem);
+        get("athleteImages", athlete.id).receive((succsess, images) => {
+            galleryElem.find(".loading").remove();
+            if(!succsess) return galleryElem.append(`<p class="font color red>Error occoured while fetching ${athlete.firstname} images. Try again later</p>"`);
+            if(images.length == 0) {
+                galleryElem.append(`<p class="margin left double">${athlete.firstname} didnt got tagged in any photos yet. Head ofer to the <a href="/gallery">gallery</a> and tag ${athlete.gender.toLowerCase() == "m" ? "him" : "her"}.</p>`);
+                return;
+            }
+            const flexElem = $(`<div class="top-3-images"></div>`);
+            console.log(images);
+            let i = 0;
+            for (const image of images) {
+                flexElem.append(`<img src="${image.image}" alt="Image of ${athlete.firstname}">`);
+                i++;
+                if(i >= 3) break; // only show top 3
+            }
+            galleryElem.append(flexElem);
+        });
 
         /**
          * best times
@@ -393,6 +417,10 @@ function pathFromRace(r) {
         <div class="elem">${r.category} ${r.gender} ${r.distance}<span class="delimiter"></span></div>
     </div>`);
 }
+
+// function getGalleryImagePath(path) {
+//     return `/gallery/nas-share/public/${path}`;
+// }
 
 function linksFromLinkString(string){
     if(!string || string.length === 0){
