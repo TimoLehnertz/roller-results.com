@@ -320,7 +320,7 @@ function athleteDataToProfileData(athlete, useRank = false, alternativeRank = un
                     flexElem.append(loadMoreBtn);
                 }
             }
-            load(ismobile() ? 1 : 3);
+            load(isMobile() ? 1 : 3);
             galleryElem.append(flexElem);
         });
 
