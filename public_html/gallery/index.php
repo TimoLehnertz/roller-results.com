@@ -114,6 +114,7 @@ $(() => {
     $(".img-display").append(`<button class="next" onclick="next()"><i class="fa fa-solid fa-angle-right"></i></button>`);
     $(".img-display").append(`<button class="prev" onclick="prev()"><i class="fa fa-solid fa-angle-left"></i></button>`);
     $(".img-display").append(`<div class="name"></div>`);
+    $(".img-display").append(`<a download="filename" href="" class="no-underline download"><i class="fa fa-solid fa-download"></i></a>`);
     $(".img-display").append(`<button class="close-btn" onclick="hideImage()"><i class="fa font bold">X</i></button>`);
     $(".img-display").append(`<button class="toggle-persons" onclick="showPersons()"><i class="fa fa-solid fa-user margin right"></i><span class="code padding left right font color a">New</span>Persons <span class="person-amount"></span></button>`);
     $(".img-display").append(`<div class="persons">
@@ -175,6 +176,8 @@ function showImage(image, first) {
             imgElem
         });
     }
+    $(".download").attr("href", currentimgPath);
+    $(".download").attr("download", image);
     imgElem.prependTo($(".img-display"));
     // $(".img-display").prepend(imgElem);
     $(".img-display").addClass("visible");
