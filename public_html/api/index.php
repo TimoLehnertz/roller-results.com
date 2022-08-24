@@ -560,6 +560,10 @@ function getRaceDescription($year, $event, $distance, $gender, $category) {
     }
 }
 
+function getAllDevLogs() {
+    return query("SELECT * FROM results.TbDevLog ORDER BY rowCreated DESC;");
+}
+
 function getAthleteImages($idAthlete) {
     return query("SELECT athlete, image, creator, rowCreated FROM TbAthleteHasImage WHERE athlete = ?;", "i", $idAthlete);
 }

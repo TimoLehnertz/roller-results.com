@@ -11,7 +11,7 @@ include_once "includes/error.php";
 include_once "api/userAPI.php";
 include_once "includes/roles.php";
 include_once "includes/preview.php";
-$loggedIn = isLoggedIn();//
+$loggedIn = isLoggedIn();
 $user;
 if($loggedIn){
     $user = getUser($_SESSION["iduser"]);
