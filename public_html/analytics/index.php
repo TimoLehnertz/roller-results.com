@@ -17,11 +17,12 @@ echoRandWallpaper();
         <div class="tool">
             <div class="presets font">
                 <h2>Presets</h2>
-                <p></p>
+                <br>
                 <p>Create your own presets! Make sure to be logged in and check public if you want to share them</p>
                 <p>Load presets from others to experiment with the features.</p>
                 <p>
-                    <select>
+                    <label for="project-select">Project: </label>
+                    <select id="project-select">
                         
                     </select>
                     <button class="loadAnalytics-btn" onclick="loadAnalytics()">Load</button>
@@ -284,8 +285,6 @@ echoRandWallpaper();
                             this.row.rowAfter.elem.addClass("dropable");
                         }
                     });
-                }
-                if(isMobile()) {
                     this.elem.click((e)=> {
                         if(dragStartSelect == this) {
                             dragStartSelect = undefined;
@@ -316,12 +315,14 @@ echoRandWallpaper();
             }
 
             dock(select) {
+                console.log("Docking");
                 this.docked.push(select);
                 const uid = getUid();
                 select.dockUid = uid;
                 const docker = $(`<div class="docker ${uid} ${isMobile() ? "mobile-half" : ""}"></div>`);
                 this.elem.find(".docker-wrapper").append(docker);
                 docker.click(() => {
+                    if(this.row.elem.hasClass("dropable")) return;
                     this.undock(select, uid);
                 });
                 this.row.rowBefore.draw();
@@ -329,6 +330,7 @@ echoRandWallpaper();
             }
 
             undock(select) {
+                console.log("undocking");
                 this.docked.splice(this.docked.indexOf(select), 1);
                 this.elem.find(`.${select.dockUid}`).remove();
                 this.row.rowBefore.draw();
@@ -784,10 +786,11 @@ echoRandWallpaper();
                     y: this.remToPixels(2) - 8
                 }
             }
-
+            
             dockingPointFromSelector(selector, index) {
                 return {
-                    x: selector.elem.position().left + (index + 1) * selector.elem.outerWidth() / (selector.docked.length + 1),
+                    x: selector.elem.position().left + (index + 1) * selector.elem.width() / 2 + 7 + $(".graph").scrollLeft(),
+                    // x: selector.elem.position().left + (index + 1) * selector.elem.outerWidth() / (selector.docked.length + 1),
                     y: this.canvas.height
                 }
             }
