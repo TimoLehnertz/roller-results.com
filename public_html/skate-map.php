@@ -2,7 +2,7 @@
 include_once "header.php";
 include_once "api/index.php";
 echoRandWallpaper();
-
+# maps API key: AIzaSyAZriMrsCFOsEEAKcRLxdtI6V8b9Fbfd-c
 ?>
 <main class="main competition-page">
     <div class="top-site">
@@ -11,16 +11,7 @@ echoRandWallpaper();
     <div class="light section no-shadow">
         <h1 class="headline">Inline Speedskate track map - <span class="font color orange">Beta</span></h1>
         <div class="flex">
-            <div id="map" style="width: 500px; height: 400px;"></div>
-            <!-- <iframe
-            id="map"
-                width="1000"
-                height="500"
-                style="border:0"
-                loading="lazy"
-                allowfullscreen
-                referrerpolicy="no-referrer-when-downgrade"
-                src="https://www.google.com/maps/embed/v1/place?key=AIzaSyAZriMrsCFOsEEAKcRLxdtI6V8b9Fbfd-c&q=Space+Needle,Seattle+WA"></iframe> -->
+          <iframe src="https://www.google.com/maps/d/u/2/embed?mid=1XQyMS9mbQBXXfB-jw1y3Yre1uLXvrDU&ehbc=2E312F" width="640" height="480"></iframe>
         </div>
     </div>
 </main>
