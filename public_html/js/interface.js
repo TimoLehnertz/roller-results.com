@@ -256,18 +256,36 @@ function athleteDataToProfileData(athlete, useRank = false, alternativeRank = un
         /**
          * Navigation
          */
+        const idVideos = getUid();
         const idCareer = getUid();
         const idGallery = getUid();
         const idBestTimes = getUid();
         const idCompetitions = getUid();
 
         const nav = $(`<div class="profile-navigation">
+            <a href="#${idVideos}">Videos</a>
             <a href="#${idCareer}">Career</a>
             <a href="#${idGallery}">Gallery</a>
             <a href="#${idBestTimes}">Best times</a>
             <a href="#${idCompetitions}">Competitions</a>
         </div>`);
         wrapper.append(nav);
+        /**
+         * Videos
+         */
+        // const videoElem = $(`<div id="${idVideos}"></div>`);
+        // const videoBody = $(`<div></div>`);
+        // const ac = new Accordion($(`<div>Videos of ${athlete.firstname}'s races<span class="amount"></span></div>`), videoBody);
+        // videoElem.append(ac.element);
+        // wrapper.append(videoElem);
+        // get("athleteVideos", athlete.id).receive((succsess, videos) => {
+        //     if(!succsess) return videoBody.append(`<p class="font color red">An error occoured while fetching ${athlete.firstname}'s videos. Try again later</p>`);
+        //     console.log(videos);
+        //     for (const video of videos) {
+        //         videoBody.append(getYtVideo(video.link));
+        //     }
+        // });
+        
         /**
          * Career
          */
@@ -463,7 +481,7 @@ function getYtVideoElems(link) {
     }
 }
 
-function getYtVideo(link){
+function getYtVideo(link) {
     const ids = linksFromLinkString(link);
     if(ids.length === 0){
         return $();
@@ -479,7 +497,7 @@ function getYtVideo(link){
             `<iframe style="width: 100%;"src="https://www.youtube.com/embed/${id}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`
         );
     }
-    const ac = new Accordion(head, body)
+    const ac = new Accordion(head, body);
     return ac.element;
 }
 // <iframe width="949" height="534" src="https://www.youtube.com/embed/YcXbt0iVu0A" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>

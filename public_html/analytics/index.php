@@ -154,17 +154,24 @@ echoRandWallpaper();
                     <button class="delete-btn">X</button>
                     <button class="properties-btn"><i class="fas fa-sliders-h margin right"></i>Properties</button>
                     <button class="run-btn"><i class="fas fa-play margin right"></i>Run</button>
-                    <div class="preset-select-div">
-                        <label for="${uid2}">Preset:</label><select id="${uid2}" class="preset-setect"></select>
-                    </div>
-                    <div class="preset-div">
-                        <button class="load-btn">Load</button>
-                        <button class="save-btn">Save</button>
-                        <button class="remove-preset-btn">Remove</button>
-                    </div>
+                    
                     <button class="schow-result-btn" style="display: none"><i class="fas fa-table margin right"></i>Show result</button>
                     <button class="drag-btn" draggable="true"></button>
                 </div>`);
+                // dont remove! insert in empty line for presets
+                // <div class="preset-select-div">
+                //         <label for="${uid2}">Preset:</label><select id="${uid2}" class="preset-setect"></select>
+                //     </div>
+                //     <div class="preset-div">
+                //         <button class="load-btn">Load</button>
+                //         <button class="save-btn">Save</button>
+                //         <button class="remove-preset-btn">Remove</button>
+                //     </div>
+                new Tooltip($(this.elem.find(".delete-btn")), "Delete this query");
+                new Tooltip($(this.elem.find(".name")), "Give this query a name for your convenience");
+                new Tooltip($(this.elem.find(".properties-btn")), "Configure this query to your needs");
+                new Tooltip($(this.elem.find(".run-btn")), "Run this query and all that are before");
+                new Tooltip($(this.elem.find(".preset-select")), "Select a preset for this query. Use the load button to load it and remove button to remove it");
                 this.elem.find(".delete-btn").click(() => {this.die()});
                 this.elem.find(".remove-preset-btn").click(() => {this.removePreset()});
                 this.elem.find(".save-btn").click(() => {this.save()});
@@ -630,6 +637,7 @@ echoRandWallpaper();
                 }
                 this.getStateConverted().receive((succsess, res) => {
                     this.elem.addClass("running");
+                    this.elem.find(".run-btn").attr("disabled", true);
                     get("athletes", res).receive((sucsess, res) => {
                         if(print) {
                             showResult(res);
@@ -642,6 +650,7 @@ echoRandWallpaper();
                         promise.callback(succsess, ids); 
                         this.res = res;
                         this.updateShow();
+                        this.elem.find(".run-btn").attr("disabled", false);
                     });
                 });
                 return promise;

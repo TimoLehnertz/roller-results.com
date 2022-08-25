@@ -32,13 +32,17 @@ if($user["athlete"] == NULL && isset($_POST["idLinkAthlete"])) {
 
 $user = getUser($iduser);
 
+if($user["athlete"] != NULL) {
+    $linkedAthlete = getAthlete($user["athlete"]);
+}
+
 include_once "../header.php";
 echoRandWallpaper();
 ?>
 <div class="absolute">
     <div class="img-display"></div>
 </div>
-<main class="main competition-page analytics race-flow">
+<main class="main competition-page analytics">
     <div class="top-site"></div>
     <svg style="margin-bottom: 0; position: relative; transform: translateY(85%); z-index: -1;" xmlns="http://www.w3.org/2000/svg" fill="none" preserveAspectRatio="none" viewBox="0 0 1680 40" class="curvature" style="bottom: -1px;"><path d="M0 40h1680V30S1340 0 840 0 0 30 0 30z" fill="#ddd"></path></svg>
     <svg style="margin-bottom: 0; position: relative; top: 0px; z-index: 1;" xmlns="http://www.w3.org/2000/svg" fill="none" preserveAspectRatio="none" viewBox="0 0 1680 40" class="curvature" style="bottom: -1px;"><path d="M0 40h1680V30S1340 0 840 0 0 30 0 30z" fill="#151515"></path></svg>
@@ -50,7 +54,7 @@ echoRandWallpaper();
     </div>
     <div class="section light">
         <?php
-// Messages
+//      Messages
         if(isset($removeAthleteSuccsess)) {
             if(!$removeAthleteSuccsess) {
                 echo "<p class='font color red'>An error occoured while removing your athlete profile please try again<?p>";
@@ -78,12 +82,49 @@ echoRandWallpaper();
                 <h2>Your <span class="font code color c">athlete profile</span></h2>
                 <div class="flex column">
                     <div class="flex mobile justify-space-evenly" style="width: 100%">
-                        <p>Your athlete profile on <span class="font code color b">Roller results</span></p>
+                        <div>
+                        <?php if($user["athleteChecked"] == "1") { ?>
+                            <form action="#" class="form" method="POST">
+                                <h3>Update your athlete profile</h3>
+                                <div>
+                                    <label for="instagram">Instagram:</label>
+                                    <input type="text" id="instagram" name="instagram" value="<?php echo $linkedAthlete["instagram"]; ?>">
+                                </div>
+                                <div>
+                                    <label for="facebook">Facebook:</label>
+                                    <input type="text" name="facebook" id="facebook" value="<?php echo $linkedAthlete["facebook"]; ?>">
+                                </div>
+                                <div>
+                                    <label for="website">Website:</label>
+                                    <input type="text" name="website" id="website" value="<?php echo $linkedAthlete["website"]; ?>">
+                                </div>
+                                <div class="flex column">
+                                    <label for="description">Short description about yourself:</label>
+                                    <br>
+                                    <textarea style="background: #ddd; resize: vertical;" name="description" id="description" cols="30" rows="10" ><?php echo $linkedAthlete["description"]; ?></textarea>
+                                </div>
+                                <br>
+                                <input class="btn" type="submit" value="Submit changes">
+                            </form>
+                        <?php } else { ?>
+                            <!-- <h3>Your athlete profile on <span class="font code color b">Roller results</span></h3><br> -->
+                            <p>Your profile isn't verified yet. Contact us on any platfotm to verify that this is you. We do this to ensure nobody can publish false information about you.</p>
+                            <br>
+                            <p>Contact us here</p>
+                            <ul>
+                                <li><a href="https://www.instagram.com/roller_results/"><i class="fab fa-instagram font color black margin right"></i>Instagram</a></li>
+                                <li><a href="https://www.facebook.com/RollerResults"><i class="fab fa-facebook font color black margin right"></i>Facebook</a></li>
+                                <li>Email: <a>roller.results@gmail.com</a></li>
+                            </ul>
+                            <?php }?>
+                        </div>
                         <div class="your-athlete"></div>
                     </div>
                     <form action="#" method="POST">
-                        <label for="remove-athlete">Not you?</label>
-                        <input type="submit" class="btn slide style-1" id="remove-athlete" name="remove-athlete" value="Remove link">
+                        <details>
+                            <summary>Not you?</summary>
+                            <input type="submit" class="btn blender alone" id="remove-athlete" name="remove-athlete" value="Remove link">
+                        </details>
                     </form>
                 </div>
         <?php } ?>
@@ -122,11 +163,11 @@ echoRandWallpaper();
 </main>
 <script>
 
-let existingLinkId = <?php 
-    if($user["athlete"] != NULL) {
-        echo $user["athlete"];
+let existingAthlete = <?php 
+    if(isset($linkedAthlete)) {
+        echo json_encode($linkedAthlete);
     } else {
-        echo "-1";
+        echo "undefined";
     }
 ?>;
 let linkId = -1;
@@ -148,11 +189,11 @@ const athleteSearch = new SearchBarSmall(["Athlete"], false, (option) => {
 $(".search-area").append(athleteSearch.elem);
 
 function loadExistingUser() {
-    const profile = new Profile(athleteDataToProfileData({idAthlete: existingLinkId}), Profile.CARD);
+    const profile = new Profile(athleteDataToProfileData(existingAthlete), Profile.CARD);
     profile.update();
     profile.appendTo($(".your-athlete"));
 }
-if(existingLinkId >= 0) {
+if(existingAthlete !== undefined) {
     loadExistingUser();
 }
 

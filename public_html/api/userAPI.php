@@ -199,5 +199,5 @@ function setAthleteProfile($idAthlete) {
 
 function removeAthleteProfile() {
     if(!isLoggedIn()) return false;
-    return dbExecute("UPDATE TbUser SET athlete = NULL WHERE iduser = ?", "i", $_SESSION["iduser"]);
+    return dbExecute("UPDATE TbUser SET athlete = NULL, athleteChecked = 0 WHERE iduser = ?", "i", $_SESSION["iduser"]);
 }

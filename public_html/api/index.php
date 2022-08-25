@@ -62,6 +62,8 @@ if(!isset($NO_GET_API)){
         } else{
             echo "error in api";
         }
+    } else if(isset($_GET["getathleteVideos"])){
+        echo json_encode(getAthleteVideos($_GET["getathleteVideos"]));
     } else if(isset($_GET["getresult"])){
         $res = getResult($_GET["getresult"]);
         if($res !== false){
@@ -678,6 +680,10 @@ function getOvertakesByDistance($distance) {
 
 function getOvertakes($idrace) {
     return query("SELECT * FROM TbPass WHERE race=? ORDER BY lap ASC, toPlace ASC;", "i", $idrace);
+}
+
+function getAthleteVideos($idAthlete) {
+    return query("CALL sp_getAthleteVideos(?);", "i", $idAthlete);
 }
 
 function saveOvertakes($overtakes) {
