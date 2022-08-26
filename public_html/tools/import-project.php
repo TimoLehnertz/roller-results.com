@@ -178,12 +178,16 @@ function echoAliasSelect() {
     <div class="section light">
         <h2 class="align center">Step 2: <span class="font size medium margin left">Alias</span></h2>
         <br>
-        <p>Select Alias Group:
-            <?php echoAliasSelect();?><br><br>
-            <label for="newAliasName">Create new</label>
-            <input id="newAliasName" type="text" class="aliasGroupName" list="existingAlias">
-            <button class="btn blender alone" id="createAliasBtn" onclick="createAlias()">Create Alias</button>
-        </p>
+        <div class="flex mobile">
+            <p>Select Alias Group:
+                <?php echoAliasSelect();?><br><br>
+                <label for="newAliasName">Create new</label>
+                <input id="newAliasName" type="text" class="aliasGroupName" list="existingAlias">
+                <button class="btn blender alone" id="createAliasBtn" onclick="createAlias()">Create Alias</button>
+            </p>
+            <p>If this is your first time uploading results simply create a new Alias and dont worry about it yet.<br>
+            If you uploaded results before and you are uploading again use the old alias if the skaters in your result are stil racing with the same athleteId(numbers)</p>
+        </div>
     </div>
     <div class="section dark">
         <h2 class="align center">Step 3: <span class="font size medium margin left">Select results</span></h2>
