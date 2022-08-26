@@ -736,6 +736,7 @@ class Slideshow {
 
 class Tooltip {
     constructor(parent, tip, settings) {
+        if(isMobile()) return; // dont use tooltips on mobile
         this.parent = $(parent);
         this.tip = tip || "<Tooltip>";
         /**
