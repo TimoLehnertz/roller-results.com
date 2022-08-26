@@ -11,6 +11,7 @@
         // overflow: scroll
 
     .graph
+        padding-left: 0.2rem
         overflow-x: auto
         overflow-y: visible
         width: 100%
@@ -246,12 +247,16 @@
             button.active
                 background: #777
 
+        &.running
+            animation: move-left-right 5s infinite both
+            z-index: 100
+            perspective: 5.5cm
+
         &.running, &.running::after, &.running::before
             // background: $c
             background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab)
             background-size: 400% 400%
-            animation: gradient 1s ease infinite
-            // border: 1px solid $a
+            // animation: gradient 1s ease infinite
 
         .preset-div
             padding: 1rem
@@ -265,6 +270,46 @@
 
             select
                 width: 100%
+
+@keyframes move-left-right
+    0%
+        transform: translateZ(0rem) rotateX(0deg)rotateY(0deg)
+    5%
+        transform: translateZ(30rem) rotateX(180deg)rotateY(0deg)
+    10%
+        transform: translateZ(30rem) rotateX(180deg) rotateY(0deg)
+    15%
+        transform: translateZ(30rem) rotateX(180deg) rotateY(180deg)
+    20%
+        transform: translateZ(30rem) rotateX(180deg) rotateY(180deg)
+    30%
+        transform: translateZ(30rem) rotateX(180deg) rotateY(0deg)
+    35%
+        transform: translateZ(30rem) rotateX(180deg) rotateY(0deg)
+    40%
+        transform: translateZ(30rem) rotateX(0) rotateY(0)
+    50%
+        transform: translateZ(0rem) rotateX(0) rotateY(0)
+
+// @keyframes move-left-right
+//     0%
+//         transform: rotateX(0deg)rotateY(0deg)
+//     5%
+//         transform: rotateX(180deg)rotateY(0deg)
+//     10%
+//         transform: rotateX(180deg) rotateY(0deg)
+//     15%
+//         transform: rotateX(180deg) rotateY(180deg)
+//     20%
+//         transform: rotateX(180deg) rotateY(180deg)
+//     30%
+//         transform: rotateX(180deg) rotateY(360deg)
+//     35%
+//         transform: rotateX(180deg) rotateY(360deg)
+//     40%
+//         transform: rotateX(360deg) rotateY(360deg)
+//     41%
+//         transform: rotateX(0) rotateY(0)
 
 @keyframes bg-gradient
     0%

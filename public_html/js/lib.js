@@ -747,6 +747,7 @@ class Tooltip {
         this.noMobile = settings.noMobile || false;
 
         $(() => {this.init()});
+        $(document).click(() => this.close());
     }
 
     init(){
