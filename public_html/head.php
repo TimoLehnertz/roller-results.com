@@ -54,7 +54,7 @@ $actual_link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https"
 
         <script src="/js/ajaxAPI.js?v=1.8"></script>
         <script src="/js/lib.js?v=1.8"></script>
-        <script src="/js/ui.js?v=1.8"></script>
+        <script src="/js/ui.js?v=1.9"></script>
         <script src="/js/interface.js?v=1.8"></script>
         <script src="/js/html2canvas/html2canvas.js" defer></script>
         <script>
