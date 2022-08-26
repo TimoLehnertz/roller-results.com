@@ -1351,10 +1351,10 @@ function deleteCompetition($idCompetition) {
         echo "Invalid competition";
         return;
     }
-    if($comp["creator"] != $_SESSION["iduser"] && !) {
-        echo "Invalid competition";
-        return;
-    }
+    // if($comp["creator"] != $_SESSION["iduser"] && !) {
+    //     echo "Invalid competition";
+    //     return;
+    // }
 }
 
 function deleteRace($id) {
