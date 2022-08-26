@@ -2603,6 +2603,7 @@ function isMobile() {
     return check || ('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (navigator.msMaxTouchPoints > 0);
 };
 
+
 let uidCounter = 0;
 function getUid(){
     uidCounter++;
