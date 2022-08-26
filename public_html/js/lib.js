@@ -2053,6 +2053,17 @@ class Profile {
                 this.elem.find(".profile__primary").first().remove();
                 this.elem.prepend(this.primaryElem);
             }
+            if(data.hasOwnProperty("instagram")){
+                console.log("insta", data.instagram);
+                this.instagram = data.instagram;
+                this.elem.find(".profile__instagram").first().remove();
+                this.elem.prepend(this.instagramElem);
+            }
+            if(data.hasOwnProperty("facebook")){
+                this.facebook = data.facebook;
+                this.elem.find(".profile__facebook").first().remove();
+                this.elem.prepend(this.facebookElem);
+            }
             if(data.hasOwnProperty("secondaryData")){
                 this.secondaryData = data.secondaryData;
             }
@@ -2298,6 +2309,16 @@ class Profile {
         }
         return $();
     }
+    
+    get instagramElem() {
+        if(!this.instagram || typeof this.instagram != "string" || this.instagram.length == 0) return $();
+        return $(`<a class="profile__instagram" target="blank" href="${preprocessUrl(this.instagram)}"><i class="fab fa-instagram"></i></a>`);
+    }
+
+    get facebookElem() {
+        if(!this.instagram || typeof this.facebook != "string" || this.facebook.length == 0) return $();
+        return $(`<a class="profile__facebook" target="blank" href="${preprocessUrl(this.facebook)}"><i class="fab fa-facebook"></i></a>`);
+    }
 
     set grayOut(gray) {
         this.grayedOut = gray;
@@ -2326,7 +2347,7 @@ class Profile {
         if(this.image != undefined){
             if(typeof this.image === "string"){
                 return $(`<div class="profile__image"><img src="${this.image}" alt="profile image"></div>`);
-            } else{
+            } else {
                 const elem = $(`<div class="profile__image"></div>`);
                 elem.append(ElemParser.parse(this.image));
                 return elem;
@@ -3271,6 +3292,12 @@ class Timeline {
       }      
 }
 
+function preprocessUrl(url) {
+    if(!url.includes("https://")) {
+        return "https://" + url;
+    }
+    return url;
+}
 
 /**
  * date

@@ -22,6 +22,7 @@ $ERROR_WRONG_CREDENTIALS = "WrongCredentials";
 $ERROR_NO_PERMISSION = "NoPermission";
 $ERROR_LOGIN_MISSING = "NoLogin";
 $INVALID_ARGUMENTS = "InvalidArgs";
+$ERROR_UPDATING_ATHLETE= "AthleteUpdateError";
 
 $ERROR_MAPPING = [
     $ERROR_NO_ID => "Please provide an Id",
@@ -37,6 +38,7 @@ $ERROR_MAPPING = [
     $ERROR_WRONG_CREDENTIALS => "Username or password is incorrect try again",
     $ERROR_LOGIN_MISSING => "You need to be logged in to visit see page",
     $INVALID_ARGUMENTS => "You or your browser provided invalid Arguments",
+    $ERROR_UPDATING_ATHLETE => "An error occoured while updating the athlete. Please try again later",
 ];
 
 function getErrormessage($errorCode){

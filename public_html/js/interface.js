@@ -144,6 +144,8 @@ function athleteDataToProfileData(athlete, useRank = false, alternativeRank = un
         type: "athlete",
         maximizePage: `/athlete?id=${athlete.id}${searchParam}`,
         name,
+        // instagram: athlete.instagram,
+        // facebook: athlete.facebook,
         image: athlete.image != null ? "/img/uploads/" + athlete.image : null,
         left: {data: athlete.country, type: "countryFlag", link: `/country?id=${athlete.country}`, tooltip: athlete.country},
         right: {data: athlete.gender, type: "gender", tooltip: athlete.gender?.toLowerCase() == "w" ? "Female" : "Male"},
@@ -262,8 +264,28 @@ function athleteDataToProfileData(athlete, useRank = false, alternativeRank = un
         const idBestTimes = getUid();
         const idCompetitions = getUid();
 
+        const socialMedia = $(`<div class="flex mobile"></div>`);
+
+        wrapper.append(socialMedia);
+
+        if(athlete.instagram && athlete.instagram.length > 0) {
+            athlete.instagram = preprocessUrl(athlete.instagram);
+            socialMedia.append(`<a href="${athlete.instagram}"> <i class="fab fa-instagram margin right font size bigger-medium"></i>${athlete.firstname} on Instagram</a>`);
+        }
+        if(athlete.facebook && athlete.facebook.length > 0) {
+            athlete.facebook = preprocessUrl(athlete.facebook);
+            socialMedia.append(`<a href="${athlete.facebook}"> <i class="fa fab fa-facebook margin right font size bigger-medium"></i>Facebook</a>`);
+        }
+        if(athlete.website && athlete.website.length > 0) {
+            athlete.website = preprocessUrl(athlete.website);
+            socialMedia.append(`<a href="${athlete.website}"> <i class="fa fa-solid fa-globe margin right font size bigger-medium"></i>Personal website</a>`);
+        }
+
+        if(athlete.description && athlete.description.length > 0) {
+            wrapper.append(`<div class="description margin left top bottom double">${athlete.description}</div>`);
+        }
+
         const nav = $(`<div class="profile-navigation">
-            <a href="#${idVideos}">Videos</a>
             <a href="#${idCareer}">Career</a>
             <a href="#${idGallery}">Gallery</a>
             <a href="#${idBestTimes}">Best times</a>

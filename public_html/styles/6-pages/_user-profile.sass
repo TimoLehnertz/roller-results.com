@@ -1,0 +1,34 @@
+.user-profile
+
+    .img-area
+        display: flex
+        flex-direction: column
+        align-items: center
+
+    .update-athlete-img
+        width: 10rem
+        height: 10rem
+        object-fit: cover
+        border-radius: 50%
+        border: 0.4rem solid #444
+
+    .img-label
+        position: relative
+
+    .img-label::after
+        content: "Upload"
+        position: absolute
+        line-height: 10rem
+        text-align: center
+        top: 0
+        right: 0
+        bottom: 0
+        left: 0
+        transition: all 0.2s
+        opacity: 0
+        border-radius: 50%
+        color: white
+
+    .img-label:hover::after
+        background: #0006
+        opacity: 1

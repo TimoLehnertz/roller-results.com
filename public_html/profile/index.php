@@ -2,6 +2,7 @@
 include_once "../includes/roles.php";
 include_once "../includes/error.php";
 include_once "../api/index.php";
+include_once "../api/imgAPI.php";
 include_once "../api/userAPI.php";
 
 if(!isLoggedIn()) {
@@ -11,29 +12,42 @@ if(!isLoggedIn()) {
 $username = $_SESSION["username"];
 $iduser = $_SESSION["iduser"];
 
-// print_r($_POST);
 $user = getUser($iduser);
-
 if(isset($_POST["remove-athlete"])) {
     $removeAthleteSuccsess = removeAthleteProfile();
     unset($_POST["remove-athlete"]);
     header("location: /profile");
     exit();
 }
-
 $user = getUser($iduser);
-
 if($user["athlete"] == NULL && isset($_POST["idLinkAthlete"])) {
     $setAthleteSuccsess = setAthleteProfile(intval($_POST["idLinkAthlete"]));
     unset($_POST["idLinkAthlete"]);
     header("location: /profile");
     exit();
 }
-
 $user = getUser($iduser);
 
 if($user["athlete"] != NULL) {
     $linkedAthlete = getAthlete($user["athlete"]);
+}
+if($user["athlete"] != NULL && $user["athleteChecked"] == "1") {
+    if(isset($_POST["submit-athlete"]) && isset($_POST["instagram"]) && isset($_POST["facebook"]) && isset($_POST["website"]) && isset($_POST["description"]) && isset($_POST["team"]) && isset($_POST["club"])) {
+        $img = NULL;
+        // var_dump($_FILES);
+        if(isset($_FILES["image"]) && strlen($_FILES["image"]["tmp_name"]) > 0){
+            // echo "image";
+            $img = uploadImg($_FILES["image"], "athlete-".$linkedAthlete["firstname"]."-".$linkedAthlete["lastname"]."-");
+            // echo $img;
+        }
+        $updateAthleteSuccsess = updateAthleteInfo($linkedAthlete["id"], $_POST["instagram"], $_POST["facebook"], $_POST["website"], $_POST["description"], $_POST["team"], $_POST["club"], $img);
+        if(!$updateAthleteSuccsess) {
+            throwError($ERROR_UPDATING_ATHLETE, "/profile");
+        }
+        header("location: /profile");
+        exit();
+        $linkedAthlete = getAthlete($user["athlete"]);
+    }
 }
 
 include_once "../header.php";
@@ -42,7 +56,7 @@ echoRandWallpaper();
 <div class="absolute">
     <div class="img-display"></div>
 </div>
-<main class="main competition-page analytics">
+<main class="main competition-page user-profile">
     <div class="top-site"></div>
     <svg style="margin-bottom: 0; position: relative; transform: translateY(85%); z-index: -1;" xmlns="http://www.w3.org/2000/svg" fill="none" preserveAspectRatio="none" viewBox="0 0 1680 40" class="curvature" style="bottom: -1px;"><path d="M0 40h1680V30S1340 0 840 0 0 30 0 30z" fill="#ddd"></path></svg>
     <svg style="margin-bottom: 0; position: relative; top: 0px; z-index: 1;" xmlns="http://www.w3.org/2000/svg" fill="none" preserveAspectRatio="none" viewBox="0 0 1680 40" class="curvature" style="bottom: -1px;"><path d="M0 40h1680V30S1340 0 840 0 0 30 0 30z" fill="#151515"></path></svg>
@@ -84,27 +98,48 @@ echoRandWallpaper();
                     <div class="flex mobile justify-space-evenly" style="width: 100%">
                         <div>
                         <?php if($user["athleteChecked"] == "1") { ?>
-                            <form action="#" class="form" method="POST">
+                            <form action="#" class="form" method="POST" enctype="multipart/form-data">
                                 <h3>Update your athlete profile</h3>
+                                <div class="img-area">
+                                    <label class="img-label" for="image">
+                                    <?php if(!empty($linkedAthlete["image"])) { ?>
+                                        <img class="update-athlete-img" src="/img/uploads/<?=$linkedAthlete["image"] ?>" alt="profile image">
+                                    <?php } else if($linkedAthlete["gender"] == "m") {?>
+                                        <img class="update-athlete-img"  src="/img/profile-men.png" alt="profile image">
+                                    <?php } else { ?>
+                                        <img class="update-athlete-img"  src="/img/profile-female.png" alt="profile image">
+                                    <?php } ?>
+                                    </label>
+                                    <input type="file" id="image" name="image" value="Upload" class="btn blender alone">
+                                </div>
                                 <div>
-                                    <label for="instagram">Instagram:</label>
+                                    <label for="instagram">Instagram(link to profile):</label>
                                     <input type="text" id="instagram" name="instagram" value="<?php echo $linkedAthlete["instagram"]; ?>">
                                 </div>
                                 <div>
-                                    <label for="facebook">Facebook:</label>
+                                    <label for="facebook">Facebook(link to profile):</label>
                                     <input type="text" name="facebook" id="facebook" value="<?php echo $linkedAthlete["facebook"]; ?>">
                                 </div>
                                 <div>
                                     <label for="website">Website:</label>
                                     <input type="text" name="website" id="website" value="<?php echo $linkedAthlete["website"]; ?>">
                                 </div>
+                                <div>
+                                    <label for="team">Team / Sponsor:</label>
+                                    <input type="text" name="team" id="team" value="<?php echo $linkedAthlete["team"]; ?>">
+                                </div>
+                                <div>
+                                    <label for="club">Club:</label>
+                                    <input type="text" name="club" id="club" value="<?php echo $linkedAthlete["club"]; ?>">
+                                </div>
                                 <div class="flex column">
                                     <label for="description">Short description about yourself:</label>
                                     <br>
                                     <textarea style="background: #ddd; resize: vertical;" name="description" id="description" cols="30" rows="10" ><?php echo $linkedAthlete["description"]; ?></textarea>
                                 </div>
+                                <img src="">
                                 <br>
-                                <input class="btn" type="submit" value="Submit changes">
+                                <input class="btn" type="submit" name="submit-athlete" value="Save changes">
                             </form>
                         <?php } else { ?>
                             <!-- <h3>Your athlete profile on <span class="font code color b">Roller results</span></h3><br> -->

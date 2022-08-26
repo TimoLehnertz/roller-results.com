@@ -1370,6 +1370,14 @@ function getAthleteCompetitions($idathlete){
     }
 }
 
+function updateAthleteInfo($idAthlete, $instagram, $facebook, $website, $description, $team, $club, $img) {
+    if($img == NULL) {
+        return dbExecute("UPDATE TbAthlete SET instagram=?, facebook=?, website=?, `description`=?, team=?, club=? WHERE id=?;", "ssssssi", $instagram, $facebook, $website, $description, $team, $club, $idAthlete);
+    } else {
+        return dbExecute("UPDATE TbAthlete SET instagram=?, facebook=?, website=?, `description`=?, team=?, club=?, `image`=? WHERE id=?;", "sssssssi", $instagram, $facebook, $website, $description, $team, $club, $img, $idAthlete);
+    }
+}
+
 function getAthlete($id){
     global $scoreInfluences;
     global $usedMedals;
