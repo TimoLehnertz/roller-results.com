@@ -63,6 +63,9 @@ include_once "head.php";
                     <a href="/index.php"><i class="fas fa-home margin right"></i>Home</a>
                 </li>
                 <li>
+                    <a href="/analytics"><i class="fas fa-binoculars margin right"></i>Analytics</a>
+                </li>
+                <li>
                     <a href="/countries"><i class="fas fa-globe-americas margin right"></i>Countries</a>
                 </li>
                 <li>
@@ -70,9 +73,6 @@ include_once "head.php";
                 </li>
                 <li>
                     <a href="/competitions"><i class="fas fa-flag-checkered margin right"></i></i>Competitions</a>
-                </li>
-                <li>
-                    <a href="/analytics"><i class="fas fa-binoculars margin right"></i>Analytics</a>
                 </li>
                 <li>
                     <a href='/tools/index.php'><i class="fa fa-solid fa-toolbox margin right"></i>Tool box</a>

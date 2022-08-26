@@ -243,17 +243,22 @@ get("countries").receive((succsess, res) => {
         allCountries = res;
         allCountries.sort((a,b) => a.country.localeCompare(b.country));
     }
-    // console.log(countries);
-})
+});
 
 compChanged();
 aliasChanged();
 
 function deleteCompetition() {
     const idCompetition = $(".comps-select").val();
+    const compName = $( ".comps-select option:selected" ).text();
     if(idCompetition == "-1234") return alert("Please select a competition to remove it");
-    get("removeCompetition", idCompetition).receive((succsess, result) => {
+    if(!confirm("Are you sure to delete " + compName + "?")) return;
+    get("deleteCompetition", idCompetition).receive((succsess, result) => {
         if(!succsess) return alert("An error occoured please try again later");
+        // console.log(result);
+        if(result === true) {
+            alert(`Succsess! Refresh this page to see the change`);
+        }
     });
 }
 

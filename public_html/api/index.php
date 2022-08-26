@@ -305,11 +305,13 @@ if(!isset($NO_GET_API)){
             exit(0);
         }
         insertLaserResult($data, $_GET["user"], $_GET["lname"]);
-    } else if(isset($_GET["uploadTriggers"]) && isset($_GET["user"])){
+    } else if(isset($_GET["uploadTriggers"]) && isset($_GET["user"])) {
         insertTrigger(file_get_contents('php://input'), $_GET["user"]);
-    } else if(isset($_GET["getathleteImages"])){
+    } else if(isset($_GET["getathleteImages"])) {
         echo json_encode(getAthleteImages($_GET["getathleteImages"]));
-    } else if(isset($_GET["getteamAdvantageDetails"])){
+    } else if(isset($_GET["getdeleteCompetition"])) {
+        deleteCompetition($_GET["getdeleteCompetition"]);
+    } else if(isset($_GET["getteamAdvantageDetails"])) {
         if(isset($_GET["data"]) && isset($_GET["data1"])) {
             echo json_encode(getTeamAdvantageDetails($_GET["getteamAdvantageDetails"], $_GET["data"], $_GET["data1"]));
         } else {
@@ -1343,18 +1345,25 @@ function getAthleteRacesFromCompetition($idathlete, $idcompetition){
 
 function deleteCompetition($idCompetition) {
     if(!isLoggedIn()) {
-        echo "You need to be logged in";
+        echo "\"You need to be logged in to delete a competition\"";
         return false;
     }
     $comp = getCompetition($idCompetition);
     if(sizeof($comp) == 0) {
-        echo "Invalid competition";
-        return;
+        echo "\"Invalid competition\"";
+        return false;
     }
-    // if($comp["creator"] != $_SESSION["iduser"] && !) {
-    //     echo "Invalid competition";
-    //     return;
-    // }
+    if(!canI("managePermissions") && ($comp["creator"] != $_SESSION["iduser"])) {
+        echo "\"You can't delete a competition you dont own!\"";
+        return false;
+    }
+    $succsess = dbExecute("CALL sp_deleteCompetition(?);", "i", $idCompetition);
+    if(!$succsess) {
+        echo "\"An error occoured :/\"";
+    } else {
+        echo "true";
+    }
+    return $succsess;
 }
 
 function deleteRace($id) {
