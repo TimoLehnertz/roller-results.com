@@ -461,8 +461,11 @@ function elemFromSearchOption(option, useLinks, callback) {
     return elem;
 }
 
-function linkFromOption(option){
-    if(option.type == "person"){
+function linkFromOption(option) {
+    if(option.type == "year") {
+        return `/competitions/index.php#${option.id}&search1=${lastSearch}`;
+    }
+    if(option.type == "person") {
         return `/athlete?id=${option.id}&search1=${lastSearch}`;
     }
     return `/${option.type}?id=${option.id}`;

@@ -271,25 +271,39 @@
             select
                 width: 100%
 
+// @keyframes move-left-right
+//     0%
+//         transform: translateZ(0rem) rotateX(0deg)rotateY(0deg)
+//     5%
+//         transform: translateZ(30rem) rotateX(180deg)rotateY(0deg)
+//     10%
+//         transform: translateZ(30rem) rotateX(180deg) rotateY(0deg)
+//     15%
+//         transform: translateZ(30rem) rotateX(180deg) rotateY(180deg)
+//     20%
+//         transform: translateZ(30rem) rotateX(180deg) rotateY(180deg)
+//     30%
+//         transform: translateZ(30rem) rotateX(180deg) rotateY(0deg)
+//     35%
+//         transform: translateZ(30rem) rotateX(180deg) rotateY(0deg)
+//     40%
+//         transform: translateZ(30rem) rotateX(0) rotateY(0)
+//     50%
+//         transform: translateZ(0rem) rotateX(0) rotateY(0)
+
 @keyframes move-left-right
     0%
-        transform: translateZ(0rem) rotateX(0deg)rotateY(0deg)
-    5%
-        transform: translateZ(30rem) rotateX(180deg)rotateY(0deg)
+        transform: rotateY(0deg)
     10%
-        transform: translateZ(30rem) rotateX(180deg) rotateY(0deg)
-    15%
-        transform: translateZ(30rem) rotateX(180deg) rotateY(180deg)
+        transform: rotateY(0deg)
     20%
-        transform: translateZ(30rem) rotateX(180deg) rotateY(180deg)
+        transform: rotateY(360deg)
     30%
-        transform: translateZ(30rem) rotateX(180deg) rotateY(0deg)
+        transform: rotateY(360deg)
     35%
-        transform: translateZ(30rem) rotateX(180deg) rotateY(0deg)
-    40%
-        transform: translateZ(30rem) rotateX(0) rotateY(0)
-    50%
-        transform: translateZ(0rem) rotateX(0) rotateY(0)
+        transform: rotateY(360deg)
+    45%
+        transform: rotateY(0deg)
 
 // @keyframes move-left-right
 //     0%

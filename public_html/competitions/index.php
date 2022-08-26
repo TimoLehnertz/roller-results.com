@@ -26,7 +26,7 @@ echoRandWallpaper();
                             echo "</div>";
                         }
                         echoYear($year);
-                        echo "<div class='comp-gallery'>";
+                        echo "<div class='comp-gallery' id='".$year."'>";
                         $begun = true;
                     }
                     echoComp($comp);
@@ -72,6 +72,25 @@ echoRandWallpaper();
         ?>
     </div>
 </main>
+<script>
+    if(window.location.href.includes("#")) {
+        const idx = window.location.href.indexOf("#") + 1;
+        if(window.location.href.length >= idx + 4) {
+            const year = window.location.href.substring(idx, idx + 4);
+            console.log(year);
+            $(() => {
+                window.setTimeout(() => {
+                    document.getElementById(year + "").scrollIntoView({
+                        behavior: "smooth",
+                        block:    "start",
+                        // inline:    "start" | "center" | "end" | "nearest",
+                    });
+                }, 500);
+            })
+            // $("#" + year).;
+        }
+    }
+</script>
 <?php
 include_once "../footer.php";
 ?>

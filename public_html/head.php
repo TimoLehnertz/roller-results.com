@@ -22,7 +22,6 @@ $actual_link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https"
 <html>
     <head>
         <meta charset="UTF-8">
-        
         <title>Roller Results</title>
         <meta name="description" content="Roller skating results and analysis">
 
@@ -32,6 +31,7 @@ $actual_link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https"
         <meta property="og:url" content="<?=$actual_link?>" />
         <meta property="og:description" content="Roller skating results and analysis">
         <meta property="og:type" content="profile" />
+        <meta name="viewport" content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0'>
 
         <link rel="icon" type="image/png" href="/img/logo/rr.png">
         <link rel="stylesheet" href="/styles/main.css?v=1.14">
@@ -59,8 +59,25 @@ $actual_link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https"
         <script src="/js/html2canvas/html2canvas.js" defer></script>
         <script>
             <?php echo "const phpUId = '".uniqid($_SERVER["SERVER_NAME"], true)."';";?>
-            </script>
+        </script>
         <script src="/js/log.js"></script>
-
-        <meta name="viewport" content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0'>
+        <script>
+            <?php if(isLoggedIn()) { 
+                $user = getUser($_SESSION["iduser"]);
+                ?>
+                const phpUser = {
+                    loggedIn: true,
+                    iduser: <?= $_SESSION["iduser"] ?>,
+                    linkedAthlete: <?= $user["athlete"] ?>,
+                    athleteChecked: <?= $user["athleteChecked"] ?>,
+                }
+            <?php } else { ?>
+                const phpUser = {
+                    loggedIn: false,
+                    iduser: undefined,
+                    linkedAthlete: undefined,
+                    athleteChecked: false,
+                }
+            <?php } ?>
+        </script>
     </head>

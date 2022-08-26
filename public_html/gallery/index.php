@@ -32,10 +32,11 @@ $backPath = dirname($relativePath);
     <svg style="margin-bottom: 0; position: relative; transform: translateY(85%); z-index: -1;" xmlns="http://www.w3.org/2000/svg" fill="none" preserveAspectRatio="none" viewBox="0 0 1680 40" class="curvature" style="bottom: -1px;"><path d="M0 40h1680V30S1340 0 840 0 0 30 0 30z" fill="#ddd"></path></svg>
     <svg style="margin-bottom: 0; position: relative; top: 0px; z-index: 1;" xmlns="http://www.w3.org/2000/svg" fill="none" preserveAspectRatio="none" viewBox="0 0 1680 40" class="curvature" style="bottom: -1px;"><path d="M0 40h1680V30S1340 0 840 0 0 30 0 30z" fill="#151515"></path></svg>
     <div class="dark section no-shadow">
-        <h1 class="font size biggest">Gallery<i class="fa fa-solid fa-images margin right"></i></h1>
+        <h1 class="font size biggest">Gallery<i class="fa fa-solid fa-images margin left"></i></h1>
         <p class="align center font size big color light margin top double">
-            Image gallery for races - <span class="font color orange">Beta release</span>
+            Image gallery for all races
         </p>
+        <p class="align center margin top">Contact us if you want to uplaod too</p>
     </div>
     <div class="path margin bottom" id="files">
         <a href="/gallery#files">Gallery</a>
