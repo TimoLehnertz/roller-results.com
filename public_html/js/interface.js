@@ -267,7 +267,7 @@ function athleteDataToProfileData(athlete, useRank = false, alternativeRank = un
         const socialMedia = $(`<div class="flex mobile"></div>`);
 
         wrapper.append(socialMedia);
-
+ 
         if(athlete.instagram && athlete.instagram.length > 0) {
             athlete.instagram = preprocessUrl(athlete.instagram);
             socialMedia.append(`<a href="${athlete.instagram}"> <i class="fab fa-instagram margin right font size bigger-medium"></i>${athlete.firstname} on Instagram</a>`);
