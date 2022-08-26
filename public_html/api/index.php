@@ -463,8 +463,10 @@ if(!isset($NO_GET_API)){
         $name = $_GET["name"];
         $json = file_get_contents('php://input');
         $public = isset($_GET["public"]) ? 1 : 0;
-        if(analyticsExists($name)) {
+        if(analyticsExistsForMe($name)) {
             updateAnalytics($name, $public, $json);
+        } else if(analyticsExists($name)) {
+            echo "$name does exist already and is not yours. Please choose a different name";
         } else {
             addAnalytics($name, $public, $json);
         }
@@ -895,20 +897,22 @@ function getAnalytics() {
 
 function updateAnalytics($name, $public, $json) {
     if(!isLoggedIn()) return false;
+    // $existing = query("SELECT owner FROM Tb_analyticsPreset WHERE name=? AND owner = ");
     return dbExecute("UPDATE Tb_analyticsPreset SET `public`=?, `json`=? WHERE `name`=? AND `owner`=?;", "issi", $public, $json, $name, $_SESSION["iduser"]);
 }
 
 function addAnalytics($name, $public, $json) {
     if(!isLoggedIn()) return false;
-    query("INSERT INTO Tb_analyticsPreset(`name`,`public`,`json`,`owner`) VALUES (?,?,?,?);", "sisi", $name, $public, $json, $_SESSION["iduser"]);
+    dbInsert("INSERT INTO Tb_analyticsPreset(`name`,`public`,`json`,`owner`) VALUES (?,?,?,?);", "sisi", $name, $public, $json, $_SESSION["iduser"]);
 }
 
 function analyticsExists($name) {
-    if(isLoggedIn()) {
-        return sizeof(query("SELECT idAnalyticsPreset FROM Tb_analyticsPreset WHERE `name` = ? AND (owner = ? OR public = 1);", "si", $name, $_SESSION["iduser"])) > 0;
-    } else {
-        return sizeof(query("SELECT idAnalyticsPreset FROM Tb_analyticsPreset WHERE `name` = ? AND public = 1;", "s", $name)) > 0;
-    }
+    return sizeof(query("SELECT idAnalyticsPreset FROM Tb_analyticsPreset WHERE `name`=? AND public = 1;", "s", $name)) > 0;
+}
+
+function analyticsExistsForMe($name) {
+    if(!isLoggedIn()) return false;
+    return sizeof(query("SELECT idAnalyticsPreset FROM Tb_analyticsPreset WHERE `name`=? AND owner = ?;", "si", $name, $_SESSION["iduser"])) > 0;
 }
 
 function deleteSelectPreset($presetName) {

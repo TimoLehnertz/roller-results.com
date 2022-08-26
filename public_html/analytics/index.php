@@ -1103,7 +1103,7 @@ echoRandWallpaper();
                     }
                     console.log(preset);
                     $(".analytics-name").val(name);
-                    $("#analytics-public-check").attr("checked", preset.public);
+                    $("#analytics-public-check").attr("checked", preset.public == "1");
                 }
             }
             window.setTimeout(() => {
@@ -1130,12 +1130,12 @@ echoRandWallpaper();
             get("analytics").receive((succsess, res) => {
                 analyticsPresets = res;
                 const val = $("#project-select").val();
-                $(".presets select").empty();
+                $("#project-select").empty();
                 for (const preset of res) {
-                    $("#project-select").append(`<option value="${preset.name}">${preset.name} (${preset.owner == iduser ? "You" : preset.username})</option>`);
+                    $("#project-select").append(`<option value="${preset.name}">${preset.name} (${preset.owner == iduser ? "You" : preset.username}, ${preset.public == "1" ? "public" : "private"})</option>`);
                 }
                 if(val && forceVal) {
-                    $(".presets select").val(val);
+                    $("#project-select").val(val);
                 }
             });
         }
