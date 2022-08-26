@@ -12,7 +12,7 @@ function echoCompsSelect() {
     $comps = getAllCompetitions();
     echo "<select onchange='compChanged()' class='comps-select' style='max-width: 15rem;'>";
     echo "<option value='-1234'>select</option>";
-    var_dump($comps);
+    // var_dump($comps);
     foreach ($comps as $comp) {
         $type = $comp["type"];
         $year = date('Y', strtotime($comp["startDate"]));
@@ -171,7 +171,7 @@ function echoAliasSelect() {
         <h2 class="align center">Step 1: <span class="font size medium margin left">Create event</span></h2>
         <br>
         <p>Select competition
-            <?php echoCompsSelect();?><br><br>
+            <?php echoCompsSelect();?><button class="btn blender alone margin left" onclick="deleteCompetition()">Delete</button><br><br>
             <a target="blank" href="create-competition.php">Create new</a> (reload this page)
         </p>
     </div>
@@ -244,6 +244,14 @@ get("countries").receive((succsess, res) => {
 
 compChanged();
 aliasChanged();
+
+function deleteCompetition() {
+    const idCompetition = $(".comps-select").val();
+    if(idCompetition == "-1234") return alert("Please select a competition to remove it");
+    get("removeCompetition", idCompetition).receive((succsess, result) => {
+        if(!succsess) return alert("An error occoured please try again later");
+    });
+}
 
 let existingRaces = undefined;
 let existingCompetition = undefined;

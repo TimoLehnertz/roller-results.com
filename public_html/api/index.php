@@ -1341,6 +1341,22 @@ function getAthleteRacesFromCompetition($idathlete, $idcompetition){
     }
 }
 
+function deleteCompetition($idCompetition) {
+    if(!isLoggedIn()) {
+        echo "You need to be logged in";
+        return false;
+    }
+    $comp = getCompetition($idCompetition);
+    if(sizeof($comp) == 0) {
+        echo "Invalid competition";
+        return;
+    }
+    if($comp["creator"] != $_SESSION["iduser"] && !) {
+        echo "Invalid competition";
+        return;
+    }
+}
+
 function deleteRace($id) {
     if(!isLoggedIn()) {
         echo "You need to be logged in";

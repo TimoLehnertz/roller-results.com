@@ -37,12 +37,12 @@ if(isset($_POST["submit"])) {
         </p>
         <br>
         <p>
-            <label for="latitude">Latitude</label>
+            <label for="latitude">Latitude (Number, example: 50.804421)</label>
             <input type="text" name="latitude" id="latitude"  placeholder="latitude" required>
         </p>
         <br>
         <p>
-            <label for="longitude">Longitude</label>
+            <label for="longitude">Longitude (Number, example: 6.826893)</label>
             <input type="text" name="longitude" id="longitude"  placeholder="longitude" required>
         </p>
         <br>
