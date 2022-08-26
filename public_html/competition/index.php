@@ -7,11 +7,16 @@ if(!isset($_GET["id"])){
     throwError($ERROR_NO_ID);
 }
 include_once "../api/index.php";
+include_once "../api/userAPI.php";
 
 $idComp = $_GET["id"];
 $comp = getCompetition($idComp);
 if(!$comp){
     throwError($ERROR_INVALID_ID);
+}
+
+if(!empty($comp["creator"])) {
+    $creator = getUser($comp["creator"]);
 }
 
 include_once "../header.php";
@@ -70,6 +75,17 @@ foreach ($bestAthletes as $athlete) {
         <h1 class="align center headline"><?= translateCompType($comp["type"])." | ".$comp["location"]." ".$comp["raceYear"]?></h1>
         <div class="date">
             <i class="fas fa-calendar-alt margin right"></i><?= $date?>
+        </div>
+        <div class="align center margin bottom font size bigger-medium">
+            <?php 
+                $phpdate = strtotime($comp["rowCreated"]);
+                $formatedDate = date( 'M d Y', $phpdate );
+                if(isset($creator)) {
+                    echo "Uploaded by <span class='font color purple'>".$creator["username"]."</span> on ".$formatedDate;
+                } else {
+                    echo "Uploaded on ".$formatedDate;
+                }
+            ?>
         </div>
         <div class="basic-stats">
             <div>Countries: <div class="stat"><?=$countryCount?></div></div>
