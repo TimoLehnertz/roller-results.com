@@ -3,65 +3,115 @@ include_once "../api/index.php";
 include_once "../header.php";
 echoRandWallpaper();
 ?>
+<script>
+    const iduser = <?php
+    if(isLoggedIn()) {
+        echo $_SESSION["iduser"];
+    } else {
+        echo "-1";
+    }?>;
+    const isLoggedIn = <?php
+    if(isLoggedIn()) {
+        echo "true";
+    } else {
+        echo "false";
+    }?>;
+</script>
 <main class="main competition-page analytics">
     <div class="top-site"></div>
     <svg style="margin-bottom: 0; position: relative; transform: translateY(85%); z-index: -1;" xmlns="http://www.w3.org/2000/svg" fill="none" preserveAspectRatio="none" viewBox="0 0 1680 40" class="curvature" style="bottom: -1px;"><path d="M0 40h1680V30S1340 0 840 0 0 30 0 30z" fill="#ddd"></path></svg>
     <svg style="margin-bottom: 0; position: relative; top: 0px; z-index: 1;" xmlns="http://www.w3.org/2000/svg" fill="none" preserveAspectRatio="none" viewBox="0 0 1680 40" class="curvature" style="bottom: -1px;"><path d="M0 40h1680V30S1340 0 840 0 0 30 0 30z" fill="#151515"></path></svg>
     <div class="dark section no-shadow">
-        <h1 class="flex mobile font size biggest">Analytics</h1>
-        <p class="align center font size big color light margin top double">
-            The tool to dig deep into Inline Speedskating data
-        </p>
+        <h1 class="font size biggest"><i class="fas fa-binoculars margin right"></i>Analytics</h1>
+        <p class="align center font size big color light margin top double">The tool to dig deep into Inline Speedskating data</p>
+        <br>
+        <p class="align center font color light ">Here you have limitless accsess and powerful tools to the worlds biggest inline skating database.</p>
     </div>
     <div class="light section">
-        <div class="tool">
-            <div class="presets font">
-                <h2>Presets</h2>
+        <div class="flex mobile">
+            <div>
+                <h2 class="font size bigger-medium align center">Getting started</h2>
+                <p class="font size bigger-medium">The Selector</p>
                 <br>
-                <p>Create your own presets! Make sure to be logged in and check public if you want to share them</p>
-                <p>Load presets from others to experiment with the features.</p>
-                <p>
-                    <label for="project-select">Project: </label>
-                    <select id="project-select">
-                        
-                    </select>
-                    <button class="loadAnalytics-btn" onclick="loadAnalytics()">Load</button>
-                    <button class="removeAnalytics-btn" onclick="removeAnalytics()">Remove</button>
-                </p>
-                <p>
-                    <label for="analytics-name">Name:</label>
-                    <input type="text" class="analytics-name" id="analytics-name" placeholder="Name">
-                    <label for="analytics-public-check">Public</label>
-                    <input id="analytics-public-check" class="analytics-public" type="checkbox">
-                    <button class="saveAnalytics-btn" onclick="saveAnalytics()">Save</button>
-                </p>
+                <p>Before we start - Quick word about databases: Databases are tables with rows and columns just like Excel. So from now on try think in tables.</p>
+                <p>In the image and below in the editor you see Selectors. You can use those to filter Results. Say you dont want all our <?php echo getResultAmount();?> results but instead all you care about is Senior male in 2015.</p>
+                <p>The selector properties let you select just that and a lot more. When youre happy with it hit the Run button. When a selector turnes blue it is currently working behind the scenes to find your results.</p>
+                <p>When your results are ready they will be Grouped by Athletes and you get a summary per athlete. The resulting table will be shown below.</p>
+                <br>
+                <p class="font size bigger-medium">Multiple Selectors</p>
+                <br>
+                <p>By utilizing the ➕ buttons you can create as many Selectors as you want</p>
+                <p>Selector neighbours: Selectors next to each other dont know about each other. It gets interesting when you have selectors below each other.</p>
+                <p>Selector rows: Selectors directly below each other can be connected by dragging the blue dot on top of another selector. Now if you execute a selector that has another one connected on to it will first execute the upper one and use it's output as input</p>
+                <p>So now you could use one Selector to select all juniors who were succsessfull on worlds. With your second selector you can then Select all of those Juniors who stil participated as Seniors. Compare those results and you know how many Skaters quit professional skating. Load the <span class="code">Junior to Senior compare</span> example to find out the numbers</p>
+                <br>
+                <p class="font size bigger-medium">Joining method</p>
+                <br>
+                <p>When connecting multiple selectors to one you need to specify the joining method. See the info graphic.</p>
+                <ul>
+                    <li>And: use Athletes that have been matched in each of the connected Selectors</li>
+                    <li>Or: use Athletes that have been matched in at least one of the connected selectors</li>
+                    <li>XOr: use Athletes that have been matched in Exactly one Selector</li>
+                    <li>Not: use Athletes that have been matched in the first connected selector but not any of the others. (Most left connection ist the first)</li>
+                </ul>
             </div>
-            <hr>
-            <br>
-            <div class="graph">
-                
-            </div>
-            <div class="last-row flex">
-                <hr>
-                <div>
-                    <p>Add row</p>
-                    <div class="add"><button class="add-btn" onclick="addRow()">+</button></div>
-                </div>
-                <div>
-                    <p>Remove last row</p>
-                    <div class="add"><button class="add-btn" onclick="removeLastRow()">X</button></div>
-                </div>
+            <!-- <div class="padding top left btn default"></div> -->
+            <div>
+                <h3>Analytics info grahpic</h3>
+                <img src="/img/Analytics-explanation.jpg" alt="Analytics graphic" style="max-width: min(40rem, 100vw)">
             </div>
         </div>
+        <br>
+    </div>
+    <div class="flex column section dark">
+        <h2>Projects</h2>
+        <div>
+            <label for="project-select">Project: </label>
+            <select id="project-select"></select>
+            <button class="loadAnalytics-btn" onclick="loadAnalytics()">Load</button>
+            <?php if(isLoggedIn()) { ?>
+            <button class="removeAnalytics-btn" onclick="removeAnalytics()">Remove</button>
+            <?php } ?>
+        </div>
+        <?php if(isLoggedIn()) { ?>
+        <div class="flex mobile align-start margin top gap">
+            <p class="font size bigger-medium">Save project</p>
+            <p>
+                <label for="analytics-name">Name:</label>
+                <input type="text" class="analytics-name" id="analytics-name" placeholder="Name">
+            </p>
+            <p>
+                <label for="analytics-public-check">Public</label>
+                <input id="analytics-public-check" class="analytics-public" type="checkbox">
+            </p>
+            <button class="saveAnalytics-btn" onclick="saveAnalytics()">Save</button>
+        </div>
+        <?php } ?>
     </div>
     <div class="dark section">
+        <p class="font size bigger">Editor</p>
+        <div class="graph margin top">
+            
+        </div>
+    </div>
+    <div class="dark section no-shadow flex row justify-center gap">
+        <div class="flex column align-center">
+            <p>Add row</p>
+            <div class="add"><button class="add-btn" onclick="addRow()">+</button></div>
+        </div>
+        <div class="flex column align-center">
+            <p>Remove last</p>
+            <div class="add"><button class="add-btn" onclick="removeLastRow()">X</button></div>
+        </div>
+    </div>
+    <div class="light section">
         <h1>Results</h2>
         <div class="summary"></div>
         <div class="results align center">
             <p class="font size big">Hit <span class="code">run</span> on a select node to see the result.</p>
         </div>
     </div>
-    <div class="light section">
+    <div class="dark section">
         <h2>Explore more analytics</h2>
         <div>
             <ul>
@@ -130,9 +180,9 @@ echoRandWallpaper();
                 type: "date",
                 value: "2050-01-01"
             },limit: {
-                displayName: "Max results",
+                displayName: "Max athletes",
                 type: "number",
-                value: 50
+                value: 100
             }
         }
 
@@ -174,15 +224,15 @@ echoRandWallpaper();
                 new Tooltip($(this.elem.find(".run-btn")), "Run this query and all that are before");
                 new Tooltip($(this.elem.find(".preset-select")), "Select a preset for this query. Use the load button to load it and remove button to remove it");
                 this.elem.find(".delete-btn").click(() => {this.die()});
-                this.elem.find(".remove-preset-btn").click(() => {this.removePreset()});
-                this.elem.find(".save-btn").click(() => {this.save()});
-                this.elem.find(".load-btn").click(() => {this.load()});
+                // this.elem.find(".remove-preset-btn").click(() => {this.removePreset()});
+                // this.elem.find(".save-btn").click(() => {this.save()});
+                // this.elem.find(".load-btn").click(() => {this.load()});
                 this.elem.find(".run-btn").click(() => {this.run(true)});
                 this.elem.find(".schow-result-btn").click(() => {if(this.res !== undefined) {showResult(this.res);}});
 
                 if(isMobile()) {
                     this.elem.click((e) => {
-                        if(dragStartSelect && dragStartSelect.row.index == this.row.index -1 && !this.docked.includes(dragStartSelect)){
+                        if(dragStartSelect && dragStartSelect.row.index == this.row.index -1 && !this.docked.includes(dragStartSelect)) {
                             this.dock(dragStartSelect);
                             dragStartSelect = undefined;
                             this.row.elem.removeClass("dropable");
@@ -255,28 +305,30 @@ echoRandWallpaper();
                 }
             }
 
-            save() {
-                const name = this.elem.find(".name").val();
-                if(name.length == 0) {
-                    alert("Please enter a name");
-                    return;
-                }
-                get("athletes", this.getSaveStateConverted(false, name)).receive((succsess, msg) => {
-                    console.log(msg);
-                    if(msg?.length > 0) {
-                        alert(msg);
-                    } else {
-                        alert("Saved as " + name);
-                        get("selectPresets").receive((succsess, res) => {
-                            selectPresets = res;
-                            updateSelectPresets(true, true);
-                        });
-                    }
-                });
-            }
+            // save() {
+            //     const name = this.elem.find(".name").val();
+            //     if(name.length == 0) {
+            //         alert("Please enter a name");
+            //         return;
+            //     }
+            //     get("athletes", this.getSaveStateConverted(false, name)).receive((succsess, msg) => {
+            //         if(!succsess) return alert("Error occoured");
+            //         // console.log(msg);
+            //         if(msg.length == 0) return alert(msg);
+            //         alert("Saved as " + name);
+            //         get("selectPresets").receive((succsess, res) => {
+            //             selectPresets = res;
+            //             updateSelectPresets(true, true);
+            //         });
+            //     });
+            // }
 
             initDrag() {
                 if(isMobile()) {
+                    $(document).click(() => {
+                        dragStartSelect = undefined;
+                        $(".dropable").removeClass("dropable");
+                    })
                     this.elem.find(".drag-btn").addClass("mobile-big");
                     this.elem.find(".drag-btn").on("click", (e) => {
                         e.stopPropagation();
@@ -296,12 +348,19 @@ echoRandWallpaper();
                 }
                 this.elem.on("dragstart", (e) => {
                     dragStartSelect = this;
+                    if(this.row.rowAfter) {
+                        this.row.rowAfter.elem.addClass("dropable");
+                    }
                 });
                 this.elem.on("dragover", (e) => {
                     if(dragStartSelect.row.index == this.row.index -1 && !this.docked.includes(dragStartSelect)) {
                         e.preventDefault();
                         e.stopPropagation();
+                        this.elem.addClass("hover-drag");
                     }
+                });
+                this.elem.on("dragleave", (e) => {
+                    this.elem.removeClass("hover-drag");
                 });
                 this.elem.on("drop", (e) => {
                     if(dragStartSelect.row.index == this.row.index -1 && !this.docked.includes(dragStartSelect)) {
@@ -309,7 +368,8 @@ echoRandWallpaper();
                         e.stopPropagation();
                         this.dock(dragStartSelect);
                         dragStartSelect = undefined;
-                        $(document).unbind("mousemove")
+                        this.elem.removeClass("hover-drag");
+                        $(document).unbind("mousemove");
                     }
                 });
             }
@@ -319,7 +379,7 @@ echoRandWallpaper();
                 this.docked.push(select);
                 const uid = getUid();
                 select.dockUid = uid;
-                const docker = $(`<div class="docker ${uid} ${isMobile() ? "mobile-half" : ""}"></div>`);
+                const docker = $(`<div class="docker ${uid} ${isMobile() ? "mobile-half" : ""}">x</div>`);
                 this.elem.find(".docker-wrapper").append(docker);
                 docker.click(() => {
                     if(this.row.elem.hasClass("dropable")) return;
@@ -351,16 +411,31 @@ echoRandWallpaper();
                 <div>
                     <button class="join-btn and ${this.joinMethod == "and" ? "active" : ""}">And</button>
                     <button class="join-btn or ${this.joinMethod == "or" ? "active" : ""}">Or</button>
+                    <button class="join-btn xor ${this.joinMethod == "xor" ? "active" : ""}">XOr</button>
+                    <button class="join-btn not ${this.joinMethod == "not" ? "active" : ""}">Not</button>
                 </div>`);
+                new Tooltip(this.elem.find(".join-btn.and"), "Use athletes that have been matched in each of the connected selectors");
                 this.elem.find(".join-btn.and").click(() => {
                     this.joinMethod = "and";
+                    this.elem.find(".join-btn").removeClass("active");
                     this.elem.find(".join-btn.and").addClass("active");
-                    this.elem.find(".join-btn.or").removeClass("active");
                 });
+                new Tooltip(this.elem.find(".join-btn.or"), "Use all athletes that have been matched in one of the connected selectors");
                 this.elem.find(".join-btn.or").click(() => {
                     this.joinMethod = "or";
+                    this.elem.find(".join-btn").removeClass("active");
                     this.elem.find(".join-btn.or").addClass("active");
-                    this.elem.find(".join-btn.and").removeClass("active");
+                });
+                new Tooltip(this.elem.find(".join-btn.xor"), "Use all athletes that have been matched in exactly one of the connected selectors");
+                this.elem.find(".join-btn.xor").click(() => {
+                    this.joinMethod = "xor";
+                    this.elem.find(".join-btn").removeClass("active");
+                    this.elem.find(".join-btn.xor").addClass("active");
+                });
+                this.elem.find(".join-btn.not").click(() => {
+                    this.joinMethod = "not";
+                    this.elem.find(".join-btn").removeClass("active");
+                    this.elem.find(".join-btn.not").addClass("active");
                 });
                 this.joinDone = true;
             }
@@ -494,6 +569,22 @@ echoRandWallpaper();
                 this.dropdown = new Dropdown(this.elem.find(".properties-btn"), dropdownEntries);
             }
 
+            eraseDoublicates(arr) {
+                for (let i = 0; i < arr.length; i++) {
+                    const element = arr[i];
+                    let found = false;
+                    for (let m = i + 1; m < arr.length; m++) {
+                        if(arr[m] == element) {
+                            arr.splice(m, 1);
+                            found = true;
+                        }
+                    }
+                    if(found) {
+                        arr.splice(i, 1);
+                    }
+                }
+            }
+
             getInput() {
                 const promise = {
                     callback: () => console.log("no Callback"),
@@ -511,8 +602,10 @@ echoRandWallpaper();
                     const me = this;
                     function runOne(i) {
                         if(i >= me.docked.length) {
-                            // console.log("input:");
-                            // console.log(ids);
+                            console.log("joined input:", ids);
+                            if(me.joinMethod === "xor") {
+                                me.eraseDoublicates(ids);
+                            }
                             promise.callback(true, ids);
                             return;
                         }
@@ -535,6 +628,14 @@ echoRandWallpaper();
                                     if(!ids.includes(id)) {
                                         ids.push(id);
                                     }
+                                }
+                            } else if(me.joinMethod === "xor") {
+                                for (const id of res) {
+                                    ids.push(id);
+                                }
+                            } else if(me.joinMethod === "not") {
+                                for (const id of res) {
+                                    if(ids.includes(id)) ids.splice(ids.indexOf(id), 1);
                                 }
                             }
                             runOne(i + 1);
@@ -639,8 +740,11 @@ echoRandWallpaper();
                 }
                 this.getStateConverted().receive((succsess, res) => {
                     this.elem.addClass("running");
-                    this.elem.find(".run-btn").attr("disabled", true);
-                    get("athletes", res).receive((sucsess, res) => {
+                    $(".run-btn").attr("disabled", true);
+                    const resClone = JSON.parse(JSON.stringify(res));
+                    resClone.ids = undefined;
+                    set("athletes" + objToUrlParams(resClone), res.ids).receive((res) => {
+                        if(res == null) return alert("An error occoured. Please try again later");
                         if(print) {
                             showResult(res);
                         }
@@ -652,7 +756,7 @@ echoRandWallpaper();
                         promise.callback(succsess, ids); 
                         this.res = res;
                         this.updateShow();
-                        this.elem.find(".run-btn").attr("disabled", false);
+                        $(".run-btn").attr("disabled", false);
                     });
                 });
                 return promise;
@@ -692,22 +796,30 @@ echoRandWallpaper();
                 this.firstRow = rowBefore === undefined;
                 this.rowBefore = rowBefore;
                 this.index = undefined;
-                this.elem = $(`<div><div class="select-row"><div class="add"><button class="add-btn">+</button></div></div></div>`);
+                this.elem = $(`<div class="select-row-parent"><div class="select-row"><div class="add"><button class="add-btn">+</button></div></div></div>`);
                 this.addField = this.elem.find(".add");
                 this.elem.find(".add-btn").click(() => {
                     this.addNew();
                 });
                 this.selectors = [];
                 this.initCanvas();
-                this.draw();
                 this.mouse = {x:0,y:0};
-                $(document).on("dragover", (e) => {this.drag(e)});
-                $(document).on("dragend", (e) => {this.draw(true)});
-                $(document).on("dragover", (e) => {this.updateMouse(e)});
+                this.mousedown = false;
+                this.draw();
+                this.elem.find("canvas").on("dragover", (e) => {this.drag(e)});
+                $(document).on("dragend", (e) => {this.mousedown = false; this.draw(); $(".dropable").removeClass("dropable");});
+                this.elem.find("canvas").on("dragover", (e) => {this.updateMouse(e)});
+                // $(document).on("mouseup", (e) => {this.mouse.pressed=false});
+                // $(document).on("mousedown", (e) => {this.mouse.pressed=true});
+                window.setInterval(() => {
+                    this.canvas.width = this.elem.innerWidth() + $(".graph").scrollLeft();
+                    this.draw();
+                }, 100);
                 // window.setInterval(() => this.draw, 1000);
             }
 
             updateMouse(e) {
+                this.mousedown = true;
                 const rect = e.target.getBoundingClientRect();
                 this.mouse.x = e.clientX - rect.left// + $(".graph").scrollLeft() / 2;
                 this.mouse.y = e.clientY - rect.top;
@@ -731,26 +843,30 @@ echoRandWallpaper();
                 //     x: e.offsetX,
                 //     y: e.offsetY,
                 // }
-                if(this.mouse.y > 0 && this.mouse.y < this.canvas.height) {
-                    this.draw();
-                }
+                // if(this.mouse.y > 0 && this.mouse.y < this.canvas.height) {
+                //     this.draw();
+                // }
+                this.draw();
             }
 
             initCanvas() {
                 this.canvas = document.createElement("canvas");
+                const canvasParent = $(`<div class="canvas-parent"></div>`);
+                // this.canvas.width = this.elem.width();
                 this.canvas.width = 10000;
                 this.canvas.height = isMobile() ? 150 : 150;
                 this.ctx = this.canvas.getContext('2d');
-                this.elem.append(this.canvas);
+                canvasParent.append(this.canvas);
+                this.elem.append(canvasParent);
             }
 
-            draw(s) {
+            draw() {
                 /**
                  * Lines
                  */
                 this.ctx.fillStyle = "blue";
+                this.ctx.strokeStyle = "#fff";
                 this.ctx.clearRect(0, 0, 10000, 150);
-                if(this.mouse?.y < 0 || this.mouse?.y > this.canvas.height) return;
                 if(this.rowAfter !== undefined) {
                     for (const selector of this.rowAfter.selectors) {
                         let index = 0;
@@ -765,7 +881,7 @@ echoRandWallpaper();
                 /**
                  * Dragline
                  */
-                if(!isMobile() && dragStartSelect !== undefined && dragStartSelect.row.index === this.index && !s) {
+                if(!isMobile() && dragStartSelect !== undefined && dragStartSelect.row.index === this.index && this.mousedown) {
                     const loc = $(this.canvas).offset();
                     const pointA = this.pointFromSelector(dragStartSelect);
                     this.lineFromTo(pointA, this.mouse);
@@ -783,14 +899,15 @@ echoRandWallpaper();
             pointFromSelector(selector) {
                 return {
                     x: selector.elem.position().left + selector.elem.width() / 2 + 7 + $(".graph").scrollLeft(),
+                    // x: selector.elem.position().left + selector.elem.width() / 2 + 7,
                     y: this.remToPixels(2) - 8
                 }
             }
             
             dockingPointFromSelector(selector, index) {
                 return {
-                    x: selector.elem.position().left + (index + 1) * selector.elem.width() / 2 + 7 + $(".graph").scrollLeft(),
-                    // x: selector.elem.position().left + (index + 1) * selector.elem.outerWidth() / (selector.docked.length + 1),
+                    // x: selector.elem.position().left + (index + 1) * selector.elem.width() / 2 + 7 + $(".graph").scrollLeft(),
+                    x: selector.elem.position().left + (index + 1) * selector.elem.outerWidth() / (selector.docked.length + 1) + $(".graph").scrollLeft(),
                     y: this.canvas.height
                 }
             }
@@ -840,14 +957,16 @@ echoRandWallpaper();
                         callback: (e) => $(`<a target="_blank" rel="noopener noreferrer" href="/country/?id=${e.country}">${e.country}</a>`)
                     },medals: {
                         displayName: "Medals"
-                    },bronzeMedals: {
-                        displayName: "Bronze medals"
-                    },silverMedals: {
-                        displayName: "Silver medals"
                     },goldMedals: {
                         displayName: "Gold medals"
+                    },silverMedals: {
+                        displayName: "Silver medals"
+                    },bronzeMedals: {
+                        displayName: "Bronze medals"
                     },medalScore: {
                         displayName: "Medal score"
+                    },raceCount: {
+                        displayName: "Race count"
                     }
                 }
             });
@@ -946,14 +1065,15 @@ echoRandWallpaper();
         }
 
         function saveAnalytics() {
+            if(!isLoggedIn) return alert("You need to be logged in");
             const analyticsName = $(".analytics-name").val();
-            if(analyticsName.length == 0) {
-                alert("Pleas fill in a name");
-                return;
+            if(analyticsName.length == 0) return alert("Pleas fill in a name");
+            for (const preset of analyticsPresets) {
+                if(preset.name === analyticsName && preset.owner === iduser) {
+                    if(!confirm(`Are you sure that you want to overwrite "${analyticsName}"?`)) return;
+                }
             }
             const analytics = getAnalytics();
-            // console.log("saving analytics:");
-            // console.log(analytics);
             const public = ($(".analytics-public").is(":checked") ? "&public" : "");
             set("analytics&name=" + analyticsName + public, analytics).receive((res) => {
                 if(res?.length > 0) {
@@ -966,7 +1086,7 @@ echoRandWallpaper();
         }
 
         function loadAnalytics() {
-            const name = $(".presets select").val();
+            const name = $("#project-select").val();
             if(!name || name.length === 0) {
                 alert("Please select a preset");
                 return;
@@ -981,6 +1101,9 @@ echoRandWallpaper();
                     for (const rowSettings of analytics) {
                         addRow().create(rowSettings);
                     }
+                    console.log(preset);
+                    $(".analytics-name").val(name);
+                    $("#analytics-public-check").attr("checked", preset.public);
                 }
             }
             window.setTimeout(() => {
@@ -991,18 +1114,12 @@ echoRandWallpaper();
         }
 
         function removeAnalytics() {
-            const name = $(".presets select").val();
-            if(!name) {
-                alert("Choose a preset to remove");
-                return;
-            }
+            const name = $("#project-select").val();
+            if(!name) return alert("Choose a preset to remove");
             get("deleteAnalytics", {name}).receive((succsess, res) => {
-                if(res && res.length > 0) {
-                    alert(res);
-                }
-                if(succsess) {
-                    alert("Deleted " + name);
-                }
+                if(!succsess) return alert("An error occoured");
+                if(res?.length > 0) return alert(res); // alert error message
+                alert("Deleted " + name);
                 updateAnalytics(false);
             });
         }
@@ -1012,10 +1129,10 @@ echoRandWallpaper();
         function updateAnalytics(forceVal) {
             get("analytics").receive((succsess, res) => {
                 analyticsPresets = res;
-                const val = $(".presets select").val();
+                const val = $("#project-select").val();
                 $(".presets select").empty();
                 for (const preset of res) {
-                    $(".presets select").append(`<option value="${preset.name}">${preset.name}</option>`);
+                    $("#project-select").append(`<option value="${preset.name}">${preset.name} (${preset.owner == iduser ? "You" : preset.username})</option>`);
                 }
                 if(val && forceVal) {
                     $(".presets select").val(val);

@@ -11,15 +11,16 @@
         // overflow: scroll
 
     .graph
-        overflow: auto
+        overflow-x: auto
+        overflow-y: visible
         width: 100%
-        min-width: 100rem
+        // min-width: 100rem
 
     .presets
         padding-bottom: 2rem
         display: flex
         flex-direction: column
-        align-items: center
+        align-items: start
 
         button
             padding: 0.5rem
@@ -36,11 +37,16 @@
             padding: 0.5rem
 
     .select-row
-        border-top: 3px solid #333
+        // border-top: 3px solid #333
         display: flex
         // align-items: center
         flex-direction: row
         gap: 2rem
+
+    .select-row-parent
+
+    .canvas-parent
+        // overflow-x: visible
 
     .last-row
         padding-top: 1rem
@@ -52,7 +58,7 @@
 
 
     .add button
-        margin-top: 3rem
+        margin-top: 1rem
         align-self: center
         border-radius: 100%
         text-align: center
@@ -68,8 +74,11 @@
 
     .dropable
         .selector, .selector *, .selector::after, .selector::before
-            background: gray
+            background: #363
             filter: grayscale(0.5)
+
+        .docker-wrapper
+            background: none !important
 
         .selector *
             pointer-events: none
@@ -82,6 +91,9 @@
         padding-bottom: 0
         padding-top: 1.5rem
         background: #333
+
+        &.hover-drag, &.hover-drag::after, &.hover-drag::before
+            background: #393 !important
 
         .schow-result-btn
             background: #{$d}AA
@@ -175,14 +187,23 @@
             border-radius: 100%
             background: $c
             border: 1px solid #777
-            padding: 0.5rem
+            // padding: 0.5rem
             box-shadow: 0px 0px 15px 5px #2b72cf69
+            height: 1.2em
+            width: 1.2em
+            text-align: center
+            line-height: 1em
 
             &.mobile-big
-                padding: 1.5rem
+                // padding: 1.5rem
+                line-height: 2em
+                height: 2.4em
+                width: 2.4em
 
             &.mobile-half
-                padding: 1rem
+                line-height: 1.5em
+                height: 1.6em
+                width: 1.6em
 
             &:hover
                 background: cyan

@@ -1382,9 +1382,9 @@ class Table {
                 } else {
                     $(rowElem).append(this.getColumn(this.layout[column].callback(row[column])));
                 }
-            } else if(column in row){
+            } else if(column in row) {
                 $(rowElem).append(this.getColumn(row[column]));
-            } else{
+            } else {
                 $(rowElem).append(this.getColumn(""));
             }
         }

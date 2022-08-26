@@ -315,7 +315,7 @@ if(!isset($NO_GET_API)){
         } else {
             echo("supply distance, maxplace and comps arguments!");
         }
-    } else if(isset($_GET["getathletes"])) {
+    } else if(isset($_GET["setathletes"])) { // (getAthletes but post ids)
         $distances = $_GET["distances"] ?? ".";// RLIKE
         $comps = $_GET["comps"] ?? "."; //RLIKE
         $gender = $_GET["gender"] ?? "."; //RLIKE
@@ -327,7 +327,10 @@ if(!isset($NO_GET_API)){
         $locations = $_GET["locations"] ?? ".";// RLIKE
         $fromDate = $_GET["fromDate"] ?? "1910-04-30";// Between
         $toDate = $_GET["toDate"] ?? "2100-04-30";// Between
-        $ids  = $_GET["ids"] ?? "."; // RLIKE
+        // $ids  = $_GET["ids"] ?? "."; // RLIKE
+        $ids  = json_decode(file_get_contents('php://input'), true) ?? "."; // RLIKE
+        // var_dump($ids);
+        // exit();
         $limit  = $_GET["limit"] ?? "50"; // Limit
         $joinMethode  = $_GET["joinMethode"] ?? "and"; // Limit
         $countries  = $_GET["countries"] ?? "."; // Limit
@@ -370,7 +373,7 @@ if(!isset($NO_GET_API)){
         if(doIOwnAnalytics($name)) {
             deletAnalytics($name);
        } else {
-           echo "You cant delete preset you dont own!";
+           echo "\"You cant delete presets you dont own!\"";
        }
     } else if(isset($_GET["getanalytics"])) {
         echo json_encode(getAnalytics());
@@ -884,22 +887,20 @@ function searchAthletes($athletes, $aliasGroup) {
 
 function getAnalytics() {
     if(isLoggedIn()) {
-        return query("SELECT * FROM Tb_analyticsPreset WHERE `owner`=? OR public=1;", "i", $_SESSION["iduser"]);
+        return query("SELECT Tb_analyticsPreset.*, TbUser.username FROM Tb_analyticsPreset JOIN TbUser on TbUser.iduser=`owner` WHERE `owner`=? OR public=1;", "i", $_SESSION["iduser"]);
     } else {
-        return query("SELECT * FROM Tb_analyticsPreset WHERE public=1;");
+        return query("SELECT Tb_analyticsPreset.*, TbUser.username FROM Tb_analyticsPreset JOIN TbUser on TbUser.iduser=`owner` WHERE public = 1;");
     }
 }
 
 function updateAnalytics($name, $public, $json) {
-    if(isLoggedIn()) {
-        query("UPDATE Tb_analyticsPreset SET `public`=?, `json`=? WHERE `name`=? AND `owner`=?;", "issi", $public, $json, $name, $_SESSION["iduser"]);
-    }
+    if(!isLoggedIn()) return false;
+    return dbExecute("UPDATE Tb_analyticsPreset SET `public`=?, `json`=? WHERE `name`=? AND `owner`=?;", "issi", $public, $json, $name, $_SESSION["iduser"]);
 }
 
 function addAnalytics($name, $public, $json) {
-    if(isLoggedIn()) {
-        query("INSERT INTO Tb_analyticsPreset(`name`,`public`,`json`,`owner`) VALUES (?,?,?,?);", "sisi", $name, $public, $json, $_SESSION["iduser"]);
-    }
+    if(!isLoggedIn()) return false;
+    query("INSERT INTO Tb_analyticsPreset(`name`,`public`,`json`,`owner`) VALUES (?,?,?,?);", "sisi", $name, $public, $json, $_SESSION["iduser"]);
 }
 
 function analyticsExists($name) {
@@ -918,10 +919,8 @@ function deleteSelectPreset($presetName) {
 }
 
 function deletAnalytics($name) {
-    if(!isLoggedIn()) {
-        return;
-    }
-    query("DELETE FROM Tb_analyticsPreset WHERE owner = ? AND name = ?;", "is", $_SESSION["iduser"], $name);
+    if(!isLoggedIn()) return false;
+    return dbExecute("DELETE FROM Tb_analyticsPreset WHERE owner = ? AND name = ?;", "is", $_SESSION["iduser"], $name);
 }
 
 function doIOwnAnalytics($name) {

@@ -76,6 +76,18 @@ function post(mode, data) {
     return promise;
 }
 
+function objToUrlParams(obj) {
+    let url = "";
+    for (const key in obj) {
+        if (Object.hasOwnProperty.call(obj, key)) {
+            const element = obj[key];
+            if(element == undefined) continue;
+            url += `&${key}=${element}`;
+        }
+    }
+    return url;
+}
+
 /**
  * js get api
  * @param {text} property property to be called from the server
@@ -88,12 +100,7 @@ function get(property, data1, data2, data3){
     }
     let url = `/api/index.php?get${property}`;
     if(typeof data1 === 'object' ) {
-        for (const key in data1) {
-            if (Object.hasOwnProperty.call(data1, key)) {
-                const element = data1[key];
-                url += `&${key}=${element}`;
-            }
-        }
+        url += objToUrlParams(data1);
     } else {
         url += `=${data1}`;
         if(data2 !== undefined) {
@@ -128,6 +135,10 @@ function get(property, data1, data2, data3){
     return promise;
 }
 
+// alert = () => {
+//     throw new Exception("moin");
+// }
+
 function set(property, data){
     const promise = {
         receive: (callback) => {promise.callback = callback},
@@ -138,7 +149,11 @@ function set(property, data){
         // data: data,
         data: JSON.stringify(data),
         success: (response) => {
-            promise.callback(response);
+            if(isJson(response) && response.length > 0/* && !response.includes("error")*/){
+                promise.callback(JSON.parse(response));
+            } else {
+                promise.callback(response);
+            }
         },
         error: function(xhr, ajaxOptions, thrownError) {
             promise.callback(null);
