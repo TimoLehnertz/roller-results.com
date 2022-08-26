@@ -1585,6 +1585,14 @@ function search($name, $allowed) {
                 "type" => "competition"
             ];
         }
+        if(strlen($name) == 4 && sizeof($competitions)) {
+            $results[] = [
+                "id" => $name,
+                "name" => "Show all in ".$name,
+                "priority" => 10, // hight priority as there only one anyway
+                "type" => "year"
+            ];
+        }
     } else {
         /**
          * Team
