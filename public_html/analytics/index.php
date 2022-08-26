@@ -230,7 +230,7 @@ echoRandWallpaper();
                 this.elem.find(".run-btn").click(() => {this.run(true)});
                 this.elem.find(".schow-result-btn").click(() => {if(this.res !== undefined) {showResult(this.res);}});
 
-                if(isMobile()) {
+                // if(isMobile()) {
                     this.elem.click((e) => {
                         if(dragStartSelect && dragStartSelect.row.index == this.row.index -1 && !this.docked.includes(dragStartSelect)) {
                             this.dock(dragStartSelect);
@@ -238,7 +238,7 @@ echoRandWallpaper();
                             this.row.elem.removeClass("dropable");
                         }
                     });
-                }
+                // }
 
                 /**
                  * ToDo description
@@ -325,6 +325,9 @@ echoRandWallpaper();
 
             initDrag() {
                 if(isMobile()) {
+                    this.elem.find(".drag-btn").addClass("mobile-big");
+                }
+                // if(isMobile()) {
                     $(document).click(() => {
                         dragStartSelect = undefined;
                         $(".dropable").removeClass("dropable");
@@ -345,7 +348,7 @@ echoRandWallpaper();
                             }
                         }
                     });
-                }
+                // }
                 this.elem.on("dragstart", (e) => {
                     dragStartSelect = this;
                     if(this.row.rowAfter) {
@@ -854,7 +857,7 @@ echoRandWallpaper();
                 const canvasParent = $(`<div class="canvas-parent"></div>`);
                 // this.canvas.width = this.elem.width();
                 this.canvas.width = 10000;
-                this.canvas.height = isMobile() ? 150 : 150;
+                this.canvas.height = 150;
                 this.ctx = this.canvas.getContext('2d');
                 canvasParent.append(this.canvas);
                 this.elem.append(canvasParent);
