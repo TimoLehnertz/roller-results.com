@@ -3,20 +3,6 @@ include_once "../api/index.php";
 include_once "../header.php";
 echoRandWallpaper();
 ?>
-<script>
-    const iduser = <?php
-    if(isLoggedIn()) {
-        echo $_SESSION["iduser"];
-    } else {
-        echo "-1";
-    }?>;
-    const isLoggedIn = <?php
-    if(isLoggedIn()) {
-        echo "true";
-    } else {
-        echo "false";
-    }?>;
-</script>
 <main class="main competition-page analytics">
     <div class="top-site"></div>
     <svg style="margin-bottom: 0; position: relative; transform: translateY(85%); z-index: -1;" xmlns="http://www.w3.org/2000/svg" fill="none" preserveAspectRatio="none" viewBox="0 0 1680 40" class="curvature" style="bottom: -1px;"><path d="M0 40h1680V30S1340 0 840 0 0 30 0 30z" fill="#ddd"></path></svg>
@@ -1068,11 +1054,11 @@ echoRandWallpaper();
         }
 
         function saveAnalytics() {
-            if(!isLoggedIn) return alert("You need to be logged in");
+            if(!phpUser.isLoggedIn) return alert("You need to be logged in");
             const analyticsName = $(".analytics-name").val();
             if(analyticsName.length == 0) return alert("Pleas fill in a name");
             for (const preset of analyticsPresets) {
-                if(preset.name === analyticsName && preset.owner === iduser) {
+                if(preset.name === analyticsName && preset.owner === phpUser.iduser) {
                     if(!confirm(`Are you sure that you want to overwrite "${analyticsName}"?`)) return;
                 }
             }
@@ -1135,7 +1121,7 @@ echoRandWallpaper();
                 const val = $("#project-select").val();
                 $("#project-select").empty();
                 for (const preset of res) {
-                    $("#project-select").append(`<option value="${preset.name}">${preset.name} (${preset.owner == iduser ? "You" : preset.username}, ${preset.public == "1" ? "public" : "private"})</option>`);
+                    $("#project-select").append(`<option value="${preset.name}">${preset.name} (${preset.owner == phpUser.iduser ? "You" : preset.username}, ${preset.public == "1" ? "public" : "private"})</option>`);
                 }
                 if(val && forceVal) {
                     $("#project-select").val(val);
