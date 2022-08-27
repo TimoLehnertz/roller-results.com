@@ -268,7 +268,7 @@ function mysqlTimestampYYY_mm_dd(timestamp) {
 
 function compToElem(comp1) {
     const comp = JSON.parse(JSON.stringify(comp1)); // clone to allow changes
-    const compElem = $(`<div class="padding left top bottom half">${comp.raceYear} ${comp.type} ${comp.name || "no name"} ${comp.location} </div>`);
+    const compElem = $(`<div class="padding left top bottom half">${comp.raceYear} ${comp.type} ${comp.name || ""} ${comp.location} </div>`);
     const editBtn = $(`<button class="btn blender alone margin right">Edit</button>`);
     const seeRacesBtn = $(`<button class="btn blender alone margin right">See races</button>`);
     compElem.prepend(seeRacesBtn);
