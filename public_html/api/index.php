@@ -514,8 +514,7 @@ function updateComp($comp) {
 
 function isAllSet($obj, $arr) {
     foreach ($arr as $property) {
-        if(!isset($obj[$property])) {
-            echo "$property is not set!";
+        if(!array_key_exists($property, $obj)) {
             return false;
         }
     }
