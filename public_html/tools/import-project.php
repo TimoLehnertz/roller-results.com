@@ -171,8 +171,8 @@ function echoAliasSelect() {
         <h2 class="align center">Step 1: <span class="font size medium margin left">Create event</span></h2>
         <br>
         <p>Select competition
-            <?php echoCompsSelect();?>
-            <a target="blank" href="create-competition.php">Create new</a> (reload this page)
+            <?php echoCompsSelect();?><br>
+            <a href="create-competition.php">Create new</a>
         </p>
     </div>
     <div class="section light">
@@ -1103,7 +1103,7 @@ function initiateResults(loadedResults) {
         }
         if(found) continue;
         athletes.push({
-            alias: result.athleteID,
+            alias: result.athleteID ?? result.startNumber,
             firstName: result.firstName,
             lastName: result.lastName,
             gender: result.gender,
