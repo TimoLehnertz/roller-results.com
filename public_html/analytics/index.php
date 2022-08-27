@@ -193,7 +193,7 @@ echoRandWallpaper();
                 this.elem = $(`
                 <div class="selector ${this.uid}">
                     <div class="docker-wrapper"></div>
-                    <textarea rows="2" class="name" type="text"  placeholder="Name"></textarea>
+                    <textarea rows="2" style="resize: vertical;" class="name" type="text"  placeholder="Name"></textarea>
                     <div class="docker-join"></div>
                     <button class="delete-btn">X</button>
                     <button class="properties-btn"><i class="fas fa-sliders-h margin right"></i>Properties</button>
@@ -212,7 +212,7 @@ echoRandWallpaper();
                 //         <button class="remove-preset-btn">Remove</button>
                 //     </div>
                 new Tooltip($(this.elem.find(".delete-btn")), "Delete this query");
-                new Tooltip($(this.elem.find(".name")), "Give this query a meaningful name");
+                // new Tooltip($(this.elem.find(".name")), "Give this query a meaningful name");
                 // new Tooltip($(this.elem.find(".properties-btn")), "Configure this query to your needs");
                 new Tooltip($(this.elem.find(".run-btn")), "Run this query and all that are before");
                 new Tooltip($(this.elem.find(".preset-select")), "Select a preset for this query. Use the load button to load it and remove button to remove it");
@@ -993,7 +993,7 @@ echoRandWallpaper();
                 }
             });
             table.init();
-            const stats = ["medals", "medalScore"];
+            const stats = ["medals", "medalScore", "goldMedals", "raceCount"];
             $(".summary").empty();
             $(".summary").append(`
             <h3>Summary</h3>
@@ -1011,7 +1011,7 @@ echoRandWallpaper();
                     avg += parseFloat(row[stat]);
                 }
                 avg /= res.length;
-                $(".summary ul").append(`<li>${stat} stats: Min=${code(min)}, Max=${code(max)}, Average=${code(avg)}</li>`);
+                $(".summary ul").append(`<li>${stat} stats: Min=${code(min)}, Max=${code(max)}, Average=${code(Math.round(avg * 100) / 100)}</li>`);
             }
         }
 
@@ -1158,6 +1158,7 @@ echoRandWallpaper();
 
         function updateAnalytics(forceVal) {
             get("analytics").receive((succsess, res) => {
+                if(!succsess) return alert("An error occoured :/");
                 analyticsPresets = res;
                 const val = $("#project-select").val();
                 $("#project-select").empty();
@@ -1242,11 +1243,20 @@ echoRandWallpaper();
         }, 100);
 
         const recoveredAnalytics = JSON.parse(localStorage.getItem("Analytics"));
+        const recoveredProjectName = localStorage.getItem("ProjectName");
         if(recoveredAnalytics) {
             if(getSelectorCount(recoveredAnalytics) > 0) {
                 displayAnalytics(recoveredAnalytics);
             }
         }
+        if(recoveredProjectName) {
+            $(() => {
+                $("#project-select").val(recoveredProjectName);
+            })
+        }
+        $("#project-select").change(() => {
+            localStorage.setItem("ProjectName", $("#project-select").val());
+        });
 
     </script>
 </main>
