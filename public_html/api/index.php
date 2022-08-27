@@ -479,6 +479,14 @@ if(!isset($NO_GET_API)){
     }
 }
 
+function requestFeatue($title, $description) {
+    if(sizeof(query("SELECT * FROM TbDevLog WHERE title = ?;", "s", $title)) > 0) {
+        // echo "This request exists already";
+        return false;
+    }
+    return dbExecute("INSERT INTO TbDevLog(title, description, status) VALUES(?,?,'Requested');", "ss", $title, $description);
+}
+
 function putAthleteImage($imgPath, $idAthlete) {
     if(!isLoggedIn()) return false;
     if(sizeof(getAthlete($idAthlete)) == 0) return false;

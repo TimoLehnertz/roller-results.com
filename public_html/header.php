@@ -63,7 +63,7 @@ include_once "head.php";
                     <a href="/index.php"><i class="fas fa-home margin right"></i>Home</a>
                 </li>
                 <li>
-                    <a href="/analytics"><i class="fas fa-binoculars margin right"></i>Analytics</a>
+                    <a href="/analytics"><i class="fas fa-binoculars margin right"></i><span class="code font color green">Update</span> Analytics</a>
                 </li>
                 <li>
                     <a href="/countries"><i class="fas fa-globe-americas margin right"></i>Countries</a>
@@ -87,7 +87,7 @@ include_once "head.php";
                     <a href="/gallery"><i class="fa fa-solid fa-images margin right"></i>Gallery</a>
                 </li>
                 <li>
-                    <a href="/blog"><i class="fa fa-brands fa-stack-exchange margin right"></i></i>Blog</a>
+                    <a href="/blog"><i class="fa fa-brands fa-stack-exchange margin right"></i></i><span class="code font color green">Update</span> Features</a>
                 </li>
                 <li>
                     <a href="/music"><i class="fa fa-solid fa-music margin right"></i>Music</a>
