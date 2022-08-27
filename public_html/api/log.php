@@ -31,7 +31,11 @@ if(isLoggedIn()) {
     $user = $_SESSION["iduser"];
 }
 
-$isMobile = $_GET["isMobile"] ?? "0";
+$isMobile = "0";
+if(isset($_GET["isMobile"])) {
+    $isMobile = $_GET["isMobile"];
+}
+
 
 dbExecute("INSERT INTO `results`.`TbLog`
 (`userId`,
@@ -43,7 +47,7 @@ dbExecute("INSERT INTO `results`.`TbLog`
 `user`,
 `isMobile`)
 VALUES
-(?,?,?,?,?,?,?,?);", "ssssssii", $uId, $lastPage, $currentPage, $ip, $loc, $device, $user, $isMobile);
+(?,?,?,?,?,?,?,?);", "ssssssis", $uId, $lastPage, $currentPage, $ip, $loc, $device, $user, $isMobile);
 
 
 function ip_info($ip = NULL, $purpose = "location", $deep_detect = TRUE) {
