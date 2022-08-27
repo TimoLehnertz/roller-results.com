@@ -43,7 +43,7 @@ dbExecute("INSERT INTO `results`.`TbLog`
 `user`,
 `isMobile`)
 VALUES
-(?,?,?,?,?,?,?);", "ssssssii", $uId, $lastPage, $currentPage, $ip, $loc, $device, $user, $isMobile);
+(?,?,?,?,?,?,?,?);", "ssssssii", $uId, $lastPage, $currentPage, $ip, $loc, $device, $user, $isMobile);
 
 
 function ip_info($ip = NULL, $purpose = "location", $deep_detect = TRUE) {
