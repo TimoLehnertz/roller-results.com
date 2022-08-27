@@ -370,24 +370,28 @@ echoRandWallpaper();
                 });
             }
 
+            updateDockerDots() {
+                this.elem.find(`.docker`).remove();
+                for (const select of this.docked) {
+                    const docker = $(`<div class="docker ${isMobile() ? "mobile-half" : ""}">x</div>`);
+                    this.elem.find(".docker-wrapper").append(docker);
+                    docker.click(() => {
+                        if(this.row.elem.hasClass("dropable")) return;
+                        this.undock(select);
+                    });
+                }
+            }
+
             dock(select) {
                 this.docked.push(select);
-                const uid = getUid();
-                select.dockUid = uid;
-                const docker = $(`<div class="docker ${uid} ${isMobile() ? "mobile-half" : ""}">x</div>`);
-                this.elem.find(".docker-wrapper").append(docker);
-                docker.click(() => {
-                    if(this.row.elem.hasClass("dropable")) return;
-                    this.undock(select, uid);
-                });
                 this.row.rowBefore.draw();
+                this.updateDockerDots();
                 this.updateJoin();
             }
 
             undock(select) {
                 this.docked.splice(this.docked.indexOf(select), 1);
-                this.elem.find(`.${select.dockUid}`).remove();
-                // this.row.rowBefore.draw();
+                this.updateDockerDots();
                 this.updateJoin();
             }
 
