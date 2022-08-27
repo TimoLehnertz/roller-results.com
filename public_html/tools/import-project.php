@@ -379,7 +379,11 @@ function compToElem(comp1) {
                 console.log("saving changes");
                 submitBtn.after(`<div class="loading circle"></div>`);
                 set("updateCompetition", comp).receive((res) => {
-                    if(res !== "succsess") return alert(res);
+                    if(res !== "succsess") {
+                        console.log(res);
+                        alert(res);
+                        return;
+                    }
                     $(".loading").remove();
                     updateYourContent();
                     setTimeout(() => {
