@@ -1,11 +1,15 @@
 <?php
+// allow this session for the api
+if(session_status() != PHP_SESSION_ACTIVE){
+    session_start();
+}
+$_SESSION["apiGranted"] = true;
 
 include_once "api/userAPI.php";
 
 if(!isLoggedIn()){
     tryRememberMeLogin();
 }
-
 
 include_once "includes/error.php";
 include_once "api/userAPI.php";

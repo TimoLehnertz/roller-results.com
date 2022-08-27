@@ -139,7 +139,7 @@ function get(property, data1, data2, data3){
 //     throw new Exception("moin");
 // }
 
-function set(property, data){
+function set(property, data) {
     const promise = {
         receive: (callback) => {promise.callback = callback},
         callback: () => {}

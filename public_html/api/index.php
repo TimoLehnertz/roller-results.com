@@ -1,36 +1,118 @@
 <?php
-$allowedOrigins = [
-    'https://api.jquery.com',
-    'https://flow.polar.com',
-    'http://localhost/',
- ];
- if(isset($_SERVER['HTTP_ORIGIN'])) {
-     if(in_array($_SERVER['HTTP_ORIGIN'], $allowedOrigins)) {
-         header("Access-Control-Allow-Origin: ".$_SERVER['HTTP_ORIGIN']);
-     }
- }
-/**
- * Php api for interacting with the database
- * 
- * get methods always return a json array of the requested data and take an ID
- * the returned array does not include child arrays. only specific information
- * 
- * get methods:
- *      getrace 
- *          id
- *      getcompetition
- *          id
- *      getresult
- *          id
- *      getAthlete
- *          id
- */
-
 include_once $_SERVER["DOCUMENT_ROOT"]."/../data/dbh.php";
 include_once $_SERVER["DOCUMENT_ROOT"]."/includes/roles.php";
 include_once $_SERVER["DOCUMENT_ROOT"]."/api/userAPI.php";
 include_once $_SERVER["DOCUMENT_ROOT"]."/includes/roles.php";
-canI("managePermissions");
+
+$allowedOrigins = [
+    // 'https://api.jquery.com',
+    // 'https://flow.polar.com',
+    // 'http://localhost/',
+];
+if(isset($_SERVER['HTTP_ORIGIN'])) {
+    if(in_array($_SERVER['HTTP_ORIGIN'], $allowedOrigins)) {
+        header("Access-Control-Allow-Origin: ".$_SERVER['HTTP_ORIGIN']);
+    }
+}
+
+// nameOfFunction => minPermissionLevel
+// has to stay updated because not listed functions will be available for everyone
+$functions = [
+    "getathlete" => 1,
+    "getcompetition" => 1,
+    "getathleteVideos" => 1,
+    "getrace" => 1,
+    "getraces" => 1,
+    "getcountry" => 1,
+    "getcountries" => 1,
+    "getworldMovement" => 1,
+    "search" => 1,
+    "getathleteCompetitions" => 1,
+    "getcountryCompetitions" => 1,
+    "getcountryRacesFromCompetition" => 1,
+    "getcountryAthletes" => 1,
+    "getcountryAthletes" => 1,
+    "getathleteBestTimes" => 1,
+    "getputAthleteImage" => 1,
+    "getremoveAthleteImage" => 1,
+    "getcountryBestTimes" => 1,
+    "getcountryCareer" => 1,
+    "getaliasGroup" => 1,
+    "getallAthletes" => 1,
+    "getcountryCodes" => 1,
+    "getallCompetitions" => 1,
+    "getallDistances" => 1,
+    "getcountryScores" => 1,
+    "gethallOfFame" => 1,
+    "createResults" => 1,
+    "createRace" => 1,
+    "getathleteRacesFromCompetition" => 1,
+    "compAthleteMedals" => 1,
+    "compCountryMedals" => 1,
+    "get500mData" => 1,
+    "getyourCompetitions" => 1,
+    "getRaceDescription" => 1,
+    "getteamAdvantage" => 1,
+    "uploadResults" => 1,
+    "uploadTriggers" => 1,
+    "getathleteImages" => 1,
+    "getdeleteCompetition" => 1,
+    "getteamAdvantageDetails" => 1,
+    "setathletes" => 1,
+    "getselectPresets" => 1,
+    "getdeleteRace" => 1,
+    "getdeleteSelectPreset" => 1,
+    "getdeleteAnalytics" => 1,
+    "getanalytics" => 1,
+    "getimgAthletes" => 1,
+    "searchAthletes" => 1,
+    "putAliases" => 1,
+    "getathleteMedals" => 1,
+    "getcompRaces" => 1,
+    "getcompRacesFlow" => 1,
+    "getraceAthletes" => 1,
+    "overtakes" => 1,
+    "getovertakes" => 1,
+    "getovertakesByDistance" => 1,
+    "aliasIds" => 1,
+    "setraceLinks" => 1,
+    "setanalytics" => 1,
+    "setupdateCompetition" => 1,
+];
+
+
+if(session_status() != PHP_SESSION_ACTIVE){
+    session_start();
+}
+if(!isset($_SESSION["apiGranted"]) || $_SESSION["apiGranted"] != true) {
+    $NO_GET_API = true;
+    if(isset($_GET["apiKey"])) {
+        if(checkApiKey($_GET["apiKey"])) {
+            $NO_GET_API = false;
+        } else {
+            echo "Your API key doesn't allow you to do that!";
+        }
+    }
+}
+
+function checkApiKey($apiKey) {
+    global $functions;
+    $apiKeys = query("SELECT * FROM TbApiKey WHERE `key`=?;", "s", $apiKey);
+    if(sizeof($apiKeys) == 0) return false;
+    $keyPermissionLevel = $apiKeys[0]["permissionLevel"];
+    if($keyPermissionLevel == 0) return false;
+    foreach ($_GET as $key => $value) { // check all get parameters for permission
+        if(!array_key_exists($key, $functions)) continue; // skip unrelevant get parameter
+        if($keyPermissionLevel < $functions[$key]) {
+            dbExecute("UPDATE TbApiKey SET amountUsedWrongly = amountUsedWrongly + 1 WHERE `key`=?;", "s", $apiKey); // remember wrong usage
+            return false;
+        }
+    }
+    dbExecute("UPDATE TbApiKey SET amountUsed = amountUsed + 1 WHERE `key`=?;", "s", $apiKey); // remember wrong usage
+    return true;
+}
+
+// canI("managePermissions");
 
 /**
  * setup
@@ -41,28 +123,28 @@ $usedMedals = "WM,World Games";
 /**
  * Getters
  */
-if(!isset($NO_GET_API)){
-    if(isset($_GET["scoreInfluences"])){
-        $scoreInfluences = $_GET["scoreInfluences"];
-    }
-    if(isset($_GET["usedMedals"])){
+if(!isset($NO_GET_API) || $NO_GET_API === false) {
+    // if(isset($_GET["scoreInfluences"])) {
+    //     $scoreInfluences = $_GET["scoreInfluences"];
+    // }
+    if(isset($_GET["usedMedals"])) {
         $usedMedals = $_GET["usedMedals"];
     }
-    if(isset($_GET["getathlete"])){
+    if(isset($_GET["getathlete"])) {
         $res = getAthlete($_GET["getathlete"]);
         if($res !== false){
             echo json_encode($res);
         } else{
             echo "error in api";
         }
-    } else if(isset($_GET["getcompetition"])){
+    } else if(isset($_GET["getcompetition"])) {
         $res = getCompetition($_GET["getcompetition"]);
         if($res !== false){
             echo json_encode($res);
         } else{
             echo "error in api";
         }
-    } else if(isset($_GET["getathleteVideos"])){
+    } else if(isset($_GET["getathleteVideos"])) {
         echo json_encode(getAthleteVideos($_GET["getathleteVideos"]));
     } else if(isset($_GET["getresult"])){
         $res = getResult($_GET["getresult"]);
@@ -71,35 +153,35 @@ if(!isset($NO_GET_API)){
         } else{
             echo "error in api";
         }
-    } else if(isset($_GET["getrace"])){
+    } else if(isset($_GET["getrace"])) {
         $res = getRace($_GET["getrace"]);
         if($res !== false){
             echo json_encode($res);
         } else{
             echo "error in api";
         }
-    }else if(isset($_GET["getraces"])){
+    }else if(isset($_GET["getraces"])) {
         $res = getRaces();
         if($res !== false){
             echo json_encode($res);
         } else{
             echo "error in api";
         }
-    } else if(isset($_GET["getcountry"])){
+    } else if(isset($_GET["getcountry"])) {
         $res = getCountry($_GET["getcountry"]);
         if($res !== false){
             echo json_encode($res);
         } else{
             echo "error in api";
         }
-    } else if(isset($_GET["getcountries"])){
+    } else if(isset($_GET["getcountries"])) {
         $res = getCountries();
         if($res !== false){
             echo json_encode($res);
         } else{
             echo "error in api";
         }
-    } else if(isset($_GET["getworldMovement"])){
+    } else if(isset($_GET["getworldMovement"])) {
         $res = getWorldMovement();
         if($res !== false){
             echo json_encode($res);
@@ -117,21 +199,21 @@ if(!isset($NO_GET_API)){
         } else{
             echo "error in api";
         }
-    } else if(isset($_GET["getathleteCompetitions"])){
+    } else if(isset($_GET["getathleteCompetitions"])) {
         $res = getAthleteCompetitions($_GET["getathleteCompetitions"]);
         if($res !== false){
             echo json_encode($res);
         } else{
             echo "error in api";
         }
-    } else if(isset($_GET["getcountryCompetitions"])){
+    } else if(isset($_GET["getcountryCompetitions"])) {
         $res = getCountryCompetitions($_GET["getcountryCompetitions"]);
         if($res !== false){
             echo json_encode($res);
         } else{
             echo "error in api";
         }
-    }else if(isset($_GET["getcountryRacesFromCompetition"]) && isset($_GET["data"])){
+    }else if(isset($_GET["getcountryRacesFromCompetition"]) && isset($_GET["data"])) {
         $res = getCountryRacesFromCompetition($_GET["getcountryRacesFromCompetition"], $_GET["data"]);
         if($res !== false){
             echo json_encode($res);
@@ -150,26 +232,26 @@ if(!isset($NO_GET_API)){
             echo "error in api";
         }
     }
-    else if(isset($_GET["getathleteBestTimes"])){
+    else if(isset($_GET["getathleteBestTimes"])) {
         $res = getAthleteBestTimes($_GET["getathleteBestTimes"]);
         if($res !== false){
             echo json_encode($res);
         } else{
             echo "error in api";
         }
-    } else if(isset($_GET["getputAthleteImage"]) && isset($_GET["data"])){
+    } else if(isset($_GET["getputAthleteImage"]) && isset($_GET["data"])) {
         if(putAthleteImage($_GET["getputAthleteImage"], $_GET["data"])) {
             echo "true";
         } else {
             echo "false";
         }
-    } else if(isset($_GET["getremoveAthleteImage"]) && isset($_GET["data"])){
+    } else if(isset($_GET["getremoveAthleteImage"]) && isset($_GET["data"])) {
         if(removeAthleteImage($_GET["getremoveAthleteImage"], $_GET["data"])) {
             echo "true";
         } else {
             echo "false";
         }
-    } else if(isset($_GET["getcountryBestTimes"])){
+    } else if(isset($_GET["getcountryBestTimes"])) {
         $res = getCountryBestTimes($_GET["getcountryBestTimes"]);
         if($res !== false){
             echo json_encode($res);
@@ -177,7 +259,7 @@ if(!isset($NO_GET_API)){
             echo "error in api";
         }
     }
-    else if(isset($_GET["getcountryCareer"])){
+    else if(isset($_GET["getcountryCareer"])) {
         $res = getCountryCareer($_GET["getcountryCareer"]);
         if($res !== false){
             echo json_encode($res);
@@ -193,21 +275,21 @@ if(!isset($NO_GET_API)){
         } else{
             echo "error in api";
         }
-    } else if(isset($_GET["getallAthletes"])){
+    } else if(isset($_GET["getallAthletes"])) {
         $res = getAllAthletes($scoreInfluences);
         if($res !== false){
             echo json_encode($res);
         } else{
             echo "error in api";
         }
-    } else if(isset($_GET["getcountryCodes"])){
+    } else if(isset($_GET["getcountryCodes"])) {
         $res = getCountryCodes();
         if($res !== false){
             echo json_encode($res);
         } else{
             echo "error in api";
         }
-    } else if(isset($_GET["getallCompetitions"])){
+    } else if(isset($_GET["getallCompetitions"])) {
         $res = getAllCompetitions();
         if($res !== false){
             echo json_encode($res);
@@ -445,25 +527,15 @@ if(!isset($NO_GET_API)){
             exit(0);
         }
         echo json_encode(getAthletesByAlias($search["aliasGroup"], $search["aliases"]));
-    }
-    /**
-     * set api
-     */
-    /**
-     * takes an array of objects each {idRace: ?, link: "?"}
-     * link beeing a ; seperated string of youtube links
-     */
-    if(canI("managePermissions")){
-        if(isset($_GET["setraceLinks"])){
-            $data = json_decode(file_get_contents('php://input'), true);
-            if($data === null){
-                echo "Data could not be parsed :(";
-                exit(0);
-            }
-            setRaceLinks($data);
+    } else if(isset($_GET["setraceLinks"])) {
+        if(!canI("managePermissions")) exit(0);
+        $data = json_decode(file_get_contents('php://input'), true);
+        if($data === null){
+            echo "Data could not be parsed :(";
+            exit(0);
         }
-    }
-    if(isset($_GET["setanalytics"]) && isset($_GET["name"])){
+        setRaceLinks($data);
+    } else if(isset($_GET["setanalytics"]) && isset($_GET["name"])){
         if(!isLoggedIn()) {
             echo "you need to be logged in";
             exit(0);
@@ -478,8 +550,7 @@ if(!isset($NO_GET_API)){
         } else {
             addAnalytics($name, $public, $json);
         }
-    }
-    if(isset($_GET["setupdateCompetition"])){
+    } else if(isset($_GET["setupdateCompetition"])){
         $newComp = json_decode(file_get_contents('php://input'), true);
         if(!isAllSet($newComp, ["idCompetition", "name", "startDate", "endDate", "location", "type", "country", "latitude", "longitude", "contact"])) {
             echo "Invalid request";
