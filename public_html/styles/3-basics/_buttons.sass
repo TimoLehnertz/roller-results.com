@@ -30,11 +30,14 @@
             border-bottom-left-radius: 0.7rem
             margin-right: 1px
 
-        &:hover
+        &:hover:not(:disabled)
             background-color: #747474
         
-        &:active
+        &:active:not(:disabled)
             background-color: #426dae
+
+        &:disabled
+            color: #a1a1a1
 
     &.border-only
         border: none

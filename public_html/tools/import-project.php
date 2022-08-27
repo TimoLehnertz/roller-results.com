@@ -208,7 +208,7 @@ function echoAliasSelect() {
         <p class="remove-me-on-athlete-finish">Save athletes to proceed</p>
         <div class="race-preview flex mobile align-start">
             <div>
-                <h3>Existing races:</h3>
+                <h3>Existing races: <button disabled class="update-existing-btn btn blender alone" onclick="updateExistingRaces()">Refresh</button></h3>
                 <div class="existing-races"></div>
             </div>
             <div>
@@ -217,12 +217,222 @@ function echoAliasSelect() {
             </div>
         </div>
     </div>
+    <section class="section light">
+        <h2>Your content </h2>
+        <?php if(!isLoggedIn()) {
+            echo "<p>Log in to see your content</p>";
+        } else {?>
+            <button class="btn blender alone" onclick="updateYourContent()">Refresh</button>
+            <div class="your-competitions margin top"></div>
+        <?php } ?>
+    </section>
 </main>
 <script>
 
 // $(window).bind('beforeunload', function(){
 //   return 'Are you sure you want to leave? Not uploaded data will be lost';
 // });
+if(phpUser.loggedIn) {
+    updateYourContent();
+}
+
+function updateYourContent() {
+    get("yourCompetitions").receive((succsess, comps) => {
+        if(!succsess) return alert("An error occoured please try again later");
+        if(!Array.isArray(comps)) return alert(comps);
+        $(".your-competitions").empty();
+        if(comps.length == 0) {
+            $(".your-competitions").append(`Upload results to see this section`);
+        }
+        let i = 0;
+        for (const comp of comps) {
+            const compElem = compToElem(comp);
+            $(".your-competitions").append(compElem);
+            if(i % 2 == 0) {
+                compElem.css("background", "#AAA");
+            }
+            i++;
+        }
+    });
+}
+
+function mysqlTimestampToDate(timestamp) {
+    let date = timestamp.replace( /[-]/g, '/' );
+    date = Date.parse(date);
+    return new Date(date);
+}
+
+function mysqlTimestampYYY_mm_dd(timestamp) {
+    return timestamp.split(" ")[0];
+}
+
+function compToElem(comp1) {
+    const comp = JSON.parse(JSON.stringify(comp1)); // clone to allow changes
+    const compElem = $(`<div class="padding left top bottom half">${comp.raceYear} ${comp.type} ${comp.name || "no name"} ${comp.location} </div>`);
+    const editBtn = $(`<button class="btn blender alone margin right">Edit</button>`);
+    const seeRacesBtn = $(`<button class="btn blender alone margin right">See races</button>`);
+    compElem.prepend(seeRacesBtn);
+    compElem.prepend(editBtn);
+    
+    
+    comp.startDate = mysqlTimestampYYY_mm_dd(comp.startDate);
+    comp.endDate = mysqlTimestampYYY_mm_dd(comp.endDate);
+    
+    const submitBtn = $(`<button class="btn blender alone">Save changes</button>`);
+    const dropDownSettings = [
+        {
+            element: "Edit comp #" + comp.idCompetition,
+        }, {
+            type: "input",
+            label: "name",
+            inputType: "text",
+            data: comp.name,
+            attributes: {
+                value: () => comp.name,
+            },
+            change: (e, val) => comp.name = val
+        }, {
+            type: "input",
+            label: "Start date",
+            inputType: "date",
+            data: comp.startDate,
+            attributes: {
+                value: () => comp.startDate,
+            },
+            change: (e, val) => comp.startDate = val
+        }, {
+            type: "input",
+            label: "End date",
+            inputType: "date",
+            data: comp.endDate,
+            attributes: {
+                value: () => comp.endDate,
+            },
+            change: (e, val) => comp.endDate = val
+        }, {
+            type: "input",
+            label: "Location",
+            inputType: "text",
+            data: comp.location,
+            attributes: {
+                value: () => comp.location,
+            },
+            change: (e, val) => comp.location = val
+        }, {
+            type: "input",
+            label: "Description",
+            inputType: "text",
+            data: comp.description,
+            attributes: {
+                value: () => comp.description,
+            },
+            change: (e, val) => comp.description = val
+        }, {
+            type: "input",
+            label: "Type",
+            inputType: "text",
+            data: comp.type,
+            attributes: {
+                value: () => comp.type,
+            },
+            change: (e, val) => comp.type = val
+        }, {
+            type: "input",
+            label: "Country",
+            inputType: "text",
+            data: comp.country,
+            attributes: {
+                value: () => comp.country,
+            },
+            change: (e, val) => comp.country = val
+        }, {
+            type: "input",
+            label: "Latitude",
+            inputType: "number",
+            data: comp.latitude,
+            attributes: {
+                value: () => comp.latitude,
+            },
+            change: (e, val) => comp.latitude = val
+        }, {
+            type: "input",
+            label: "Longitude",
+            inputType: "number",
+            data: comp.longitude,
+            attributes: {
+                value: () => comp.longitude,
+            },
+            change: (e, val) => comp.longitude = val
+        }, {
+            type: "input",
+            label: "Contact",
+            inputType: "text",
+            data: "moin",
+            attributes: {
+                value: () => comp.contact,
+            },
+            change: (e, val) => comp.contact = val
+        }, {
+            type: "dom",
+            data: submitBtn,
+            onclick: () => {
+                console.log("saving changes");
+                submitBtn.after(`<div class="loading circle"></div>`);
+                set("updateCompetition", comp).receive((res) => {
+                    if(res !== "succsess") return alert(res);
+                    $(".loading").remove();
+                    updateYourContent();
+                    setTimeout(() => {
+                        alert("Saved changes");
+                    }, 100);
+                });
+            }
+        }
+    ];
+    let racesShown = false;
+    seeRacesBtn.click(() => {
+        if(racesShown) {
+            compElem.find(".comp-race").remove();
+            racesShown = false;
+            seeRacesBtn.text("See races");
+            return;
+        }
+        compElem.append(`<div class="loading circle"></div>`);
+        get("compRaces", comp.idCompetition).receive((succsess, races) => {
+            if(!succsess) alert("An error occoured :/ please try again later");
+            for (const race of races) {
+                compElem.append(getRaceEdidElem(race));
+            }
+            racesShown = true;
+            seeRacesBtn.text("Hide races");
+            compElem.find(".loading").remove();
+        });
+    });
+    const dropdown = new Dropdown(editBtn, dropDownSettings);
+    return compElem;
+}
+
+function getRaceEdidElem(race) {
+    const owned = phpUser.isAdmin || phpUser.iduser == race.creator;
+    const elem =$(`<div class="comp-race padding top bottom half padding left">${race.distance} ${race.trackStreet} ${race.category} ${race.gender}</div>`);
+    if(owned) {
+        const deleteBtn = $(`<button class="btn blender alone margin right">Delete</button>`);
+        deleteBtn.click(() => {
+            elem.append(`<div class="loading circle"></div>`);
+            deleteRace(race, (succsess) => {
+                if(succsess) {
+                    alert("Succsessfully deleted race");
+                    elem.remove();
+                } else {
+                    alert("An error occoured :/");
+                }
+                elem.find(".loading").remove();
+            });
+        });
+        elem.prepend(deleteBtn);
+    }
+    return elem;
+}
 
 $(() => {
     const idCompetition = sessionStorage.getItem('importScriptIdCompetition');
@@ -295,6 +505,7 @@ function compChanged() {
 function updateExistingRaces() {
     const idCompetition = $(".comps-select").val();
     if(idCompetition == "-1234") return;
+    $(".update-existing-btn").attr("disabled", false);
     get("competition", idCompetition).receive((succsess, comp) => {
         if(!succsess) return;
         existingRaces = comp.races;

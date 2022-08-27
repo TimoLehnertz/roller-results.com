@@ -275,6 +275,8 @@ if(!isset($NO_GET_API)){
         }
     } else if(isset($_GET["get500mData"])){
         echo json_encode(get500mData());
+    } else if(isset($_GET["getyourCompetitions"])){
+        echo json_encode(getYourCompetitions());
     }
     /**
     * Year: year of competition
@@ -476,6 +478,54 @@ if(!isset($NO_GET_API)){
         } else {
             addAnalytics($name, $public, $json);
         }
+    }
+    if(isset($_GET["setupdateCompetition"])){
+        $newComp = json_decode(file_get_contents('php://input'), true);
+        if(!isAllSet($newComp, ["idCompetition", "name", "startDate", "endDate", "location", "type", "country", "latitude", "longitude", "contact"])) {
+            echo "Invalid request";
+            exit(0);
+        }
+        updateComp($newComp);
+    }
+}
+
+function updateComp($comp) {
+    if(!isLoggedIn()) {
+        echo "You need to be logged in";
+        return false;
+    }
+    $oldComp = query("SELECT * FROM TbCompetition WHERE idCompetition = ?;", "i", $comp["idCompetition"]);
+    if(sizeof($oldComp) == 0) {
+        echo "invalid id";
+        return false;
+    }
+    if(!canI("managePermissions") && $oldComp[0]["creator"] != $_SESSION["iduser"]) {
+        echo "You dont have permission to do that!";
+        return false;
+    }
+    if(!dbExecute("UPDATE TbCompetition SET name=?, startDate=?, endDate=?, location=?, type=?, country=?, latitude=?, longitude=?, contact=? WHERE idCompetition=?;", "sssssssssi", $comp["name"], $comp["startDate"], $comp["endDate"], $comp["location"], $comp["type"], $comp["country"], $comp["latitude"], $comp["longitude"], $comp["contact"], $comp["idCompetition"])) {
+        echo "An error occoured";
+        return false;
+    }
+    echo "succsess";
+    return true;
+}
+
+function isAllSet($obj, $arr) {
+    foreach ($arr as $property) {
+        if(!isset($obj[$property])) return false;
+    }
+    return true;
+}
+
+function getYourCompetitions() {
+    if(!isLoggedIn()) {
+        return "You need to be logged in";
+    }
+    if(canI("managePermissions")) {
+        return query("SELECT * FROM TbCompetition ORDER BY startDate DESC;");
+    } else {
+        return query("SELECT * FROM TbCompetition WHERE creator=? ORDER BY startDate DESC;", "i", $_SESSION["iduser"]);
     }
 }
 
@@ -1386,7 +1436,7 @@ function deleteRace($id) {
     $iduser = $_SESSION["iduser"];
     $race = getRace($id);
     $admin = canI("managePermissions");
-    if(!$admin || ($race["creator"] != $iduser)) {
+    if(!$admin && ($race["creator"] != $iduser)) {
         echo "you dont have the permission to do that!";
         return false;
     }
