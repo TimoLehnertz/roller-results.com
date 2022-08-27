@@ -60,7 +60,7 @@ $actual_link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https"
         <script>
             <?php echo "const phpUId = '".uniqid($_SERVER["SERVER_NAME"], true)."';";?>
         </script>
-        <script src="/js/log.js"></script>
+        <script src="/js/log.js?v=1.1"></script>
         <script>
             <?php if(isLoggedIn()) { 
                 $user = getUser($_SESSION["iduser"]);

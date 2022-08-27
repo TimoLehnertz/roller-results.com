@@ -30,7 +30,7 @@ function postLog() {
     if(lastPage) {
         lastPageQuery = "&lastPage=" + lastPage;
     }
-    $.ajax(`/api/log.php?uId=${uId}${lastPageQuery}&currentPage=${getCurrentPage()}`, {
+    $.ajax(`/api/log.php?uId=${uId}${lastPageQuery}&currentPage=${getCurrentPage()}&isMobile=${isMobile() ? "1" : "0"}`, {
         method: "GET",
         success: (response) => {
         },
