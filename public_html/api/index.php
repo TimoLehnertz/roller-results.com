@@ -483,6 +483,7 @@ if(!isset($NO_GET_API)){
         $newComp = json_decode(file_get_contents('php://input'), true);
         if(!isAllSet($newComp, ["idCompetition", "name", "startDate", "endDate", "location", "type", "country", "latitude", "longitude", "contact"])) {
             echo "Invalid request";
+            print_r($newComp);
             exit(0);
         }
         updateComp($newComp);
