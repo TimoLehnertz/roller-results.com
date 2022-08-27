@@ -13,6 +13,10 @@ const defaultCompSettings =  {
     cadetsChallenge: {dbName: "Cadets Challenge",   displayName: "Cadets Challenge",        influence: 0,useMedals: false, icon: "fas fa-award"}
 }
 
+// $(() => {
+//     window.scroll(0, 0);
+// });
+
 let settingCompetitions = defaultCompSettings;
 let settingsDropdown;
 

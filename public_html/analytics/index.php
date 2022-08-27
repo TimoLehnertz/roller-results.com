@@ -75,7 +75,10 @@ echoRandWallpaper();
         <?php } ?>
     </div>
     <div class="dark section">
-        <p class="font size bigger">Editor</p>
+        <span class="font size bigger">Editor</span>
+        <button class="clear-btn btn blender alone margin left font size bigger-medium">Clear</button>
+        <button class="undo-btn btn blender left margin left font size bigger-medium">Undo</button>
+        <button class="redo-btn btn blender right font size bigger-medium">redo</button>
         <div class="graph margin top">
             
         </div>
@@ -107,6 +110,9 @@ echoRandWallpaper();
         </div>
     </div>
     <script>
+        $(".clear-btn").click(clear);
+        $(".undo-btn").click(undo);
+        $(".redo-btn").click(redo);
 
         let selectPresets = [];
 
@@ -183,10 +189,11 @@ echoRandWallpaper();
                 this.joinMethod = "and";
                 this.uid = getUid();
                 const uid2 = getUid();
+                // <input class="name" type="text"  placeholder="Name">
                 this.elem = $(`
                 <div class="selector ${this.uid}">
                     <div class="docker-wrapper"></div>
-                    <input class="name" type="text" placeholder="Name">
+                    <textarea rows="2" class="name" type="text"  placeholder="Name"></textarea>
                     <div class="docker-join"></div>
                     <button class="delete-btn">X</button>
                     <button class="properties-btn"><i class="fas fa-sliders-h margin right"></i>Properties</button>
@@ -205,8 +212,8 @@ echoRandWallpaper();
                 //         <button class="remove-preset-btn">Remove</button>
                 //     </div>
                 new Tooltip($(this.elem.find(".delete-btn")), "Delete this query");
-                new Tooltip($(this.elem.find(".name")), "Give this query a name for your convenience");
-                new Tooltip($(this.elem.find(".properties-btn")), "Configure this query to your needs");
+                new Tooltip($(this.elem.find(".name")), "Give this query a meaningful name");
+                // new Tooltip($(this.elem.find(".properties-btn")), "Configure this query to your needs");
                 new Tooltip($(this.elem.find(".run-btn")), "Run this query and all that are before");
                 new Tooltip($(this.elem.find(".preset-select")), "Select a preset for this query. Use the load button to load it and remove button to remove it");
                 this.elem.find(".delete-btn").click(() => {this.die()});
@@ -364,7 +371,6 @@ echoRandWallpaper();
             }
 
             dock(select) {
-                console.log("Docking");
                 this.docked.push(select);
                 const uid = getUid();
                 select.dockUid = uid;
@@ -379,10 +385,9 @@ echoRandWallpaper();
             }
 
             undock(select) {
-                console.log("undocking");
                 this.docked.splice(this.docked.indexOf(select), 1);
                 this.elem.find(`.${select.dockUid}`).remove();
-                this.row.rowBefore.draw();
+                // this.row.rowBefore.draw();
                 this.updateJoin();
             }
 
@@ -468,6 +473,7 @@ echoRandWallpaper();
             }
 
             initDropdown() {
+                const parent = this.elem;
                 const dropdownEntries = [];
                 for (const key in selectOptions) {
                     if (Object.hasOwnProperty.call(selectOptions, key)) {
@@ -493,6 +499,9 @@ echoRandWallpaper();
                                         state.all = val;
                                         if(val) {
                                             $("." + this.uid + " .stateCheckbox input").attr("disabled", true);
+                                            // parent.find(".data-dropdown__entry").each((i, elem) => {
+                                            //     console.log(elem);
+                                            // });
                                         } else {
                                             $("." + this.uid + " .stateCheckbox input").removeAttr("disabled");
                                         }
@@ -508,8 +517,7 @@ echoRandWallpaper();
                                     {
                                         data: option,
                                         style: {marginRight: "1rem"}
-                                    },
-                                    {
+                                    }, {
                                         type: "input",
                                         class: "stateCheckbox",
                                         inputType: "checkbox",
@@ -576,7 +584,7 @@ echoRandWallpaper();
 
             getInput() {
                 const promise = {
-                    callback: () => console.log("no Callback"),
+                    callback: () => {},
                     receive: (e) => {promise.callback = e}
                 }
                 if(this.docked.length == 0) {
@@ -591,7 +599,6 @@ echoRandWallpaper();
                     const me = this;
                     function runOne(i) {
                         if(i >= me.docked.length) {
-                            console.log("joined input:", ids);
                             if(me.joinMethod === "xor") {
                                 me.eraseDoublicates(ids);
                             }
@@ -667,26 +674,29 @@ echoRandWallpaper();
                 return settings;
             }
 
+            idsToIdString(ids) {
+                if(!Array.isArray(ids)) return ids + "";
+
+                let idString = `\\b(`;
+                let delimiter = "";
+                for (const id of ids) {
+                    idString += delimiter + id;
+                    delimiter = "|";
+                }
+                idString += `)\\b`;
+                if(ids.length === 0) {
+                    idString = "a^";
+                }
+                return idString;
+            }
+
             getStateConverted() {
                 const promise = {
-                    callback: () => console.log("no Callback"),
+                    callback: () => {},
                     receive: (e) => {promise.callback = e}
                 }
                 this.getInput().receive((succsess, res) => {
-                    let idString = `\\b(`;
-                    if(Array.isArray(res)) {
-                        let delimiter = "";
-                        for (const id of res) {
-                            idString += delimiter + id;
-                            delimiter = "|";
-                        }
-                        idString += `)\\b`;
-                        if(res.length === 0) {
-                            idString = "a^";
-                        }
-                    } else {
-                        idString = res;
-                    }
+                    let idString = this.idsToIdString(res);
                     const settings = {
                         ids: `${idString}`,
                         joinMethode: this.joinMethod
@@ -721,18 +731,30 @@ echoRandWallpaper();
             }
 
             run(print) {
-                this.res = undefined;
-                this.updateShow();
                 const promise = {
-                    callback: () => console.log("no Callback"),
+                    callback: () => {},
                     receive: (e) => {promise.callback = e}
                 }
                 this.getStateConverted().receive((succsess, res) => {
+                    const resClone = JSON.parse(JSON.stringify(res));
+                    const inputIds = res.ids;
+                    resClone.ids = undefined;
+                    // console.log("lastSettings: ");
+                    // console.log(this.lastSettings);
+                    // console.log(objToUrlParams(resClone) + inputIds)
+                    if(this.idRes !== undefined && this.lastSettings == objToUrlParams(resClone) + inputIds) {
+                        window.setTimeout(() => {
+                            promise.callback(true, this.idRes);
+                        }, 100);
+                        this.updateShow();
+                        return promise;
+                    }
+                    this.res = undefined;
+                    this.idRes = undefined;
+                    this.updateShow();
                     this.elem.addClass("running");
                     $(".run-btn").attr("disabled", true);
-                    const resClone = JSON.parse(JSON.stringify(res));
-                    resClone.ids = undefined;
-                    set("athletes" + objToUrlParams(resClone), res.ids).receive((res) => {
+                    set("athletes" + objToUrlParams(resClone), res.ids).receive((res) => { // RUN
                         if(res == null) return alert("An error occoured. Please try again later");
                         if(print) {
                             showResult(res);
@@ -743,7 +765,9 @@ echoRandWallpaper();
                         }
                         this.elem.removeClass("running");
                         promise.callback(succsess, ids); 
+                        this.idRes = ids;
                         this.res = res;
+                        this.lastSettings = objToUrlParams(resClone) + inputIds;
                         this.updateShow();
                         $(".run-btn").attr("disabled", false);
                     });
@@ -800,10 +824,14 @@ echoRandWallpaper();
                 this.elem.find("canvas").on("dragover", (e) => {this.updateMouse(e)});
                 // $(document).on("mouseup", (e) => {this.mouse.pressed=false});
                 // $(document).on("mousedown", (e) => {this.mouse.pressed=true});
-                window.setInterval(() => {
+                const update = () => {
                     this.canvas.width = this.elem.innerWidth() + $(".graph").scrollLeft();
                     this.draw();
-                }, 100);
+                    requestAnimationFrame(update);
+                }
+                update();
+                // window.setInterval(() => {
+                // }, 100);
                 // window.setInterval(() => this.draw, 1000);
             }
 
@@ -921,6 +949,7 @@ echoRandWallpaper();
             }
 
             create(settings) {
+                // console.log(settings);
                 for (const selectorSettings of settings.selectors) {
                     const selector = this.addNew();
                     selector.load(selectorSettings);
@@ -1054,7 +1083,7 @@ echoRandWallpaper();
         }
 
         function saveAnalytics() {
-            if(!phpUser.isLoggedIn) return alert("You need to be logged in");
+            if(!phpUser.loggedIn) return alert("You need to be logged in");
             const analyticsName = $(".analytics-name").val();
             if(analyticsName.length == 0) return alert("Pleas fill in a name");
             for (const preset of analyticsPresets) {
@@ -1074,6 +1103,13 @@ echoRandWallpaper();
             });
         }
 
+        function displayAnalytics(analytics) {
+            clear();
+            for (const rowSettings of analytics) {
+                addRow().create(rowSettings);
+            }
+        }
+
         function loadAnalytics() {
             const name = $("#project-select").val();
             if(!name || name.length === 0) {
@@ -1083,16 +1119,17 @@ echoRandWallpaper();
             for (const preset of analyticsPresets) {
                 if(preset.name === name) {
                     $(".analytics-name").val(name);
-                    const analytics = JSON.parse(preset.json);
-                    clear()
-                    // console.log("loading analytics:");
-                    // console.log(analytics);
-                    for (const rowSettings of analytics) {
-                        addRow().create(rowSettings);
-                    }
-                    console.log(preset);
                     $(".analytics-name").val(name);
                     $("#analytics-public-check").attr("checked", preset.public == "1");
+                    const analytics = JSON.parse(preset.json);
+                    displayAnalytics(analytics);
+                    // clear()
+                    // console.log("loading analytics:");
+                    // console.log(analytics);
+                    // for (const rowSettings of analytics) {
+                    //     addRow().create(rowSettings);
+                    // }
+                    // console.log(preset);
                 }
             }
             window.setTimeout(() => {
@@ -1133,12 +1170,79 @@ echoRandWallpaper();
             while(rows.length > 0) {
                 removeLastRow();
             }
+            localStorage.removeItem("Analytics");
         }
 
         updateAnalytics(false);
 
         addRow();
         rows[0].addNew();
+
+        function getSelectorCount(analytics) {
+            let i = 0;
+            for (const row of analytics) {
+                i+=row.selectors.length;
+            }
+            return i;
+        }
+
+        new Tooltip($(".undo-btn"), "CTRL + Z");
+        new Tooltip($(".undo-redo"), "CTRL + Y");
+
+        document.addEventListener("keypress", (e) => {
+            if (e.keyCode == 26 && e.ctrlKey) undo();
+            if (e.keyCode == 25 && e.ctrlKey) redo();
+        });
+
+        let history = [];
+        let currentHistory = -1;
+
+        function undo() {
+            currentHistory--;
+            if(currentHistory < 0) {
+                currentHistory = 0;
+                return;
+            }
+            displayAnalytics(history[currentHistory]);
+            localStorage.setItem("Analytics", JSON.stringify(history[currentHistory]));
+        }
+
+        function redo() {
+            currentHistory++;
+            if(currentHistory >= history.length) {
+                currentHistory = history.length - 1;
+                return;
+            }
+            // console.log("redos left: ", -(currentHistory - history.length + 1));
+            displayAnalytics(history[currentHistory]);
+            localStorage.setItem("Analytics", JSON.stringify(history[currentHistory]));
+        }
+
+        // Auto save
+        window.setInterval(() => {
+            const recoveredAnalyticsString = localStorage.getItem("Analytics");
+            const newAnalytics = getAnalytics();
+            const newAnalyticsString = JSON.stringify(newAnalytics);
+            if(recoveredAnalyticsString != newAnalyticsString) {
+                localStorage.setItem("Analytics", newAnalyticsString);
+                console.log("Saved");
+                currentHistory++;
+                history[currentHistory] = newAnalytics;
+                history.splice(currentHistory + 1, 10000); // remove everything in ahead
+
+                if(history.length > 20) {
+                    history.splice(0, 1);
+                    currentHistory--;
+                }
+            }
+        }, 100);
+
+        const recoveredAnalytics = JSON.parse(localStorage.getItem("Analytics"));
+        if(recoveredAnalytics) {
+            if(getSelectorCount(recoveredAnalytics) > 0) {
+                displayAnalytics(recoveredAnalytics);
+            }
+        }
 
     </script>
 </main>

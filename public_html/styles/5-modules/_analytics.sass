@@ -169,6 +169,7 @@
             color: white
             margin-bottom: 1rem
             width: 9rem
+            font-size: 0.8rem
 
         .data-dropdown__entry > div
             width: 100%
@@ -248,7 +249,8 @@
                 background: #777
 
         &.running
-            animation: move-left-right 5s infinite both
+            animation: move-left-right 0.2s infinite both
+            transform-origin: bottom
             z-index: 100
             perspective: 5.5cm
 
@@ -293,17 +295,13 @@
 
 @keyframes move-left-right
     0%
-        transform: rotateY(0deg)
-    10%
-        transform: rotateY(0deg)
-    20%
-        transform: rotateY(360deg)
-    30%
-        transform: rotateY(360deg)
-    35%
-        transform: rotateY(360deg)
-    45%
-        transform: rotateY(0deg)
+        transform: translateX(0) rotate(0deg)
+    25%
+        transform: translateX(0) rotate(0.5deg)
+    75%
+        transform: translateX(0) rotate(-0.5deg)
+    100%
+        transform: translateX(0) rotate(0deg)
 
 // @keyframes move-left-right
 //     0%
