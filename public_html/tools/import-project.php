@@ -171,7 +171,7 @@ function echoAliasSelect() {
         <h2 class="align center">Step 1: <span class="font size medium margin left">Create event</span></h2>
         <br>
         <p>Select competition
-            <?php echoCompsSelect();?><button class="btn blender alone margin left" onclick="deleteCompetition()">Delete</button><br><br>
+            <?php echoCompsSelect();?>
             <a target="blank" href="create-competition.php">Create new</a> (reload this page)
         </p>
     </div>
@@ -269,11 +269,12 @@ function mysqlTimestampYYY_mm_dd(timestamp) {
 function compToElem(comp1) {
     const comp = JSON.parse(JSON.stringify(comp1)); // clone to allow changes
     const compElem = $(`<div class="padding left top bottom half">${comp.raceYear} <span class="code">${comp.type}</span> ${comp.name || ""} ${comp.location} </div>`);
+    const removeBtn = $(`<button class="btn blender alone margin right">Delete</button>`);
     const editBtn = $(`<button class="btn blender alone margin right">Edit</button>`);
     const seeRacesBtn = $(`<button class="btn blender alone margin right">See races</button>`);
+    compElem.prepend(removeBtn);
     compElem.prepend(seeRacesBtn);
     compElem.prepend(editBtn);
-    
     
     comp.startDate = mysqlTimestampYYY_mm_dd(comp.startDate);
     comp.endDate = mysqlTimestampYYY_mm_dd(comp.endDate);
@@ -412,6 +413,14 @@ function compToElem(comp1) {
             compElem.find(".loading").remove();
         });
     });
+
+    removeBtn.click(() => {
+        deleteCompetition(comp.idCompetition, (succsess) => {
+            if(!succsess) return alert("An error occoured :/");
+            alert("Succsessfully deleted competition");
+            updateYourContent();
+        });
+    });
     const dropdown = new Dropdown(editBtn, dropDownSettings);
     return compElem;
 }
@@ -462,17 +471,14 @@ get("countries").receive((succsess, res) => {
 compChanged();
 aliasChanged();
 
-function deleteCompetition() {
-    const idCompetition = $(".comps-select").val();
-    const compName = $( ".comps-select option:selected" ).text();
-    if(idCompetition == "-1234") return alert("Please select a competition to remove it");
-    if(!confirm("Are you sure to delete " + compName + "?")) return;
+function deleteCompetition(idCompetition, callback) {
+    // const idCompetition = $(".comps-select").val();
+    // const compName = $( ".comps-select option:selected" ).text();
+    // if(idCompetition == "-1234") return alert("Please select a competition to remove it");
+    if(!confirm("Are you sure to delete this competition?")) return;
     get("deleteCompetition", idCompetition).receive((succsess, result) => {
-        if(!succsess) return alert("An error occoured please try again later");
-        // console.log(result);
-        if(result === true) {
-            alert(`Succsess! Refresh this page to see the change`);
-        }
+        if(!succsess) return callback(false);
+        callback(result === true);
     });
 }
 
