@@ -373,7 +373,11 @@ if(!isset($NO_GET_API)){
     } else if(isset($_GET["getdeleteAnalytics"]) && isset($_GET["name"])) {
         $name = $_GET["name"];
         if(doIOwnAnalytics($name)) {
-            deletAnalytics($name);
+            if(deletAnalytics($name)) {
+                echo "true";
+            } else {
+                echo "\"Error while deleting\"";
+            }
        } else {
            echo "\"You cant delete presets you dont own!\"";
        }
