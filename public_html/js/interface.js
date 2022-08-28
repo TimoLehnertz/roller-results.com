@@ -473,13 +473,14 @@ function pathFromRace(r) {
 //     return `/gallery/nas-share/public/${path}`;
 // }
 
-function linksFromLinkString(string){
-    if(!string || string.length === 0){
-        return [];
-    }
-    let links = string.split(";");
+function linksFromLinkString(string) {
+    const links = [];
+    if(!string || string.length === 0) return links;
+    let split = string.split(";");
     for (let i = 0; i < links.length; i++) {
-        links[i] = links[i].split("v=")[1]?.split("&")[0];
+        const link = split[i].split("v=")[1]?.split("&")[0];
+        if(link == undefined) continue;
+        links.push(link);
     }
     // let links = string.split("https://www.youtube.com/watch?v=");
     // for (let i = 0; i < links.length; i++) {
@@ -504,6 +505,8 @@ function getYtVideoElems(link) {
 }
 
 function getYtVideo(link) {
+    if(link === undefined || link === null) return $();
+    // console.log(link);
     const ids = linksFromLinkString(link);
     if(ids.length === 0){
         return $();
@@ -514,6 +517,7 @@ function getYtVideo(link) {
     }
     const head = $(`<div class="youtube-head"><i class="fab fa-youtube"></i><div class="margin left">${ids.length} ${text}</div></div>`);
     const body = $(`<div class="youtube-body"></div>`);
+    console.log("ids: ", ids);
     for (const id of ids) {
         body.append(
             `<iframe style="width: 100%;"src="https://www.youtube.com/embed/${id}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`
