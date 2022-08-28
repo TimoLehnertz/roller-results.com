@@ -1048,10 +1048,27 @@ function metersFromDistance(distance) {
     return parseInt(meterString);
 }
 
-function sortRaces(races, method) {
+function indexFromCategory(category) {
+    if(!category) return 0;
+    category = category.toLowerCase();
+    if(category.includes("youth")) return 1;
+    else if(category.includes("cadet")) return 2;
+    else if(category.includes("junior")) return 3;
+    else if(category.includes("senior")) return 4;
+    console.log(category);
+    return 0;
+}
+
+function sortRaces(races, method, first = true) {
+    if(first) {
+        races = sortRaces(races, "category", false);
+        races = sortRaces(races, "distance", false);
+        races = sortRaces(races, "gender", false);
+    }
     switch(method) {
         case "gender": races    = races.sort((a,b) => b.gender?.localeCompare(a.gender)); break;
         case "distance": races  = races.sort((a,b) => metersFromDistance(a.distance) - metersFromDistance(b.distance) + b.distance?.localeCompare(a.distance)); break;
+        case "category": races  = races.sort((a,b) => indexFromCategory(a.category) - indexFromCategory(b.category)); break;
         default: races          = races.sort((a,b) => a[method]?.localeCompare(b[method])); break;
     }
     return races;
