@@ -1017,8 +1017,7 @@ function getRacesElem(races, showSortSelect = true) {
     const updateRaces = () => {
         raceListElem.empty();
         let lastSortingHeader = "";
-        // let distance = "";
-        races = races.sort((a,b)=>a[sortMode]?.localeCompare(b[sortMode]));
+        races = sortRaces(races, sortMode);
         let useDelimiters = false;
         let i = 0;
         for (const race of races) {
@@ -1033,17 +1032,29 @@ function getRacesElem(races, showSortSelect = true) {
         for (const race of races) {
             if(lastSortingHeader?.toLowerCase() !== race[sortMode]?.toLowerCase() && useDelimiters) {
                 lastSortingHeader = race[sortMode];
-                raceListElem.append(getRaceDelimiter(`<h3>${lastSortingHeader}</h3>`));
+                raceListElem.append(getRaceDelimiter(`<h3 style="background: #BBB; color: #000">${sortMode == "gender" ? (lastSortingHeader?.toLowerCase() == "m" ? "Men" : "Women") : lastSortingHeader}</h3>`));
             }
-            // if(distance !== race.distance) {
-            //     distance = race.distance;
-            //     elem.append(getRaceDelimiter(distance));
-            // }
             raceListElem.append(getRaceElem(race));
         }
     }
     updateRaces();
     return elem;
+}
+
+function metersFromDistance(distance) {
+    if(!distance) return 0;
+    if(distance.includes("Marathon")) return 42000;
+    const meterString = distance.replace(/\D/g, '');
+    return parseInt(meterString);
+}
+
+function sortRaces(races, method) {
+    switch(method) {
+        case "gender": races    = races.sort((a,b) => b.gender?.localeCompare(a.gender)); break;
+        case "distance": races  = races.sort((a,b) => metersFromDistance(a.distance) - metersFromDistance(b.distance) + b.distance?.localeCompare(a.distance)); break;
+        default: races          = races.sort((a,b) => a[method]?.localeCompare(b[method])); break;
+    }
+    return races;
 }
 
 function getRaceDelimiter(text) {
@@ -1066,7 +1077,7 @@ function getRaceElem(race, results) {
     if(results !== undefined) {
         race.results = results;
     }
-    const head = $(`<div class="race flex align-center justify-space-between padding right ${race.gender}"><span>${race.distance} ${race.trackStreet} ${race.category} ${race.gender} ${race.round ?? ""}</span></div>`)
+    const head = $(`<div class="race flex align-center justify-space-between padding right ${race.gender}"><span>${race.distance} ${race.trackStreet} ${race.category} ${race.gender?.toLowerCase() == "m" ? "Men" : "Women"} ${race.round ?? ""}</span></div>`)
     if(!race.checked) {
         head.append(getUncheckedElem());
     }
