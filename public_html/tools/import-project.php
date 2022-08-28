@@ -1385,7 +1385,7 @@ function validateObject(object, settings, i) {
 function validateResultsFormat(results) {
     const validResult = {
         distance: 3,
-        isRelay: ["1", "0"],
+        isRelay: ["1", "0", ""],
         gender: ["m", "w"],
         category: "",
         trackRoad: ["track", "road"],

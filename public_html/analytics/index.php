@@ -211,10 +211,10 @@ echoRandWallpaper();
                 //         <button class="save-btn">Save</button>
                 //         <button class="remove-preset-btn">Remove</button>
                 //     </div>
-                new Tooltip($(this.elem.find(".delete-btn")), "Delete this query");
+                // new Tooltip($(this.elem.find(".delete-btn")), "Delete this query");
                 // new Tooltip($(this.elem.find(".name")), "Give this query a meaningful name");
                 // new Tooltip($(this.elem.find(".properties-btn")), "Configure this query to your needs");
-                new Tooltip($(this.elem.find(".run-btn")), "Run this query and all that are before");
+                // new Tooltip($(this.elem.find(".run-btn")), "Run this query and all that are before");
                 new Tooltip($(this.elem.find(".preset-select")), "Select a preset for this query. Use the load button to load it and remove button to remove it");
                 this.elem.find(".delete-btn").click(() => {this.die()});
                 // this.elem.find(".remove-preset-btn").click(() => {this.removePreset()});
