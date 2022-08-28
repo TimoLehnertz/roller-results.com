@@ -47,7 +47,7 @@ echoRandWallpaper();
                         <div class='left'>
                             $flag
                             <div class='name'>
-                                ".translateCompType($comp["type"])." - ".$comp["location"]."
+                                ".translateCompType($comp["type"])." - ".$comp["location"].($comp["checked"] != "1" ? " <span class='font color orange'>(unchecked)</span>" : "")."
                             </div>
                             <div class='date'>
                                 $startDate

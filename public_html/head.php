@@ -38,7 +38,7 @@ $actual_link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https"
         <meta name="viewport" content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0'>
 
         <link rel="icon" type="image/png" href="/img/logo/rr.png">
-        <link rel="stylesheet" href="/styles/main.css?v=1.16">
+        <link rel="stylesheet" href="/styles/main.css?v=1.17">
         <!-- GOOGLE fonts -->
         <link rel="preconnect" href="https://fonts.gstatic.com">
         <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,200;0,300;0,400;0,500;0,600;1,200;1,400;1,500;1,600&display=swap" rel="stylesheet">
@@ -59,7 +59,7 @@ $actual_link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https"
         <script src="/js/ajaxAPI.js?v=2.0"></script>
         <script src="/js/lib.js?v=2.0"></script>
         <script src="/js/ui.js?v=2.3"></script>
-        <script src="/js/interface.js?v=2.0"></script>
+        <script src="/js/interface.js?v=2.1"></script>
         <script src="/js/html2canvas/html2canvas.js" defer></script>
         <script>
             <?php echo "const phpUId = '".uniqid($_SERVER["SERVER_NAME"], true)."';";?>

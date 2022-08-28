@@ -576,14 +576,14 @@ function getRaceTable(parent, race) {
     // console.log(JSON.parse(JSON.stringify(race.results)));
     table.setup({
         layout: {
-            place: {allowSort: true, displayName: "Place"},
+            place: {allowSort: true, displayName: ""},
             time: {
                 displayName: "Time",
                 allowSort: true,
                 use: race.results[0]?.time !== null
             },
             country: {
-                displayName: "Country",
+                displayName: "",
                 allowSort: false
             },
             profiles: {
@@ -964,7 +964,8 @@ function getCompetitionElem(comp, isCountry, name) {
     return new Accordion(head, $("<div class='loading circle'></div>"), {
         onextend: (head, body) => {
             get(getter, name, comp.idCompetition).receive((succsess, races) => {
-                getRacesElem(races, body);
+                body.empty();
+                body.append(getRacesElem(races));
                 // body.empty();
                 // body.addClass("competition");
                 // let trackStreet = "";
@@ -985,27 +986,64 @@ function getCompetitionElem(comp, isCountry, name) {
     }).element;
 }
 
-function getRacesElem(races, body) {
-    if(body === undefined) {
-        body = $(`<div class="competition"></div>`);
-    } else {
-        body.empty();
+function getRacesElem(races, showSortSelect = true) {
+    // const sortMode = "trackStreet";
+    // const sortMode = "category";
+    // const sortMode = "distance";
+    const elem = $(`<div class="competition"></div>`);
+    let sortMode = "distance";
+    const sortModeRecovered = localStorage.getItem("compSortMode");
+    if(sortModeRecovered) sortMode = sortModeRecovered;
+    if(showSortSelect) {
+        const uid = getUid();
+        const select = $(`<select id="${uid}">
+                            <option value="category">Category</option>
+                            <option value="distance">Distance</option>
+                            <option value="gender">Gender</option>
+                            <option value="trackStreet">Track / Road</option>
+                            <option value="round">Round</option>
+                        </select>`);
+        elem.append(`<label for="${uid}">Sort by: </label>`);
+        elem.append(select);
+        select.val(sortMode);
+        select.change(() => {
+            sortMode = select.val();
+            localStorage.setItem("compSortMode", sortMode);
+            updateRaces();
+        });
     }
-    let trackStreet = "";
-    let distance = "";
-    races = races.sort((a,b)=>a.trackStreet.localeCompare(b.trackStreet));
-    for (const race of races) {
-        if(trackStreet.toLowerCase() !== race.trackStreet.toLowerCase()) {
-            trackStreet = race.trackStreet;
-            body.append(getRaceDelimiter(`<h2>${trackStreet}<h2>`));
+    const raceListElem = $(`<div class="race-list"></div>`);
+    elem.append(raceListElem);
+    const updateRaces = () => {
+        raceListElem.empty();
+        let lastSortingHeader = "";
+        // let distance = "";
+        races = races.sort((a,b)=>a[sortMode]?.localeCompare(b[sortMode]));
+        let useDelimiters = false;
+        let i = 0;
+        for (const race of races) {
+            if(lastSortingHeader?.toLowerCase() !== race[sortMode]?.toLowerCase()) {
+                lastSortingHeader = race[sortMode];
+                if(i > 1) useDelimiters = true;
+                i = 0;
+            }
+            i++;
         }
-        if(distance !== race.distance) {
-            distance = race.distance;
-            body.append(getRaceDelimiter(distance));
+        lastSortingHeader = "";
+        for (const race of races) {
+            if(lastSortingHeader?.toLowerCase() !== race[sortMode]?.toLowerCase() && useDelimiters) {
+                lastSortingHeader = race[sortMode];
+                raceListElem.append(getRaceDelimiter(`<h3>${lastSortingHeader}</h3>`));
+            }
+            // if(distance !== race.distance) {
+            //     distance = race.distance;
+            //     elem.append(getRaceDelimiter(distance));
+            // }
+            raceListElem.append(getRaceElem(race));
         }
-        body.append(getRaceElem(race));
     }
-    return body;
+    updateRaces();
+    return elem;
 }
 
 function getRaceDelimiter(text) {
@@ -1028,7 +1066,7 @@ function getRaceElem(race, results) {
     if(results !== undefined) {
         race.results = results;
     }
-    const head = $(`<div class="race flex align-center justify-space-between padding right ${race.gender}"><span>${race.distance} ${race.trackStreet} ${race.category} ${race.gender}</span></div>`)
+    const head = $(`<div class="race flex align-center justify-space-between padding right ${race.gender}"><span>${race.distance} ${race.trackStreet} ${race.category} ${race.gender} ${race.round ?? ""}</span></div>`)
     if(!race.checked) {
         head.append(getUncheckedElem());
     }

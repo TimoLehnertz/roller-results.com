@@ -554,11 +554,21 @@ if(!isset($NO_GET_API) || $NO_GET_API === false) {
         $newComp = json_decode(file_get_contents('php://input'), true);
         if(!isAllSet($newComp, ["idCompetition", "name", "startDate", "endDate", "location", "type", "country", "latitude", "longitude", "contact"])) {
             echo "Invalid request";
-            // print_r($newComp);
             exit(0);
         }
         updateComp($newComp);
+    } else if(isset($_GET["getcheckCompetitionAndBelow"])) {
+        checkCompetitionAndBelow($_GET["getcheckCompetitionAndBelow"]);
     }
+}
+
+function checkCompetitionAndBelow($idCompetition) {
+    if(!canI("managePermissions")) return false;
+    if(!dbExecute("CALL sp_checkCompetitionAndBelow(?);", "i", $idCompetition)) {
+        return false;
+    }
+    echo "true";
+    return true;
 }
 
 function updateComp($comp) {
@@ -1616,7 +1626,7 @@ function getCountries() {
     }
 }
 
-function getResult($id){
+function getResult($id) {
     $result = query("SELECT * FROM vResult WHERE idResult = ?;", "i", intval($id));
     if(sizeof($result) > 0){
         return $result[0];

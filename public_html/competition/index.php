@@ -67,6 +67,9 @@ foreach ($bestAthletes as $athlete) {
 }
 
 ?>
+<script>
+    const idCompetition = <?=$idComp?>;
+</script>
 <main class="main competition-page">
     <div class="top-site">
     </div>
@@ -161,6 +164,9 @@ foreach ($bestAthletes as $athlete) {
             // console.log(comp)
             if(!comp.checked) {
                 $(".headline").append(getUncheckedElem());
+                if(phpUser.isAdmin) {
+                    $(".headline").append(`<button onclick="checkComp()" class="margin left btn blender alone">Check Comp/Races/Athletes</button>`);
+                }
             }
             $(".bronzem").each(function() {
                 $(this).append(getMedal("bronze", 3, false));
@@ -176,6 +182,14 @@ foreach ($bestAthletes as $athlete) {
             // for (const race of comp.races) {
                 $(".races-table").append(getRacesElem(comp.races));
             // }
+
+            function checkComp() {
+                if(!phpUser.isAdmin) return;
+                get("checkCompetitionAndBelow", idCompetition).receive((succsess, res) => {
+                    if(!succsess || res !== true) return alert("An error occoured");
+                    location.reload();
+                })
+            }
         </script>
     </div>
 </main>
