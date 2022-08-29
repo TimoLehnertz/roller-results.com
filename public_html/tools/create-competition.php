@@ -4,9 +4,11 @@ include_once "../includes/error.php";
 include_once "../api/index.php";
 include_once "../header.php";
 
+$amIAllowed = isLoggedIn();
+
 
 if(isset($_POST["submit"])) {
-    if(!canI("uploadResults")) {
+    if($amIAllowed) {
         throwError($ERROR_NO_PERMISSION, "/tools/index.php");
         exit(0);
     }
@@ -65,10 +67,11 @@ if(isset($_POST["submit"])) {
             <input type="text" name="description" id="description"  placeholder="description">
         </p>
         <br>
-        <?php if(canI("uploadResults")) { ?>
+        <?php if($amIAllowed) { ?>
             <input type="submit" value="Create" name="submit" class="btn default">
         <?php } else { ?>
-            <p>Contact us at <span class="code padding left right">roller.results@gmail.com</span> to get accsess to this tool</p>
+            <p><a target="blank" href="/login">Login</a> to create competitions</p>
+            <!-- <p>Contact us at <span class="code padding left right">roller.results@gmail.com</span> to get accsess to this tool</p> -->
         <?php }?>
     </form>
 </div>

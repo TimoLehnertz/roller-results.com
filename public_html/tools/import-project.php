@@ -8,6 +8,8 @@ include_once "../header.php";
 //     throwError($ERROR_NO_PERMISSION, "/tools/index.php");
 // }
 
+$canUpload = isLoggedIn();
+
 function echoCompsSelect() {
     $comps = getAllCompetitions();
     echo "<select onchange='compChanged()' class='comps-select' style='max-width: 15rem;'>";
@@ -44,7 +46,7 @@ function echoAliasSelect() {
 ?>
 <script>
     const iduser = <?php 
-        if(isLoggedIn()) {
+        if($canUpload) {
             echo $_SESSION["iduser"];
         } else {
             echo "undefined";
@@ -59,7 +61,7 @@ function echoAliasSelect() {
     ?>;
 
     const canUploadResults = <?php
-        if(canI("uploadResults")) {
+        if($canUpload) {
             echo "true";
         } else {
             echo "false";
@@ -80,8 +82,10 @@ function echoAliasSelect() {
     <div class="section light">
         <h1 class="align center margin top triple">Roller results Import procedure</h1>
         <br>
-        <?php if(!canI("uploadResults")) { ?>
-            <h2 class="margin top bottom">Contact us at <span class="code padding left right">roller.results@gmail.com</span> to get full accsess to this tool!</h2>
+        <?php if(!$canUpload) { ?>
+            <p><a target="blank" href="/login">Login</a> to upload results</p>
+            <h2 class="margin top bottom"></h2>
+            <!-- <h2 class="margin top bottom">Contact us at <span class="code padding left right">roller.results@gmail.com</span> to get full accsess to this tool!</h2> -->
         <?php }?>
         <a href="/tools/import-preset.xlsx">Download link</a> for the format preset <br>
             <h2>Format:</h2>

@@ -75,7 +75,7 @@ include_once "head.php";
                     <a href="/competitions"><i class="fas fa-flag-checkered margin right"></i></i>Competitions</a>
                 </li>
                 <li>
-                    <a href='/tools/index.php'><i class="fa fa-solid fa-toolbox margin right"></i>Tool box</a>
+                    <a href='/tools/index.php'><i class="fa fa-solid fa-toolbox margin right"></i><span class="code font color green">Update</span> Tool box</a>
                 </li>
                 <li>
                     <a href='/skate-map.php'><i class="fa fa-solid fa-map margin right"></i>Skate map</a>

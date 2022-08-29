@@ -482,7 +482,7 @@ if(!isset($NO_GET_API) || $NO_GET_API === false) {
         // print_r($athletes);
         echo json_encode(searchAthletes($athletes, $aliasGruop));
     } else if(isset($_GET["putAliases"])) {
-        if(!canI("uploadResults")) {
+        if(!isLoggedIn()) {
             echo "No permission";
             exit();
         }
@@ -744,7 +744,7 @@ function spacesAfterText($text, $maxSize) {
  *  time
  */
 function createResults($results) {
-    if(!canI("uploadResults")) {
+    if(!isLoggedIn()) {
         echo "No permission";
         exit();
     }
@@ -783,7 +783,7 @@ function createResults($results) {
 }
 
 function createRace($distance, $isRelay, $gender, $category, $trackRoad, $idCompetition) {
-    if(!canI("uploadResults")) {
+    if(!isLoggedIn()) {
         echo "No permission";
         exit();
     }
@@ -1279,7 +1279,8 @@ function getAllTimes() {
 }
 
 function addCompetition($name, $city, $country, $latitude, $longitude, $type, $startDate, $endDate, $description) {
-    if(!canI("uploadResults")) {
+    if(!isLoggedIn()) {
+    // if(!canI("uploadResults")) {
         echo "You dont have permission to do that";
         exit(0);
     }
@@ -1549,7 +1550,7 @@ function updateAthleteInfo($idAthlete, $instagram, $facebook, $website, $descrip
     }
 }
 
-function getAthlete($id){
+function getAthlete($id) {
     global $scoreInfluences;
     global $usedMedals;
     // $result = query("CALL sp_athleteFull(?, ?, ?)", "iss", intval($id), $scoreInfluences, $usedMedals);
