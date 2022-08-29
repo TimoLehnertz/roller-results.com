@@ -66,6 +66,9 @@ include_once "head.php";
                     <a href="/analytics"><i class="fas fa-binoculars margin right"></i><span class="code font color green">Update</span> Analytics</a>
                 </li>
                 <li>
+                    <a href="/tools/import-project.php"><i class="fas fa-binoculars margin right"></i><span class="code font color green">Update</span> Upload results</a>
+                </li>
+                <li>
                     <a href="/countries"><i class="fas fa-globe-americas margin right"></i>Countries</a>
                 </li>
                 <li>

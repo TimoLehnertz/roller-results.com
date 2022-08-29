@@ -87,7 +87,7 @@ function echoAliasSelect() {
             <h2 class="margin top bottom"></h2>
             <!-- <h2 class="margin top bottom">Contact us at <span class="code padding left right">roller.results@gmail.com</span> to get full accsess to this tool!</h2> -->
         <?php }?>
-        <a href="/tools/import-preset.xlsx">Download link</a> for the format preset <br>
+        <a href="/tools/import-preset.xlsx" class="font size big">Download excel preset</a><br>
             <h2>Format:</h2>
             <ul>
                 <li>Distance:
