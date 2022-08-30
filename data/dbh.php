@@ -1,7 +1,7 @@
 <?php
-$serverName = "www.roller-results.com";
-$dBUsername = "dev";
-$dBPwd = "skateSpeed!";
+$serverName = "localhost";
+$dBUsername = "root";
+$dBPwd = "";
 
 $dBName = "results";
 
