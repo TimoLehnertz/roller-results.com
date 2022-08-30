@@ -19,6 +19,7 @@ if(isset($_SERVER['HTTP_ORIGIN'])) {
 // has to stay updated because not listed functions will be available for everyone
 $functions = [
     "getathlete" => 1,
+    "getathleteWithScore" => 1,
     "getcompetition" => 1,
     "getathleteVideos" => 1,
     "getrace" => 1,
@@ -38,7 +39,6 @@ $functions = [
     "getcountryBestTimes" => 1,
     "getcountryCareer" => 1,
     "getaliasGroup" => 1,
-    "getallAthletes" => 1,
     "getcountryCodes" => 1,
     "getallCompetitions" => 1,
     "getallDistances" => 1,
@@ -124,18 +124,24 @@ $usedMedals = "WM,World Games";
  * Getters
  */
 if(!isset($NO_GET_API) || $NO_GET_API === false) {
-    // if(isset($_GET["scoreInfluences"])) {
-    //     $scoreInfluences = $_GET["scoreInfluences"];
-    // }
+    if(isset($_GET["scoreInfluences"])) {
+        $scoreInfluences = $_GET["scoreInfluences"];
+    }
     if(isset($_GET["usedMedals"])) {
         $usedMedals = $_GET["usedMedals"];
-    }
-    if(isset($_GET["getathlete"])) {
+    } if(isset($_GET["getathlete"])) {
         $res = getAthlete($_GET["getathlete"]);
         if($res !== false){
             echo json_encode($res);
         } else{
             echo "error in api";
+        }
+    } if(isset($_GET["getathleteWithScore"])) {
+        $res = getAthleteWithScore($_GET["getathleteWithScore"]);
+        if($res !== false) {
+            echo json_encode($res);
+        } else {
+            echo "error in api :/";
         }
     } else if(isset($_GET["getcompetition"])) {
         $res = getCompetition($_GET["getcompetition"]);
@@ -189,7 +195,7 @@ if(!isset($NO_GET_API) || $NO_GET_API === false) {
             echo "error in api";
         }
     } else if(isset($_GET["search"])) {
-        $allowed = "Athlates";
+        $allowed = "Athlete";
         if(isset($_GET["allowed"])) {
             $allowed = $_GET["allowed"];
         }
@@ -275,13 +281,13 @@ if(!isset($NO_GET_API) || $NO_GET_API === false) {
         } else{
             echo "error in api";
         }
-    } else if(isset($_GET["getallAthletes"])) {
-        $res = getAllAthletes($scoreInfluences);
-        if($res !== false){
-            echo json_encode($res);
-        } else{
-            echo "error in api";
-        }
+    // } else if(isset($_GET["getallAthletes"])) {
+    //     $res = getAllAthletes();
+    //     if($res !== false){
+    //         echo json_encode($res);
+    //     } else{
+    //         echo "error in api";
+    //     }
     } else if(isset($_GET["getcountryCodes"])) {
         $res = getCountryCodes();
         if($res !== false){
@@ -1318,17 +1324,17 @@ function getCountryCodes(){
     }
 }
 
-function getAllAthletes($influences){
-    global $scoreInfluences;
-    global $usedMedals;
-    $res = query("CALL sp_athleteFull('%', ?´, ?);", "ss", $scoreInfluences, $usedMedals);
-    // $res = query("SELECT * FROM vAthletePublic;");
-    if(sizeof($res) > 0){
-        return $res;
-    } else{
-        return [];
-    }
-}
+// function getAllAthletes() {
+//     global $scoreInfluences;
+//     global $usedMedals;
+//     $res = query("CALL sp_athleteFull('%', ?´, ?);", "ss", $scoreInfluences, $usedMedals);
+//     // $res = query("SELECT * FROM vAthletePublic;");
+//     if(sizeof($res) > 0){
+//         return $res;
+//     } else{
+//         return [];
+//     }
+// }
 
 function getCountryCareer($country){
     global $usedMedals;
@@ -1550,6 +1556,17 @@ function updateAthleteInfo($idAthlete, $instagram, $facebook, $website, $descrip
     }
 }
 
+function getAthleteWithScore($id) {
+    global $scoreInfluences;
+    global $usedMedals;
+    $result = query("CALL sp_athleteFull(?, ?, ?)", "iss", intval($id), $scoreInfluences, $usedMedals);
+    if(sizeof($result) > 0) {
+        return $result[0];
+    } else {
+        return [];
+    }
+}
+
 function getAthlete($id) {
     global $scoreInfluences;
     global $usedMedals;
@@ -1736,6 +1753,7 @@ function athleteFromResult($result){
  */
 function search($name, $allowed) {
     $allowed = explode(",", $allowed);
+    // print_r( $allowed);
     $name = trim($name);//remove whitespaces at front and end
     $results = [];
     setMaxResultSize(10);
@@ -1812,6 +1830,7 @@ function search($name, $allowed) {
          */
         if(in_array("Athlete", $allowed)) {
             $results = array_merge($results, searchPersons($name));
+            // print_r();
         }
         /**
          * competitionTypes
