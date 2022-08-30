@@ -1,10 +1,19 @@
 <?php
-$serverName = "localhost";
-$dBUsername = "root";
-$dBPwd = "";
+// $serverName = "localhost";
+// $dBUsername = "timo";
+// $dBPwd = "Joker0711ml";
+
+// $serverName = "127.0.0.1";
+// $dBUsername = "root";
+// $dBPwd = "Joker0711ml";
+
+$serverName = "192.168.178.103";
+$dBUsername = "phpResults";
+$dBPwd = "thisSecretPasswdWillNeverBeLeaked!!12)";
 
 $dBName = "results";
 
+#$conn = mysqli_connect($serverName, $dBUsername, $dBPwd, $dBName);
 $mysqli = new mysqli($serverName, $dBUsername, $dBPwd, $dBName);
 
 $QUERY_MAX_SIZE = -1;
@@ -110,7 +119,7 @@ function query($sql, ... $fillers){
         }
     }
     if($stmt = $mysqli->prepare($sql)) {
-        if(isset($insertTypes)) {
+        if(isset($insertTypes)){
             if(!call_user_func_array(array($stmt, "bind_param"), array_merge(array($insertTypes), $insertValues))){
                 $stmt->close();
                 return [];
