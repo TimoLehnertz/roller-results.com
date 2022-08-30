@@ -1,5 +1,4 @@
 <?php
-
 $serverName = "localhost";
 $dBUsername = "root";
 $dBPwd = "";
@@ -111,7 +110,7 @@ function query($sql, ... $fillers){
         }
     }
     if($stmt = $mysqli->prepare($sql)) {
-        if(isset($insertTypes)){
+        if(isset($insertTypes)) {
             if(!call_user_func_array(array($stmt, "bind_param"), array_merge(array($insertTypes), $insertValues))){
                 $stmt->close();
                 return [];
