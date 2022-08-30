@@ -1,5 +1,6 @@
-# roller-results.com
+# www.roller-results.com
 This is an open source project aiming to make Inline Speedskating more accessible to everyday people by sharing all results at a central place.
+
 # local installation
 Requirements:
  - xamp: https://www.apachefriends.org/de/index.html
