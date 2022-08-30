@@ -1,7 +1,7 @@
 <?php
 $serverName = "localhost";
-$dBUsername = "root";
-$dBPwd = "";
+$dBUsername = "phpResults";
+$dBPwd = "thisSecretPasswdWillNeverBeLeaked!!12)";
 
 $dBName = "results";
 
