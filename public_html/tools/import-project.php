@@ -267,6 +267,7 @@ function mysqlTimestampToDate(timestamp) {
 }
 
 function mysqlTimestampYYY_mm_dd(timestamp) {
+    if(!timestamp) return "000-00-00";
     return timestamp.split(" ")[0];
 }
 
@@ -1058,8 +1059,7 @@ function uploadResultsFile() {
             initiateResults(results);
         };
         reader.readAsText(event.target.files[0]);
-    }
-    if (xlsRegex.test(fileUpload.value.toLowerCase())) {
+    } else if (xlsRegex.test(fileUpload.value.toLowerCase())) {
         if (typeof (FileReader) != "undefined") {
             //For Browsers other than IE.
             if (reader.readAsBinaryString) {
@@ -1144,7 +1144,7 @@ function raceFromResult(result) {
         distance: "",
         category: "",
         gender: "",
-        isRelay: "",
+        isRelay: "0",
         trackRoad: "",
         results: []
     }
@@ -1364,7 +1364,7 @@ function validateObject(object, settings, i) {
             const propertySettings = settings[property];
             let value = object[property];
             // alert required but empty
-            if((value === undefined || value === null) && propertySettings !== "timeOrNull") {
+            if((value === undefined || value === null) && propertySettings !== "timeOrNull" && propertySettings !== "isRelayOrNull") {
                 console.log(object)
                 return parseErrorAt(i, property + " required");
             }
@@ -1389,6 +1389,7 @@ function validateObject(object, settings, i) {
             if(propertySettings === "integer" && !Number.isInteger(parseFloat(value))) return parseErrorAt(i, `Only integers allowed for field ${property}. given: "${value}"`);
             // alert wrong times
             if(propertySettings === "timeOrNull" && !isTimeOrNull(value)) return parseErrorAt(i, `Invalid time "${value}" use format hh:mm:ss.uuu!"`);
+            if(propertySettings === "isRelayOrNull" && value && !["0", "1"].includes(value)) return parseErrorAt(i, `Invalid isRelay "${value}" can only be one of 0,1 or null"`);
         }
     }
     return true;
@@ -1397,7 +1398,7 @@ function validateObject(object, settings, i) {
 function validateResultsFormat(results) {
     const validResult = {
         distance: 3,
-        isRelay: ["1", "0", ""],
+        isRelay: "isRelayOrNull",
         gender: ["m", "w"],
         category: "",
         trackRoad: ["track", "road"],

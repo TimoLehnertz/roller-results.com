@@ -577,6 +577,11 @@ function checkCompetitionAndBelow($idCompetition) {
     return true;
 }
 
+function validateMysqlDate( $date ) {
+    return preg_match( '#^(?P<year>\d{2}|\d{4})([- /.])(?P<month>\d{1,2})\2(?P<day>\d{1,2})$#', $date, $matches )
+           && checkdate($matches['month'],$matches['day'],$matches['year']);
+}
+
 function updateComp($comp) {
     if(!isLoggedIn()) {
         echo "You need to be logged in";
@@ -591,6 +596,9 @@ function updateComp($comp) {
         echo "You dont have permission to do that!";
         return false;
     }
+    if(!validateMysqlDate($comp["startDate"])) $comp["startDate"] = NULL;
+    if(!validateMysqlDate($comp["endDate"])) $comp["endDate"] = $comp["startDate"];
+
     if(!dbExecute("UPDATE TbCompetition SET name=?, startDate=?, endDate=?, location=?, type=?, country=?, latitude=?, longitude=?, contact=? WHERE idCompetition=?;", "sssssssssi", $comp["name"], $comp["startDate"], $comp["endDate"], $comp["location"], $comp["type"], $comp["country"], $comp["latitude"], $comp["longitude"], $comp["contact"], $comp["idCompetition"])) {
         echo "An error occoured";
         return false;
@@ -1290,6 +1298,10 @@ function addCompetition($name, $city, $country, $latitude, $longitude, $type, $s
         echo "You dont have permission to do that";
         exit(0);
     }
+    if(strlen($latitude) == 0) $latitude = NULL;
+    if(strlen($longitude) == 0) $longitude = NULL;
+    if(!validateMysqlDate($startDate)) $startDate = NULL;
+    if(!validateMysqlDate($endDate)) $endDate = $startDate;
     $creator = $_SESSION["iduser"];
     $checked = canI("managePermissions");
     $year = explode("-", $startDate)[0];
