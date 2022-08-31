@@ -341,7 +341,8 @@ if(!isset($NO_GET_API) || $NO_GET_API === false) {
             echo "invalid race";
             exit();
         }
-        $response["id"] = createRace($race["distance"], $race["isRelay"], $race["gender"], $race["category"], $race["trackRoad"], $race["idCompetition"]);
+        $race["round"] = $race["round"] ?? NULL;
+        $response["id"] = createRace($race["distance"], $race["isRelay"], $race["gender"], $race["category"], $race["trackRoad"], $race["idCompetition"], $race["round"]);
         echo json_encode($response);
     } else if(isset($_GET["getathleteRacesFromCompetition"])){
         $id = intval($_GET["getathleteRacesFromCompetition"]);
@@ -763,30 +764,55 @@ function createResults($results) {
         exit();
     }
     $types = "";
-    $sql = "INSERT INTO TbResult(idPerson, idRace, place, tacticalNote, timeDate, creator, checked) VALUES ";
+    $sql = "INSERT INTO TbResult(idPerson, idRace, place, tacticalNote, timeDate, creator, checked, points, disqualificationTechnical, disqualificationSportsFault, didNotStart, falseStart) VALUES ";
 
     $checked = canI("managePermissions");
     $delimiter = "";
     $fillers = [];
     foreach ($results as $result) {
-        $sql .= "$delimiter(?,?,?,?,?,?,?)";
-        $types .= "iiissii";
+        $sql .= "$delimiter(?,?,?,?,?,?,?,?,?,?,?,?)";
+        $types .= "iiissiiiiiii";
         $delimiter = ",";
         $fillers []= $result["idAthlete"];
         $fillers []= $result["idRace"];
         $fillers []= $result["place"];
         $tacticalNote = NULL;
         $time = NULL;
+        $points = 0;
+        $disqualificationTechnical = 0;
+        $disqualificationSportsFault = 0;
+        $didNotStart = 0;
+        $falseStart = 0;
         if(isset($result["tacticalNote"])) {
             $tacticalNote = $result["tacticalNote"];
         }
         if(isset($result["time"])) {
             $time = $result["time"];
         }
+        if(isset($result["points"])) {
+            $points = $result["points"];
+        }
+        if(isset($result["disqualificationTechnical"])) {
+            $disqualificationTechnical = $result["disqualificationTechnical"];
+        }
+        if(isset($result["disqualificationSportsFault"])) {
+            $disqualificationSportsFault = $result["disqualificationSportsFault"];
+        }
+        if(isset($result["didNotStart"])) {
+            $didNotStart = $result["didNotStart"];
+        }
+        if(isset($result["falseStart"])) {
+            $falseStart = $result["falseStart"];
+        }
         $fillers []= $tacticalNote;
         $fillers []= $time;
         $fillers []= $_SESSION["iduser"];
         $fillers []= $checked;
+        $fillers []= $points;
+        $fillers []= $disqualificationTechnical;
+        $fillers []= $disqualificationSportsFault;
+        $fillers []= $didNotStart;
+        $fillers []= $falseStart;
     }
     $sql .= ";";
     if(dbInsert($sql, $types, ...$fillers) == false) {
@@ -796,14 +822,14 @@ function createResults($results) {
     }
 }
 
-function createRace($distance, $isRelay, $gender, $category, $trackRoad, $idCompetition) {
+function createRace($distance, $isRelay, $gender, $category, $trackRoad, $idCompetition, $round) {
     if(!isLoggedIn()) {
         echo "No permission";
         exit();
     }
     $checked = canI("managePermissions");
     $creator = $_SESSION["iduser"];
-    return dbInsert("INSERT INTO TbRace(distance, relay, gender, category, trackStreet, idCompetition, creator, checked) VALUES (?,?,?,?,?,?,?,?)", "sisssiii", $distance, $isRelay, $gender, $category, $trackRoad, $idCompetition, $creator, $checked);
+    return dbInsert("INSERT INTO TbRace(distance, relay, gender, category, trackStreet, idCompetition, creator, checked, `round`) VALUES (?,?,?,?,?,?,?,?,?)", "sisssiiis", $distance, $isRelay, $gender, $category, $trackRoad, $idCompetition, $creator, $checked, $round);
 }
 
 /**
@@ -1010,8 +1036,34 @@ function putAliases($aliases) {
 function searchAthletes($athletes, $aliasGroup) {
     if($athletes == NULL) return [];
     // print_r($athletes);
+    $existingAliases = query("SELECT * FROM TbAthleteAlias WHERE aliasGroup=?;", "s", $aliasGroup);
     $res = [];
     foreach ($athletes as $athlete) {
+        $foundAlias = false;
+        foreach ($existingAliases as $alias) {
+            if($alias["alias"] === $athlete["alias"]) {
+                $athleteQuery = query("SELECT * FROM TbAthlete WHERE id=?;", "i", $alias["idAthlete"]);
+                if(sizeof($athleteQuery) > 0) {
+                    $res[] = [
+                        "search" => $athlete,
+                        "result" => [
+                            [
+                                "firstname" => $athleteQuery[0]["firstname"],
+                                "lastname" => $athleteQuery[0]["lastname"],
+                                "country" => $athleteQuery[0]["country"],
+                                "gender" => $athleteQuery[0]["gender"],
+                                "id" => $athleteQuery[0]["id"],
+                                "image" => $athleteQuery[0]["image"],
+                                "priority" => 50
+                            ]
+                        ]
+                    ];
+                    $foundAlias = true;
+                    break;
+                }
+            }
+        }
+        if($foundAlias) continue;
         $firstName = "";
         $lastName = "";
         $gender = "%";
@@ -1676,7 +1728,7 @@ function getRace($id) {
     }
 }
 
-function getRaces(){
+function getRaces() {
     $result = query("SELECT * FROM vRace;");
     if(sizeof($result) > 0){
         return $result;

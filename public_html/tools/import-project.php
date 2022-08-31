@@ -45,13 +45,6 @@ function echoAliasSelect() {
 // print_r($comps);
 ?>
 <script>
-    const iduser = <?php 
-        if($canUpload) {
-            echo $_SESSION["iduser"];
-        } else {
-            echo "undefined";
-        }
-    ?>;
     const isAdmin = <?php
         if(canI("managePermissions")) {
             echo "true";
@@ -139,6 +132,10 @@ function echoAliasSelect() {
                         use trailing zeros
 
                         If you cant get this format just leave it empty. Times aren't the main focus anyway :)</li>
+                <li>disqualificationTechnical: 1 or 0 or nothing<hr></li>
+                <li>disqualificationSportsFault: 1 or 0 or nothing<hr></li>
+                <li>falseStart: 1 or 0 or nothing<hr></li>
+                <li>didNotStart: 1 or 0 or nothing<hr></li>
             </ul>
         <br><br><hr><br><br>
         <p>Here anybody can upload results from any competition.<br>
@@ -196,7 +193,7 @@ function echoAliasSelect() {
     <div class="section dark">
         <h2 class="align center">Step 3: <span class="font size medium margin left">Select results</span></h2>
         <br>
-        <p>Download excel file <a href="import-preset.xlsx">here</a> and fill in results</p><br>
+        <p><span class="code font color red">Updated excel file</span> Download excel file <a href="import-preset.xlsx">here</a> and fill in results</p><br>
         <p>Upload file here: <input type="file" id="fileUpload" onchange="uploadResultsFile()"/><br>
     </div>
     <div class="section light">
@@ -671,14 +668,15 @@ function updateUI() {
                 search.result.pop();
             }
         }
+        let decided = search.result.length > 0 && search.result[0].isBest;
         if(search.result.length > 0 && !search.result[0].isBest) {
             unsafe++;
         }
         
-        search.createNew = search.result.length === 0;
+        search.createNew = !decided;
         search.newAthlete = JSON.parse(JSON.stringify(search.search));
         const uiId = id;
-    
+
         for (const athlete of search.result) {
             const athleteUid = getUid();
             const res = $(`<div class="res">
@@ -708,8 +706,8 @@ function updateUI() {
             </label>
         </div>`);
         // create adder
-        results.append(`<div class="create-new res ${search.result.length > 0 ? "" : "best"}">
-            <input id="${uiId}-1" type="radio" name="${uiId}" ${search.result.length > 0 ? "" : "checked"} value="-1">
+        results.append(`<div class="create-new res ${decided ? "" : "best"}">
+            <input id="${uiId}-1" type="radio" name="${uiId}" ${decided ? "" : "checked"} value="-1">
             <label id="${uiId}-label-create" for="${uiId}-1">
                 <div class="create-new-inputs">Create new: 
                     <input tooltip="AthleteID" placeholder="AthleteID" name="alias" id="${uiId}-alias" value="${search.search.alias}">
@@ -834,10 +832,26 @@ function createAlias() {
 
 function checkNewAthlete(athlete, i) {
     return validateObject(athlete, {
-        firstName: 2,
-        lastName: 2,
-        country: 3,
-        gender: ["m", "w"],
+        firstName: {
+            type: "string",
+            required: true,
+            minLength: 1
+        },
+        lastName: {
+            type: "string",
+            required: true,
+            minLength: 1
+        },
+        country: {
+            type: "string",
+            required: true,
+            minLength: 3
+        },
+        gender: {
+            type: "string",
+            required: true,
+            allowed: ["m", "w", "d"]
+        },
     }, i);
 }
 
@@ -864,13 +878,12 @@ function apply(aliasGroup) {
         return;
     }
     let i = 0;
-    console.log(athletes);
     for (const athlete of athletes) {
         if(athlete.linkId == "-1234") return alert(`Invalid id given for ${i + 1}th athlete!`);
         if(athlete.createNew && !checkNewAthlete(athlete.newAthlete, 0)) return false;
         if(!athlete.search.alias && !athlete.search.id) {
-            // alert("No alias given for " + athlete.search.firstName + " " + athlete.search.lastName);
-            // return;
+            alert("No alias given for " + athlete.search.firstName + " " + athlete.search.lastName);
+            return;
         }
         aliases.aliases.push({
             idAthlete: athlete.linkId != "-1" ? athlete.linkId : null,
@@ -920,8 +933,11 @@ function apply(aliasGroup) {
 }
 
 function initStep5() {
+    console.log("Initiating step 5");
     hideUnrelevant();
+    if(existingRaces === undefined) return alert("Please select a competition in step 1 and try again");
     $(".existing-races").empty();
+    console.log("Existing races:", existingRaces)
     $(".existing-races").append(getRacesElem(existingRaces));
 
     // relinking athletes
@@ -1146,6 +1162,7 @@ function raceFromResult(result) {
         gender: "",
         isRelay: "0",
         trackRoad: "",
+        round: "",
         results: []
     }
     takeFromRight(race, result);
@@ -1216,6 +1233,7 @@ function findExistingRace(race) {
         category: "",
         gender: "",
         trackRoad: "",
+        round: ""
     }
     // console.log("existing races:", existingRaces);
     // console.log("race:", race);
@@ -1302,7 +1320,8 @@ function addRaceToQue(race, idCompetition) {
         allQuedRaces.push(race);
     } else if(existing !== undefined) {
         raceElem.find(".race").append(`<a class="existing-warning code color red" target="blank" href="/race/index.php?id=${existing?.id}">Existing</a>`);
-        if(isAdmin || iduser == race.creator) {
+        // console.log("existing:", existing);
+        if(phpUser.isAdmin || phpUser.iduser == existing.creator) {
             const delBtn = $(`<button class="btn blender alone">Delete Existing</button>`);
             delBtn.click((e) => {
                 deleteRace(existing, () => {
@@ -1346,16 +1365,12 @@ function deleteRace(race, callback) {
 /**
  * Example:
  * settings: {
-        distance: 3,
-        isRelay: ["1", "0"],
-        gender: ["m", "w"],
-        category: "",
-        trackRoad: ["track", "road"],
-        athleteID: 1,
-        firstName: 1,
-        lastName: 1,
-        place: "integer",
-        time: "timeOrNull",
+        distance: {
+            type: "string" | "time" | "integer"     default: string
+            required: true, false                   default: true
+            minLength: x                            default: 0
+            allowed: ["1", "0"]                     default: all
+        },
     }
     */
 function validateObject(object, settings, i) {
@@ -1363,33 +1378,41 @@ function validateObject(object, settings, i) {
         if (Object.hasOwnProperty.call(settings, property)) {
             const propertySettings = settings[property];
             let value = object[property];
-            // alert required but empty
-            if((value === undefined || value === null) && propertySettings !== "timeOrNull" && propertySettings !== "isRelayOrNull") {
-                console.log(object)
-                return parseErrorAt(i, property + " required");
+            propertySettings.required = propertySettings.required ?? false;
+            propertySettings.type = propertySettings.type ?? "string";
+            propertySettings.minLength = propertySettings.minLength ?? 0;
+
+            if(propertySettings.required && (value == undefined || value == null)) return parseErrorAt(i, property + " required");
+            if(!propertySettings.required && (value == undefined || value == null)) {
+                if(propertySettings.default !== undefined) {
+                    object[property] = propertySettings.default;
+                    value = object[property];
+                } else {
+                    continue;
+                }
             }
             // trim strings
-            if(typeof value === "string") {
+            if(propertySettings.type === "string" && typeof value !== "string") return parseErrorAt(i, "type of " + property + " should be string");
+            if(propertySettings.type === "string") {
                 object[property] = object[property].trim();
                 value = object[property];
+                if(value.length < propertySettings.minLength) return parseErrorAt(i, property + " should have at least " + propertySettings.minLength + " characters. " + value.length + " given");
             }
             // alert too short values
-            if(typeof propertySettings === 'number' && value.length < propertySettings) return parseErrorAt(i, `min ${propertySettings} characters required for field ${property}`);
-            if(Array.isArray(propertySettings)) {
+            if(propertySettings.type === 'integer' && !Number.isInteger(parseFloat(value))) return parseErrorAt(i, `type of ${property} should be integer`);
+            if(propertySettings.allowed) {
                 let succsess = false;
-                for (const option of propertySettings) {
-                    if(option.toLowerCase() === value.toLowerCase()) {
+                for (let a of propertySettings.allowed) {
+                    a = a.toLowerCase();
+                    if(typeof value == "string") value = value.toLowerCase();
+                    if(a === value) {
                         succsess = true;
                         break;
                     }
                 }
-                if(!succsess) return parseErrorAt(i, `"${value}" is invalid for ${property}. Allowed values are: ${propertySettings}`);
+                if(!succsess) return parseErrorAt(i, `"${value}" is invalid for ${property}. Allowed values are: ${propertySettings.allowed}`);
             }
-            // alert invalid integers
-            if(propertySettings === "integer" && !Number.isInteger(parseFloat(value))) return parseErrorAt(i, `Only integers allowed for field ${property}. given: "${value}"`);
-            // alert wrong times
-            if(propertySettings === "timeOrNull" && !isTimeOrNull(value)) return parseErrorAt(i, `Invalid time "${value}" use format hh:mm:ss.uuu!"`);
-            if(propertySettings === "isRelayOrNull" && value && !["0", "1"].includes(value)) return parseErrorAt(i, `Invalid isRelay "${value}" can only be one of 0,1 or null"`);
+            if(propertySettings.type === 'time' && !isTime(value)) return parseErrorAt(i, `"${value}" is no valid time use either the format hh:mm:ss:uuu or remove this value`);
         }
     }
     return true;
@@ -1397,16 +1420,90 @@ function validateObject(object, settings, i) {
 
 function validateResultsFormat(results) {
     const validResult = {
-        distance: 3,
-        isRelay: "isRelayOrNull",
-        gender: ["m", "w"],
-        category: "",
-        trackRoad: ["track", "road"],
-        athleteID: 1,
-        firstName: 2,
-        lastName: 2,
-        place: "integer",
-        time: "timeOrNull",
+        distance: {
+            type: "string",
+            minLength: 3,
+            required: true,
+        },
+        isRelay: {
+            type: "string",
+            required: false,
+            default: "0",
+            allowed: ["1", "0"]
+        },
+        gender: {
+            type: "string",
+            required: true,
+            allowed: ["w", "m"]
+        },
+        category: {
+            type: "string",
+            required: true,
+            minLength: 3
+        },
+        trackRoad: {
+            type: "string",
+            allowed: ["track", "road"],
+            required: false,
+            default: "track"
+        },
+        athleteID: {
+            type: "string",
+            required: true,
+            minLength: 1
+        },
+        firstName: {
+            type: "string",
+            required: true,
+            minLen: 1
+        },
+        lastName: {
+            type: "string",
+            required: true,
+            minLen: 1
+        },
+        place: {
+            required: true,
+            type: "number",
+        },
+        time: {
+            type: "time",
+            required: false,
+        },
+        disqualification: {
+            required: false,
+            default: "0",
+            allowed: ["0", "1"]
+        },
+        falseStart: {
+            required: false,
+            default: "0",
+            allowed: ["0", "1"]
+        },
+        points: {
+            type: "integer",
+            required: false,
+            default: 0,
+        },
+        didNotStart: {
+            required: false,
+            default: "0",
+            allowed: ["0", "1"]
+        },
+        round: {
+            required: false,
+            default: "final",
+        },
+        disqualificationTechnical: {
+            required: false,
+            default: "0",
+            allowed: ["0", "1"]
+        },
+        disqualificationSportsFault: {
+            required: false,
+            default: "0",
+            allowed: ["0", "1"]
+        }
         // country: 3,
     }
     let i = 0;
@@ -1417,8 +1514,7 @@ function validateResultsFormat(results) {
     return true;
 }
 
-function isTimeOrNull(time) {
-    if(time === null || time === undefined) return true;
+function isTime(time) {
     return time.match("(0[0-9]|1[0-9]|2[1-4]):(0[0-9]|[1-5][0-9]):(0[0-9]|[1-5][0-9])\.(00[0-9]|0[0-9][0-9]|[0-9][0-9][0-9])") !== null;
 }
 

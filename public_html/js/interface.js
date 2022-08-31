@@ -555,13 +555,22 @@ function getRaceTable(parent, race) {
     }
     race.results = results;
 
+    let useDisqualified = false;
+    let useTime = false;
+    let usePoints = false;
+    let useDNS = false;
+
     for (const result of race.results) {
-        if(result.time !== undefined) {
-            result.timeDate = result.time;
-        }
         if(result.timeDate !== null) {
-            result.time = preprocessTime(result.timeDate);
+            result.time = result.timeDate;
         }
+        if(result.time && result.time.length > 0) {
+            result.time = preprocessTime(result.timeDate);
+            useTime = true;
+        }
+        if(result.points && parseInt(result.points) > 0) usePoints = true;
+        if(result.didNotStart == "1") useDNS = true;
+        if(result.disqualified == "1") useDisqualified = true;
         result.profiles = profilesElemFromResult(result);
         result.place = {
             data: parseInt(result.place),
@@ -584,16 +593,31 @@ function getRaceTable(parent, race) {
             time: {
                 displayName: "Time",
                 allowSort: true,
-                use: race.results[0]?.time !== null
+                use: useTime
             },
-            country: {
-                displayName: "",
-                allowSort: false
+            points: {
+                displayName: "Points",
+                allowSort: true,
+                use: usePoints
             },
             profiles: {
                 displayName: "Athlete/s",
                 allowSort: false
             },
+            country: {
+                displayName: "",
+                allowSort: false
+            },
+            didNotStart: {
+                displayName: "DNS",
+                allowSort: true,
+                use: useDNS
+            },
+            disqualified: {
+                displayName: "Disqualified",
+                allowSort: true,
+                use: useDisqualified
+            }
         }
     });
     table.init();
@@ -1049,17 +1073,27 @@ function metersFromDistance(distance) {
     if(!distance) return 0;
     if(distance.includes("Marathon")) return 42000;
     const meterString = distance.replace(/\D/g, '');
+    if(meterString.length == 0) return 0;
     return parseInt(meterString);
 }
 
 function indexFromCategory(category) {
     if(!category) return 0;
     category = category.toLowerCase();
-    if(category.includes("youth")) return 1;
-    else if(category.includes("cadet")) return 2;
-    else if(category.includes("junior")) return 3;
-    else if(category.includes("senior")) return 4;
-    console.log(category);
+    if(category.includes("schüler")) return 1;
+    else if(category.includes("youth") || category.includes("jugend")) return 2;
+    else if(category.includes("cadet") || category.includes("kadetten")) return 3;
+    else if(category.includes("junior") || category.includes("junioren")) return 4;
+    else if(category.includes("senior") || category.includes("aktive")) return 5;
+    else if(category.includes("masters")) return 6;
+    return 0;
+}
+
+function compareStrings(a, b) {
+    let comp = a?.localeCompare(b);
+    if(!comp) return 0;
+    if(comp > 0) return 1;
+    if(comp < 0) return -1;
     return 0;
 }
 
@@ -1071,8 +1105,8 @@ function sortRaces(races, method, first = true) {
     }
     switch(method) {
         case "gender": races    = races.sort((a,b) => b.gender?.localeCompare(a.gender)); break;
-        case "distance": races  = races.sort((a,b) => metersFromDistance(a.distance) - metersFromDistance(b.distance) + b.distance?.localeCompare(a.distance)); break;
-        case "category": races  = races.sort((a,b) => indexFromCategory(a.category) - indexFromCategory(b.category)); break;
+        case "distance": races  = races.sort((a,b) => (metersFromDistance(a.distance) - metersFromDistance(b.distance)) * 100 + compareStrings(b.distance, a.distance)); break;
+        case "category": races  = races.sort((a,b) => (indexFromCategory(b.category) - indexFromCategory(a.category)) * 100 - compareStrings(b.category, a.category)); break;
         default: races          = races.sort((a,b) => a[method]?.localeCompare(b[method])); break;
     }
     return races;
