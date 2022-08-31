@@ -1048,11 +1048,19 @@ function uploadResultsFile() {
     var fileUpload = document.getElementById("fileUpload");
 
     //Validate whether File is valid Excel file.
-    var regex = /.+(.xls|.xlsx)$/;
-    if (regex.test(fileUpload.value.toLowerCase())) {
+    let xlsRegex = /.+(.xls|.xlsx)$/;
+    let jsonRegex = /.+(.json)$/;
+    const reader = new FileReader();
+    if(jsonRegex.test(fileUpload.value.toLowerCase())) {
+        reader.onload = () => {
+            const results = JSON.parse(event.target.result);
+            console.log("Uploaded:", results);
+            initiateResults(results);
+        };
+        reader.readAsText(event.target.files[0]);
+    }
+    if (xlsRegex.test(fileUpload.value.toLowerCase())) {
         if (typeof (FileReader) != "undefined") {
-            var reader = new FileReader();
-
             //For Browsers other than IE.
             if (reader.readAsBinaryString) {
                 reader.onload = function (e) {
