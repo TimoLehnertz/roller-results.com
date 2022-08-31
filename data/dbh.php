@@ -1,5 +1,5 @@
 <?php
-include_once "../secret/secrets.php";
+include_once $_SERVER["DOCUMENT_ROOT"]."/../secret/secrets.php";
 
 $dBName = "results";
 
