@@ -1,7 +1,5 @@
 <?php
-$serverName = "192.168.178.103";
-$dBUsername = "phpResults";
-$dBPwd = "thisSecretPasswdWillNeverBeLeaked!!12)";
+include_once "../secret/secrets.php";
 
 $dBName = "results";
 
