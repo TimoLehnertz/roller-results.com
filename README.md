@@ -18,4 +18,10 @@ Installation:
  - find the line that says "DocumentRoot <path>" and change the path to DocumentRoot "C:/xampp/htdocs/roller-results.com/public_html" (or the path of public_html on your system)
  - find the line that says "<Directory <path>>" and change the path to DocumentRoot "C:/xampp/htdocs/roller-results.com/public_html" (or the path of public_html on your system)
  - start the Apache service in XAMP and type "localhost" in your browsers address bar. If you see the roller results start page everything till now works
+ - finally you need to create a folder named secret in the projects root directory. In this folder create a new file called secrets.php. in there paste the following code and save:
+`<?php
+$serverName = "localhost";
+$dBUsername = "root";
+$dBPwd = "";
+?>`
  - You should now have a working instance of roller results on your pc
