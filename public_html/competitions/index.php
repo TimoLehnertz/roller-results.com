@@ -18,7 +18,7 @@ echoRandWallpaper();
         <br>
         <div>
             <button class="btn blender left" onclick="checkAll(true)">Show all</button>
-            <button class="btn blender right" onclick="checkAll(false)">Hode all</button>
+            <button class="btn blender right" onclick="checkAll(false)">Hide all</button>
         </div>
         <br>
         <div class="filters font color black grid four mobile-two gap padding left right">
