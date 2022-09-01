@@ -13,7 +13,13 @@
     &.four
         grid-template-columns: 1fr 1fr 1fr 1fr
 
+    &.gap
+        gap: 1rem
+
     @media only screen and (max-width: 65rem)
         grid-template-columns: 1fr !important
         margin-left: auto
         margin-right: auto
+
+        &.mobile-two
+            grid-template-columns: 1fr 1fr !important

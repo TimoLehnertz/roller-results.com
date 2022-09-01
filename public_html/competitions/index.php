@@ -15,6 +15,14 @@ echoRandWallpaper();
     <div class="comps">
         <h1 class="align center font color gray size biggest">Competitions</h1>
         <p class="align center font color gray size big">See all competitions</p>
+        <br>
+        <div>
+            <button class="btn blender left" onclick="checkAll(true)">Show all</button>
+            <button class="btn blender right" onclick="checkAll(false)">Hode all</button>
+        </div>
+        <br>
+        <div class="filters font color black grid four mobile-two gap padding left right">
+        </div>
         <?php
             if(sizeof($comps) > 0) {
                 $year = 0;
@@ -42,7 +50,7 @@ echoRandWallpaper();
                 $link = "/competition/index.php?id=".$comp["idCompetition"];
                 $flag = "<img class='flag' alt='".$comp["country"]."' src='/img/countries/".strtolower($comp["alpha-2"]).".svg'>";
                 echo "
-                <a class='no-underline comp-link' href='$link'>
+                <a class='no-underline comp-link ".str_replace(" ", "-", translateCompType($comp["type"]))."' href='$link'>
                     <div class='comp'>
                         <div class='left'>
                             $flag
@@ -90,6 +98,34 @@ echoRandWallpaper();
             // $("#" + year).;
         }
     }
+
+    const types = [];
+
+    function checkAll(checked) {
+        $(".show-check").attr("checked", checked)
+        $(`.comp-link`).css("display", checked ? "block" : "none");
+    }
+
+    $(() => {
+        $(".comp-link").each(function() {
+            const type = $(this).attr('class').split(' ')[2];
+            if(!types.includes(type)) {
+                types.push(type);
+            }
+        });
+        for (const type of types) {
+            const div = $("<div></div>")
+            const uid = getUid();
+            const checker = $(`<input type="checkbox" id="${uid}"checked class="show-check margin right">`);
+            div.append(checker);
+            div.append(`<label for="${uid}">${type}</label>`)
+            $(".filters").append(div);
+            checker.change(function() {
+                const checked = this.checked;
+                $(`.comp-link.${type}`).css("display", checked ? "block" : "none");
+            })
+        }
+    })
 </script>
 <?php
 include_once "../footer.php";
