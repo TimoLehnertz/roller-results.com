@@ -102,7 +102,7 @@ echoRandWallpaper();
     const types = [];
 
     function checkAll(checked) {
-        $(".show-check").attr("checked", checked)
+        $(".show-check").prop("checked", checked)
         $(`.comp-link`).css("display", checked ? "block" : "none");
     }
 
@@ -113,6 +113,7 @@ echoRandWallpaper();
                 types.push(type);
             }
         });
+        types.sort();
         for (const type of types) {
             const div = $("<div></div>")
             const uid = getUid();

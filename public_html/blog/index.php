@@ -49,7 +49,7 @@ echoRandWallpaper();
             </div>
             <div style="height: 100%">
                 <form class="Form" action="#" method="POST">
-                    <h2>Feature request</h2>
+                    <h1>Request a feature</h1>
                     <?php
                         if(isset($requestFeatueSuccsess)) {
                             if(!$requestFeatueSuccsess) echo "<p class='font color red margin top bottom'>This request exists already</p>";
