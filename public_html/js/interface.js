@@ -545,8 +545,7 @@ function getRaceTable(parent, race) {
     const places = [];
     const results = [];
     if(race.results.length == 0) {
-        // raceTable.append(`Results will be updated soon`);
-        return $(`<div>Results will be updated soon<div>`);
+        return parent.append(`Results will be updated soon`);
     }
     for (const result of race.results) {
         if(places.includes(result.place)) {
