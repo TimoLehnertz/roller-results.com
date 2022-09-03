@@ -64,7 +64,15 @@ include_once "api/imgAPI.php";
                 <br><span><b>Inline speedskating</b> has no central point for results collection</span><br>
                 <br><span style="color: #222">We're here to fix that!</span>
             </p>
-            <div class="dark section align center" style="background-color: #3b0d20">
+            <div class="dark section align center" style="background-color: #4b0d20">
+                <a class="font size bigger" href="https://www.roller-results.com/competition/?id=451&mainPage=1">
+                <h2>
+                    Results from L'aquila!
+                </h2>
+                <img src="/img/laquila.png" style="max-width: 50%">
+                </a>
+            </div>
+            <div class="dark section align center" style="background-color: #2b0d20">
                 <h2 class="font">Call for action!</h2>
                 <p class="font size big">By the comunity for the comunity!</p>
                 <br>
