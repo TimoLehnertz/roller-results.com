@@ -45,12 +45,12 @@ include_once "../header.php";
         <br>
         <p>
             <label for="longitude">Longitude (Empty or Number; example: 50.804421)</label>
-            <input type="number" name="longitude" id="longitude"  placeholder="longitude">
+            <input step="0.000001" type="number" name="longitude" id="longitude"  placeholder="longitude">
         </p>
         <br>
         <p>
             <label for="type">Competition type*</label>
-            <input type="text" name="type" id="type"  placeholder="type" required>
+            <input step="0.000001" type="text" name="type" id="type"  placeholder="type" required>
         </p>
         <p>
             <label for="startDate">Start date*</label>
