@@ -544,6 +544,10 @@ function getRaceTable(parent, race) {
 
     const places = [];
     const results = [];
+    if(race.results.length == 0) {
+        raceTable.append(`Results will be updated soon`);
+        return;
+    }
     for (const result of race.results) {
         if(places.includes(result.place)) {
             results[results.length - 1].athletes.push(athleteFromResult(result));
