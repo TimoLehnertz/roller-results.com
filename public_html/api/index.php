@@ -66,6 +66,7 @@ $functions = [
     "getanalytics" => 1,
     "getimgAthletes" => 1,
     "searchAthletes" => 1,
+    "searchAthletesFullname" => 1,
     "putAliases" => 1,
     "getathleteMedals" => 1,
     "getcompRaces" => 1,
@@ -488,6 +489,18 @@ if(!isset($NO_GET_API) || $NO_GET_API === false) {
         $aliasGruop = $input["aliasGroup"];
         // print_r($athletes);
         echo json_encode(searchAthletes($athletes, $aliasGruop));
+    } else if(isset($_GET["searchAthletesFullname"])) {
+        // var_dump(file_get_contents('php://input'));
+        $input = json_decode(file_get_contents('php://input'), true);
+        if(!isset($input["athletes"]) || !isset($input["aliasGroup"])) {
+            // var_dump($input);
+            echo "invalid input";
+            exit(0);
+        }
+        $athletes = $input["athletes"];
+        $aliasGruop = $input["aliasGroup"];
+        // print_r($athletes);
+        echo json_encode(searchAthletesFullName($athletes, $aliasGruop));
     } else if(isset($_GET["putAliases"])) {
         if(!isLoggedIn()) {
             echo "No permission";
@@ -1031,6 +1044,69 @@ function putAliases($aliases) {
     $sql .= ";";
     dbExecute($sql, $types, ...$fillers);
     echo "Done";
+}
+
+function searchAthletesFullName($athletes, $aliasGroup) {
+    if($athletes == NULL) return [];
+    // print_r($athletes);
+    $existingAliases = query("SELECT * FROM TbAthleteAlias WHERE aliasGroup=?;", "s", $aliasGroup);
+    $res = [];
+    foreach ($athletes as $athlete) {
+        $foundAlias = false;
+        foreach ($existingAliases as $alias) {
+            if($alias["alias"] === $athlete["alias"]) {
+                $athleteQuery = query("SELECT * FROM TbAthlete WHERE id=?;", "i", $alias["idAthlete"]);
+                if(sizeof($athleteQuery) > 0) {
+                    $res[] = [
+                        "search" => $athlete,
+                        "result" => [
+                            [
+                                "firstname" => $athleteQuery[0]["firstname"],
+                                "lastname" => $athleteQuery[0]["lastname"],
+                                "country" => $athleteQuery[0]["country"],
+                                "gender" => $athleteQuery[0]["gender"],
+                                "id" => $athleteQuery[0]["id"],
+                                "image" => $athleteQuery[0]["image"],
+                                "priority" => 50
+                            ]
+                        ]
+                    ];
+                    $foundAlias = true;
+                    break;
+                }
+            }
+        }
+        if($foundAlias) continue;
+        $fullName = "";
+        $gender = "%";
+        $country = "%";
+        $alias = "";
+        if(isset($athlete["nation"])) {
+            $athlete["country"] = $athlete["nation"]; // alias nation for country
+        }
+        if(isset($athlete["fullName"])) {
+            $fullName = $athlete["fullName"];
+        }
+        if(isset($athlete["country"]) ) {
+            $country = $athlete["country"];
+        }
+        if(isset($athlete["alias"]) ) {
+            $alias = $athlete["alias"];
+        }
+        if(isset($athlete["gender"])) {
+            if(strtolower($athlete["gender"]) === "m") {
+                $gender = "m";
+            } else {
+                $gender = "w";
+            }
+        }
+        $result = [];
+        $result["search"] = $athlete;
+        // echo $gender;
+        $result["result"] = query("CALL sp_searchAthleteFullName(?,?,?,?,?);", "sssss", $fullName, $gender, $country, $alias, $aliasGroup);
+        $res[] = $result;
+    }
+    return $res;
 }
 
 function searchAthletes($athletes, $aliasGroup) {

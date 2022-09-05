@@ -559,7 +559,7 @@ function updateSearch() {
 function process(search, aliasGroup) {
     $(".preview").empty();
     const loadingBar = new LoadingBar();
-    let remaining = parseInt(athletes.length / 4);
+    let remaining = parseInt(athletes.length / 2);
     $(".preview").append(`<p>This will take about <span class="remaining"></span> seconds</p>`)
     $(".preview").append(loadingBar.elem);
     let interval = window.setInterval(() => {
@@ -569,7 +569,8 @@ function process(search, aliasGroup) {
             window.clearInterval(interval);
         }
     }, 1000);
-    post("searchAthletes", {aliasGroup, athletes}).receive((succsess, res) => {
+    // post("searchAthletes", {aliasGroup, athletes}).receive((succsess, res) => {
+    post("searchAthletesFullname", {aliasGroup, athletes}).receive((succsess, res) => {
         console.log("got athlete matches from server:");
         log(res);
         loadingBar.remove();
@@ -614,11 +615,18 @@ function updateUI() {
     let unsafe = 0;
     for (const athlete of athletes) {
         athlete.sureness = 0;
+        let count = 0;
         for (const result of athlete.result) {
-            athlete.sureness = Math.max(athlete.sureness, result.priority);
+            if(result.priority == athlete.sureness) count++;
+            if(result.priority > athlete.sureness) {
+                athlete.sureness = result.priority;
+                count = 0;
+            }
         }
+        athlete.decided = count == 0;
     }
     athletes.sort((a, b) => a.sureness - b.sureness);
+    athletes.sort((a, b) => a.decided == b.decided ? 0 : (a.decided ? 1 : -1));
     let i = 1;
     for (const search of athletes) {
         odd = !odd;
@@ -630,6 +638,7 @@ function updateUI() {
                 <span class="alias">${search.search.alias          || "-"}</span>
                 <span class="first-name">${search.search.firstName || "-"}</span> | 
                 <span class="last-name">${search.search.lastName   || "-"}</span>
+                <span class="full-name">${search.search.fullName   || "-"}</span>
                 <span class="gender">${search.search.gender        || "-"}</span>
                 <span class="country">${search.search.country      || "-"}</span>
                 <span class="country">${search.search.category     || "-"}</span>
@@ -650,7 +659,28 @@ function updateUI() {
             }
         }
         search.result = newResults;
-        
+
+        if(search.search.firstName == undefined) { // reconstructing first and last name
+            if(search.search.fullName == undefined) return alert("We made a mistake");
+            const split = search.search.fullName.split(" ");
+            if(split.length <= 1) {
+                $(".preview").empty();
+                alert(`${search.search.fullName} is not a valid name. Abording`);
+                return;
+            }
+            const splitIndex = parseInt(split.length / 2);
+            search.search.firstName = "";
+            search.search.lastName = "";
+            for (let i = 0; i < splitIndex; i++) {
+                search.search.lastName += split[i] + " ";
+            }
+            for (let i = splitIndex; i < split.length; i++) {
+                search.search.firstName += split[i] + " ";
+            }
+            search.search.firstName = search.search.firstName.trim();
+            search.search.lastName = search.search.lastName.trim();
+        }
+
         let match = false;
         if(search.result.length > 1) {
             if(parseFloat(search.result[0].priority) > parseFloat(search.result[1].priority)) {
@@ -777,6 +807,17 @@ function updateUI() {
     $(".preview").prepend(`<p>Found ${found} / ${athletes.length} Athletes. ${unsafe} not sure.</p>`)
 }
 
+function toTitleCase(str) {
+    if(typeof str !== "string") return str;
+    return str.replace(
+        /\w\S*/g,
+        function(txt) {
+            return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+        }
+    );
+}
+
+
 function getGenderImg(gender) {
     switch(gender?.toUpperCase()){
         case "m":
@@ -853,6 +894,33 @@ function checkNewAthlete(athlete, i) {
             allowed: ["m", "w", "d"]
         },
     }, i);
+}
+
+const countryAliases = [
+    {
+        dbName: "Czechia",
+        aliases: ["Czech Republic"],
+    },
+    {
+        dbName: "Hungary",
+        aliases: ["Hungarya"],
+    },
+]
+
+function parseCountry(country) {
+    country = country.replace(/\(..\)/, "");
+    country = country.trim();
+    country = country.toLowerCase();
+    if(typeof country !== "string") return country;
+    for (const countryAlias of countryAliases) {
+        if(country == countryAlias.dbName.toLowerCase()) return countryAlias.dbName;
+        for (const alias of countryAlias.aliases) {
+            if(alias.toLowerCase() == country) {
+                return countryAlias.dbName;
+            } 
+        }
+    }
+    return country;
 }
 
 function apply(aliasGroup) {
@@ -1129,16 +1197,19 @@ function initiateResults(loadedResults) {
         for (const athlete of athletes) {
             if(athlete.alias === result.athleteID) found = true;
         }
+        result.athleteID = result.athleteID ?? result.startNumber;
+        result.country = toTitleCase(parseCountry(result.country));
         if(found) continue;
         athletes.push({
             alias: result.athleteID ?? result.startNumber,
-            firstName: result.firstName,
-            lastName: result.lastName,
-            gender: result.gender,
-            country: result.country,
-            club: result.club,
-            team: result.team,
-            category: result.category,
+            fullName: toTitleCase(result.fullName ?? result.firstName + result.lastName),
+            // firstName: toTitleCase(result.firstName),
+            // lastName: toTitleCase(result.lastName),
+            gender: result.gender.toLowerCase(),
+            country: toTitleCase(parseCountry(result.country)),
+            club: toTitleCase(result.club),
+            team: toTitleCase(result.team),
+            category: toTitleCase(result.category),
         })
     }
     const aliasGroup = $(".alias-select").val();
@@ -1340,7 +1411,7 @@ function addRaceToQue(race, idCompetition) {
     } else { // doublicate athletes
         let doublicateString = "";
         for (const doublicate of doublicates) {
-            doublicateString += `firstname: ${doublicate.firstName}, lastname: ${doublicate.firstName}, id: ${doublicate.idAthlete}, place: ${doublicate.place}<br>`;
+            doublicateString += `fullName: ${doublicate.fullName}, firstname: ${doublicate.firstName}, lastname: ${doublicate.firstName}, id: ${doublicate.idAthlete}, place: ${doublicate.place}<br>`;
         }
         const warningId = getUid();
         raceElem.find(".race").append(`<a id="${warningId}" class="existing-warning code color red" target="blank">Doublicate athlete</span>`);
@@ -1370,6 +1441,7 @@ function deleteRace(race, callback) {
             required: true, false                   default: true
             minLength: x                            default: 0
             allowed: ["1", "0"]                     default: all
+            alternative: "fullName",                default: undefined
         },
     }
     */
@@ -1382,7 +1454,14 @@ function validateObject(object, settings, i) {
             propertySettings.type = propertySettings.type ?? "string";
             propertySettings.minLength = propertySettings.minLength ?? 0;
 
-            if(propertySettings.required && (value == undefined || value == null)) return parseErrorAt(i, property + " required");
+            if(propertySettings.required && (value == undefined || value == null)) {
+                if(object[propertySettings.alternative] == undefined) {
+                    console.log("alternative: ", object[propertySettings.alternative]);
+                    return parseErrorAt(i, property + " required");
+                } else {
+                    continue;
+                }
+            }
             if(!propertySettings.required && (value == undefined || value == null)) {
                 if(propertySettings.default !== undefined) {
                     object[property] = propertySettings.default;
@@ -1450,16 +1529,27 @@ function validateResultsFormat(results) {
         athleteID: {
             type: "string",
             required: true,
-            minLength: 1
+            minLength: 1,
+            alternative: "startNumber",
+        },
+        startNumber: {
+            required: false,
+            minLength: 1,
         },
         firstName: {
             type: "string",
             required: true,
+            alternative: "fullName",
             minLen: 1
         },
         lastName: {
             type: "string",
             required: true,
+            alternative: "fullName",
+            minLen: 1
+        },
+        fullName: {
+            required: false,
             minLen: 1
         },
         place: {
