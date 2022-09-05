@@ -73,7 +73,7 @@ include_once "api/imgAPI.php";
                 </a>
             </div>
             <div class="dark section align center" style="background-color: #2b0d20">
-                <h2 class="font">Call for action!</h2>
+                <h2 class="font">Call for action!</h2>console.log()
                 <p class="font size big">By the comunity for the comunity!</p>
                 <br>
                 <p>
