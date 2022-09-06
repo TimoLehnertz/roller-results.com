@@ -1202,7 +1202,7 @@ function initiateResults(loadedResults) {
         if(found) continue;
         athletes.push({
             alias: result.athleteID ?? result.startNumber,
-            fullName: toTitleCase(result.fullName ?? result.firstName + result.lastName),
+            fullName: toTitleCase(result.fullName ?? result.firstName + " " + result.lastName),
             // firstName: toTitleCase(result.firstName),
             // lastName: toTitleCase(result.lastName),
             gender: result.gender.toLowerCase(),
