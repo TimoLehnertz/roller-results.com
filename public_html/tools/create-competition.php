@@ -40,7 +40,7 @@ include_once "../header.php";
         <br>
         <p>
             <label for="latitude">Latitude (Empty or Number; example: 50.804421)</label>
-            <input type="number" name="latitude" id="latitude"  placeholder="latitude">
+            <input step="0.000001" type="number" name="latitude" id="latitude"  placeholder="latitude">
         </p>
         <br>
         <p>
