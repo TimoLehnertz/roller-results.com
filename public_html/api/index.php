@@ -86,7 +86,7 @@ if(session_status() != PHP_SESSION_ACTIVE){
     session_start();
 }
 if(!isset($_SESSION["apiGranted"]) || $_SESSION["apiGranted"] != true) {
-    $NO_GET_API = true;
+    // $NO_GET_API = true;
     if(isset($_GET["apiKey"])) {
         if(checkApiKey($_GET["apiKey"])) {
             $NO_GET_API = false;

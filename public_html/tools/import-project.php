@@ -559,10 +559,11 @@ function updateSearch() {
 function process(search, aliasGroup) {
     $(".preview").empty();
     const loadingBar = new LoadingBar();
-    let remaining = parseInt(athletes.length / 2);
+    let remaining = parseInt(athletes.length * 0.35);
     $(".preview").append(`<p>This will take about <span class="remaining"></span> seconds</p>`)
     $(".preview").append(loadingBar.elem);
-    let interval = window.setInterval(() => {
+    let interval;
+    interval = window.setInterval(() => {
         $(".preview").find(".remaining").text(remaining);
         remaining--;
         if(remaining < 0) {
@@ -609,6 +610,22 @@ function updateUI() {
         }
     });
 
+
+    // deleting doublicates
+    for (const search of athletes) {
+        const ids = [];
+        const newResults = [];
+        for (const result of search.result) {
+            if(!ids.includes(result.id)) {
+                newResults.push(result);
+                ids.push(result.id);
+            }
+        }
+        search.result = newResults;
+    }
+
+    // find decided athletes
+    // decided is 1 or more with min priority of 1 
     let id = 0;
     let odd = true;
     let found = 0;
@@ -616,14 +633,24 @@ function updateUI() {
     for (const athlete of athletes) {
         athlete.sureness = 0;
         let count = 0;
+        let bestResult = undefined;
         for (const result of athlete.result) {
             if(result.priority == athlete.sureness) count++;
             if(result.priority > athlete.sureness) {
                 athlete.sureness = result.priority;
                 count = 0;
+                bestResult = result;
             }
         }
-        athlete.decided = count == 0;
+        athlete.decided = count == 0 && athlete.sureness >= 1.5;
+        if(athlete.decided) {
+            athlete.linkId = bestResult.id;
+            bestResult.isBest = true;
+            found++;
+        }
+        if(!athlete.decided && athlete.result.length > 1) {
+            unsafe++;
+        }
     }
     athletes.sort((a, b) => a.sureness - b.sureness);
     athletes.sort((a, b) => a.decided == b.decided ? 0 : (a.decided ? 1 : -1));
@@ -648,17 +675,6 @@ function updateUI() {
 
         
         const results = $(`<div class="results"></div>`);
-        
-        // deleting doublicates
-        const ids = [];
-        const newResults = [];
-        for (const result of search.result) {
-            if(!ids.includes(result.id)) {
-                newResults.push(result);
-                ids.push(result.id);
-            }
-        }
-        search.result = newResults;
 
         if(search.search.firstName == undefined) { // reconstructing first and last name
             if(search.search.fullName == undefined) return alert("We made a mistake");
@@ -681,29 +697,29 @@ function updateUI() {
             search.search.lastName = search.search.lastName.trim();
         }
 
-        let match = false;
-        if(search.result.length > 1) {
-            if(parseFloat(search.result[0].priority) > parseFloat(search.result[1].priority)) {
-                search.result[0].isBest = search.result[0].priority > 2;
-                search.linkId = search.result[0].id;
-            }
-        } else if(search.result.length === 1) {
-            search.result[0].isBest = search.result[0].priority >= 2;
-            search.linkId = search.result[0].id;
-        }
-        if(search.result.length > 0 && search.result[0].isBest) {
-            found++;
-            match = true; 
-            while(search.result.length > 3) {
-                search.result.pop();
-            }
-        }
-        let decided = search.result.length > 0 && search.result[0].isBest;
-        if(search.result.length > 0 && !search.result[0].isBest) {
-            unsafe++;
-        }
+        // let match = false;
+        // if(search.result.length > 1) {
+        //     if(parseFloat(search.result[0].priority) > parseFloat(search.result[1].priority)) {
+        //         search.result[0].isBest = search.result[0].priority > 2;
+        //         search.linkId = search.result[0].id;
+        //     }
+        // } else if(search.result.length === 1) {
+        //     search.result[0].isBest = search.result[0].priority >= 2;
+        //     search.linkId = search.result[0].id;
+        // }
+        // if(search.result.length > 0 && search.result[0].isBest) {
+        //     found++;
+        //     match = true; 
+        //     while(search.result.length > 3) {
+        //         search.result.pop();
+        //     }
+        // }
+        // let decided = search.result.length > 0 && search.result[0].isBest;
+        // if(search.result.length > 0 && !search.result[0].isBest) {
+        //     unsafe++;
+        // }
         
-        search.createNew = !decided;
+        search.createNew = !search.decided;
         search.newAthlete = JSON.parse(JSON.stringify(search.search));
         const uiId = id;
 
@@ -736,8 +752,8 @@ function updateUI() {
             </label>
         </div>`);
         // create adder
-        results.append(`<div class="create-new res ${decided ? "" : "best"}">
-            <input id="${uiId}-1" type="radio" name="${uiId}" ${decided ? "" : "checked"} value="-1">
+        results.append(`<div class="create-new res ${search.decided ? "" : "best"}">
+            <input id="${uiId}-1" type="radio" name="${uiId}" ${search.decided ? "" : "checked"} value="-1">
             <label id="${uiId}-label-create" for="${uiId}-1">
                 <div class="create-new-inputs">Create new: 
                     <input tooltip="AthleteID" placeholder="AthleteID" name="alias" id="${uiId}-alias" value="${search.search.alias}">
@@ -1193,15 +1209,16 @@ function initiateResults(loadedResults) {
     for (const result of results) {
         // check if existing
         let found = false;
+        result.athleteID = result.athleteID ?? result.startNumber;
         result.place = parseInt(result.place);
         for (const athlete of athletes) {
-            if(athlete.alias === result.athleteID) found = true;
+            if(athlete.alias == result.athleteID) found = true;
         }
         result.athleteID = result.athleteID ?? result.startNumber;
         result.country = toTitleCase(parseCountry(result.country));
         if(found) continue;
         athletes.push({
-            alias: result.athleteID ?? result.startNumber,
+            alias: result.athleteID,
             fullName: toTitleCase(result.fullName ?? result.firstName + " " + result.lastName),
             // firstName: toTitleCase(result.firstName),
             // lastName: toTitleCase(result.lastName),
@@ -1446,6 +1463,10 @@ function deleteRace(race, callback) {
     }
     */
 function validateObject(object, settings, i) {
+    parseErrorInfo = {
+        validateObject: JSON.parse(JSON.stringify(object)),
+        settings,
+    };
     for (const property in settings) {
         if (Object.hasOwnProperty.call(settings, property)) {
             const propertySettings = settings[property];
@@ -1608,8 +1629,12 @@ function isTime(time) {
     return time.match("(0[0-9]|1[0-9]|2[1-4]):(0[0-9]|[1-5][0-9]):(0[0-9]|[1-5][0-9])\.(00[0-9]|0[0-9][0-9]|[0-9][0-9][0-9])") !== null;
 }
 
+let parseErrorInfo = undefined;
+
 function parseErrorAt(row, msg) {
     alert(`Invalid result in row ${row}. ${msg}`);
+    console.log("parse error info:");
+    console.log(parseErrorInfo);
     return false;
 }
 </script>
