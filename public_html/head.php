@@ -22,6 +22,8 @@ if($loggedIn) {
     $user = getUser($_SESSION["iduser"]);
 }
 $actual_link = htmlentities((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]");
+
+// <meta property="og:url" content="<?=$actual_link
 ?>
 
 <html>
@@ -33,7 +35,7 @@ $actual_link = htmlentities((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === '
         <meta property="og:image" content="<?php echo getPreview();?>">
 
         <meta property="og:title" content="Roller Results" />
-        <meta property="og:url" content="<?=$actual_link?>" />
+        
         <meta property="og:description" content="Roller skating results and analysis">
         <meta property="og:type" content="profile" />
         <meta name="viewport" content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0'>
