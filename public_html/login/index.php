@@ -13,7 +13,7 @@ if(isLoggedIn()){
 
 $username = "";
 if(isset($_GET["user"])){
-    $username = $_GET["user"];
+    $username = htmlentities($_GET["user"]);
 }
 
 ?>
