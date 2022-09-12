@@ -110,7 +110,7 @@ include_once "api/imgAPI.php";
                 <h2>500+ Videos</h2>
                 <ul>
                     <li>
-                        Anytime you see this <i class="fab fa-youtube"></i> Icon there will be a video availbale for the race / competition
+                        Any time you see this <i class="fab fa-youtube"></i> Icon there will be a video available for the race / competition
                     </li>
                     <li>
                         Search for a race or competition and find lots of videos
