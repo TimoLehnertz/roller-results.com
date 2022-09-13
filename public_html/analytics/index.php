@@ -11,7 +11,7 @@ echoRandWallpaper();
         <h1 class="font size biggest"><i class="fas fa-binoculars margin right"></i>Analytics</h1>
         <p class="align center font size big color light margin top double">The tool to dig deep into Inline Speedskating data</p>
         <br>
-        <p class="align center font color light ">Here you have limitless accsess and powerful tools to the worlds biggest inline skating database.</p>
+        <p class="align center font color light ">Here you have limitless access and powerful tools to the worlds biggest inline skating database.</p>
     </div>
     <div class="light section">
         <div class="flex mobile">

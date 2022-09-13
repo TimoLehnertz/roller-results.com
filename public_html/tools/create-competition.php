@@ -71,7 +71,7 @@ include_once "../header.php";
             <input type="submit" value="Create" name="submit" class="btn default">
         <?php } else { ?>
             <p><a target="blank" href="/login">Login</a> to create competitions</p>
-            <!-- <p>Contact us at <span class="code padding left right">roller.results@gmail.com</span> to get accsess to this tool</p> -->
+            <!-- <p>Contact us at <span class="code padding left right">roller.results@gmail.com</span> to get access to this tool</p> -->
         <?php }?>
     </form>
 </div>
