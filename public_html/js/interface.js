@@ -558,10 +558,13 @@ function getRaceTable(parent, race) {
     }
     race.results = results;
 
-    let useDisqualified = false;
+    let useDisqualificationSportsFault = false;
+    let useDisqualificationTechnicalFault = false;
     let useTime = false;
     let usePoints = false;
     let useDNS = false;
+
+    const dqs = [];
 
     for (const result of race.results) {
         if(result.timeDate !== null) {
@@ -573,19 +576,30 @@ function getRaceTable(parent, race) {
         }
         if(result.points && parseInt(result.points) > 0) usePoints = true;
         if(result.didNotStart == "1") useDNS = true;
-        if(result.disqualified == "1") useDisqualified = true;
+        if(result.disqualificationSportsFault == "1") useDisqualificationSportsFault = true;
+        if(result.disqualificationTechnical == "1") useDisqualificationTechnicalFault = true;
+        if(result.disqualificationSportsFault == "1" || result.disqualificationTechnical == "1") {
+            result.place = undefined;
+            dqs.push(result);
+        } else {
+            result.place = {
+                data: parseInt(result.place),
+                alignment: "center",
+                type: "place"
+            };
+        }
         result.profiles = profilesElemFromResult(result);
-        result.place = {
-            data: parseInt(result.place),
-            alignment: "center",
-            type: "place"
-        };
         result.country = {
             data: result.athletes[0].country,
             type: "countryFlag",
             link: "/country?id=" + result.athletes[0].country,
             tooltip: result.athletes[0].country
         }
+    }
+
+    for (const dq of dqs) {
+        results.splice(results.indexOf(dq), 1);
+        results.push(dq);
     }
     
     const table = new Table(raceTable, race.results);
@@ -616,10 +630,15 @@ function getRaceTable(parent, race) {
                 allowSort: true,
                 use: useDNS
             },
-            disqualified: {
-                displayName: "Disqualified",
+            disqualificationSportsFault: {
+                displayName: "DQ sports fault",
                 allowSort: true,
-                use: useDisqualified
+                use: useDisqualificationSportsFault
+            },
+            disqualificationTechnical: {
+                displayName: "DQ technical",
+                allowSort: true,
+                use: useDisqualificationTechnicalFault
             }
         }
     });

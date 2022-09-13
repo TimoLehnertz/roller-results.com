@@ -12,10 +12,10 @@ if(!isset($_GET["id"])) {
 $id = $_GET["id"];
 
 $athlete = getAthlete($id);
-if(sizeof($athlete) == 0) {
-    throwError($ERROR_INVALID_ID);
-    exit();
-}
+// if(sizeof($athlete) == 0) {
+//     throwError($ERROR_INVALID_ID);
+//     exit();
+// }
 
 include_once "../header.php";
 

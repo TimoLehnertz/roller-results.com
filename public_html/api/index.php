@@ -118,8 +118,12 @@ function checkApiKey($apiKey) {
 /**
  * setup
  */
-$scoreInfluences = "WM,World Games,EM,0.2"; // @todo
-$usedMedals = "WM,World Games";
+$scoreInfluences = "WM,World Games,EM"; // @todo
+$usedMedals = "WM,World Games,Junior,Senior";
+
+if(isset($_SESSION["usedMedals"])) {
+    $usedMedals = $_SESSION["usedMedals"];
+}
 
 /**
  * Getters
@@ -130,6 +134,7 @@ if(!isset($NO_GET_API) || $NO_GET_API === false) {
     }
     if(isset($_GET["usedMedals"])) {
         $usedMedals = $_GET["usedMedals"];
+        $_SESSION["usedMedals"] = $usedMedals;
     } if(isset($_GET["getathlete"])) {
         $res = getAthlete($_GET["getathlete"]);
         if($res !== false){
@@ -383,7 +388,7 @@ if(!isset($NO_GET_API) || $NO_GET_API === false) {
        }
        if(isset($_GET["round"]) && $_GET["round"] != "Final") exit();
        echo getRaceDescription($_GET["year"], $_GET["event"], $_GET["distance"], $_GET["gender"], $_GET["category"]);
-   } else if(isset($_GET["getteamAdvantage"])){
+   } else if(isset($_GET["getteamAdvantage"])) {
         if(isset($_GET["data"]) && isset($_GET["data1"])) {
             echo json_encode(getTeamAdvantage($_GET["getteamAdvantage"], $_GET["data"], $_GET["data1"]));
         } else {
@@ -1712,6 +1717,8 @@ function getAthlete($id) {
     global $usedMedals;
     // $result = query("CALL sp_athleteFull(?, ?, ?)", "iss", intval($id), $scoreInfluences, $usedMedals);
     $result = query("CALL sp_getAthleteNew(?, ?)", "is", intval($id), $usedMedals);
+    // print_r($result);
+    // echo $usedMedals;
     if(sizeof($result) > 0) {
         return $result[0];
     } else {
