@@ -78,7 +78,7 @@ function echoAliasSelect() {
         <?php if(!$canUpload) { ?>
             <p><a target="blank" href="/login">Login</a> to upload results</p>
             <h2 class="margin top bottom"></h2>
-            <!-- <h2 class="margin top bottom">Contact us at <span class="code padding left right">roller.results@gmail.com</span> to get full accsess to this tool!</h2> -->
+            <!-- <h2 class="margin top bottom">Contact us at <span class="code padding left right">roller.results@gmail.com</span> to get full access to this tool!</h2> -->
         <?php }?>
         <a href="/tools/import-preset.xlsx" class="font size big">Download excel preset</a><br>
             <h2>Format:</h2>
@@ -817,7 +817,7 @@ function updateUI() {
     if(canUploadResults) {
         $(".preview").append(`<button class="save-athletes-btn btn default" onclick="update()">Save athletes</button>`);
     } else {
-        $(".preview").append(`<h2 class="margin top">Contact us at <span class="code padding left right">roller.results@gmail.com</span> to get accsess to this tool</h2>`);
+        $(".preview").append(`<h2 class="margin top">Contact us at <span class="code padding left right">roller.results@gmail.com</span> to get access to this tool</h2>`);
     }
     // $(".preview").append(`<button class="btn default" onclick="update()"></button>`);
     $(".preview").prepend(`<p>Found ${found} / ${athletes.length} Athletes. ${unsafe} not sure.</p>`)
