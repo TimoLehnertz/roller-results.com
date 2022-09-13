@@ -74,10 +74,10 @@ include_once "api/imgAPI.php";
             </div>
             <div class="dark section align center" style="background-color: #2b0d20">
                 <h2 class="font">Call for action!</h2>console.log()
-                <p class="font size big">By the comunity for the comunity!</p>
+                <p class="font size big">By the community for the community!</p>
                 <br>
                 <p>
-                    If you can get results from somewhere and could get them into this format it would mean a lot.<br>We will upload all results that will be send by the comunity
+                    If you can get results from somewhere and could get them into this format it would mean a lot.<br>We will upload all results that will be send by the community
                 </p>
                 <br>
                 <h3>Our format: <a href="/tools/import-preset.xlsx">Download link</a></h2>
@@ -226,7 +226,7 @@ include_once "api/imgAPI.php";
                 <h2>And the best is yet to come:<br>it's all free and open source!</h2>
                 <button class="btn only-text" onclick="easterEgg()"><img src="/img/easter-egg.png" style="max-width: 2rem"></button>
                 <p>
-                    We commit this site to the amazing inline speedskating comunity!
+                    We commit this site to the amazing inline speedskating community!
                 </p>
                 <p>
                     The whole sourcecode for this website is<br>available on <a target="_blank" rel="noopener noreferrer" href="https://github.com/TimoLehnertz/roller-results.com" class="no-underline"><i class="fab fa-github"></i> Gihub</a>
