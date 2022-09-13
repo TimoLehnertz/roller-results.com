@@ -10,7 +10,7 @@ echoRandWallpaper();
     <div class="dark section no-shadow">
         <h1 class="flex mobile font size biggest">Music</h1>
         <p class="align center font size big color light margin top double">
-            Comunity spotify playlists
+            Community spotify playlists
         </p>
     </div>
     <div class="light section">

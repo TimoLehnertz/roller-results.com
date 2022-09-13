@@ -1121,7 +1121,7 @@ function getRaceDelimiter(text) {
 
 function getUncheckedElem() {
     const elem = $(`<span class="code font color red">Unchecked</span>`);
-    new Tooltip(elem, "This data has been uploaded by the comunity and is not validated yet");
+    new Tooltip(elem, "This data has been uploaded by the community and is not validated yet");
     return elem;
 }
 
