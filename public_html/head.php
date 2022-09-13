@@ -61,7 +61,7 @@ $actual_link = htmlentities((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === '
 
         <script src="/js/ajaxAPI.js?v=2.1"></script>
         <script src="/js/lib.js?v=2.1"></script>
-        <script src="/js/ui.js?v=2.4"></script>
+        <script src="/js/ui.js?v=2.5"></script>
         <script src="/js/interface.js?v=2.2"></script>
         <script src="/js/html2canvas/html2canvas.js" defer></script>
         <script>
