@@ -924,6 +924,7 @@ const countryAliases = [
 ]
 
 function parseCountry(country) {
+    if(!country) return country;
     country = country.replace(/\(..\)/, "");
     country = country.trim();
     country = country.toLowerCase();
