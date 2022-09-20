@@ -1963,6 +1963,11 @@ function search($name, $allowed) {
             foreach ($names as $key => $value) {
                 $competitions = query("CALL sp_searchCompetitionType(?)", "s", $value);
                 foreach ($competitions as $key => $competition) {
+                    $existing = false;
+                    foreach ($results as $res) {
+                        if($res["id"] == $competition["idCompetition"]) $found = true;
+                    }
+                    if($found) continue;
                     $results[] = [
                         "id" => $competition["idCompetition"],
                         "name" => $competition["type"]." ".$competition["location"]." ".$competition["raceYear"],

@@ -195,6 +195,15 @@ function echoAliasSelect() {
         <br>
         <p><span class="code font color red">Updated excel file</span> Download excel file <a href="import-preset.xlsx">here</a> and fill in results</p><br>
         <p>Upload file here: <input type="file" id="fileUpload" onchange="uploadResultsFile()"/><br>
+        <select class="name-order">
+            <option value="firstNameFirst">First name first</option>
+            <option value="lastNameFirst">Last name first</option>
+        </select>
+        <br>
+        <label for="limitResults">Limit results</label>
+        <input type="checkbox" name="limitResults" id="limitResults"><br>
+        <label for="maxRows">Max rows</label>
+        <input type="number" name="maxRows" id="maxRows" value="10">
     </div>
     <div class="section light">
         <h2 class="align center">Step 4: <span class="font size medium margin left">Link athletes</span></h2>
@@ -456,10 +465,16 @@ $(() => {
         compChanged();
     }
     const aliasGroup = sessionStorage.getItem('importScriptAliasGroup');
-    if(aliasGroup !== undefined) {
+    if(aliasGroup) {
+        if($(`.alias-select option[value='${aliasGroup}']`).length == 0) {
+            $(".alias-select").append(`<option value="${aliasGroup}">${aliasGroup}</option>`);
+        }
         $(".alias-select").val(aliasGroup);
         aliasChanged();
     }
+    $("#newAliasName").on("keypress", (e) => {
+        if(e.key == "Enter") createAlias();
+    });
 });
 
 let allCountries = [];
@@ -488,7 +503,7 @@ let existingRaces = undefined;
 let existingCompetition = undefined;
 
 function getCountrySelect() {
-    const elem = $(`<select/>`);
+    const elem = $(`<select class="country-select"></select>`);
     for (const country of allCountries) {
         elem.append(`<option value="${country.country}">${country.country}</option>`);
     }
@@ -597,9 +612,10 @@ function updateUI() {
     $(".preview").empty();
     const hideBtn = $(`<button class="btn blender alone">Hide matched</button>`);
     const showUnrelevalt = $(`<button class="btn blender alone">Show all</button>`);
+    // const link = $(`<button class="btn blender alone">Show all</button>`);
     $(".preview").append(`<div class="sticky buttons"></div>`);
     $(".preview").find(".buttons").append(hideBtn);
-    $(".preview").find(".buttons").append(showUnrelevalt);
+    $(".preview").find(".buttons").append(hideBtn);
 
     hideBtn.click(() => {
         hideUnrelevant();
@@ -642,7 +658,7 @@ function updateUI() {
                 bestResult = result;
             }
         }
-        athlete.decided = count == 0 && athlete.sureness >= 1.5;
+        athlete.decided = count == 0 && athlete.sureness >= 1.8;
         if(athlete.decided) {
             athlete.linkId = bestResult.id;
             bestResult.isBest = true;
@@ -678,20 +694,47 @@ function updateUI() {
 
         if(search.search.firstName == undefined) { // reconstructing first and last name
             if(search.search.fullName == undefined) return alert("We made a mistake");
-            const split = search.search.fullName.split(" ");
-            if(split.length <= 1) {
-                $(".preview").empty();
-                alert(`${search.search.fullName} is not a valid name. Abording`);
-                return;
+            const words = search.search.fullName.split(" ");
+            const split = [];
+            // concatinate names shorter than 3 chars
+            let concat = "";
+            for (let i = 0; i < words.length; i++) {
+                const word = words[i];
+                if(i == split.length - 1) {
+                    split.push((concat + " " + word).trim());
+                    break;
+                }
+                if(word.length > 2) {
+                    split.push((concat + " " + word).trim());
+                    concat = "";
+                } else {
+                    concat += " " + word;
+                }
             }
+
+            // if(split.length <= 1) {
+            //     $(".preview").empty();
+            //     alert(`${search.search.fullName} is not a valid name. Abording`);
+            //     return;
+            // }
             const splitIndex = parseInt(split.length / 2);
+
             search.search.firstName = "";
             search.search.lastName = "";
+            const firstNameFirst = $(".name-order").val() == "firstNameFirst";
             for (let i = 0; i < splitIndex; i++) {
-                search.search.lastName += split[i] + " ";
+                if(firstNameFirst) {
+                    search.search.firstName += split[i] + " ";
+                } else {
+                    search.search.lastName += split[i] + " ";
+                }
             }
             for (let i = splitIndex; i < split.length; i++) {
-                search.search.firstName += split[i] + " ";
+                if(firstNameFirst) {
+                    search.search.lastName += split[i] + " ";
+                } else {
+                    search.search.firstName += split[i] + " ";
+                }
             }
             search.search.firstName = search.search.firstName.trim();
             search.search.lastName = search.search.lastName.trim();
@@ -757,8 +800,8 @@ function updateUI() {
             <label id="${uiId}-label-create" for="${uiId}-1">
                 <div class="create-new-inputs">Create new: 
                     <input tooltip="AthleteID" placeholder="AthleteID" name="alias" id="${uiId}-alias" value="${search.search.alias}">
-                    <input tooltip="First name" placeholder="First name" name="firstName" id="${uiId}-firstName" value="${search.search.firstName}">
-                    <input tooltip="Last name" placeholder="Last name" name="lastName" id="${uiId}-lastName" value="${search.search.lastName}">
+                    <input class="first-name" tooltip="First name" placeholder="First name" name="firstName" id="${uiId}-firstName" value="${search.search.firstName}">
+                    <input class="last-name" tooltip="Last name" placeholder="Last name" name="lastName" id="${uiId}-lastName" value="${search.search.lastName}">
                     <select id="${uiId}-gender" name="gender">
                         <option value="m" ${search.search.gender === "m" ? "selected" : ""}>Male</option>
                         <option value="w" ${search.search.gender === "w" ? "selected" : ""}>Female</option>
@@ -769,9 +812,13 @@ function updateUI() {
             </label>
         </div>`);
         const countryElem = getCountrySelect();
+        const countrySmartElem = $(`<button>Apply country for all of this club</button>`);
+        const swapNameBtn = $(`<button>Swap name</button>`);
         countryElem.attr("id", `${uiId}-country`);
         countryElem.val(search.search.country);
         results.find(`#${uiId}-label-create`).append(countryElem);
+        results.find(`#${uiId}-label-create`).append(swapNameBtn);
+        results.find(`#${uiId}-label-create`).append(countrySmartElem);
         // add listeners
         function updateAthleteSearch() {
             const idAthlete = results.find(`#${uiId}-link-manually`).val();
@@ -787,9 +834,18 @@ function updateUI() {
                 }
                 results.find(".athlete").append(`<a target="blank" href="/athlete/index.php?id=${athlete.id}">${athlete.firstname} ${athlete.lastname} | ${athlete.country}</a>`);
                 search.linkId = athlete.id;
-                console.log(athlete);
+                // console.log(athlete);
             });
         }
+
+        function checkNewAthlete() {
+            if(checkStrings(search.newAthlete, ["firstName", "lastName", "alias", "gender", "country"])) {
+                results.find(".create-new").removeClass("error");
+            } else {
+                results.find(".create-new").addClass("error");
+            }
+        }
+        checkNewAthlete();
         results.find(`.custom-linker#${uiId}-1`).on("change", () => {
             updateAthleteSearch();
         });
@@ -798,16 +854,36 @@ function updateUI() {
         });
         results.find(".create-new-inputs input").on("change", function() {
             search.newAthlete[$(this).attr("name")] = $(this).val();
+            // console.log($(this).attr("name") + "=" + $(this).val());
+            checkNewAthlete();
         });
         countryElem.on("change", function() {
             search.newAthlete["country"] = countryElem.val();
+            checkNewAthlete()
         });
-        // results.find(".create-new-inputs").trigger("change");
         results.find("input[type='radio']").on("change", () => {
             search.linkId = $(`input:radio[name="${uiId}"]:checked`).val();
             row.find(".best").removeClass("best");
             $(`input:radio[name="${uiId}"]:checked`).parent().addClass("best");
             search.createNew = $(`input:radio[name="${uiId}"]:checked`).parent().hasClass("create-new");
+        });
+        swapNameBtn.click(() => {
+            const tmp = search.newAthlete.firstName;
+            results.find(".first-name").val(search.newAthlete.lastName).change();
+            results.find(".last-name").val(tmp).change();
+            console.log(search.newAthlete.lastName);
+        });
+        countrySmartElem.click(() => {
+            let count = -1;
+            for (const athlete of athletes) {
+                if(athlete.newAthlete.club && athlete.newAthlete.club.toLowerCase() == $(`#${uiId}-club`).val()?.toLowerCase() && athlete.newAthlete.club.length > 0) {
+                    athlete.newAthlete.country = countryElem.val();
+                    athlete.guiElem.find(`.country-select`).val(countryElem.val()).change();
+                    count++;
+                }
+            }
+            results.find(".notice").remove();
+            results.append(`<p class="notice font color green padding top bottom">Aplied ${countryElem.val()} for ${count} athletes</p>`);
         });
         row.append(results);
         $(".preview").append(row);
@@ -821,6 +897,14 @@ function updateUI() {
     }
     // $(".preview").append(`<button class="btn default" onclick="update()"></button>`);
     $(".preview").prepend(`<p>Found ${found} / ${athletes.length} Athletes. ${unsafe} not sure.</p>`)
+}
+
+function checkStrings(obj, properties) {
+    for (const prop of properties) {
+        if(typeof obj[prop] != "string") return false;
+        if(obj[prop].length == 0) return false;
+    }
+    return true;
 }
 
 function toTitleCase(str) {
@@ -965,7 +1049,7 @@ function apply(aliasGroup) {
     let i = 0;
     for (const athlete of athletes) {
         if(athlete.linkId == "-1234") return alert(`Invalid id given for ${i + 1}th athlete!`);
-        if(athlete.createNew && !checkNewAthlete(athlete.newAthlete, 0)) return false;
+        if(athlete.createNew && !checkNewAthlete(athlete.newAthlete, i)) return false;
         if(!athlete.search.alias && !athlete.search.id) {
             alert("No alias given for " + athlete.search.firstName + " " + athlete.search.lastName);
             return;
@@ -1200,7 +1284,11 @@ function GetTableFromExcel(data) {
 let results = [];
 
 function initiateResults(loadedResults) {
-    console.log("Excel file loaded")
+    console.log("Excel file loaded");
+    if($("#limitResults").is(':checked')) {
+        const maxRows = $("#maxRows").val();
+        loadedResults.splice(maxRows);
+    }
     clearFile();
     if(!validateResultsFormat(loadedResults)) return;
     console.log("file validated")
@@ -1633,9 +1721,10 @@ function isTime(time) {
 let parseErrorInfo = undefined;
 
 function parseErrorAt(row, msg) {
-    alert(`Invalid result in row ${row}. ${msg}`);
-    console.log("parse error info:");
-    console.log(parseErrorInfo);
+    alert(`Row ${row} invalid. ${msg}`);
+    console.log(`Row ${row} invalid. ${msg}`);
+    console.log("parse error info:", parseErrorInfo);
+    console.trace();
     return false;
 }
 </script>

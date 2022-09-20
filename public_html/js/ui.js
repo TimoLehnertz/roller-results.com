@@ -437,7 +437,7 @@ function updateSearchBar(data){
     }
     const optionsElem = $("#search-bar__options__header");
     optionsElem.empty();
-    if(data !== undefined){
+    if(data !== undefined) {
         data = sortSearch(data);
     } else{
         return;
