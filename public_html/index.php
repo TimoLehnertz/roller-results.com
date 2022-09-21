@@ -101,7 +101,7 @@ if(isset($_GET["q"]) && !empty($_GET["q"])) {
                 history.splice(i, 1);
             }
         }
-        history.unshift({text: q});
+        history.unshift({text: decodeURI(q)});
         localStorage.setItem("searchHistory", JSON.stringify(history));
     }
 
