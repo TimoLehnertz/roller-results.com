@@ -30,7 +30,7 @@ $(() => {
     initSettings();
 });
 
-function initNav(){
+function initNav() {
     $(".nav a").each(function() {
         if($(this).attr("href") != "/index.php");
         if(window.location.pathname.includes($(this).attr("href"))){
@@ -393,7 +393,8 @@ function initSearchBar(){
     $(".search-bar__input").keyup((e) => {
         if(e.keyCode === 13){
             if(options.length > 0){
-                window.location = linkFromOption(options[0]);
+                // window.location = linkFromOption(options[0]);
+                window.location = "/index.php?q=" + $(".search-bar__input").val();
             }
         }
     });

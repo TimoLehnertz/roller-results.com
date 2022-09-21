@@ -33,7 +33,7 @@ if(isset($_GET["q"]) && !empty($_GET["q"])) {
        <?php if(!$searching) { ?>
        <div class="buttons align center margin top double">
            <input type="submit" class="btn google margin right search-btn" value="Search">
-           <a class="btn google no-link-style" href="/index.php">Home</a>
+           <a class="btn google no-link-style" href="/home/index.php">Home</a>
        </div>
        <?php } ?>
        <div></div>
