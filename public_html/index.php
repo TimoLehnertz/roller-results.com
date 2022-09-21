@@ -94,14 +94,15 @@ if(isset($_GET["q"]) && !empty($_GET["q"])) {
     history = JSON.parse(history);
 
     if(resultsFound) {
-        const q = findGetParameter("q");
+        let q = decodeURI(findGetParameter("q"));
+        q = q.replace("+", " ");
         for (let i = 0; i < history.length; i++) {
             const element = history[i];
             if(element.text.toLowerCase() == q.toLowerCase()) {
                 history.splice(i, 1);
             }
         }
-        history.unshift({text: decodeURI(q)});
+        history.unshift({text: q});
         localStorage.setItem("searchHistory", JSON.stringify(history));
     }
 
