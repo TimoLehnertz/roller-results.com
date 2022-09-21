@@ -6,16 +6,17 @@
         height: 3px
         background-color: #FFF
         margin: 0.53rem
-        transition: all 0.3s ease-in-out
+        transition: all 0.2s ease-in-out
         transform: translateX(0)
         box-shadow: 1px 1px 3px 0px rgba(0,0,0,0.6)
         transform-origin: right
-        
-    &:hover .line1
-        transform: translateY(-3px)
+    
+    @media only screen and (min-width: 800px)
+        &:hover .line1
+            transform: translateY(-3px)
 
-    &:hover .line3
-        transform: translateY(3px)
+        &:hover .line3
+            transform: translateY(3px)
 
 
     &.toggle .line1

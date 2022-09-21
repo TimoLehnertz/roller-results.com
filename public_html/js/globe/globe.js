@@ -11,7 +11,8 @@
  * http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import * as THREE from 'https://unpkg.com/three@0.95.0/build/three.module.js';
+import * as THREE from '/js/globe/third-party/three.module.js';
+// import * as THREE from 'https://unpkg.com/three@0.95.0/build/three.module.js';
 
 const GLOBE_RADIUS = 150;
 const CURVE_MIN_ALTITUDE = 20;

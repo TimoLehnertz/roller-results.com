@@ -1,0 +1,145 @@
+.search-page
+    padding-top: 0rem
+
+    .burger div
+        background: white !important
+
+    form
+        position: relative
+
+    .search-logo
+        position: absolute
+        top: -7rem
+        color: white
+        text-align: center
+        margin: 0
+        right: 0
+        left: 0
+        // margin-bottom: 2rem
+        font-size: 3rem
+        font-family: $font-title
+
+    .wrapper
+        height: 3rem
+        margin-top: 10rem
+
+    &.searching .wrapper
+        margin-top: 0
+
+    .google-search-bar
+        position: relative
+        z-index: 1000
+        background: $bg
+        position: absolute
+        // top: 10rem
+        height: 3rem
+        width: 35rem
+        max-width: 100vw
+        margin: 0
+        margin-left: auto
+        margin-right: auto
+        color: #9aa0a6
+        border-radius: 1.5rem
+        border: 1px solid #5f6368
+        overflow: hidden
+        font-size: 1.1rem
+        // position: absolute
+        margin-left: 50%
+        transform: translateX(-50%)
+
+
+        &.history-open
+            height: auto
+
+        &:hover, &.history-open
+            background: #303134
+            border: 1px solid #303134
+            box-shadow: 0 1px 6px 0 #171717
+
+        .search
+            display: flex
+            align-items: center
+            height: 3rem
+            padding-left: 1rem
+            border-bottom: 1px solid #5f6368
+
+        input
+            background: transparent
+            border: none
+            width: 100%
+            color: white
+            outline: none
+        
+        .history
+            padding: 1rem 0
+            display: flex
+            flex-direction: column
+
+            .entry
+                padding-left: 2rem
+                color: #ccc
+                display: flex
+                justify-content: space-between
+
+                svg
+                    height: 1.5rem
+                    width: 1.5rem
+                    fill: #9aa0a6
+                    margin-right: 0.5rem
+
+                &:hover, &.active
+                    background: #3c4043
+                    color: white
+
+            a::before
+                display: none
+
+            a::visited
+                color: #c58af9
+
+    .search-icon, .x
+        width: 2rem
+        height: 2rem
+        margin-right: 0.5rem
+        fill: #9aa0a6
+
+    .search-results
+        display: flex
+        flex-direction: column
+        padding-left: 3rem
+        @media only screen and (max-width: 800px)
+            padding-left: 1rem
+
+
+    .search-result
+        padding: 0.4rem
+
+        a
+            display: inline
+
+    .filters
+        display: flex
+        justify-content: center
+        flex-wrap: wrap
+        gap: 0.5rem
+        // @media only screen and (min-width: 800px)
+        //     justify-content: start
+        //     padding-left: 2rem
+
+        .filter
+            border-radius: 4px
+            display: flex
+
+            .search-icon
+                width: 1rem
+                height: 1rem
+                transform: scale(1.5)
+                z-index: -1
+
+        input[type="radio"]:checked+label
+            border-bottom: 4px solid #8ab4f8
+
+    .text
+        margin-top: 3rem
+        padding: 1rem
+        text-align: center

@@ -25,6 +25,7 @@ include_once "head.php";
                 </div>
             </div>
         </div>
+        <?php if(!isset($noHeaderSearchBar)) { ?>
         <div class="search-bar">
             <svg class="search-bar__icon" focusable="false" height="24px" viewBox="0 0 24 24" width="24px"><path d="M20.49,19l-5.73-5.73C15.53,12.2,16,10.91,16,9.5C16,5.91,13.09,3,9.5,3S3,5.91,3,9.5C3,13.09,5.91,16,9.5,16 c1.41,0,2.7-0.47,3.77-1.24L19,20.49L20.49,19z M5,9.5C5,7.01,7.01,5,9.5,5S14,7.01,14,9.5S11.99,14,9.5,14S5,11.99,5,9.5z"></path><path d="M0,0h24v24H0V0z" fill="none"></path></svg>
             <?php
@@ -32,14 +33,13 @@ include_once "head.php";
                 if(isset($_GET["search1"])){
                     $search = $_GET["search1"];
                 }
-                //Error display
-                if(isset($_GET["error"])){
-                    echo "<script>$(() => {alert('". getErrormessage($_GET["error"]) ."'); window.location = removeParams('error');})</script>";
-                }
             ?>
             <input class="search-bar__input" type="text" autocomplete="off" placeholder="Search for athletes / countries / locations / Events / Years..." value="<?=$search?>">
             <div class="search-bar__options" id="search-bar__options__header"></div>
         </div>
+        <?php } else {?>
+            <div style="pointer-events: none"></div>
+        <?php }?>
         <div class="header__right">
             <?php if($loggedIn){ ?>
                 <div class="toggle-profile-section">
@@ -60,13 +60,16 @@ include_once "head.php";
             <div class="hider hider2"></div> -->
             <ul>
                 <li>
-                    <a href="/index.php"><i class="fas fa-home margin right"></i>Home</a>
+                    <a href="/index.php"><i class="fa-solid fa-magnifying-glass-plus"></i>Search</a>
                 </li>
                 <li>
-                    <a href="/analytics"><i class="fas fa-binoculars margin right"></i><span class="code font color green">Update</span> Analytics</a>
+                    <a href="/home/index.php"><i class="fas fa-home margin right"></i>Home</a>
                 </li>
                 <li>
-                    <a href="/tools/import-project.php"><i class="fas fa-binoculars margin right"></i><span class="code font color green">Update</span> Upload results</a>
+                    <a href="/analytics"><i class="fas fa-binoculars margin right"></i>Analytics</a>
+                </li>
+                <li>
+                    <a href="/tools/import-project.php"><i class="fas fa-binoculars margin right"></i>Upload results</a>
                 </li>
                 <li>
                     <a href="/countries"><i class="fas fa-globe-americas margin right"></i>Countries</a>
@@ -78,7 +81,7 @@ include_once "head.php";
                     <a href="/competitions"><i class="fas fa-flag-checkered margin right"></i></i>Competitions</a>
                 </li>
                 <li>
-                    <a href='/tools/index.php'><i class="fa fa-solid fa-toolbox margin right"></i><span class="code font color green">Update</span> Tool box</a>
+                    <a href='/tools/index.php'><i class="fa fa-solid fa-toolbox margin right"></i>Tool box</a>
                 </li>
                 <li>
                     <a href='/skate-map.php'><i class="fa fa-solid fa-map margin right"></i>Skate map</a>
@@ -90,7 +93,7 @@ include_once "head.php";
                     <a href="/gallery"><i class="fa fa-solid fa-images margin right"></i>Gallery</a>
                 </li>
                 <li>
-                    <a href="/blog"><i class="fa fa-brands fa-stack-exchange margin right"></i></i><span class="code font color green">Update</span> Features</a>
+                    <a href="/blog"><i class="fa fa-brands fa-stack-exchange margin right"></i>Features</a>
                 </li>
                 <li>
                     <a href="/music"><i class="fa fa-solid fa-music margin right"></i>Music</a>

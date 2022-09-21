@@ -24,10 +24,18 @@ if($loggedIn) {
 $actual_link = htmlentities((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]");
 
 // <meta property="og:url" content="<?=$actual_link
+//Error display
 ?>
 
 <html>
     <head>
+        <script>
+            <?php
+            if(isset($_GET["error"])) {
+                echo "<script>$(() => {alert('". getErrormessage($_GET["error"]) ."'); window.location = removeParams('error');})</script>";
+            }
+            ?>
+        </script>
         <meta charset="UTF-8">
         <title>Roller Results</title>
         <meta name="description" content="Roller skating results and analysis">

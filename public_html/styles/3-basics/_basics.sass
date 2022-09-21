@@ -61,7 +61,7 @@ button
     margin-right: auto
     display: block
 
-a:not(.no-underline)
+a:not(.no-underline, .no-link-style)
     position: relative
     color: inherit
     text-decoration: none
@@ -74,6 +74,7 @@ a:not(.no-underline)
         background: #888
 
     &:hover
+        color: red
         color: #666
 
     &:visited
@@ -101,6 +102,21 @@ a.no-underline::before
 a.no-underline
     text-decoration: none
 
+a.no-link-style
+    text-decoration: none
+    color: inherit
+
+    &::before
+        display: none
+
+
+.noselect 
+    -webkit-touch-callout: none // iOS Safari
+    -webkit-user-select: none // Safari
+    -khtml-user-select: none // Konqueror HTML
+    -moz-user-select: none // Old versions of Firefox
+    -ms-user-select: none // Internet Explorer/Edge
+    user-select: none // Non-prefixed version, currently supported by Chrome, Edge, Opera and Firefox
 
 .hidden
     display: none !important

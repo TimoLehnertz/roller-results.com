@@ -32,6 +32,7 @@ $(() => {
 
 function initNav(){
     $(".nav a").each(function() {
+        if($(this).attr("href") != "/index.php");
         if(window.location.pathname.includes($(this).attr("href"))){
             $(this).parent().addClass("active");
             return false;
@@ -106,14 +107,14 @@ function getMedalComps() {
 }
 
 function loadStorage() {
-    const storedSettings = sessionStorage.getItem("settingCompetitions");
+    const storedSettings = localStorage.getItem("settingCompetitions");
     if(storedSettings && storedSettings.senior) {
         settingCompetitions = JSON.parse(storedSettings);
     }
 }
 
 function updateStorage() {
-    sessionStorage.setItem("settingCompetitions", JSON.stringify(settingCompetitions));
+    localStorage.setItem("settingCompetitions", JSON.stringify(settingCompetitions));
 }
 
 
@@ -272,7 +273,7 @@ function initSettings(){
     /**
      * init
      */
-    settingsDropdown = new Dropdown($(".settings-toggle"), list, {customClass: "settings-dropdown"});
+    settingsDropdown = new Dropdown($(".settings-toggle"), list, {customClass: "settings-dropdown"}, true);
     // settingsDropdown.elem.find(".data-dropdown").css("left", "-13rem");
 }
 

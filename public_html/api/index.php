@@ -1898,12 +1898,12 @@ function athleteFromResult($result){
  * allowed: <string> Year,Team,Competition,Athlete,Country
  * 
  */
-function search($name, $allowed) {
+function search($name, $allowed = "Year,Team,Competition,Athlete,Country") {
     $allowed = explode(",", $allowed);
     // print_r( $allowed);
     $name = trim($name);//remove whitespaces at front and end
     $results = [];
-    setMaxResultSize(10);
+    setMaxResultSize(100);
     /**
      * Year
      */
@@ -1919,7 +1919,8 @@ function search($name, $allowed) {
                 "id" => $competition["idCompetition"],
                 "name" => $competition["type"]." ".$competition["location"]." ".$competition["raceYear"],
                 "priority" => (intval($year) == $competition["raceYear"]) ? 2 : 1,
-                "type" => "competition"
+                "type" => "competition",
+                "link" => "/competition?id=".$competition["idCompetition"]
             ];
         }
         if(strlen($name) == 4 && sizeof($competitions)) {
@@ -1927,7 +1928,8 @@ function search($name, $allowed) {
                 "id" => $name,
                 "name" => "Show all in ".$name,
                 "priority" => 10, // hight priority as there only one anyway
-                "type" => "year"
+                "type" => "year",
+                "link" => "/year?id=".$name
             ];
         }
     } else {
@@ -1941,7 +1943,8 @@ function search($name, $allowed) {
                     "id" => $teams["name"],
                     "name" => $teams["name"],
                     "priority" => 4,
-                    "type" => "team"
+                    "type" => "team",
+                    "link" => "/team?id=".$teams["name"]
                 ];
             }
         }
@@ -1956,7 +1959,8 @@ function search($name, $allowed) {
                     "id" => $competition["idCompetition"],
                     "name" => $competition["type"]." ".$competition["location"]." ".$competition["raceYear"],
                     "priority" => 2,
-                    "type" => "competition"
+                    "type" => "competition",
+                    "link" => "/competition?id=".$competition["idCompetition"]
                 ];
             }
             $names = explode("  ", $name);
@@ -1965,14 +1969,15 @@ function search($name, $allowed) {
                 foreach ($competitions as $key => $competition) {
                     $existing = false;
                     foreach ($results as $res) {
-                        if($res["id"] == $competition["idCompetition"]) $found = true;
+                        if($res["id"] == $competition["idCompetition"]) $existing = true;
                     }
-                    if($found) continue;
+                    if($existing) continue;
                     $results[] = [
                         "id" => $competition["idCompetition"],
                         "name" => $competition["type"]." ".$competition["location"]." ".$competition["raceYear"],
                         "priority" => 1,
-                        "type" => "competition"
+                        "type" => "competition",
+                        "link" => "/competition?id=".$competition["idCompetition"]
                     ];
                 }
             }
@@ -1998,12 +2003,14 @@ function search($name, $allowed) {
                         "id" => $country["country"],
                         "name" => $country["country"],
                         "priority" => 3,
-                        "type" => "country"
+                        "type" => "country",
+                        "link" => "/country?id=".$country["country"]
                     ];
                 }
             }
         }
     }
+    usort($results, "cmpSearchResult");
     // @todo
     // $delimiter = strpos($name, ":");
     // if($delimiter != -1){
@@ -2011,6 +2018,10 @@ function search($name, $allowed) {
     // }
     setMaxResultSize(-1);
     return $results;
+}
+
+function cmpSearchResult($b, $a) {
+    return $a["priority"] - $b["priority"];
 }
 
 function searchPersons($name){
@@ -2026,7 +2037,8 @@ function searchPersons($name){
                     "id" => $person["idAthlete"],
                     "name" => $person["firstname"]." ".$person["lastname"]." - ".$person["country"],
                     "priority" => 1,
-                    "type" => "person"
+                    "type" => "person",
+                    "link" => "/athlete?id=".$person["idAthlete"],
                 ];
             } else{
                 $i = 0;

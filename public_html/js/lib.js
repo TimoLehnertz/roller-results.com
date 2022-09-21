@@ -843,7 +843,7 @@ class Dropdown{
     static entryClass = "data-dropdown__entry";
     static nameClass = "data-dropdown__name";
 
-    constructor(elem, content = "Dropdown", setupObj = {}){
+    constructor(elem, content = "Dropdown", setupObj = {}, noPositionRelative){
         this.elem = elem;
         this.content = content;
         this.unfolded = false;
@@ -875,7 +875,7 @@ class Dropdown{
             }
         }
         this.setup(setupObj);
-        this.init();
+        this.init(noPositionRelative);
     }
 
     getDropDownElem(){
@@ -907,7 +907,7 @@ class Dropdown{
     /**
      * init (caled last by constructor)
      */
-    init() {
+    init(noPositionRelative) {
         this.dropDownElem = $(`<div class="${Dropdown.dropdownClass} ${this.customClass != undefined ? this.customClass : ""}"></div>`);
         // this.dropDownElem.append(this.content);
         /**
@@ -915,7 +915,7 @@ class Dropdown{
          */
         $(this.elem).append(this.dropDownElem);
         this.dropDownElem.css("display", "none");
-        if($(this.elem).css("position") != "absolute") {
+        if(!noPositionRelative && $(this.elem).css("position") != "absolute" && $(this.elem).css("position") != "relative") {
             $(this.elem).css("position", "relative");//Relative for alowing absolute placement inside
         }
         this.initEvents();
