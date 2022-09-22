@@ -32,7 +32,7 @@ if($user["athlete"] != NULL) {
     $linkedAthlete = getAthlete($user["athlete"]);
 }
 if($user["athlete"] != NULL && $user["athleteChecked"] == "1") {
-    if(isset($_POST["submit-athlete"]) && isset($_POST["instagram"]) && isset($_POST["facebook"]) && isset($_POST["website"]) && isset($_POST["description"]) && isset($_POST["team"]) && isset($_POST["club"])) {
+    if(isset($_POST["submit-athlete"]) && isset($_POST["instagram"]) && isset($_POST["facebook"]) && isset($_POST["website"]) && isset($_POST["description"]) && isset($_POST["team"]) && isset($_POST["club"]) && isset($_POST["country"])) {
         $img = NULL;
         // var_dump($_FILES);
         if(isset($_FILES["image"]) && strlen($_FILES["image"]["tmp_name"]) > 0){
@@ -40,7 +40,7 @@ if($user["athlete"] != NULL && $user["athleteChecked"] == "1") {
             $img = uploadImg($_FILES["image"], "athlete-".$linkedAthlete["firstname"]."-".$linkedAthlete["lastname"]."-");
             // echo $img;
         }
-        $updateAthleteSuccsess = updateAthleteInfo($linkedAthlete["id"], $_POST["instagram"], $_POST["facebook"], $_POST["website"], $_POST["description"], $_POST["team"], $_POST["club"], $img);
+        $updateAthleteSuccsess = updateAthleteInfo($linkedAthlete["id"], $_POST["instagram"], $_POST["facebook"], $_POST["website"], $_POST["description"], $_POST["team"], $_POST["club"], $img, $_POST["country"]);
         if(!$updateAthleteSuccsess) {
             throwError($ERROR_UPDATING_ATHLETE, "/profile");
         }
@@ -48,6 +48,17 @@ if($user["athlete"] != NULL && $user["athleteChecked"] == "1") {
         exit();
         $linkedAthlete = getAthlete($user["athlete"]);
     }
+}
+
+function echoCountrySelect($preselect) {
+    $countries = getAllCountries();
+    echo "<select id='country' name='country'>";
+    foreach ($countries as $country) {
+        $selected = "";
+        if($preselect == $country["country"]) $selected = " selected";
+        echo "<option value='".$country["country"]."'$selected>".$country["country"]."</option>";
+    }
+    echo "</select>";
 }
 
 include_once "../header.php";
@@ -111,6 +122,10 @@ echoRandWallpaper();
                                     <?php } ?>
                                     </label>
                                     <input type="file" id="image" name="image" value="Upload" class="btn blender alone">
+                                </div>
+                                <div>
+                                    <label for="country">Country</label>
+                                    <?php echoCountrySelect($linkedAthlete["country"]); ?>
                                 </div>
                                 <div>
                                     <label for="instagram">Instagram(link to profile):</label>

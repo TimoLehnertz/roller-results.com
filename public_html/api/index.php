@@ -119,7 +119,7 @@ function checkApiKey($apiKey) {
  * setup
  */
 $scoreInfluences = "WM,World Games,EM"; // @todo
-$usedMedals = "WM,World Games,Junior,Senior";
+$usedMedals = "WM,World Games,Junior,Senior,";
 
 if(isset($_SESSION["usedMedals"])) {
     $usedMedals = $_SESSION["usedMedals"];
@@ -1693,11 +1693,11 @@ function getAthleteCompetitions($idathlete){
     }
 }
 
-function updateAthleteInfo($idAthlete, $instagram, $facebook, $website, $description, $team, $club, $img) {
+function updateAthleteInfo($idAthlete, $instagram, $facebook, $website, $description, $team, $club, $img, $country) {
     if($img == NULL) {
-        return dbExecute("UPDATE TbAthlete SET instagram=?, facebook=?, website=?, `description`=?, team=?, club=? WHERE id=?;", "ssssssi", $instagram, $facebook, $website, $description, $team, $club, $idAthlete);
+        return dbExecute("UPDATE TbAthlete SET instagram=?, facebook=?, website=?, `description`=?, team=?, club=?, country=? WHERE id=?;", "sssssssi", $instagram, $facebook, $website, $description, $team, $club, $country, $idAthlete);
     } else {
-        return dbExecute("UPDATE TbAthlete SET instagram=?, facebook=?, website=?, `description`=?, team=?, club=?, `image`=? WHERE id=?;", "sssssssi", $instagram, $facebook, $website, $description, $team, $club, $img, $idAthlete);
+        return dbExecute("UPDATE TbAthlete SET instagram=?, facebook=?, website=?, `description`=?, team=?, club=?, `image`=?, country=? WHERE id=?;", "ssssssssi", $instagram, $facebook, $website, $description, $team, $club, $img, $country, $idAthlete);
     }
 }
 
@@ -1781,7 +1781,7 @@ function getCountries() {
     // $countries = query("SELECT * FROM vCountry ORDER BY score DESC");
     // $countries = query("CALL sp_getCountries('%', ?, ?)", "ss", $scoreInfluences, $usedMedals);
     $countries = query("CALL sp_getCountriesNew(?)", "s",  $usedMedals);
-    for ($i=0; $i < sizeof($countries); $i++) { 
+    for ($i=0; $i < sizeof($countries); $i++) {
         $countries[$i]["rank"] = $i + 1;
     }
     if(sizeof($countries) > 0){
@@ -1789,6 +1789,10 @@ function getCountries() {
     } else{
         return [];
     }
+}
+
+function getAllCountries() {
+    return query("SELECT country FROM TbAthlete GROUP BY country;");
 }
 
 function getResult($id) {
