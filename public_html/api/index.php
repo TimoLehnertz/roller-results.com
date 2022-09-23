@@ -2040,7 +2040,7 @@ function searchPersons($name){
                 $results[] = [
                     "id" => $person["idAthlete"],
                     "name" => $person["firstname"]." ".$person["lastname"]." - ".$person["country"],
-                    "priority" => 2,
+                    "priority" => $person["priority"],
                     "type" => "person",
                     "link" => "/athlete?id=".$person["idAthlete"],
                 ];
