@@ -1931,7 +1931,7 @@ function search($name, $allowed = "Year,Team,Competition,Athlete,Country") {
             $results[] = [
                 "id" => $name,
                 "name" => "Show all in ".$name,
-                "priority" => 10, // hight priority as there only one anyway
+                "priority" => 10, // hight priority as there is only one anyway
                 "type" => "year",
                 "link" => "/year?id=".$name
             ];
@@ -1946,7 +1946,7 @@ function search($name, $allowed = "Year,Team,Competition,Athlete,Country") {
                 $results[] = [
                     "id" => $teams["name"],
                     "name" => $teams["name"],
-                    "priority" => 4,
+                    "priority" => 2,
                     "type" => "team",
                     "link" => "/team?id=".$teams["name"]
                 ];
@@ -1962,7 +1962,7 @@ function search($name, $allowed = "Year,Team,Competition,Athlete,Country") {
                 $results[] = [
                     "id" => $competition["idCompetition"],
                     "name" => $competition["type"]." ".$competition["location"]." ".$competition["raceYear"],
-                    "priority" => 2,
+                    "priority" => 1,
                     "type" => "competition",
                     "link" => "/competition?id=".$competition["idCompetition"]
                 ];
