@@ -2638,10 +2638,10 @@ function getUid(){
 }
 
 function getPlaceColor(place) {
-    switch(place) {
-        case 1: return "#c28b1d";
-        case 2: return "#757575";
-        case 3: return "#8a450f";
+    switch(place + "") {
+        case "1": return "#c28b1d";
+        case "2": return "#757575";
+        case "3": return "#8a450f";
         default: return getRandomColor();
     }
 }

@@ -89,7 +89,7 @@ echoRandWallpaper();
             const datasets = [];
             let end = 0;
             let maxPlace = 0;
-            let minPlace = $("#min-place").val();
+            let minPlace = parseInt($("#min-place").val());
             for (const o of overtakes) {
                 end = Math.max(end, o.lap);
                 maxPlace = Math.max(maxPlace, o.finishPlace);
@@ -99,33 +99,28 @@ echoRandWallpaper();
                 labels.push(Math.round(i * 1000) / 1000 + "");
             }
 
-            let idRace = overtakes[0].race;
-            let raceData = [];
-            let lastPlace = 1;
-            for (let place = minPlace; place <= maxPlace + 1; place++) {
-                for (let i = 0; i <= overtakes.length; i++) {
-                    const o = overtakes[Math.min(i, overtakes.length - 1)];
-                    if(o.finishPlace != place) continue;
-                    if(i == overtakes.length || idRace != o.race || lastPlace != place) {
-                        datasets.push({
-                            label: `${o.location} ${o.raceYear} ${o.category} ${o.gender} ${o.distance} #${place - 1}`,
-                            data: raceData,
-                            // backgroundColor: getRandomColor(),
-                            borderColor: getPlaceColor(place - 1),
-                            borderWidth: 1
-                        });
-                        raceData = [];
-                        idRace = o.race;
-                        lastPlace = place;
-                    }
-                    if(i == overtakes.length) break; // done
-                    if(place == maxPlace+1) break; // done
-                    
-                    // handle race overtake
-                    for (let n = o.lap * 20; n < end / 0.05 + 1; n++) {
-                        raceData[n] = o.toPlace;
-                    }
+            function findDataset(overtake) {
+                for (const dataset of datasets) {
+                    if(dataset.finishPlace == overtake.finishPlace && dataset.race == overtake.race) return dataset;
                 }
+                // add dataset
+                const dataset = {
+                    label: `${overtake.location} ${overtake.raceYear} ${overtake.category} ${overtake.gender} ${overtake.distance} #${overtake.finishPlace}`,
+                        data: [],
+                        borderColor: getPlaceColor(overtake.finishPlace),
+                        borderWidth: 1,
+                        spanGaps: true,
+                        finishPlace: overtake.finishPlace,
+                        race: overtake.race
+                }
+                datasets.push(dataset);
+                return dataset;
+            }
+
+            for (const overtake of overtakes) {
+                if(overtake.finishPlace > maxPlace || overtake.finishPlace < minPlace) continue;
+                dataset = findDataset(overtake);
+                dataset.data[overtake.lap * (1 / 0.05)] = overtake.toPlace;
             }
 
             const canvas = document.getElementById("canvas");
@@ -133,6 +128,7 @@ echoRandWallpaper();
             
             Chart.defaults.global.defaultFontColor = 'white';
             Chart.defaults.global.defaultFontSize = 16;
+            console.log(datasets);
             new Chart(ctx,
                 {
                     type: 'line',
