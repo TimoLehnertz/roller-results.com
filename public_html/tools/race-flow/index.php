@@ -49,18 +49,20 @@ echoRandWallpaper();
                         echo "<option value='$d'>$d</option>";
                     }?>
                 </select>
-                Show all races from this discipline
+                <label for="women">Women</label>
+                <input type="checkbox" id="women" checked>
+                <label for="men">Men</label>
+                <input type="checkbox" id="men" checked>
             </p>
             <br>
             <p>
-                <label for="max-place">Max place:</label>
-                <input id="max-place" type="number" step="1" min = "1" value="3">
-                Display skaters that finished on this position or better
-            </p>
-            <p>
                 <label for="min-place">Min place:</label>
                 <input id="min-place" type="number" step="1" min = "1" value="1">
-                Display skaters that finished on this position or worse
+                Display Only skaters that finished on these positions
+            </p>
+            <p>
+                <label for="max-place">Max place:</label>
+                <input id="max-place" type="number" step="1" min = "1" value="3"><br>
             </p>
             <button type="button" class="btn blender alone margin top font size big" onclick="go()">Go!</button>
         </form>
@@ -79,7 +81,9 @@ echoRandWallpaper();
         $(".graph").empty();
         $(".graph").append(`<canvas id="canvas" width="1920" height="${isMobile() ? "3000" : "700"}"></canvas>`);
 
-        get("overtakesByDistance", distance).receive((succsess, overtakes) => {
+        const gender = ($("#men").is(':checked') ? "m" : "") + ($("#women").is(':checked') ? "w" : "");
+
+        get("overtakesByDistance", distance, gender).receive((succsess, overtakes) => {
             if(!succsess) {
                 alert("Error");
                 return;
@@ -101,17 +105,21 @@ echoRandWallpaper();
 
             function findDataset(overtake) {
                 for (const dataset of datasets) {
+                    // if(dataset.race == overtake.race) return dataset;
                     if(dataset.finishPlace == overtake.finishPlace && dataset.race == overtake.race) return dataset;
                 }
                 // add dataset
                 const dataset = {
+                    label: "a",
+                    // label: `${overtake.location} ${overtake.raceYear} ${overtake.category} ${overtake.gender} ${overtake.distance}`,
                     label: `${overtake.location} ${overtake.raceYear} ${overtake.category} ${overtake.gender} ${overtake.distance} #${overtake.finishPlace}`,
-                        data: [],
-                        borderColor: getPlaceColor(overtake.finishPlace),
-                        borderWidth: 1,
-                        spanGaps: true,
-                        finishPlace: overtake.finishPlace,
-                        race: overtake.race
+                    data: [],
+                    borderColor: getPlaceColor(overtake.finishPlace),
+                    borderWidth: 1,
+                    showLabel: false,
+                    spanGaps: true,
+                    finishPlace: overtake.finishPlace,
+                    race: overtake.race
                 }
                 datasets.push(dataset);
                 return dataset;
@@ -121,6 +129,10 @@ echoRandWallpaper();
                 if(overtake.finishPlace > maxPlace || overtake.finishPlace < minPlace) continue;
                 dataset = findDataset(overtake);
                 dataset.data[overtake.lap * (1 / 0.05)] = overtake.toPlace;
+                // dataset.data.push({
+                //     x: overtake.lap * (1 / 0.05),
+                //     y: overtake.toPlace
+                // })
             }
 
             const canvas = document.getElementById("canvas");
@@ -137,6 +149,9 @@ echoRandWallpaper();
                         datasets,
                     },
                     options: {
+                        legend: {
+                            display: false
+                        },
                         defaultFontColor: "#FFF",
                         layout: {
                             padding: {

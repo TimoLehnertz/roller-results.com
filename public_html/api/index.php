@@ -527,8 +527,8 @@ if(!isset($NO_GET_API) || $NO_GET_API === false) {
         saveOvertakes($overtakes);
     } else if(isset($_GET["getovertakes"])) {
         echo json_encode(getOvertakes($_GET["getovertakes"]));
-    } else if(isset($_GET["getovertakesByDistance"])) {
-        echo json_encode(getOvertakesByDistance($_GET["getovertakesByDistance"]));
+    } else if(isset($_GET["getovertakesByDistance"]) && isset($_GET["data"])) {
+        echo json_encode(getOvertakesByDistance($_GET["getovertakesByDistance"], $_GET["data"]));
     }
     /**
      * Expecting:
@@ -885,8 +885,10 @@ function arrayInsert($tableName, $colNames, $insertTypes, $rows) {
     dbInsert($sql, $types, ...$vals);
 }
 
-function getOvertakesByDistance($distance) {
-    return query("SELECT * FROM TbPass JOIN TbRace ON TbRace.id = TbPass.race JOIN TbCompetition ON TbCompetition.idCompetition = TbRace.idCompetition WHERE distance=? ORDER BY race, lap ASC;", "s", $distance);
+function getOvertakesByDistance($distance, $gender) {
+    $w = strpos($gender, "w") !== False ? "w" : "-";
+    $m = strpos($gender, "m") !== False ? "m" : "-";
+    return query("SELECT * FROM TbPass JOIN TbRace ON TbRace.id = TbPass.race JOIN TbCompetition ON TbCompetition.idCompetition = TbRace.idCompetition WHERE distance=? AND (gender LIKE ? OR gender LIKE ?) ORDER BY race, lap ASC;", "sss", $distance, $m, $w);
 }
 
 function getOvertakes($idrace) {
