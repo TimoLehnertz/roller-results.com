@@ -1,7 +1,7 @@
         <footer class="footer">
             <div class="flex mobile align-center justify-space-arround margin bottom">
                 <p class="font color gray">
-                    This is a non-profit project. Donate to keep it rolling
+                    This is a non-profit project. Keep it rolling with your donation
                 </p>
                 <div id="donate-button-container">
                     <div id="donate-button"></div>

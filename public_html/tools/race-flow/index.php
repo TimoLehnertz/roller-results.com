@@ -105,14 +105,12 @@ echoRandWallpaper();
 
             function findDataset(overtake) {
                 for (const dataset of datasets) {
-                    // if(dataset.race == overtake.race) return dataset;
                     if(dataset.finishPlace == overtake.finishPlace && dataset.race == overtake.race) return dataset;
                 }
                 // add dataset
                 const dataset = {
                     label: "a",
-                    // label: `${overtake.location} ${overtake.raceYear} ${overtake.category} ${overtake.gender} ${overtake.distance}`,
-                    label: `${overtake.location} ${overtake.raceYear} ${overtake.category} ${overtake.gender} ${overtake.distance} #${overtake.finishPlace}`,
+                    label: `${overtake.location} ${overtake.raceYear} ${overtake.category} ${overtake.gender} ${overtake.distance} #${overtake.finishPlace} ${overtake.firstname} ${overtake.lastname}`,
                     data: [],
                     borderColor: getPlaceColor(overtake.finishPlace),
                     borderWidth: 1,
@@ -129,15 +127,10 @@ echoRandWallpaper();
                 if(overtake.finishPlace > maxPlace || overtake.finishPlace < minPlace) continue;
                 dataset = findDataset(overtake);
                 dataset.data[overtake.lap * (1 / 0.05)] = overtake.toPlace;
-                // dataset.data.push({
-                //     x: overtake.lap * (1 / 0.05),
-                //     y: overtake.toPlace
-                // })
             }
 
             const canvas = document.getElementById("canvas");
             const ctx = canvas.getContext('2d');
-            
             Chart.defaults.global.defaultFontColor = 'white';
             Chart.defaults.global.defaultFontSize = 16;
             console.log(datasets);

@@ -888,7 +888,7 @@ function arrayInsert($tableName, $colNames, $insertTypes, $rows) {
 function getOvertakesByDistance($distance, $gender) {
     $w = strpos($gender, "w") !== False ? "w" : "-";
     $m = strpos($gender, "m") !== False ? "m" : "-";
-    return query("SELECT * FROM TbPass JOIN TbRace ON TbRace.id = TbPass.race JOIN TbCompetition ON TbCompetition.idCompetition = TbRace.idCompetition WHERE distance=? AND (gender LIKE ? OR gender LIKE ?) ORDER BY race, lap ASC;", "sss", $distance, $m, $w);
+    return query("SELECT * FROM TbPass JOIN TbRace ON TbRace.id = TbPass.race JOIN TbCompetition ON TbCompetition.idCompetition = TbRace.idCompetition JOIN TbAthlete ON TbAthlete.id = TbPass.athlete WHERE distance=? AND (TbRace.gender LIKE ? OR TbRace.gender LIKE ?) ORDER BY race, lap ASC;", "sss", $distance, $m, $w);
 }
 
 function getOvertakes($idrace) {
