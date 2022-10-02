@@ -98,7 +98,7 @@ echoRandWallpaper();
             $('#raceSelect').prop("disabled", false);
             $("#raceSelect").append(`<option value="-1">Select</option>`);
             for (const race of races) {
-                $("#raceSelect").append(`<option style="color: white; background-color: ${race.raceFlow == "1" ? "#014201" : "#1c1312"}" value="${race.id}">${race.distance} ${race.category} ${race.gender}</option>`);
+                $("#raceSelect").append(`<option style="color: white; background-color: ${race.raceFlow == "1" ? "#014201" : "#fff"}" value="${race.id}">${race.distance} ${race.category} ${race.gender}</option>`);
             }
         });
     });
