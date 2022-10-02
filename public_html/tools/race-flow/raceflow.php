@@ -98,7 +98,8 @@ echoRandWallpaper();
             $('#raceSelect').prop("disabled", false);
             $("#raceSelect").append(`<option value="-1">Select</option>`);
             for (const race of races) {
-                $("#raceSelect").append(`<option style="color: white; background-color: ${race.raceFlow == "1" ? "#014201" : "#fff"}" value="${race.id}">${race.distance} ${race.category} ${race.gender}</option>`);
+                console.log(race.link);
+                $("#raceSelect").append(`<option style="color: white; background-color: ${race.raceFlow == "1" ? "#014201" : "#fff"}" value="${race.id}">${race.distance} ${race.category} ${race.gender} ${race.link ? "✔" : ""}</option>`);
             }
         });
     });
@@ -118,6 +119,9 @@ echoRandWallpaper();
     function initRace(race) {
         $(".race-link").remove();
         $(".form").append(`<a target="blank" class="race-link" href="/race/index.php?id=${race.id}">Race link</a>`);
+        if(race.link) {
+            $(".form").append(`<a target="blank" class="race-link" href="${race.link}">Video link</a>`);
+        }
         currentRace = race;
         get("raceAthletes", race.id).receive((succsess, res) => {
             if(!succsess) {
