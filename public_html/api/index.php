@@ -926,7 +926,7 @@ function saveOvertakes($overtakes) {
 }
 
 function getRaceAthletes($idRace) {
-    return query("SELECT * FROM vAthlete JOIN TbResult as res ON res.idPerson = vAthlete.idAthlete WHERE res.idRace = ?;", "i", $idRace);
+    return query("SELECT * FROM vAthlete JOIN TbResult as res ON res.idPerson = vAthlete.idAthlete WHERE res.idRace = ? ORDER BY place ASC;", "i", $idRace);
 }
 
 function getCompRaces($idComp) {

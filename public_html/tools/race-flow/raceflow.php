@@ -98,7 +98,7 @@ echoRandWallpaper();
             $('#raceSelect').prop("disabled", false);
             $("#raceSelect").append(`<option value="-1">Select</option>`);
             for (const race of races) {
-                console.log(race.link);
+                // console.log(race.link);
                 $("#raceSelect").append(`<option style="color: white; background-color: ${race.raceFlow == "1" ? "#014201" : "#fff"}" value="${race.id}">${race.distance} ${race.category} ${race.gender} ${race.link ? "✔" : ""}</option>`);
             }
         });
@@ -117,6 +117,7 @@ echoRandWallpaper();
     });
 
     function initRace(race) {
+        console.log(race);
         $(".race-link").remove();
         $(".form").append(`<a target="blank" class="race-link" href="/race/index.php?id=${race.id}">Race link</a>`);
         if(race.link) {
@@ -124,6 +125,7 @@ echoRandWallpaper();
         }
         currentRace = race;
         get("raceAthletes", race.id).receive((succsess, res) => {
+            console.log("raceAthletes:", res);
             if(!succsess) {
                 alert("server error");
                 return;
@@ -382,7 +384,7 @@ echoRandWallpaper();
                 const athlete = position.athlete;
                 if(athlete.idAthlete == undefined) continue;
                 if(athleteStates[athlete.idAthlete].prevPlace == place) continue;
-                console.log(athlete);
+                // console.log(athlete);
                 overtakes.push({
                     athlete: athlete.idAthlete,
                     race: currentRace.id,
