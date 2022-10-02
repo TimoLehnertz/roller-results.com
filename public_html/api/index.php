@@ -898,9 +898,9 @@ function getAthleteVideos($idAthlete) {
 }
 
 function saveOvertakes($overtakes) {
-    if(!canI("speaker")) {
-        return;
-    }
+    // if(!canI("speaker")) {
+    //     return;
+    // }
     if(!is_array($overtakes)) {
         echo "Error: overtakes need to be an array";
         return;
@@ -908,6 +908,14 @@ function saveOvertakes($overtakes) {
     if(sizeof($overtakes) == 0) {
         echo "Error: overtakes need to be filled";
         return;
+    }
+    // if(!isLoggedIn()) {
+    //     echo "Error: You need to be logged in";
+    //     return;
+    // }
+    $idUser = NULL;
+    if(isLoggedIn()) {
+        $idUser = $_SESSION["iduser"];
     }
     $idrace = $overtakes[0]["race"];
     foreach ($overtakes as &$o) {
@@ -919,10 +927,11 @@ function saveOvertakes($overtakes) {
             echo "Error: invalid idRace";
             return;
         }
-       $o["creator"] = $_SESSION["iduser"];
+       $o["creator"] = $idUser;
     }
     dbExecute("DELETE FROM TbPass WHERE race=?;", "i", $idrace);
     arrayInsert("TbPass", ["athlete", "race", "fromPlace", "toPlace", "lap", "insideOut", "creator", "finishPlace"], "iiiidsii", $overtakes);
+    echo "succsess";
 }
 
 function getRaceAthletes($idRace) {

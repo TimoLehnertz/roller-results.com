@@ -399,13 +399,13 @@ echoRandWallpaper();
         // return;
         post("overtakes", overtakes).receive((succsess, res) => {
             $(".save").html(`Save race to cloud`);
-            if(succsess) {
+            // if(succsess) {
                 setTimeout(() => {
-                    alert("Saved");
+                    alert(res);
                 }, 100);
-            } else {
-                alert("Error: " + res);
-            }
+            // } else {
+                // alert("Error: " + res);
+            // }
         });
     }
 </script>
