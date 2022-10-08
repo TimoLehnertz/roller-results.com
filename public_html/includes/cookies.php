@@ -19,10 +19,10 @@ function setRememberMe($value) {
 
 function unsetRememberMe() {
     // unsetCookie("rememberMe");
-    setcookie('rememberMe', null, -1, '/');
+    setcookie('rememberMe', null, -1, '/', $_SERVER['SERVER_NAME'], $RUNNING_HTTPS, true);
 }
 
-function unsetCookie($name){
+function unsetCookie($name) {
     if (isset($_COOKIE[$name])) {
         unset($_COOKIE[$name]); 
         setcookie($name, null, -1, '/'); 

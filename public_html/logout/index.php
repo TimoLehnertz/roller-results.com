@@ -7,7 +7,7 @@ if(!isset($_POST["logout-submit"])){
     throwError($INVALID_ARGUMENTS);
     // header("location: /index.php");
     exit();
-} else{
+} else {
     logout();
     // echo "logged out";
     // header("location: /index.php?logoutComplete");
