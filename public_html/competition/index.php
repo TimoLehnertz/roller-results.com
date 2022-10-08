@@ -3,23 +3,6 @@ include_once "../api/index.php";
 include_once "../includes/error.php";
 
 /**
- * Embeding
- */
-$embed = false;
-if($_SERVER["HTTP_SEC_FETCH_SITE"] == "cross-site" || isset($_GET["embed"])) {
-    print_r($_SERVER);
-    if(!isset($_GET["apiKey"])) {
-        echo "please provide a valid API key! Contact roller.results@gmail.com if you don't have one yet.";
-        exit(0);
-    }
-    if(!checkApiKey($_GET["apiKey"])) {
-        echo "This API key is invalid!";
-        exit(0);
-    }
-    $embed = true;
-}
-
-/**
  * Setup
  */
 if(!isset($_GET["id"])) {
@@ -36,11 +19,9 @@ if(!$comp){
 if(!empty($comp["creator"])) {
     $creator = getUser($comp["creator"]);
 }
-if(!$embed) {
-    include_once "../header.php";
-} else {
-    include_once "../head.php";
-}
+
+$allowEmbedding = true;
+include_once "../header.php";
 
 $date = $comp["raceYearNum"];
 if($comp["startDate"] !== NULL) {
