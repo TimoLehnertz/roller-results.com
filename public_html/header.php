@@ -117,6 +117,9 @@ if(!$embed) { // hide header if beeing embedded
                     <a href="/gallery"><i class="fa fa-solid fa-images margin right"></i>Gallery</a>
                 </li>
                 <li>
+                    <a href="/organizers"><i class="fa fa-solid fa-user margin right"></i>For organizers</a>
+                </li>
+                <li>
                     <a href="/blog"><i class="fa fa-brands fa-stack-exchange margin right"></i>Features</a>
                 </li>
                 <!-- <li>
