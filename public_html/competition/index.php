@@ -1,12 +1,30 @@
 <?php
+include_once "../api/index.php";
 include_once "../includes/error.php";
+
+/**
+ * Embeding
+ */
+$embed = false;
+// var_dump($_SERVER["HTTP_ORIGIN"]);
+if(isset($_SERVER["HTTP_ORIGIN"]) || isset($_GET["embed"])) {
+    if(!isset($_GET["apiKey"])) {
+        echo "please provide a valid API key! Contact roller.results@gmail.com if you don't have one yet.";
+        exit(0);
+    }
+    if(!checkApiKey($_GET["apiKey"])) {
+        echo "This API key is invalid!";
+        exit(0);
+    }
+    $embed = true;
+}
+
 /**
  * Setup
  */
-if(!isset($_GET["id"])){
+if(!isset($_GET["id"])) {
     throwError($ERROR_NO_ID);
 }
-include_once "../api/index.php";
 include_once "../api/userAPI.php";
 
 $idComp = $_GET["id"];
@@ -18,8 +36,11 @@ if(!$comp){
 if(!empty($comp["creator"])) {
     $creator = getUser($comp["creator"]);
 }
-
-include_once "../header.php";
+if(!$embed) {
+    include_once "../header.php";
+} else {
+    include_once "../head.php";
+}
 
 $date = $comp["raceYearNum"];
 if($comp["startDate"] !== NULL) {
@@ -32,8 +53,9 @@ $lat = $comp["latitude"];
 $lng = $comp["longitude"];
 
 echo "<script>const comp = ". json_encode($comp) .";</script>";
-echoRandWallpaper();
-
+if(!$embed) {
+    echoRandWallpaper();
+}
 $mapsKey = "AIzaSyAZriMrsCFOsEEAKcRLxdtI6V8b9Fbfd-c";
 
 $bestAthletes = getCompAthleteMedals($idComp);
@@ -71,9 +93,15 @@ foreach ($bestAthletes as $athlete) {
     const idCompetition = <?=$idComp?>;
 </script>
 <main class="main competition-page">
-    <div class="top-site">
-    </div>
+    <?php if(!$embed) { ?>
+    <div class='top-site'></div>
     <svg xmlns="http://www.w3.org/2000/svg" fill="none" preserveAspectRatio="none" viewBox="0 0 1680 40" class="curvature" style="bottom: -1px;"><path d="M0 40h1680V30S1340 0 840 0 0 30 0 30z" fill="#ddd"></path></svg>
+    <?php } else { ?>
+        <a href="https://www.roller-results.com/competition?id=<?=$idComp?>" target="blank" class="flex justify-center">
+            view on Roller results
+            <img src="/img/logo/rr-plack.png" width="50px" alt="Roller results logo" class="margin left">
+        </a>
+    <?php } ?>
     <div class="content">
         <h1 class="align center headline"><?= translateCompType($comp["type"])." | ".$comp["location"]." ".$comp["raceYear"]?></h1>
         <div class="date">

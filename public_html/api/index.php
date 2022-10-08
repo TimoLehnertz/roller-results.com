@@ -97,6 +97,7 @@ if(!isset($_SESSION["apiGranted"]) || $_SESSION["apiGranted"] != true) {
 }
 
 function checkApiKey($apiKey) {
+    if(!isset($apiKey)) return false;
     global $functions;
     $apiKeys = query("SELECT * FROM TbApiKey WHERE `key`=?;", "s", $apiKey);
     if(sizeof($apiKeys) == 0) return false;
