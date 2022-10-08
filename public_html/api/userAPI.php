@@ -136,9 +136,8 @@ function login($iduser, $rememberMe){
     $_SESSION["email"] = $user["email"];
     $_SESSION["country"] = $user["registerCountry"];
     $_SESSION["role"] = intval($user["idRole"]);
-    if($rememberMe){
-        $succsess = rememberMe();
-        return $succsess;
+    if($rememberMe) {
+        return rememberMe();
     }
     return true;
 }

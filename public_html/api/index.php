@@ -1975,6 +1975,7 @@ function search($name, $allowed = "Year,Team,Competition,Athlete,Country") {
                     "name" => $competition["type"]." ".$competition["location"]." ".$competition["raceYear"],
                     "priority" => 1,
                     "type" => "competition",
+                    "date" => $competition["startDate"],
                     "link" => "/competition?id=".$competition["idCompetition"]
                 ];
             }
@@ -1992,6 +1993,7 @@ function search($name, $allowed = "Year,Team,Competition,Athlete,Country") {
                         "name" => $competition["type"]." ".$competition["location"]." ".$competition["raceYear"],
                         "priority" => 1,
                         "type" => "competition",
+                        "date" => $competition["startDate"],
                         "link" => "/competition?id=".$competition["idCompetition"]
                     ];
                 }
@@ -2036,7 +2038,14 @@ function search($name, $allowed = "Year,Team,Competition,Athlete,Country") {
 }
 
 function cmpSearchResult($b, $a) {
-    return $a["priority"] - $b["priority"];
+    // return $a["priority"] - $b["priority"];
+    if ($a["priority"] == $b["priority"]) {
+        if(isset($a["date"]) && !isset($b["priority"])) return 1;
+        if(!isset($a["date"]) && isset($b["priority"])) return -1;
+        if(!isset($a["date"]) && !isset($b["priority"])) return 0;
+        return ($a["date"] < $b["date"]) ? -1 : 1;
+    }
+    return ($a["priority"] < $b["priority"]) ? -1 : 1;
 }
 
 function searchPersons($name){
