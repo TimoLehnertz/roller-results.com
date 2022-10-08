@@ -1,5 +1,4 @@
 <?php
-
 include_once "setup.php";
 
 function setCocieAccepted() {

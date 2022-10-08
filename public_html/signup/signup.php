@@ -100,7 +100,7 @@ $pwdHash = password_hash($pwd1, PASSWORD_DEFAULT);
 if(($iduser = dbInsert("INSERT INTO TbUser(username, email, pwdHash, registerCountry) VALUES (?, ?, ?, ?);", "ssss", $username, $email, $pwdHash, $registerCountry)) !== FALSE){
     login($iduser, $username, $email, $registerCountry);
     header("location: succsess.php?r=3.1415");
-} else{
+} else {
     header("location: /signup/index.php?message=$ERROR_SERVER_ERROR&user=$username&email=$email");
     exit(0);
 }
