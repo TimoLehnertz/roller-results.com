@@ -103,7 +103,7 @@ function checkUsername($name){
     return strlen($name) < 200 && strlen($name) > 0;
 }
 
-function logout(){
+function logout() {
     if(session_status() != PHP_SESSION_ACTIVE){
         session_start();
     }
