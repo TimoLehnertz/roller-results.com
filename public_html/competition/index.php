@@ -7,7 +7,7 @@ include_once "../includes/error.php";
  */
 $embed = false;
 if(isset($_SERVER["HTTP_ORIGIN"]) || isset($_GET["embed"])) {
-    var_dump($_SERVER["HTTP_ORIGIN"]);
+    print_r($_SERVER);
     if(!isset($_GET["apiKey"])) {
         echo "please provide a valid API key! Contact roller.results@gmail.com if you don't have one yet.";
         exit(0);
