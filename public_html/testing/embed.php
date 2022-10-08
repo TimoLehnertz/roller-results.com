@@ -7,6 +7,6 @@
     <title>Document</title>
 </head>
 <body>
-    <iframe src="http://localhost/competition/?id=453&embed=1&apiKey=dev" frameborder="0" width="1000" height="1000"></iframe>
+    <iframe src="http://www.roller-results.com/competition/?id=453&embed=1&apiKey=dev" frameborder="0" width="1000" height="1000"></iframe>
 </body>
 </html>
