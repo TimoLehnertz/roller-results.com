@@ -92,6 +92,7 @@ if(isset($_GET["q"]) && !empty($_GET["q"])) {
     let history = localStorage.getItem("searchHistory");
     if(!history) history = "[]";
     history = JSON.parse(history);
+    let filterSet = false;
 
     if(resultsFound) {
         let q = decodeURI(findGetParameter("q"));
@@ -150,6 +151,11 @@ if(isset($_GET["q"]) && !empty($_GET["q"])) {
         let filter = $("input[name='filter']:checked").val();
         $(".search-result").show();
         $(".search-result").not("." + filter).hide();
+        window.history.replaceState({}, filter, `?q=${findGetParameter("q")}&filter=${parseFilter(filter)}`);
+        // if(!filterSet) {
+        //     insertParam("filter", filter);
+        // }
+        // filterSet = false;
     });
 
     function openHistory(e) {
@@ -170,6 +176,23 @@ if(isset($_GET["q"]) && !empty($_GET["q"])) {
         //     localStorage.setItem("searchHistory", JSON.stringify(history));
         // }
         return succsess;
+    }
+
+    const filter = findGetParameter("filter");
+    if(filter) {
+        filterSet = true;
+        // console.log(parseFilter(filter));
+        $(`#${parseFilter(filter)}`).prop("checked", true);
+    }
+
+    function parseFilter(filter) {
+        switch(filter) {
+            case "person": return "athletes";
+            case "competition": return "competitions";
+            case "country": return "countries";
+            case "team": return "teams";
+        }
+        return filter;
     }
 </script>
 <?php
