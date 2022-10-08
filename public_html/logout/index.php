@@ -9,6 +9,7 @@ if(!isset($_POST["logout-submit"])){
     exit();
 } else{
     logout();
-    header("location: /index.php?logoutComplete");
-    exit(0);
+    echo "logged out";
+    // header("location: /index.php?logoutComplete");
+    // exit(0);
 }
