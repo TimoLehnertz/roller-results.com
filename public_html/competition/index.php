@@ -6,7 +6,7 @@ include_once "../includes/error.php";
  * Embeding
  */
 $embed = false;
-if(isset($_SERVER["HTTP_ORIGIN"]) || isset($_GET["embed"])) {
+if($_SERVER["cross-site"] == "cross-site" || isset($_GET["embed"])) {
     print_r($_SERVER);
     if(!isset($_GET["apiKey"])) {
         echo "please provide a valid API key! Contact roller.results@gmail.com if you don't have one yet.";
