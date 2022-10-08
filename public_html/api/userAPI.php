@@ -8,7 +8,7 @@ function isLoggedIn() {
     if(!isset($_COOKIE["cookie_accepted"]) || !$_COOKIE["cookie_accepted"]) {
         return false;
     }
-    if(session_status() != PHP_SESSION_ACTIVE){
+    if(session_status() != PHP_SESSION_ACTIVE) {
         session_start();
     }
     return isset($_SESSION["username"]);
@@ -107,17 +107,17 @@ function logout(){
     if(session_status() != PHP_SESSION_ACTIVE){
         session_start();
     }
+    unsetRememberMe();
     session_unset();
     session_destroy();
-    unsetRememberMe();
 }
 
 function getUser($iduser){
     $result = query("SELECT * FROM vUser WHERE idUser = ?;", "i", $iduser);
-    if(sizeof($result) == 0){
+    if(sizeof($result) == 0) {
         return false;
     }
-    if($result[0]["image"] === NULL){
+    if($result[0]["image"] === NULL) {
         $result[0]["image"] = defaultProfileImgPath("m");
     }
     return $result[0];
@@ -125,7 +125,7 @@ function getUser($iduser){
 
 function login($iduser, $rememberMe){
     $user = getUser($iduser);
-    if(!$user){
+    if(!$user) {
         return false;
     }
     setCocieAccepted();
@@ -147,8 +147,8 @@ function login($iduser, $rememberMe){
  * Remember me
  */
 
-function rememberMe(){
-    if(!isLoggedIn()){
+function rememberMe() {
+    if(!isLoggedIn()) {
         return false;
     }
     $iduser = $_SESSION["iduser"];
