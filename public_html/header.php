@@ -4,22 +4,22 @@
  * Embeding
  */
 $embed = false;
-if($_SERVER["HTTP_SEC_FETCH_SITE"] == "cross-site") {
-    if(!isset($allowEmbedding)) {
-        echo "This site cannot be embedded";
-        exit(0);
-    }
-    // print_r($_SERVER);
-    if(!isset($_GET["apiKey"])) {
-        echo "please provide a valid API key! Contact roller.results@gmail.com if you don't have one yet.";
-        exit(0);
-    }
-    if(!checkApiKey($_GET["apiKey"])) {
-        echo "This API key is invalid!";
-        exit(0);
-    }
-    $embed = true;
-}
+// if($_SERVER["HTTP_SEC_FETCH_SITE"] == "cross-site") {
+//     if(!isset($allowEmbedding)) {
+//         echo "This site cannot be embedded";
+//         exit(0);
+//     }
+//     // print_r($_SERVER);
+//     if(!isset($_GET["apiKey"])) {
+//         echo "please provide a valid API key! Contact roller.results@gmail.com if you don't have one yet.";
+//         exit(0);
+//     }
+//     if(!checkApiKey($_GET["apiKey"])) {
+//         echo "This API key is invalid!";
+//         exit(0);
+//     }
+//     $embed = true;
+// }
 
 include_once "head.php";
 
