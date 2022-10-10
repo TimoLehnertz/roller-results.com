@@ -132,16 +132,16 @@ function login($iduser, $rememberMe) {
     setCocieAccepted();
     logout();
     session_start();
-    $_SESSION["iduser"] = $user["idUser"];
+    $_SESSION["iduser"] = $user["iduser"];
     $_SESSION["username"] = $user["username"];
     $_SESSION["email"] = $user["email"];
     $_SESSION["country"] = $user["registerCountry"];
     $_SESSION["role"] = intval($user["idRole"]);
-    if($rememberMe) {
-        $succsess = rememberMe();
-        if(!$succsess) echo "rem me failed :(";
-        return $succsess;
-    }
+    // if($rememberMe) {
+    //     $succsess = rememberMe();
+    //     if(!$succsess) echo "rem me failed :(";
+    //     return $succsess;
+    // }
     return true;
 }
 

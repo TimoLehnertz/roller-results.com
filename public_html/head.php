@@ -20,6 +20,7 @@ include_once "includes/preview.php";
 $loggedIn = isLoggedIn();
 $user;
 if($loggedIn) {
+    // var_dump($_SESSION);
     $user = getUser($_SESSION["iduser"]);
 }
 $actual_link = htmlentities((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]");
