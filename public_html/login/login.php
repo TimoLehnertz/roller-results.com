@@ -39,7 +39,10 @@ $registerCountry = $result[0]["registerCountry"];
  * 
  * -> login
  */
+// print_r($result);
 if(!login($iduser, !empty($_POST["rememberMe"]))){
     throwError($ERROR_SERVER_ERROR, "/login/index.php?user=$username");
+    // echo "Error";
+    // exit();
 }
 returnHome();

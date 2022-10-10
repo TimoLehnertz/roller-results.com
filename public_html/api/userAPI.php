@@ -112,8 +112,8 @@ function logout() {
     session_destroy();
 }
 
-function getUser($iduser){
-    $result = query("SELECT * FROM vUser WHERE idUser = ?;", "i", $iduser);
+function getUser($iduser) {
+    $result = query("SELECT * FROM TbUser WHERE iduser = ?;", "i", $iduser);
     if(sizeof($result) == 0) {
         return false;
     }
@@ -123,9 +123,10 @@ function getUser($iduser){
     return $result[0];
 }
 
-function login($iduser, $rememberMe){
+function login($iduser, $rememberMe) {
     $user = getUser($iduser);
     if(!$user) {
+        // echo "User doesnt exist";
         return false;
     }
     setCocieAccepted();
@@ -137,7 +138,9 @@ function login($iduser, $rememberMe){
     $_SESSION["country"] = $user["registerCountry"];
     $_SESSION["role"] = intval($user["idRole"]);
     if($rememberMe) {
-        return rememberMe();
+        $succsess = rememberMe();
+        if(!$succsess) echo "rem me failed :(";
+        return $succsess;
     }
     return true;
 }
