@@ -17,7 +17,7 @@ $password = $_POST["password"];
 include_once "../api/userAPI.php";
 
 $result = query("SELECT iduser, username, email, pwdHash, registerCountry FROM TbUser WHERE username = ? OR email = ?;", "ss", $username, $username);
-if(sizeof($result) == 0){
+if(sizeof($result) == 0) {
     throwError($ERROR_WRONG_CREDENTIALS, "/login/index.php?user=$username");
 }
 

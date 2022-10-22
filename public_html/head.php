@@ -42,7 +42,7 @@ $actual_link = htmlentities((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === '
         <title>Roller Results</title>
         <meta name="description" content="Roller skating results and analysis">
 
-        <meta property="og:image" content="<?php echo getPreview();?>">
+        <meta property="og:image" content="<?php //cecho getPreview();?>">
 
         <meta property="og:title" content="Roller Results" />
         

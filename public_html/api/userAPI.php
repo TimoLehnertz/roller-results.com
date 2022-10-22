@@ -50,8 +50,8 @@ function updateUsers($newUsers) {
 /**
  * Arr should be something like ["username" => "test", etc]
  */
-function updateUser($iduser, $arr){
-    if(!canI("managePermissions")){
+function updateUser($iduser, $arr) {
+    if(!canI("managePermissions")) {
         return false;
     }
     $update = "";
@@ -136,7 +136,7 @@ function login($iduser, $rememberMe) {
     $_SESSION["username"] = $user["username"];
     $_SESSION["email"] = $user["email"];
     $_SESSION["country"] = $user["registerCountry"];
-    $_SESSION["role"] = intval($user["idRole"]);
+    $_SESSION["role"] = intval($user["idrole"]);
     if($rememberMe) {
         rememberMe();
     }
