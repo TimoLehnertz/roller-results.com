@@ -126,6 +126,7 @@ if(!$embed) { // hide header if beeing embedded
                     <a href="/music"><i class="fa fa-solid fa-music margin right"></i>Music</a>
                 </li> -->
                 <?php
+                // print_r($_SESSION);
                 if(canI("seeAdminPage")) {
                     echo "<li><a href='/admin/index.php'><i class='fas fa-shield-alt margin right'></i>Admin</a></li>";
                 }

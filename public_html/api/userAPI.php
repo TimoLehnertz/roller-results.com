@@ -50,8 +50,8 @@ function updateUsers($newUsers) {
 /**
  * Arr should be something like ["username" => "test", etc]
  */
-function updateUser($iduser, $arr){
-    if(!canI("managePermissions")){
+function updateUser($iduser, $arr) {
+    if(!canI("managePermissions")) {
         return false;
     }
     $update = "";
@@ -132,15 +132,13 @@ function login($iduser, $rememberMe) {
     setCocieAccepted();
     logout();
     session_start();
-    $_SESSION["iduser"] = $user["idUser"];
+    $_SESSION["iduser"] = $user["iduser"];
     $_SESSION["username"] = $user["username"];
     $_SESSION["email"] = $user["email"];
     $_SESSION["country"] = $user["registerCountry"];
-    $_SESSION["role"] = intval($user["idRole"]);
+    $_SESSION["role"] = intval($user["idrole"]);
     if($rememberMe) {
-        $succsess = rememberMe();
-        if(!$succsess) echo "rem me failed :(";
-        return $succsess;
+        rememberMe();
     }
     return true;
 }
