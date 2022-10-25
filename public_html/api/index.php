@@ -653,11 +653,18 @@ function isUserInPerformanceCategory($idPerformanceCategory, $idUser) {
     return sizeof($res) > 0;
 }
 
+/**
+ * removes a user from a performance category if the current user has greater rights
+ */
 function removeUserFromPerformanceCategory($idPerformanceCategory, $idUser) {
     if(!amIAdminInPerformanceCategory($idPerformanceCategory)) return false;
-    if()
+    if(isUserAdminInPerformanceCategory($idPerformanceCategory, $idUser) && !doIOwnPerformanceCategory($idPerformanceCategory)) return false;
+    return dbExecute("DELETE FROM TbUserInPerformanceCategory WHERE performanceCategory=? AND user=?;", "ii", $idPerformanceCategory, $idUser);
 }
 
+/**
+ * CHecks if a user is admin in the Performance group
+ */
 function isUserAdminInPerformanceCategory($idPerformanceCategory, $idUser) {
     $res = query("SELECT * FROM TbUserInPerformanceCategory WHERE performanceCategory=? AND user=? AND isAdmin=1;", "ii", $idPerformanceCategory, $idUser);
     if(!$res) return false;
