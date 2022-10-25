@@ -588,6 +588,144 @@ if(!isset($NO_GET_API) || $NO_GET_API === false) {
     }
 }
 
+/**
+ *  gets the performance categories visible by the current user
+ *  returns:
+ *  [
+ *      {
+ *          idPerformanceCategory: <int>,
+ *          name: <string>,
+ *          description: <string>,
+ *          type: <string>,
+ *          creator: <int>,
+ *          creatorAthleteChecked: <boolean>,
+ *          creatorAthleteFirstName: <string>,
+ *          creatorAthleteLastName: <string>,
+ *          username: <string>,
+ *          creatorImage: <string>,
+ *          createDate: <string>
+ *      }
+ *  ]
+ */
+function getPerformanceCategories() {
+    return query("SELECT ");
+}
+
+/**
+ * @param name string
+ * @param description string
+ * @param type string (time,bpm,distance)
+ * @param users array of numbers
+ * 
+ * Creates a Performance category
+ */
+function createPerformanceCategory($name, $description, $type, $users) {
+    if(!isLoggedIn()) return false;
+    $creator = $_SESSION["iduser"];
+    $idPerformanceCategory = dbInsert("INSERT INTO TbPerformanceCategory(`name`, `description`, `type`, creator) VALUES(?,?,?,?);", "sssi", $name, $description, $type, $creator);
+    if(!$idPerformanceCategory) return false;
+    addUsersToPerformanceCategory($idPerformanceCategory, $users);
+    return true;
+}
+
+/**
+ * changes the name and or description of a performance category if the user is an admin
+ */
+function editPerformanceCategory($idPerformanceCategory, $name, $description) {
+    if(!amIAdminInPerformanceCategory($idPerformanceCategory)) return false;
+    return dbExecute("UPDATE TbPerformanceCategory SET `name`=?, SET `description`=? WHERE idPerformanceCategory=?;", "ssi", $name, $description, $idPerformanceCategory);
+}
+
+/**
+ * Adds a user to the Performance category if the current user is an admin
+ */
+function addUserToPerformanceCategory($idPerformanceCategory, $idUser) {
+    if(!amIAdminInPerformanceCategory($idPerformanceCategory)) return false;
+    if(isUserInPerformanceCategory($idPerformanceCategory, $idUser)) return true;
+    $creator = $_SESSION["iduser"];
+    return dbInsert("INSERT INTO TbUserInPerformanceCategory
+    (`user`, performanceCategory, isAdmin, creator) VALUES (?,?,?,?)", "iiii", $idUser, $idPerformanceCategory, false, $creator) != false;
+}
+
+function isUserInPerformanceCategory($idPerformanceCategory, $idUser) {
+    $res = query("SELECT * FROM TbUserInPerformanceCategory WHERE performanceCategory=? AND user=?;", "ii", $idPerformanceCategory, $idUser);
+    if($res === false) return false;
+    return sizeof($res) > 0;
+}
+
+function removeUserFromPerformanceCategory($idPerformanceCategory, $idUser) {
+    if(!amIAdminInPerformanceCategory($idPerformanceCategory)) return false;
+    if()
+}
+
+function isUserAdminInPerformanceCategory($idPerformanceCategory, $idUser) {
+    $res = query("SELECT * FROM TbUserInPerformanceCategory WHERE performanceCategory=? AND user=? AND isAdmin=1;", "ii", $idPerformanceCategory, $idUser);
+    if(!$res) return false;
+    return sizeof($res) > 0;
+}
+
+/**
+ * adds users to a group
+ * 
+ * @param users array of numbers
+ */
+function addUsersToPerformanceCategory($idPerformanceCategory, $users) {
+    if(!isLoggedIn()) return false;
+    $creator = $_SESSION["iduser"];
+    if(sizeof($users) == 0) return true;
+    $types = "";
+    $sql = "";
+    $del = "";
+    $fillers = [];
+    foreach ($users as $iduser) {
+        $types.="iiii";
+        $sql .= "$del(?,?,?,?)";
+        $del = ",";
+        $fillers[]= $iduser;
+        $fillers[]= $idPerformanceCategory;
+        $fillers[]= false;
+        $fillers[]= $creator;
+    }
+    return dbInsert("INSERT INTO results.TbUserInPerformanceCategory
+    (`user`, performanceCategory, isAdmin, creator) VALUES $sql;", $types, ... $fillers) != false;
+}
+
+/**
+ * Checks if the current user is admin in the performance category
+ */
+function amIAdminInPerformanceCategory($idPerformanceCategory) {
+    if(!isLoggedIn()) return false;
+    isUserAdminInPerformanceCategory($_SESSION["iduser"]);
+}
+
+/**
+ * Checks if the current user owns the performance category
+ */
+function doIOwnPerformanceCategory($idPerformanceCategory) {
+    if(!isLoggedIn()) return false;
+    $res = query("SELECT * FROM TbPerformanceCategory WHERE idPerformanceCategory=? AND creator=?;", "ii", $idPerformanceCategory, , $_SESSION["iduser"]);
+    if(!$res) return false;
+    return sizeof($res) > 0;
+}
+
+/**
+ * Deletes all users from a performance category if the current user is the owner 
+ */
+function deletePerformanceCategoryUsers($idPerformanceCategory) {
+    if(!doIOwnPerformanceCategory($idPerformanceCategory)) return false;
+    return dbExecute("DELETE FROM TbUserInPerformanceCategory WHERE performanceCategory = ?;", "i", $idPerformanceCategory);
+}
+
+/**
+ * Deletes a performance category and user links if the current user is the creator
+ */
+function deletePerformanceCategory($idPerformanceCategory) {
+    if(!doIOwnPerformanceCategory($idPerformanceCategory)) return false;
+    if(!deletePerformanceCategoryUsers($idPerformanceCategory)) return false;
+    dbExecute("DELETE FROM TbPerformanceCategory WHERE idPerformanceCategory = ?;", "i", $idPerformanceCategory);
+}
+
+
 function checkCompetitionAndBelow($idCompetition) {
     if(!canI("managePermissions")) return false;
     if(!dbExecute("CALL sp_checkCompetitionAndBelow(?);", "i", $idCompetition)) {
