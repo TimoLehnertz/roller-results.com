@@ -1133,6 +1133,15 @@ function getPerformanceGroupTypeShort($type) {
     }
 }
 
+function getPerformanceGroupTypeMetricLong($type) {
+    switch($type) {
+        case "time": return "seconds";
+        case "bpm": return "beats per minute";
+        case "distance": return "meters";
+        default: return "";
+    }
+}
+
 function getPerformanceGroupTypelong($type) {
     switch($type) {
         case "time": return "Time";

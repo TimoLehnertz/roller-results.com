@@ -17,12 +17,46 @@
             justify-content: center
             align-items: center
 
+        .pc-upload
+            display: none
+
+        @media screen and (min-width: 60rem)
+            display: block
+
+            > div
+                margin-bottom: 1rem
+
+            .mobile-upload
+                display: none
+
+            .pc-upload
+                display: flex
+
+    .list
+        display: grid
+        gap: 1rem
+        grid-template-columns: 1fr
+
+        @media screen and (min-width: 35rem)
+            grid-template-columns: 1fr 1fr
+
+        @media screen and (min-width: 60rem)
+            grid-template-columns: 1fr 1fr 1fr
+
+        @media screen and (min-width: 80rem)
+            grid-template-columns: 1fr 1fr 1fr 1fr
+
+        .btn.plus
+            display: none
+
     .profile-img
-        width: 15rem
-        height: 15rem
+        width: 13rem
+        height: 13rem
         border-radius: 100%
         overflow: hidden
         border: 0.5rem solid $imgOutline
+        max-width: 40vw
+        max-height: 40vw
 
         img
             object-fit: cover
@@ -36,35 +70,35 @@
             transform: scale(1)
 
     .username
-        font-size: 2rem
+        font-size: 1.5rem
 
     .realname
         color: #aaa
-        font-size: 1.5rem
 
     .goals-wrapper
         justify-content: end !important
 
     .goals
         border-radius: 1.5rem
-        border: 0.5rem solid white
-        padding: 1.5rem
+        border: 0.2rem solid white
+        padding: 1rem
         padding-right: 2.5rem
         transform: translateX(4.5rem)
-        font-size: 1.5rem
+
+        @media screen and (min-width: 60rem)
+            transform: translateX(0)
 
         .number
-            font-size: 2.5rem
             color: orange
+            font-size: 1.5rem
 
     .lower-section
         margin-top: 3rem
 
     .athlete
         background: #2c4288
-        border-radius: 3rem
-        font-size: 2rem
-        padding: 0.5rem
+        border-radius: 1.5rem
+        padding: 0.2rem
         margin-bottom: 1rem
         
         .info
@@ -73,11 +107,11 @@
             align-items: center
 
         .profile-img
-            width: 4rem
-            height: 4rem
+            width: 3rem
+            height: 3rem
             object-fit: cover
             border-radius: 100%
-            border: 0.3rem solid $imgOutline
+            border: none
 
         .name
             flex-grow: 100
@@ -89,7 +123,6 @@
     
         .status
             // position: absolute
-            font-size: 1.5rem
 
         .uploads
             text-align: center
@@ -97,17 +130,19 @@
 
         button
             color: white
-            padding: 1rem
-            margin-bottom: 1rem
-            border: 0.5rem solid #ccc
+            padding: 0.5rem
+            border: 0.3rem solid #ccc
             background: #0000
             border-radius: 1rem
+        
+        .remove-btn
+            border-color: #f006
 
-        .remove-btn, .remove-admin-btn
-            border-color: orange
+        .remove-admin-btn
+            border-color: #c406
 
         .make-creator-btn, .make-admin-btn
-            border-color: green
+            border-color: #0f06
     
     .highlight
         outline: 0.75rem solid #e77e1c
@@ -116,9 +151,9 @@
     .performance-category
         padding: 0.5rem
         border-radius: 1rem
-        border: 0.5rem solid #2f5597
+        border: 0.3rem solid #2f5597
         color: #fff
-        width: 20rem
+        width: 15rem
 
         &.active
             border-color: #fff
@@ -128,9 +163,7 @@
             justify-content: space-between
         .records
             color: #aaa
-            font-size: 1rem
         .best, .name
-            font-size: 2rem
 
     .editable-input, .editable-textarea
         background: #0000
@@ -143,26 +176,26 @@
         height: 2rem
         filter: invert(0.9)
 
-    #name
-        font-size: 2rem
+    .your-record
+        border: 0.3rem solid white
+        padding: 1rem 1rem
+        border-radius: 1rem
 
     .records-amount
-        font-size: 1.5rem
-        color: #5f79c4
+        color: #7493f0
+        background: #5555
+        padding: 0.5rem
+        border-radius: 0.5rem
 
     .description
-        font-size: 1.5rem
 
     .record
-        font-size: 4rem
         color: orange
 
     .your-goal-label
-        font-size: 1.5rem
         color: #5f79c4
 
     .your-goal
-        font-size: 2rem
 
     .performance-input
         border: none
@@ -170,6 +203,12 @@
         border-radius: 0.5rem
         padding: 1rem
         color: white
+        width: 100%
+
+    .performance-label
+        display: block
+        color: #5f79c4
+        margin-bottom: 0.5rem
 
     .results-options
         display: grid
@@ -196,8 +235,63 @@
         border-radius: 1rem
         padding: 1rem
         margin-bottom: 1rem
+        max-width: 30rem
+        flex-grow: 100
+        width: 100%
 
         .top
             display: flex
             flex-direction: row
             justify-content: space-between
+
+    .flex-mobile
+        display: flex
+        flex-direction: column
+        align-items: stretch
+        gap: 1rem
+
+        & > div:last-child
+            overflow: hidden
+        
+        & > div:last-child
+            flex-grow: 100
+
+
+        @media screen and (min-width: 60rem)
+            flex-direction: row
+        
+            & > div:first-child
+                width: 20rem
+                background: #333A
+                border-top-right-radius: 1rem
+                // border: 0.5rem solid #3336
+                border-bottom: none
+                border-left: none
+                min-height: 60vh
+
+            & > div:last-child
+                // width: 100%
+
+            & > div
+                // background: #071e5c
+
+                padding: 2rem
+
+    canvas
+        width: 100%
+
+    .performance-group-config
+        margin-left: auto
+        margin-right: auto
+        max-width: 30rem
+
+        .head
+            background: #0003
+            font-size: 1.2rem
+            padding: 1rem
+            border-top-left-radius: 1rem
+            border-top-right-radius: 1rem
+
+    @media screen and (min-width: 60rem)
+        padding: 0
+        padding-top: 4rem

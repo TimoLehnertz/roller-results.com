@@ -57,7 +57,7 @@ include_once "../header.php";
 ?>
 <script>const user = <?=json_encode($jsUser)?>;</script>
 <main class="performance">
-    <h1 class="align center font size bigger margin left right double">Upload performance</h1>
+    <h1 class="align center margin left right double">Upload performance</h1>
     <?php if($error) {
         echo "<p class='font color red'>We are sorry an error occoured :( please try again</p>";
     } ?>

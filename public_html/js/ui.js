@@ -574,7 +574,7 @@ class PerformanceGroupUserConfig {
         this.elem = $(`<div class="performance-group-config"></div>`);
         if(isAdmin || !allowConfig) {
             this.searchBar = new SearchBarSmall("User", false, (user) => this.searchCallback(user));
-            this.elem.append("<p class='align center font size big'>Add users</p>");
+            this.elem.append("<p class='align center head'>Add users</p>");
             this.elem.append(this.searchBar.elem);
         }
         this.usersElem = $(`<div class="margin top"></div>`);
@@ -638,7 +638,7 @@ class PerformanceGroupUserConfig {
         const status = `${user.isCreator ? "Owner" : user.isAdmin ? "Admin" : "Member"}`;
         const statusColor = `${user.isCreator ? "#f55" : user.isAdmin ? "#5f5" : "#ccc"}`;
         const elem = $(`<div class="athlete"><div class="info"><img class="profile-img" src="${user.image}"><span class="name">${user.username}</span><span class="status" style="color: ${statusColor}">${status}</span></div></div>`);
-        const userOptions = $(`<div class="user-options flex mobile"></div>`);
+        const userOptions = $(`<div class="user-options flex column"><div class="flex gap stretch"></div></div>`);
         wrapper.append(elem);
         elem.append(userOptions);
         elem.click(() => {
@@ -654,34 +654,34 @@ class PerformanceGroupUserConfig {
         
         if(this.allowConfig) {
             const records = $(`<p class="uploads">${user.uploads > 0 ? `${user.uploads} upload${user.uploads > 1 ? "s" : ""}` : "No uploads yet"} </p>`);
-            userOptions.append(records);
+            userOptions.prepend(records);
         }
         
-        const removeBtn = $(`<button class="remove-btn">Remove ${user.username}</button>`);
+        const removeBtn = $(`<button class="remove-btn">Remove</button>`);
         removeBtn.click(() => this.removeUser(user)); // no action needed
         
-        const makeAdminBtn = $(`<button class="make-admin-btn">Make ${user.username} an admin</button>`);
+        const makeAdminBtn = $(`<button class="make-admin-btn">Make admin</button>`);
         makeAdminBtn.click(() => this.makeAdmin(user, true));
         
-        const removeAdminBtn = $(`<button class="remove-admin-btn">remove ${user.username}'s admin rights</button>`);
+        const removeAdminBtn = $(`<button class="remove-admin-btn">Remove admin</button>`);
         removeAdminBtn.click(() => this.makeAdmin(user, false));
         
-        const makeCreatorBtn = $(`<button class="make-creator-btn">Make ${user.username} the creator</button>`);
+        const makeCreatorBtn = $(`<button class="make-creator-btn">Make creator</button>`);
         makeCreatorBtn.click(() => this.makeCreator(user));
         
         const higherPermissions = this.permissionLevel > this.getPermissionLevel(user);
         if(higherPermissions && user.iduser != this.thisUser) {
-            userOptions.append(removeBtn);
+            userOptions.find(".flex").append(removeBtn);
         }
         if(!this.allowConfig) return;
         if(higherPermissions && user.isAdmin) {
-            userOptions.append(removeAdminBtn);
+            userOptions.find(".flex").append(removeAdminBtn);
         }
         if(!user.isAdmin && isCreator) {
-            userOptions.append(makeAdminBtn);
+            userOptions.find(".flex").append(makeAdminBtn);
         }
         if(user.isAdmin && higherPermissions) {
-            userOptions.append(makeCreatorBtn);
+            userOptions.find(".flex").append(makeCreatorBtn);
         }
     }
 
@@ -692,6 +692,8 @@ class PerformanceGroupUserConfig {
                     user.isCreator = false;
                 }
                 user.isCreator = true;
+                $(".make-creator-btn").remove();
+                $(".remove-admin-btn").remove();
                 this.updateGui();
             } else {
                 alert(res);

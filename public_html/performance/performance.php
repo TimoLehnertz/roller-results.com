@@ -68,156 +68,157 @@ include_once "../header.php";
     const records = <?=json_encode($performance["records"])?>;
 </script>
 <main class="performance">
-    <a href="/performance" class="no-underline"><h1 class="align center">< Your performance</h1></a>
-    <?=$editError?>
-    <form action="#" method="POST">
-        <div class="flex justify-space-between">
-            <div class="flex justify-start">
+    <h1 class="align center">Your performance</h1>
+    <div class="flex-mobile">
+        <div>
+            <?=$editError?>
+            <form action="#" method="POST">
+                <div class="flex justify-space-between">
+                    <div class="flex justify-start">
+                        <?php if($admin) { ?>
+                        <input type="text" name="name" id="name" class="editable-input" value="<?=$performance["name"] ?>">
+                        <label for="name"><img class="edit-img" src="/img/edit.png" alt="edit"></label>
+                        <?php } else { ?>
+                        <p class="name"><?=$performance["name"] ?></p>
+                        <?php } ?>
+                    </div>
+                    <p class="records-amount"><?=$recordsText?></p>
+                </div>
+                <br>
                 <?php if($admin) { ?>
-                <input type="text" name="name" id="name" class="editable-input" value="<?=$performance["name"] ?>">
-                <label for="name"><img class="edit-img" src="/img/edit.png" alt="edit"></label>
+                <!-- <label for="description"><img class="edit-img" src="/img/edit.png" alt="edit"></label> -->
+                <textarea style="resize: none" name="description" id="description" cols="30" rows="3" class="editable-textarea description" placeholder="Add a description to this Category"><?=$performance["description"]?></textarea>
                 <?php } else { ?>
-                <p class="name"><?=$performance["name"] ?></p>
+                <p class="name"><?=$performance["description"] ?></p>
                 <?php } ?>
-            </div>
-            <p class="records-amount"><?=$recordsText?></p>
-        </div>
-        <br>
-        <br>
-        <?php if($admin) { ?>
-        <!-- <label for="description"><img class="edit-img" src="/img/edit.png" alt="edit"></label> -->
-        <textarea style="resize: none" name="description" id="description" cols="30" rows="3" class="editable-textarea description" placeholder="Add a description to this Category"><?=$performance["description"]?></textarea>
-        <?php } else { ?>
-        <p class="name"><?=$performance["description"] ?></p>
-        <?php } ?>
-        <div class="flex">
-            <?php
-        $personalRecord = getPersonalRecordFromPerformanceCategory($performance);
-        if($personalRecord) {
-            echo "<a href='upload.php?pid=".$performance["idPerformanceCategory"]."&gop=1' class='btn create margin top no-underline'>Upload now</a>";
-        }
-        ?>
-        </div>
-        <br>
-        <br>
-        <p class="align center font size bigger">Your record</p>
-        <br>
-        <p class="flex">
-            <?php
-            if(!$personalRecord) {
-                echo "<a href='upload.php?pid=".$performance["idPerformanceCategory"]."&gop=1' class='btn create margin top no-underline'>Upload now</a>";
-            } else {
-                echo "<span class='record'>$personalRecord</span>";
-            }
-            ?>
-        </p>
-        <?=$goalError?>
-        <?php if($performance["goal"] != NULL) { ?>
-        <div class="flex justify-space-between">
-            <p class="your-goal-label">Your Goal</p>
-            <p class="your-goal"><?=$performance["goal"]?></p>
-        </div>
-        <?php } ?>
-        <br>
-        <div class="flex gap align-center">
-            <div class="new-goal">
-                <label for="new-goal" class="font size big">New goal</label>
-                <input type="number" name="new-goal" id="new-goal" class="performance-input">
-                <input type="text" name="set-goal" id="set-goal" hidden value="0">
-            </div>
-            <button type="button" class="set-goal-btn btn create gray" onclick="toggleGoal()">Set a <?php if($performance["goal"] != NULL) echo "new";?> goal</button>
-        </div>
-        <br>
-        <br>
-        <br>
-        <div class="flex justify-center gap">
-            <a href="/performance/performance.php?id=<?=$_GET["id"]?>" class="no-underline btn create gray font size big">Reset</a>
-            <button name="submit" type="submit" class="btn create font size big">Save</button>
-        </div>
-    </form>
-    <br>
-    <br>
-    <br>
-    <div class="flex">
-        <a href="manage-athletes.php?id=<?=$_GET["id"]?>" class="no-underline btn create gray font size big">See members</a>
-    </div>
-    <br>
-    <br>
-    <h2 class="font size big">Results</h2>
-    <br>
-    <div class="results-options">
-        <input type="radio" id="table" name="graph-table" value="graph" checked hidden>
-        <label for="table">Graph</label>
-        <input type="radio" id="graph" name="graph-table" value="table" hidden>
-        <label for="graph">Table</label>
-
-        <input type="radio" id="you" name="you-all" value="you" hidden>
-        <label for="you">You</label>
-        <input type="radio" id="all" name="you-all" value="all" checked hidden>
-        <label for="all">All</label>
-    </div>
-    <br>
-    <br>
-    <div class="graph">
-        <canvas id="line-chart" width="800" height="400"></canvas>
-    </div>
-    <div class="table">
-        <?php
-        function formatMysqlDate($mysqlDate) {
-            $phpdate = strtotime($mysqlDate);
-            return date('Y.m.d', $phpdate);
-        }
-
-        function echoDate($date) {
-            echo "<p>$date</p>";
-        }
-
-        function canIEditRecord($record) {
-            global $admin;
-            if($record["user"] == $_SESSION["iduser"]) return true;
-            return $admin;
-        }
-
-        function echoRecord($record) {
-            global $performance;
-            $idRecord = $record["idPerformanceRecord"];
-            $username = $record["username"];
-            $comment = $record["comment"];
-            if(strlen($comment) > 0) $comment = "Comment: $comment";
-            $value = $record["value"].getPerformanceGroupTypeShort($performance["type"]);
-            $editSection = "";
-            if(canIEditRecord($record)) {
-                $editSection .= "<button onclick='deleteRecord($idRecord)' class='delete-btn'>Delete</button>";
-            }
-            $youClass = "not-you";
-            if($record["user"] == $_SESSION["iduser"]) $youClass = "you";
-            echo "<div class='tabel-record $idRecord $youClass'>
-                    <div class='top'>
-                        <p>$username</p>
-                        <p>$value</p>
+                <div class="flex">
+                    <?php
+                $personalRecord = getPersonalRecordFromPerformanceCategory($performance);
+                // if($personalRecord) {
+                //     echo "<a href='upload.php?pid=".$performance["idPerformanceCategory"]."&gop=1' class='btn create margin top no-underline'>Upload now</a>";
+                // }
+                ?>
+                </div>
+                <br>
+                <div class="flex row justify-space-evenly your-record align-center">
+                    <p class="flex">Your record</p>
+                    <div class="flex row">
+                    <?php
+                    if(!$personalRecord) {
+                        echo "<a href='upload.php?pid=".$performance["idPerformanceCategory"]."&gop=1' class='btn create margin top no-underline'>Upload now</a>";
+                    } else {
+                        echo "<p class='record'>$personalRecord</p>";
+                    }
+                    ?>
                     </div>
-                    <div class='bottom' hidden>
-                        <p class='comment'>$comment</p>
-                        <div class='flex justify-space-evenly'>
-                            $editSection
-                        </div>
+                </div>
+                <br>
+                <br>
+                <?=$goalError?>
+                <?php if($performance["goal"] != NULL) { ?>
+                <div class="flex justify-space-between">
+                    <p class="your-goal-label">Your Goal</p>
+                    <p class="your-goal"><?=$performance["goal"]?></p>
+                </div>
+                <?php } ?>
+                <br>
+                <div class="flex gap align-center">
+                    <div class="new-goal">
+                        <label for="new-goal" class="performance-label">New goal (<?=getPerformanceGroupTypeMetricLong($performance["type"])?>)</label>
+                        <input type="number" name="new-goal" id="new-goal" class="performance-input">
+                        <input type="text" name="set-goal" id="set-goal" hidden value="0">
                     </div>
-                </div>";
-        }
+                    <button type="button" class="set-goal-btn btn create gray" onclick="toggleGoal()">Set a <?php if($performance["goal"] != NULL) echo "new";?> goal</button>
+                </div>
+                <br>
+                <div class="flex justify-center gap">
+                    <a href="/performance/performance.php?id=<?=$_GET["id"]?>" class="no-underline btn create gray">Reset</a>
+                    <button name="submit" type="submit" class="btn create ">Save</button>
+                </div>
+            </form>
+            <br>
+            <div class="flex">
+                <a href="manage-athletes.php?id=<?=$_GET["id"]?>" class="no-underline btn create gray">See members</a>
+            </div>
+            </div>
+        <div>
+            <h2 class="">Results</h2>
+            <br>
+            <div class="results-options">
+                <input type="radio" id="table" name="graph-table" value="graph" checked hidden>
+                <label for="table">Graph</label>
+                <input type="radio" id="graph" name="graph-table" value="table" hidden>
+                <label for="graph">Table</label>
 
-        if(sizeof($performance["records"]) > 0) {
-            $lastDate = formatMysqlDate($performance["records"][0]["date"]);
-            echoDate($lastDate);
-            foreach ($performance["records"] as $record) {
-                $newDate = formatMysqlDate($record["date"]);
-                if($newDate != $lastDate) {
-                    $lastDate = $newDate;
-                    echoDate($newDate);
+                <input type="radio" id="you" name="you-all" value="you" hidden>
+                <label for="you">You</label>
+                <input type="radio" id="all" name="you-all" value="all" checked hidden>
+                <label for="all">All</label>
+            </div>
+            <br>
+            <br>
+            <div class="graph">
+                <canvas id="line-chart" width="800" height="400"></canvas>
+            </div>
+            <div class="table flex column">
+                <?php
+                function formatMysqlDate($mysqlDate) {
+                    $phpdate = strtotime($mysqlDate);
+                    return date('D d.m.Y', $phpdate);
                 }
-                echoRecord($record);
-            }
-        }
-        ?>
+
+                function echoDate($date) {
+                    echo "<p>$date</p>";
+                }
+
+                function canIEditRecord($record) {
+                    global $admin;
+                    if($record["user"] == $_SESSION["iduser"]) return true;
+                    return $admin;
+                }
+
+                function echoRecord($record) {
+                    global $performance;
+                    $idRecord = $record["idPerformanceRecord"];
+                    $username = $record["username"];
+                    $comment = $record["comment"];
+                    if(strlen($comment) > 0) $comment = "Comment: $comment";
+                    $value = $record["value"].getPerformanceGroupTypeShort($performance["type"]);
+                    $editSection = "";
+                    if(canIEditRecord($record)) {
+                        $editSection .= "<button onclick='deleteRecord($idRecord)' class='delete-btn'>Delete</button>";
+                    }
+                    $youClass = "not-you";
+                    if($record["user"] == $_SESSION["iduser"]) $youClass = "you";
+                    echo "<div class='tabel-record $idRecord $youClass'>
+                            <div class='top'>
+                                <p>$username</p>
+                                <p>$value</p>
+                            </div>
+                            <div class='bottom' hidden>
+                                <p class='comment'>$comment</p>
+                                <div class='flex justify-space-evenly'>
+                                    $editSection
+                                </div>
+                            </div>
+                        </div>";
+                }
+
+                if(sizeof($performance["records"]) > 0) {
+                    $lastDate = formatMysqlDate($performance["records"][0]["date"]);
+                    echoDate($lastDate);
+                    foreach ($performance["records"] as $record) {
+                        $newDate = formatMysqlDate($record["date"]);
+                        if($newDate != $lastDate) {
+                            $lastDate = $newDate;
+                            echoDate($newDate);
+                        }
+                        echoRecord($record);
+                    }
+                }
+                ?>
+            </div>
+        </div>
     </div>
 </main>
 <script>

@@ -32,11 +32,18 @@ include_once "../header.php";
     const isCreator = <?=doIOwnPerformanceCategory($_GET["id"]) ? "true" : "false"?>;
 </script>
 <main class="performance">
-    <a href="performance.php?id=<?=$_GET["id"]?>"><h1 class="align center">< <?=$performance["name"]?></h1></a>
-    <br>
-    <p class="align center font size big">Group members</p>
-    <br>
-    <div class="group-members"></div>
+    <h1 class="align center"><?=$performance["name"]?></h1>
+    <div class="flex-mobile">
+        <div>
+            <h2 class="align center">Group members</h2>
+            <br>
+            <p>Manage members and permissions</p>
+            <br>
+            <a href="performance.php?id=<?=$_GET["id"]?>"><h3 class="btn round default no-border">< Back</h2></a>
+            <br>
+        </div>
+        <div class="group-members"></div>
+    </div>
 </main>
 <script>
 const config = new PerformanceGroupUserConfig(idPerformanceCategory, existingUsers, thisUser, isAdmin, isCreator);
