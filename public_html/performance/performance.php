@@ -139,6 +139,7 @@ include_once "../header.php";
             <br>
             <div class="flex">
                 <a href="manage-athletes.php?id=<?=$_GET["id"]?>" class="no-underline btn create gray">See members</a>
+                <a href='upload.php?pid=<?=$performance["idPerformanceCategory"]?>"&gop=1' class='btn create no-underline'>Upload</a>
             </div>
             </div>
         <div>
