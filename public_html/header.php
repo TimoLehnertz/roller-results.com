@@ -93,6 +93,9 @@ if(!$embed) { // hide header if beeing embedded
                     <a href="/analytics"><i class="fas fa-binoculars margin right"></i>Analytics</a>
                 </li>
                 <li>
+                    <a href="/performance"><i class="fas fa-binoculars margin right"></i>Performance</a>
+                </li>
+                <li>
                     <a href="/tools/import-project.php"><i class="fas fa-binoculars margin right"></i>Upload results</a>
                 </li>
                 <li>

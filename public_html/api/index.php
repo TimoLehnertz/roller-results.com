@@ -585,7 +585,234 @@ if(!isset($NO_GET_API) || $NO_GET_API === false) {
         updateComp($newComp);
     } else if(isset($_GET["getcheckCompetitionAndBelow"])) {
         checkCompetitionAndBelow($_GET["getcheckCompetitionAndBelow"]);
+    } else if(isset($_GET["setcreatePerformanceCategory"])) {
+        $performanceCategory = json_decode(file_get_contents('php://input'), true);
+        if(validateObjectProperties($performanceCategory, [
+            [
+                "property" => "name",
+                "type" => "string",
+                "maxLength" => 20,
+            ],[
+                "property" => "description",
+                "type" => "string",
+                "required" => false,
+                "maxLength" => 200,
+            ],[
+                "property" => "users",
+                "type" => "array",
+            ]
+        ])) {
+            if(!createPerformanceCategory($performanceCategory["name"], $performanceCategory["description"], $performanceCategory["type"], $performanceCategory["users"])) {
+                echo "Error creating performance category";
+            }
+        }
+    } else if(isset($_GET["seteditPerformanceCategory"])) {
+        $performanceCategory = json_decode(file_get_contents('php://input'), true);
+        if(validateObjectProperties($performanceCategory, [
+            [
+                "property" => "idPerformanceCategory",
+                "type" => "integer"
+            ],[
+                "property" => "name",
+                "type" => "string",
+                "maxLength" => 20,
+            ],[
+                "property" => "description",
+                "type" => "string",
+                "required" => false,
+                "maxLength" => 200,
+            ]
+            ], true)) {
+            if(!editPerformanceCategory($performanceCategory["idPerformanceCategory"], $performanceCategory["name"], $performanceCategory["description"])) {
+                echo "Error while editing performance category";
+            }
+        }
+    } else if(isset($_GET["setmakePerformanceCategoryUserCreator"])) {
+        $performanceCategory = json_decode(file_get_contents('php://input'), true);
+        if(validateObjectProperties($performanceCategory, [
+            [
+                "property" => "idPerformanceCategory",
+                "type" => "integer"
+            ],[
+                "property" => "idUser",
+                "type" => "integer",
+            ]
+            ], true)) {
+            if(!makePerformanceCategoryUserCreator($performanceCategory["idPerformanceCategory"], $performanceCategory["idUser"])) {
+                echo "Error while making user creator in performance category";
+            } else {
+                echo "succsess";
+            }
+        }
+    } else if(isset($_GET["setmakePerformanceCategoryUserAdmin"])) {
+        $performanceCategory = json_decode(file_get_contents('php://input'), true);
+        if(validateObjectProperties($performanceCategory, [
+            [
+                "property" => "idPerformanceCategory",
+                "type" => "integer"
+            ],[
+                "property" => "idUser",
+                "type" => "integer",
+            ],[
+                "property" => "makeAdmin",
+                "type" => "integer",
+            ]
+            ], true)) {
+            if(!makePerformanceCategoryUserAdmin($performanceCategory["idPerformanceCategory"], $performanceCategory["idUser"], $performanceCategory["makeAdmin"], true)) {
+                echo "Error while making user admin in performance category";
+            } else {
+                echo "succsess";
+            }
+        }
+    } else if(isset($_GET["setuserToPerformanceCategory"])) {
+        $user = json_decode(file_get_contents('php://input'), true);
+        if(validateObjectProperties($user, [
+            [
+                "property" => "idPerformanceCategory",
+                "type" => "integer",
+            ],[
+                "property" => "idUser",
+                "type" => "integer",
+            ]
+            ], true)) {
+            if(!addUserToPerformanceCategory($user["idPerformanceCategory"], $user["idUser"])) {
+                echo "Error while adding user to Performance category";
+            } else {
+                echo "succsess";
+            }
+        }
+    } else if(isset($_GET["setremoveUserFromPerformanceCategory"])) {
+        $user = json_decode(file_get_contents('php://input'), true);
+        if(validateObjectProperties($user, [
+            [
+                "property" => "idPerformanceCategory",
+                "type" => "integer",
+            ],[
+                "property" => "idUser",
+                "type" => "integer",
+            ]
+            ], true)) {
+            if(!removeUserFromPerformanceCategory($user["idPerformanceCategory"], $user["idUser"])) {
+                echo "Error while removing user from Performance category";
+            } else {
+                echo "succsess";
+            }
+        }
+    } else if(isset($_GET["setuploadPerformanceRecord"])) {
+        $record = json_decode(file_get_contents('php://input'), true);
+        if(validateObjectProperties($record, [
+            [
+                "property" => "idPerformanceCategory",
+                "type" => "integer",
+            ],[
+                "property" => "idUser",
+                "type" => "integer",
+            ],[
+                "property" => "value",
+                "type" => "float",
+            ],[
+                "property" => "comment",
+                "type" => "string",
+                "required" => false,
+            ],[
+                "property" => "date",
+                "type" => "string",
+            ]
+        ])) {
+            if(!uploadPerformanceRecord($record["idPerformanceCategory"], $record["idUser"], $record["value"], $record["comment"], $record["date"])) {
+                echo "Error while editing Performance record";
+            }
+        }
+    } else if(isset($_GET["seteditPerformanceRecord"])) {
+        $record = json_decode(file_get_contents('php://input'), true);
+        if(validateObjectProperties($record, [
+            [
+                "property" => "idPerformanceRecord",
+                "type" => "integer",
+            ],[
+                "property" => "value",
+                "type" => "float",
+            ]
+        ])) {
+            if(!editPerformanceRecord($record["idPerformanceRecord"], $record["value"])) {
+                echo "Error while editing Performance record";
+            }
+        }
+    } else if(isset($_GET["setdeletePerformanceRecord"])) {
+        $record = json_decode(file_get_contents('php://input'), true);
+        if(validateObjectProperties($record, [
+            [
+                "property" => "idPerformanceRecord",
+                "type" => "integer",
+            ]
+        ])) {
+            if(!deletePerformanceRecord($record["idPerformanceRecord"])) {
+                echo "Error while deleting Performance record";
+            } else {
+                echo "succsess";
+            }
+        }
     }
+}
+function validateObjectProperties(&$object, $properties, $logErrors = false) {
+    foreach ($properties as $property) {
+        if(!validateObjectOnProperty($object, $property, $logErrors)) return false;
+    }
+    return true;
+}
+
+/**
+ * property settings
+ * @param property string the name of the property
+ * @param required boolean if true invalidates if this property is not existing, default true
+ * @param forbidden boolean invalidates if this property is present, overwrites required, default false
+ * @param noLog boolean ignore error messages for this error, default false
+ * @param type string (string, number, integer, float, array) invalidates different types, default any
+ * @param minLength int only for strings
+ * @param maxLength int only for strings
+ * @param value any value that this property must have
+ * @param values any one of values that this property must have
+ */
+function validateObjectOnProperty(&$object, $property, $logErrors) {
+    if(!isset($property["required"])) $property["required"] = true;
+    if(!isset($property["forbidden"])) $property["forbidden"] = false;
+    if(!isset($property["noLog"])) $property["noLog"] = false;
+    if(!isset($property["type"])) $property["type"] = -1;
+    if(!isset($property["minLength"])) $property["minLength"] = -1;
+    if(!isset($property["maxLength"])) $property["maxLength"] = -1;
+    if($property["forbidden"] && isset($object[$property["property"]])) return logError($logErrors && !$property["noLog"], "Missing parameter: ".$property["property"]);
+    if($property["required"] && !isset($object[$property["property"]])) return logError($logErrors && !$property["noLog"], "Missing parameter: ".$property["property"]);
+    if(!isset($object[$property["property"]])) {
+        $object[$property["property"]] = NULL;
+        return true;
+    }
+    $value = $object[$property["property"]];
+    if($property["type"] != -1) {
+        if($property["type"] === "string"   && !is_string($value)) return logError($logErrors && !$property["noLog"], "Invalid type given for: ".$property["property"].". expected string");
+        if($property["type"] === "number"   && !is_numeric($value)) return logError($logErrors && !$property["noLog"], "Invalid type given for: ".$property["property"].". expected number");
+        if($property["type"] === "integer"  && !is_int($value)) return logError($logErrors && !$property["noLog"], "Invalid type given for: ".$property["property"].". expected integer");
+        if($property["type"] === "float"    && !is_float($value) && !is_int($value) && !is_double($value)) return logError($logErrors && !$property["noLog"], "Invalid type given for: ".$property["property"].". expected float");
+        if($property["type"] === "array"    && !is_array($value)) return logError($logErrors && !$property["noLog"], "Invalid type given for: ".$property["property"].". expected array");
+        if($property["type"] === "string") {
+            if($property["minLength"] > -1 && strlen($value) < $property["minLength"]) return logError($logErrors && !$property["noLog"], "Too short argument given for: ".$property["property"].". expected at least ".$property["minLength"]." chacarters");
+            if($property["maxLength"] > -1 && strlen($value) > $property["maxLength"]) return logError($logErrors && !$property["noLog"], "Too long argument given for: ".$property["property"].". expected less than ".$property["maxLength"]." chacarters");;
+        }
+    }
+    if(isset($property["value"]) && $property["value"] !== $value) return false;
+    if(isset($property["values"]) && !in_array($value, $property["values"])) return false;
+    return true;
+}
+
+/**
+ * Logs the error if logErrors is true
+ * @param logErrors boolean
+ * @param error string
+ * @returns false
+ */
+function logError($logErrors, $error) {
+    if(!$logErrors) return false;
+    echo "Error: $error\n";
+    return false;
 }
 
 /**
@@ -598,17 +825,67 @@ if(!isset($NO_GET_API) || $NO_GET_API === false) {
  *          description: <string>,
  *          type: <string>,
  *          creator: <int>,
- *          creatorAthleteChecked: <boolean>,
- *          creatorAthleteFirstName: <string>,
- *          creatorAthleteLastName: <string>,
- *          username: <string>,
- *          creatorImage: <string>,
- *          createDate: <string>
+ *          rowCreated: <string>
+ *          rowupdated <string>
+ *          myRecords: <int>
+ *          records: <int>
+ *          minValue: <float>
+ *          maxValue: <float>
+ *          goal: <float>
  *      }
  *  ]
  */
 function getPerformanceCategories() {
-    return query("SELECT ");
+    if(!isLoggedIn()) return [];
+    return query("  SELECT pc.*, sum(if(pr.user=?, 1, 0)) as myRecords, count(pr.idPerformanceRecord) as records, min(pr.value) as `minValue`, max(pr.value) as `maxValue`, max(uipc.goal) as goal, max(pr.rowCreated) as lastUpload
+                    FROM TbPerformanceCategory pc
+                    JOIN TbUserInPerformanceCategory uipc ON uipc.performanceCategory = pc.idPerformanceCategory
+                    LEFT JOIN TbPerformanceRecord pr ON pr.performanceCategory = pc.idPerformanceCategory
+                    WHERE uipc.`user`=?
+                    GROUP BY pc.idPerformanceCategory
+                    ORDER BY lastUpload DESC, rowCreated DESC;", "ii", $_SESSION["iduser"], $_SESSION["iduser"]);
+}
+
+function getPerformanceCategoryUsers($idPerformanceCategory) {
+    if(!isLoggedIn() || !isUserInPerformanceCategory($idPerformanceCategory, $_SESSION["iduser"])) return [];
+    return query("  SELECT `user`.username, `user`.iduser, IF(athlete.image IS NOT NULL, CONCAT('/img/uploads/', athlete.image), NULL) as image, athlete.firstname, athlete.lastname, athlete.gender, uipc.isAdmin, uipc.creator, pc.creator = `user`.iduser as isCreator, count(TbPerformanceRecord.idPerformanceRecord) as uploads
+                    FROM TbUserInPerformanceCategory uipc
+                    JOIN TbUser `user` ON `user`.iduser = uipc.`user`
+                    LEFT JOIN TbPerformanceRecord ON TbPerformanceRecord.user = `user`.iduser
+                    LEFT JOIN TbAthlete athlete ON athlete.id = `user`.athlete
+                    JOIN TbPerformanceCategory pc ON pc.idPerformanceCategory = uipc.performanceCategory
+                    WHERE uipc.performanceCategory = ?
+                    GROUP BY `user`.iduser, athlete.id, uipc.idUserInPerformanceCategory;", "i", $idPerformanceCategory);
+}
+
+function getPerformanceCategory($idPerformanceCategory) {
+    if(!isLoggedIn()) return [];
+    $res = query("  SELECT pc.*, sum(if(pr.user=?, 1, 0)) as myRecords, count(pr.idPerformanceRecord) as records, min(pr.value) as `minValue`, max(pr.value) as `maxValue`, max(uipc.goal) as goal, max(pr.rowCreated) as lastUpload
+                    FROM TbPerformanceCategory pc
+                    JOIN TbUserInPerformanceCategory uipc ON uipc.performanceCategory = pc.idPerformanceCategory
+                    LEFT JOIN TbPerformanceRecord pr ON pr.performanceCategory = pc.idPerformanceCategory
+                    WHERE uipc.`user`=? AND pc.idPerformanceCategory=?
+                    GROUP BY pc.idPerformanceCategory
+                    ORDER BY lastUpload DESC, rowCreated DESC;", "iii", $_SESSION["iduser"], $_SESSION["iduser"], $idPerformanceCategory);
+    if(sizeof($res) == 0) return false;
+    return $res[0];
+}
+
+function getPerformanceRecords($idPerformanceCategory) {
+    return query("SELECT TbPerformanceRecord.*, TbUser.username FROM TbPerformanceRecord JOIN TbUser ON TbUser.iduser = TbPerformanceRecord.user WHERE performanceCategory=? ORDER BY `date` DESC, `user` ASC, rowCreated ASC;", "i", $idPerformanceCategory);
+}
+
+function getFullperformanceCategory($idPerformanceCategory) {
+    if(!isLoggedIn() || !isUserInPerformanceCategory($idPerformanceCategory, $_SESSION["iduser"])) return false; // check rights
+    $category = getPerformanceCategory($idPerformanceCategory);
+    $records = getPerformanceRecords($idPerformanceCategory);
+    $category["records"] = $records;
+    return $category;
+}
+
+function updateGoalOnGroup($idPerformanceCategory, $goal) {
+    if(!isLoggedIn()) return false;
+    return dbExecute("UPDATE TbUserInPerformanceCategory SET goal=? WHERE performanceCategory=? AND `user`=?;", "idi", $goal, $idPerformanceCategory, $_SESSION["iduser"]);
 }
 
 /**
@@ -624,8 +901,9 @@ function createPerformanceCategory($name, $description, $type, $users) {
     $creator = $_SESSION["iduser"];
     $idPerformanceCategory = dbInsert("INSERT INTO TbPerformanceCategory(`name`, `description`, `type`, creator) VALUES(?,?,?,?);", "sssi", $name, $description, $type, $creator);
     if(!$idPerformanceCategory) return false;
+    // var_dump($users);
     addUsersToPerformanceCategory($idPerformanceCategory, $users);
-    return true;
+    return $idPerformanceCategory;
 }
 
 /**
@@ -633,11 +911,24 @@ function createPerformanceCategory($name, $description, $type, $users) {
  */
 function editPerformanceCategory($idPerformanceCategory, $name, $description) {
     if(!amIAdminInPerformanceCategory($idPerformanceCategory)) return false;
-    return dbExecute("UPDATE TbPerformanceCategory SET `name`=?, SET `description`=? WHERE idPerformanceCategory=?;", "ssi", $name, $description, $idPerformanceCategory);
+    return dbExecute("UPDATE TbPerformanceCategory SET `name`=?, `description`=? WHERE idPerformanceCategory=?;", "ssi", $name, $description, $idPerformanceCategory);
+}
+
+function makePerformanceCategoryUserAdmin($idPerformanceCategory, $idUser, $admin) {
+    if(!doIOwnPerformanceCategory($idPerformanceCategory)) return false;
+    return dbExecute("UPDATE TbUserInPerformanceCategory SET isAdmin=? WHERE `user`=? AND performanceCategory =?;", "iii", $admin, $idUser, $idPerformanceCategory);
+}
+
+function makePerformanceCategoryUserCreator($idPerformanceCategory, $idUser) {
+    if(!doIOwnPerformanceCategory($idPerformanceCategory)) return false;
+    return dbExecute("UPDATE TbPerformanceCategory SET `creator`=? WHERE idPerformanceCategory=?;", "ii", $idUser, $idPerformanceCategory);
 }
 
 /**
  * Adds a user to the Performance category if the current user is an admin
+ * 
+ * @param idPerformanceCategory int
+ * @param idUser int
  */
 function addUserToPerformanceCategory($idPerformanceCategory, $idUser) {
     if(!amIAdminInPerformanceCategory($idPerformanceCategory)) return false;
@@ -647,14 +938,11 @@ function addUserToPerformanceCategory($idPerformanceCategory, $idUser) {
     (`user`, performanceCategory, isAdmin, creator) VALUES (?,?,?,?)", "iiii", $idUser, $idPerformanceCategory, false, $creator) != false;
 }
 
-function isUserInPerformanceCategory($idPerformanceCategory, $idUser) {
-    $res = query("SELECT * FROM TbUserInPerformanceCategory WHERE performanceCategory=? AND user=?;", "ii", $idPerformanceCategory, $idUser);
-    if($res === false) return false;
-    return sizeof($res) > 0;
-}
-
 /**
  * removes a user from a performance category if the current user has greater rights
+ * 
+ * @param idPerformanceCategory int
+ * @param idUser int
  */
 function removeUserFromPerformanceCategory($idPerformanceCategory, $idUser) {
     if(!amIAdminInPerformanceCategory($idPerformanceCategory)) return false;
@@ -663,7 +951,22 @@ function removeUserFromPerformanceCategory($idPerformanceCategory, $idUser) {
 }
 
 /**
+ * checks if a user is member in a performance category
+ * 
+ * @param idPerformanceCategory int
+ * @param idUser int
+ */
+function isUserInPerformanceCategory($idPerformanceCategory, $idUser) {
+    $res = query("SELECT * FROM TbUserInPerformanceCategory WHERE performanceCategory=? AND user=?;", "ii", $idPerformanceCategory, $idUser);
+    if($res === false) return false;
+    return sizeof($res) > 0;
+}
+
+/**
  * CHecks if a user is admin in the Performance group
+ * 
+ * @param idPerformanceCategory int
+ * @param idUser int
  */
 function isUserAdminInPerformanceCategory($idPerformanceCategory, $idUser) {
     $res = query("SELECT * FROM TbUserInPerformanceCategory WHERE performanceCategory=? AND user=? AND isAdmin=1;", "ii", $idPerformanceCategory, $idUser);
@@ -673,12 +976,13 @@ function isUserAdminInPerformanceCategory($idPerformanceCategory, $idUser) {
 
 /**
  * adds users to a group
+ * Note: ignores if the user is already in the performance group.
+ * Only to be used on initialization of performance groups
  * 
  * @param users array of numbers
  */
 function addUsersToPerformanceCategory($idPerformanceCategory, $users) {
     if(!isLoggedIn()) return false;
-    $creator = $_SESSION["iduser"];
     if(sizeof($users) == 0) return true;
     $types = "";
     $sql = "";
@@ -690,19 +994,32 @@ function addUsersToPerformanceCategory($idPerformanceCategory, $users) {
         $del = ",";
         $fillers[]= $iduser;
         $fillers[]= $idPerformanceCategory;
-        $fillers[]= false;
-        $fillers[]= $creator;
+        $fillers[]= $iduser == $_SESSION["iduser"] ? 1 : 0;
+        $fillers[]= $_SESSION["iduser"];
     }
-    return dbInsert("INSERT INTO results.TbUserInPerformanceCategory
-    (`user`, performanceCategory, isAdmin, creator) VALUES $sql;", $types, ... $fillers) != false;
+    return dbInsert("INSERT INTO TbUserInPerformanceCategory(`user`, performanceCategory, isAdmin, creator) VALUES $sql;", $types, ... $fillers) != FALSE;
 }
 
 /**
  * Checks if the current user is admin in the performance category
+ * 
+ * @param idPerformanceCategory int
  */
 function amIAdminInPerformanceCategory($idPerformanceCategory) {
     if(!isLoggedIn()) return false;
-    isUserAdminInPerformanceCategory($_SESSION["iduser"]);
+    return isUserAdminInPerformanceCategory($idPerformanceCategory, $_SESSION["iduser"]);
+}
+
+/**
+ * Checks if the specified user owns this performance category
+ * 
+ * @param idPerformanceCategory int
+ * @param idUser int
+ */
+function doesUserOwnPerformanceCategory($idPerformanceCategory, $idUser) {
+    $res = query("SELECT * FROM TbPerformanceCategory WHERE idPerformanceCategory=? AND creator=?;", "ii", $idPerformanceCategory, $idUser);
+    if(!$res) return false;
+    return sizeof($res) > 0;
 }
 
 /**
@@ -710,9 +1027,7 @@ function amIAdminInPerformanceCategory($idPerformanceCategory) {
  */
 function doIOwnPerformanceCategory($idPerformanceCategory) {
     if(!isLoggedIn()) return false;
-    $res = query("SELECT * FROM TbPerformanceCategory WHERE idPerformanceCategory=? AND creator=?;", "ii", $idPerformanceCategory, , $_SESSION["iduser"]);
-    if(!$res) return false;
-    return sizeof($res) > 0;
+    return doesUserOwnPerformanceCategory($idPerformanceCategory, $_SESSION["iduser"]);
 }
 
 /**
@@ -732,6 +1047,121 @@ function deletePerformanceCategory($idPerformanceCategory) {
     dbExecute("DELETE FROM TbPerformanceCategory WHERE idPerformanceCategory = ?;", "i", $idPerformanceCategory);
 }
 
+function canIEditPerformanceRecord($idPerformanceCategory, $targetUser) {
+    if(!isLoggedIn()) return false;
+    if(!isUserInPerformanceCategory($idPerformanceCategory, $_SESSION["iduser"])) return false;
+    if(($targetUser != $_SESSION["iduser"]) && !amIAdminInPerformanceCategory($idPerformanceCategory)) return false;
+    return true;
+}
+
+function uploadPerformanceRecord($idPerformanceCategory, $idUser, $value, $comment, $date) {
+    if(!canIEditPerformanceRecord($idPerformanceCategory, $idUser)) return false;
+    return dbInsert("INSERT INTO TbPerformanceRecord(`user`, `value`, `comment`, `performanceCategory`, `date`) VALUES (?,?,?,?,?);", "idsis", $idUser, $value, $comment, $idPerformanceCategory, $date);
+}
+
+function editPerformanceRecord($idPerformanceRecord, $value) {
+    $record = getPerformanceRecord($idPerformanceRecord);
+    if(!$record) return false;
+    if(!canIEditPerformanceRecord($idPerformanceCategory, $record["user"])) return false;
+    return dbExecute("UPDATE TbPerformanceRecord SET value=? WHERE idPerformanceRecord=?;", "di", $value, $idPerformanceRecord);
+}
+
+function deletePerformanceRecord($idPerformanceRecord) {
+    $record = getPerformanceRecord($idPerformanceRecord);
+    if(!$record) return false;
+    if(!canIEditPerformanceRecord($record["performanceCategory"], $record["user"])) return false;
+    return dbExecute("DELETE FROM TbPerformanceRecord WHERE idPerformanceRecord=?;", "i", $idPerformanceRecord);
+}
+
+function getPerformanceRecord($idPerformanceRecord) {
+    $res = query("SELECT * FROM TbPerformanceRecord WHERE idPerformanceRecord=?", "i", $idPerformanceRecord);
+    if(!$res) return false;
+    if(sizeof($res) == 0) return false;
+    return $res[0];
+}
+
+function getPerformanceRecordsByCategory($idPerformanceCategory) {
+    if(!loggedIn()) return false;
+    $isAdmin = amIAdminInPerformanceCategory($idPerformanceCategory);
+    $res = query("SELECT *, ? OR `user`=? AS `editable` FROM TbPerformanceRecord WHERE performanceCategory=?;", "iii", $isAdmin, $_SESSION["iduser"], $idPerformanceCategory);
+    if(!$res) return false;
+    if(sizeof($res) == 0) return false;
+    return $res[0];
+}
+
+function getPersonalRecordFromPerformanceCategory($category) {
+    if(!isLoggedIn()) return false;
+    $asc = isPerformanceGroupTypeMin($category["type"]);
+    if(sizeof($category["records"]) == 0) return false;
+    $found = false;
+    foreach ($category["records"] as $record) {
+        if($record["user"] != $_SESSION["iduser"]) continue;
+        $best = $record["value"];
+        $found = true;
+        break;
+    }
+    if(!$found) {
+        return false;
+    }
+    foreach ($category["records"] as $record) {
+        if($record["user"] != $_SESSION["iduser"]) continue;
+        if($asc) {
+            if($record < $best) $best = $record["value"];
+        } else {
+            if($record > $best) $best = $record["value"];
+        }
+    }
+    // var_dump($best);
+    return $best.getPerformanceGroupTypeShort($category["type"]);
+}
+
+function isPerformanceGroupTypeMin($type) {
+    switch($type) {
+        case "time": return true;
+        case "bpm": return true;
+        case "distance": return false;
+        default: return false;
+    }
+}
+
+function getPerformanceGroupTypeShort($type) {
+    switch($type) {
+        case "time": return "s";
+        case "bpm": return "bpm";
+        case "distance": return "m";
+        default: return "";
+    }
+}
+
+function getPerformanceGroupTypelong($type) {
+    switch($type) {
+        case "time": return "Time";
+        case "bpm": return "Bpm";
+        case "distance": return "Meters";
+        default: return "";
+    }
+}
+
+function echoPerformanceCategory($performanceCategory) {
+    $records = $performanceCategory["myRecords"]." ".($performanceCategory["myRecords"] > 1 ? "records" : "record");
+    if($records == 0) {
+        $records = "No records yet";
+    }
+    $type = $performanceCategory["type"];
+    $best = isPerformanceGroupTypeMin($type) ? $performanceCategory["minValue"] : $performanceCategory["maxValue"];
+    $short = !empty($best) ? getPerformanceGroupTypeShort($type) : "";
+    $long = getPerformanceGroupTypelong($type);
+    $name = $performanceCategory["name"];
+    $id = $performanceCategory["idPerformanceCategory"];
+    echo "
+    <div class='performance-category' id='$id' long='$long'>
+        <div class='top'>
+            <p class='records'>$records</p><p class='best'>$best$short</p>
+        </div>
+        <p class='name'>$name</p>
+        <div></div>
+    </div>";
+}
 
 function checkCompetitionAndBelow($idCompetition) {
     if(!canI("managePermissions")) return false;
@@ -2056,7 +2486,7 @@ function athleteFromResult($result){
  * <location> location of competition
  * <country> country
  * 
- * allowed: <string> Year,Team,Competition,Athlete,Country
+ * allowed: <string> Year,Team,Competition,Athlete,Country,User
  * 
  */
 function search($name, $allowed = "Year,Team,Competition,Athlete,Country") {
@@ -2068,8 +2498,25 @@ function search($name, $allowed = "Year,Team,Competition,Athlete,Country") {
     /**
      * Year
      */
+    if(in_array("User", $allowed)) {
+        // echo "moin";
+        $users = query("CALL sp_searchUser(?);", "s", $name);
+        foreach ($users as $user) {
+            $image = defaultProfileImgPath("m");
+            if($user["image"] != NULL) {
+                $image = "/img/uploads/".$user["image"];
+            }
+            $results[] = [
+                "id" => $user["iduser"],
+                "name" => $user["username"],
+                "priority" => 2,
+                "type" => "user",
+                "image" => $image
+            ];
+        }
+    }
     $year = substr($name, 0, 4);
-    $competition = null;
+    $competition = NULL;
     if(is_numeric($year) && in_array("Year", $allowed)) {
         $competitions = query("CALL sp_searchYear(?);", "i", intval($year));
         if(sizeof($competitions) > 0){

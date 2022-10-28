@@ -56,3 +56,41 @@ $form-b: $d
         padding: 0.2rem
         border-radius: 0rem
         // width: 100%
+
+.form-performance
+    label
+        display: block
+        color: #5f79c4
+        margin-bottom: 0.5rem
+
+    input[type="text"]:not(.athlete-search input), textarea
+        margin-bottom: 2rem
+        border: none
+        background: #2c4288
+        border-radius: 0.5rem
+        padding: 1rem
+        color: white
+
+    input[type="radio"]
+        display: none
+
+        &+label
+            background: #2c4288
+            border-radius: 0.5rem
+            border: 0.4rem solid #0000
+            transition: border 0.2s
+            text-align: center
+            padding: 0.2rem 0.5rem
+            display: flex
+            align-items: center
+
+        &:checked+label
+            border: 0.4rem solid #fff
+            background: #213166
+
+
+    @media only screen and (max-width: 600px)
+        font-size: 2rem
+        
+        input[type="text"]:not(.athlete-search input), textarea
+            width: 100%

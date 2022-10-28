@@ -1,0 +1,203 @@
+.performance
+
+    $imgOutline: #052a91
+    $background: #031956
+
+    background: $background
+    margin-top: -5rem
+    padding-top: 4rem
+    padding: 3rem
+
+    .upper-section
+        display: grid
+        grid-template-columns: 1fr 1fr
+
+        > div
+            display: flex
+            justify-content: center
+            align-items: center
+
+    .profile-img
+        width: 15rem
+        height: 15rem
+        border-radius: 100%
+        overflow: hidden
+        border: 0.5rem solid $imgOutline
+
+        img
+            object-fit: cover
+            width: 100%
+            height: 100%
+            transform: scale(0.95)
+            border-radius: 100%
+            transition: transform 0.2s
+
+        &:hover img
+            transform: scale(1)
+
+    .username
+        font-size: 2rem
+
+    .realname
+        color: #aaa
+        font-size: 1.5rem
+
+    .goals-wrapper
+        justify-content: end !important
+
+    .goals
+        border-radius: 1.5rem
+        border: 0.5rem solid white
+        padding: 1.5rem
+        padding-right: 2.5rem
+        transform: translateX(4.5rem)
+        font-size: 1.5rem
+
+        .number
+            font-size: 2.5rem
+            color: orange
+
+    .lower-section
+        margin-top: 3rem
+
+    .athlete
+        background: #2c4288
+        border-radius: 3rem
+        font-size: 2rem
+        padding: 0.5rem
+        margin-bottom: 1rem
+        
+        .info
+            display: flex
+            gap: 1rem
+            align-items: center
+
+        .profile-img
+            width: 4rem
+            height: 4rem
+            object-fit: cover
+            border-radius: 100%
+            border: 0.3rem solid $imgOutline
+
+        .name
+            flex-grow: 100
+
+            img
+                width: 3.5rem
+                height: 3.5rem
+                filter: invert(0.8)
+    
+        .status
+            // position: absolute
+            font-size: 1.5rem
+
+        .uploads
+            text-align: center
+            padding: 0.5rem
+
+        button
+            color: white
+            padding: 1rem
+            margin-bottom: 1rem
+            border: 0.5rem solid #ccc
+            background: #0000
+            border-radius: 1rem
+
+        .remove-btn, .remove-admin-btn
+            border-color: orange
+
+        .make-creator-btn, .make-admin-btn
+            border-color: green
+    
+    .highlight
+        outline: 0.75rem solid #e77e1c
+        transition: outline 0.2s
+
+    .performance-category
+        padding: 0.5rem
+        border-radius: 1rem
+        border: 0.5rem solid #2f5597
+        color: #fff
+        width: 20rem
+
+        &.active
+            border-color: #fff
+
+        .top
+            display: flex
+            justify-content: space-between
+        .records
+            color: #aaa
+            font-size: 1rem
+        .best, .name
+            font-size: 2rem
+
+    .editable-input, .editable-textarea
+        background: #0000
+        border: none
+        outline: none
+        color: white
+
+    .edit-img
+        width: 2rem
+        height: 2rem
+        filter: invert(0.9)
+
+    #name
+        font-size: 2rem
+
+    .records-amount
+        font-size: 1.5rem
+        color: #5f79c4
+
+    .description
+        font-size: 1.5rem
+
+    .record
+        font-size: 4rem
+        color: orange
+
+    .your-goal-label
+        font-size: 1.5rem
+        color: #5f79c4
+
+    .your-goal
+        font-size: 2rem
+
+    .performance-input
+        border: none
+        background: #2c4288
+        border-radius: 0.5rem
+        padding: 1rem
+        color: white
+
+    .results-options
+        display: grid
+        grid-template-columns: 1fr 1fr
+        gap: 1rem
+
+        input[type="radio"]
+            display: none
+
+            &+label
+                background: #2c4288
+                border-radius: 0.5rem
+                border: 0.4rem solid #0000
+                transition: border 0.2s
+                text-align: center
+                padding: 0.2rem 0.5rem
+
+            &:checked+label
+                border: 0.4rem solid #fff
+                background: #213166
+
+    .tabel-record
+        background: #2c4288
+        border-radius: 1rem
+        padding: 1rem
+        margin-bottom: 1rem
+
+        .top
+            display: flex
+            flex-direction: row
+            justify-content: space-between

@@ -74,10 +74,10 @@ function echoAthleteImg($athlete){
 }
 
 function defaultProfileImgPath($gender){
-    if(strtolower($gender) == "m"){
-        return "/img/profile-men.png";
-    } else{
+    if(strtolower($gender) == "w"){
         return "/img/profile-female.jpg";
+    } else{
+        return "/img/profile-men.png";
     }
 }
 

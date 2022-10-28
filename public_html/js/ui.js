@@ -390,8 +390,8 @@ let searchTooltip;
 
 function initSearchBar(){
     $("body").click(closeSearchBar);
-    $(".search-bar__input").keyup((e) => {
-        if(e.keyCode === 13){
+    $(".search-bar__input").not(".no-links").keyup((e) => {
+        if(e.keyCode === 13) {
             if(options.length > 0){
                 // window.location = linkFromOption(options[0]);
                 window.location = "/index.php?q=" + $(".search-bar__input").val();
@@ -512,11 +512,12 @@ class SearchBarSmall {
         if(!isFunction(callback)) callback = () => {};
         this.callback = callback;
         this.elem = $(`<div class="search-bar"></div>`);
-        this.input = $(`<input type="text" class="search-bar__input" placeholder="Search for ${hintFromAllowedSearch(allowed)}">`);
+        this.input = $(`<input type="text" class="search-bar__input ${useLinks ? "" : "no-links"}" placeholder="Search for ${hintFromAllowedSearch(allowed)}">`);
         this.options = $(`<div class="search-bar__options flex column align-start"></div>`);
         this.input.on("input", (e) => this.handleChange(e));
         this.elem.append(this.input);
         this.elem.append(this.options);
+        this.limit = 10;
         $("body").click(() => this.options.empty());
         this.input.keyup((e) => {
             if(e.keyCode !== 13) return;
@@ -547,12 +548,183 @@ class SearchBarSmall {
     updateSearchBar(data) {
         this.options.empty();
         if(data === undefined) return;
+        let i = 0;
         for (const option of data) {
+            if(i >= this.limit) break;
             this.options.append(elemFromSearchOption(option, this.useLinks, (option) => {this.options.empty(); this.callback(option)}));
+            i++;
         }
+        this.options.scrollTop(0);
     }
 }
 
 function isFunction(functionToCheck) {
     return functionToCheck && {}.toString.call(functionToCheck) === '[object Function]';
+}
+
+class PerformanceGroupUserConfig {
+    constructor(idPerformanceCategory, existingUsers, thisUser, isAdmin, isCreator, allowConfig = true) {
+        this.allowConfig = allowConfig;
+        this.thisUser = thisUser;
+        this.users = existingUsers;
+        this.idPerformanceCategory = idPerformanceCategory;
+        this.permissionLevel = 0;
+        if(isAdmin) this.permissionLevel++;
+        if(isCreator) this.permissionLevel++;
+        this.elem = $(`<div class="performance-group-config"></div>`);
+        if(isAdmin || !allowConfig) {
+            this.searchBar = new SearchBarSmall("User", false, (user) => this.searchCallback(user));
+            this.elem.append("<p class='align center font size big'>Add users</p>");
+            this.elem.append(this.searchBar.elem);
+        }
+        this.usersElem = $(`<div class="margin top"></div>`);
+        this.elem.append(this.usersElem);
+        this.updateGui();
+        this.onchange = () => {};
+    }
+
+    searchCallback(user) {
+        console.log(user);
+        for (const u of this.users) if(user.id == u.iduser) return; // check if existing
+        this.addUser(user);
+    }
+
+    getUserIds() {
+        const ids = [];
+        for (const user of this.users) {
+            ids.push(user.id);
+        }
+        return ids;
+    }
+
+    addUser(user) {
+        user.isAdmin = user.isAdmin ?? false;
+        user.isCreator = user.isCreator ?? false;
+        user.iduser = user.iduser ?? user.id;
+        user.uploads = user.uploads ?? 0;
+        user.username = user.username ?? user.name;
+        this.users.push(user);
+        $(".group-members").append(`<div class="loading circle"></div>`);
+        if(this.allowConfig) {
+            set("userToPerformanceCategory", {idPerformanceCategory: this.idPerformanceCategory, idUser: user.iduser}).receive((res) => {
+                if(res == "succsess") {
+                    this.addUserToGui(user);
+                } else {
+                    alert(res);
+                }
+                $(".loading").remove();
+            });
+        } else {
+            this.addUserToGui(user);
+        }
+    }
+    
+    getPermissionLevel(user) {
+        if(!user.isAdmin) return 0;
+        if(!user.isCreator) return 1;
+        if(user.isCreator) return 2;
+        return -1;
+    }
+
+    updateGui() {
+        this.usersElem.empty();
+        for (const user of this.users) {
+            this.addUserToGui(user);
+        }
+    }
+
+    addUserToGui(user) {
+        const wrapper = $("<div></div>");
+        const status = `${user.isCreator ? "Owner" : user.isAdmin ? "Admin" : "Member"}`;
+        const statusColor = `${user.isCreator ? "#f55" : user.isAdmin ? "#5f5" : "#ccc"}`;
+        const elem = $(`<div class="athlete"><div class="info"><img class="profile-img" src="${user.image}"><span class="name">${user.username}</span><span class="status" style="color: ${statusColor}">${status}</span></div></div>`);
+        const userOptions = $(`<div class="user-options flex mobile"></div>`);
+        wrapper.append(elem);
+        elem.append(userOptions);
+        elem.click(() => {
+            if(!userOptions.is(":visible")) {
+                $(".user-options").hide();
+            }
+            userOptions.toggle();
+        });
+        userOptions.hide();
+        user.guiElem = wrapper;
+        this.usersElem.append(wrapper);
+        this?.onchange?.();
+        
+        if(this.allowConfig) {
+            const records = $(`<p class="uploads">${user.uploads > 0 ? `${user.uploads} upload${user.uploads > 1 ? "s" : ""}` : "No uploads yet"} </p>`);
+            userOptions.append(records);
+        }
+        
+        const removeBtn = $(`<button class="remove-btn">Remove ${user.username}</button>`);
+        removeBtn.click(() => this.removeUser(user)); // no action needed
+        
+        const makeAdminBtn = $(`<button class="make-admin-btn">Make ${user.username} an admin</button>`);
+        makeAdminBtn.click(() => this.makeAdmin(user, true));
+        
+        const removeAdminBtn = $(`<button class="remove-admin-btn">remove ${user.username}'s admin rights</button>`);
+        removeAdminBtn.click(() => this.makeAdmin(user, false));
+        
+        const makeCreatorBtn = $(`<button class="make-creator-btn">Make ${user.username} the creator</button>`);
+        makeCreatorBtn.click(() => this.makeCreator(user));
+        
+        const higherPermissions = this.permissionLevel > this.getPermissionLevel(user);
+        if(higherPermissions && user.iduser != this.thisUser) {
+            userOptions.append(removeBtn);
+        }
+        if(!this.allowConfig) return;
+        if(higherPermissions && user.isAdmin) {
+            userOptions.append(removeAdminBtn);
+        }
+        if(!user.isAdmin && isCreator) {
+            userOptions.append(makeAdminBtn);
+        }
+        if(user.isAdmin && higherPermissions) {
+            userOptions.append(makeCreatorBtn);
+        }
+    }
+
+    makeCreator(user) {
+        set("makePerformanceCategoryUserCreator", {idPerformanceCategory: this.idPerformanceCategory, idUser: user.iduser}).receive((res) => {
+            if(res == "succsess") {
+                for (const user of this.users) {
+                    user.isCreator = false;
+                }
+                user.isCreator = true;
+                this.updateGui();
+            } else {
+                alert(res);
+            }
+        });
+    }
+
+    makeAdmin(user, makeAdmin) {
+        set("makePerformanceCategoryUserAdmin", {idPerformanceCategory: this.idPerformanceCategory, idUser: user.iduser, makeAdmin: makeAdmin ? 1 : 0}).receive((res) => {
+            if(res == "succsess") {
+                user.isAdmin = makeAdmin;
+                this.updateGui();
+            } else {
+                alert(res);
+            }
+        });
+    }
+
+    removeUser(user) {
+        if(this.allowConfig) {
+            user.guiElem.append(`<div class="loading circle"></div>`);
+            set("removeUserFromPerformanceCategory", {idPerformanceCategory: this.idPerformanceCategory, idUser: user.iduser}).receive((res) => {
+                if(res == "succsess") {
+                    user.guiElem.remove();
+                    this.users.splice(this.users.indexOf(user), 1);
+                } else {
+                    alert(res);
+                }
+            });
+        } else {
+            user.guiElem.remove();
+            this.users.splice(this.users.indexOf(user), 1);
+            this.onchange();
+        }
+    }
 }

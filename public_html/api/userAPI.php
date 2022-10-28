@@ -113,12 +113,14 @@ function logout() {
 }
 
 function getUser($iduser) {
-    $result = query("SELECT * FROM TbUser WHERE iduser = ?;", "i", $iduser);
+    $result = query("SELECT TbUser.*,TbAthlete.image, TbAthlete.gender, TbAthlete.firstname, TbAthlete.lastname FROM TbUser JOIN TbAthlete ON TbAthlete.id  = TbUser.athlete WHERE TbUser.iduser=?;", "i", $iduser);
     if(sizeof($result) == 0) {
         return false;
     }
     if($result[0]["image"] === NULL) {
-        $result[0]["image"] = defaultProfileImgPath("m");
+        $result[0]["image"] = defaultProfileImgPath($result[0]["gender"] == "w" ? "w" : "m");
+    } else {
+        $result[0]["image"] = "/img/uploads/".$result[0]["image"];
     }
     return $result[0];
 }

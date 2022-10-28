@@ -4,7 +4,7 @@
  * @param {callback(succsess, response)} callback
  */
 function search(text, allowed, callback) {
-    console.log("/api/index.php?search=" + text + "&allowed=" + allowed);
+    // console.log("/api/index.php?search=" + text + "&allowed=" + allowed);
     $.ajax({
         url: "/api/index.php?search=" + text + "&allowed=" + allowed,
         dataType:  "text",
@@ -134,10 +134,6 @@ function get(property, data1, data2, data3){
     });
     return promise;
 }
-
-// alert = () => {
-//     throw new Exception("moin");
-// }
 
 function set(property, data) {
     const promise = {
