@@ -1282,11 +1282,14 @@ function getYourCompetitions() {
 }
 
 function requestFeatue($title, $description) {
+    if(!isLoggedIn()) return false;
     if(sizeof(query("SELECT * FROM TbDevLog WHERE title = ?;", "s", $title)) > 0) {
-        // echo "This request exists already";
         return false;
     }
-    return dbExecute("INSERT INTO TbDevLog(title, description, status) VALUES(?,?,'Requested');", "ss", $title, $description);
+    if(sizeof(query("SELECT * FROM TbDevLog WHERE `user`=? AND DATE(rowCreated) = DATE(NOW());", "i", $_SESSION["iduser"])) > 5) {
+        return false;
+    }
+    return dbExecute("INSERT INTO TbDevLog(title, description, status, `user`) VALUES(?,?,'Requested',?);", "ssi", $title, $description, $_SESSION["iduser"]);
 }
 
 function putAthleteImage($imgPath, $idAthlete) {

@@ -53,7 +53,7 @@ echoRandWallpaper();
                 <form class="form" action="#" method="POST">
                     <?php
                         if(isset($requestFeatueSuccsess)) {
-                            if(!$requestFeatueSuccsess) echo "<p class='font color red margin top bottom'>This request exists already</p>";
+                            if(!$requestFeatueSuccsess) echo "<p class='font color red margin top bottom'>Request failed. Either this feature does exist already or you used up you 1 request per day.</p>";
                             else echo "<p class='font color green margin top bottom'>Your feature got requested</p>";
                         }
                     ?>
@@ -69,7 +69,7 @@ echoRandWallpaper();
                     <input class="btn blender alone" type="submit" name="feature-request" value="Request feature">
                 </form>
                 <?php } else { ?>
-                    <p>You need to be logged in to request features</p>
+                    <p>You need to be logged in to request features.</p>
                 <?php } ?>
             </div>
         </div>
