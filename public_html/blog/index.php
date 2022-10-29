@@ -21,7 +21,7 @@ echoRandWallpaper();
     <div class="section dark no-shadow">
         <h1><i class="fas fa-gavel margin right"></i>Developer blog</h1>
         <h4 style="font-size: 1.5rem; margin-bottom: 4rem;">Stay up to date with new features and bug fixes</h4>
-        <div class="flex mobile align-start reversed">
+        <div class="flex mobile gap align-start reversed">
             <div class="blogs" style="position: sticky; top: 10rem">
             <?php
                 foreach ($logs as $log) {
