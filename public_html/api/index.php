@@ -1110,7 +1110,8 @@ function canIEditPerformanceRecord($idPerformanceCategory, $targetUser) {
 }
 
 function uploadPerformanceRecord($idPerformanceCategory, $idUser, $value, $comment, $date) {
-    if(!canIEditPerformanceRecord($idPerformanceCategory, $idUser)) return false;
+    if(!isLoggedIn()) return false;
+    if(!isUserInPerformanceCategory($idPerformanceCategory, $_SESSION["iduser"])) return false;
     return dbInsert("INSERT INTO TbPerformanceRecord(`user`, `value`, `comment`, `performanceCategory`, `date`) VALUES (?,?,?,?,?);", "idsis", $idUser, $value, $comment, $idPerformanceCategory, $date);
 }
 

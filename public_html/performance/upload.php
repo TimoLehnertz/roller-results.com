@@ -8,7 +8,9 @@ if(!isLoggedIn()) {
 }
 
 $metric = "Time (seconds)";
+$returnLink = "/performance";
 if(isset($_GET["pid"])) {
+    $returnLink = "/performance/performance.php?id=".$_GET["pid"];
     $performance = getPerformanceCategory($_GET["pid"]);
     $metric = getPerformanceGroupTypelong($performance["type"])." (".getPerformanceGroupTypeMetricLong($performance["type"]).")";
 }
@@ -36,6 +38,7 @@ if(isset($_POST["submit"])) { // submit
             "maxLength" => 2000
         ],
     ], true)) {
+        // print_r($_POST);
         $user = $_POST["user"] ?? $_SESSION["iduser"];
         if($_POST["forWho"] == "forMe") {
             $user = $_SESSION["iduser"];
@@ -132,7 +135,7 @@ const idPerformanceCategory = <?=$performance["idPerformanceCategory"] ?? null?>
         <br>
         <br>
         <div class="flex">
-            <a href="/performance" class="btn create gray no-underline">Back</a>
+            <a href="<?=$returnLink?>" class="btn create gray no-underline">Back</a>
             <input class="btn create" type="submit" name="submit" value="Upload">
         </div>
     </form>
@@ -185,7 +188,7 @@ const idPerformanceCategory = <?=$performance["idPerformanceCategory"] ?? null?>
                 <span class="name">${user.username}</span>
             </div>
         </lab>`);
-        const input = $(`<input type="radio" name="user" id="user-${user.iduser}" ${first ? "checked" : ""} hidden>`);
+        const input = $(`<input type="radio" name="user" value="${user.iduser}" id="user-${user.iduser}" ${first ? "checked" : ""} hidden>`);
         $(".athlete-select").append(input);
         $(".athlete-select").append(label);
     }
