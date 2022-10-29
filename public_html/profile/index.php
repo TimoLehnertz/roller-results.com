@@ -109,7 +109,7 @@ echoRandWallpaper();
                     <div class="flex mobile justify-space-evenly" style="width: 100%">
                         <div>
                         <?php if($user["athleteChecked"] == "1") { ?>
-                            <form action="#" class="form" method="POST" enctype="multipart/form-data">
+                            <form action="#" class="form" style="background: #ccc" method="POST" enctype="multipart/form-data">
                                 <h3>Update your athlete profile</h3>
                                 <div class="img-area">
                                     <label class="img-label" for="image">

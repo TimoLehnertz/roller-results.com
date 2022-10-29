@@ -48,8 +48,9 @@ echoRandWallpaper();
             ?>
             </div>
             <div style="height: 100%">
-                <form class="Form" action="#" method="POST">
-                    <h1>Request a feature</h1>
+            <h1>Request a feature</h1>
+            <?php if(isLoggedIn()) { ?>
+                <form class="form" action="#" method="POST">
                     <?php
                         if(isset($requestFeatueSuccsess)) {
                             if(!$requestFeatueSuccsess) echo "<p class='font color red margin top bottom'>This request exists already</p>";
@@ -62,11 +63,14 @@ echoRandWallpaper();
                     </div>
                     <div>
                         <label for="description">Description</label><br>
-                        <textarea rows="7" cols="30" style="background: #151515; resize: vertical" type="text" name="description" id="description" placeholder="description" required></textarea>
+                        <textarea rows="7" cols="30" style="resize: vertical" type="text" name="description" id="description" placeholder="description" required></textarea>
                     </div>
                     <br>
                     <input class="btn blender alone" type="submit" name="feature-request" value="Request feature">
                 </form>
+                <?php } else { ?>
+                    <p>You need to be logged in to request features</p>
+                <?php } ?>
             </div>
         </div>
 </main>

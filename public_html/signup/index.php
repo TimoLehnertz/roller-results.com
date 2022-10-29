@@ -1,4 +1,5 @@
 <?php
+$noErrorAlert = 1;
 include_once "../head.php";
 
 include_once "../api/userAPI.php";
@@ -31,6 +32,7 @@ if(isset($_GET["email"])){
                 <h3 class="subtitle">It's quick and easy</h3>
             </div>
             <form class="form" action="signup.php" method="POST">
+                <?=$getErrorMessage?>
                 <div>
                     <label for="username">Username</label>
                     <br>
@@ -72,9 +74,5 @@ if(isset($_GET["email"])){
     </main>
 </body>
 <?php
-if(isset($_GET["message"])){
-    $msg = getErrormessage($_GET["message"]);
-    echo "<script>$(() => {window.setTimeout(() => {alert('$msg');removeParams('message');}, 1000)});</script>";
-}
 ?>
 </html>

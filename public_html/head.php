@@ -94,8 +94,13 @@ $actual_link = htmlentities((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === '
         </script>
         <script>
         <?php
-        if(isset($_GET["error"])) {
-            echo "$(() => {alert('". getErrormessage($_GET["error"]) ."'); window.location = removeParams('error');})";
+        $getErrorMessage = "";
+        if(!isset($noErrorAlert) && isset($_GET["error"]) && getErrormessage($_GET["error"]) != false) {
+            $msg = getErrormessage($_GET["error"]);
+            echo "<script>$(() => {window.setTimeout(() => {alert('$msg');}, 1000)});</script>";
+        }
+        if(isset($_GET["error"]) && getErrormessage($_GET["error"]) != false) {
+            $getErrorMessage = "<p class='font color orange margin bottom'>".getErrormessage($_GET["error"])."</p>";
         }
         ?>
         </script>
