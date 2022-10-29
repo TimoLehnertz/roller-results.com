@@ -153,12 +153,17 @@ include_once "../header.php";
             </form>
             <br>
             <?php if($creator) { ?>
-            <form action="delete-performance.php" method="POST">
-                <div class="flex">
-                    <input type="text" name="id" value="<?=$performance["idPerformanceCategory"]?>" hidden>
-                    <button type="submit" name="submit" class="btn create red">Delete</button>
-                </div>
-            </form>
+            <div class="pc-only">
+                <br>
+                <br>
+                <br>
+                <form action="delete-performance.php" method="POST">
+                    <div class="flex">
+                        <input type="text" name="id" value="<?=$performance["idPerformanceCategory"]?>" hidden>
+                        <button type="submit" name="submit" class="btn create red">Delete this group</button>
+                    </div>
+                </form>
+            </div>
             <?php } ?>
             </div>
         <div>
@@ -240,6 +245,20 @@ include_once "../header.php";
             </div>
         </div>
     </div>
+    <?php if($creator) { ?>
+    <div class="mobile-only">
+        <br>
+        <br>
+        <br>
+        <br>
+        <form action="delete-performance.php" method="POST">
+            <div class="flex">
+                <input type="text" name="id" value="<?=$performance["idPerformanceCategory"]?>" hidden>
+                <button type="submit" name="submit" class="btn create red">Delete this group</button>
+            </div>
+        </form>
+    </div>
+    <?php } ?>
 </main>
 <script>
 $(".editable-input").on("input", resizeInput);
