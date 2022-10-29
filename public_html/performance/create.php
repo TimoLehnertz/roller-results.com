@@ -15,16 +15,16 @@ if(isset($_POST["submit"])) { // submit
             "property" => "name",
             "type" => "string",
             "minLength" => 1,
-            "maxLength" => 20,
-        ],[
+            "maxLength" => 50,
+        ], [
             "property" => "description",
             "type" => "string",
             "maxLength" => 200,
-        ],[
+        ], [
             "property" => "type",
             "type" => "string",
-            "values" => ["time", "bpm", "distance"]
-        ],[
+            "values" => ["time", "bpm", "distance", "weight"]
+        ], [
             "property" => "users",
             "type" => "string",
         ],
@@ -58,19 +58,21 @@ include_once "../header.php";
     <?php if($error) {
         echo "<p class='font color red'>We are sorry an error occoured :( please try again</p>";
     } ?>
-    <form action="#" method="POST" id="myForm" class="form-performance">
+    <form action="#" method="POST" id="myForm" class="form-performance" autocomplete="off">
         <label for="name">Name</label>
-        <input type="text" name="name" id="name" maxlength="20" required>
+        <input autocomplete="false" type="text" name="name" id="name" maxlength="50" required>
         <label for="description">Description</label>
-        <textarea type="text" name="description" id="description" maxlength="200"></textarea>
+        <textarea autocomplete="false" type="text" name="description" id="description" maxlength="200"></textarea>
         <label>Type</label>
-        <div class="flex align-stretch gap margin bottom">
+        <div class="flex align-stretch gap margin bottom wrap">
             <input type="radio" name="type" id="time" value="time" checked>
             <label for="time">Time</label>
             <input type="radio" name="type" id="bpm" value="bpm">
             <label for="bpm">Heart-rate</label>
             <input type="radio" name="type" id="distance" value="distance">
             <label for="distance">Distace</label>
+            <input type="radio" name="type" id="weight" value="weight">
+            <label for="weight">Weight</label>
         </div>
         <br>
         <label>Invite users</label>

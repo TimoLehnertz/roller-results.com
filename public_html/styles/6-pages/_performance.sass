@@ -1,12 +1,13 @@
 .performance
 
-    $imgOutline: #052a91
-    $background: #031956
+    $imgOutline: #314fa0
+    $background: #071b52
 
     background: $background
     margin-top: -5rem
     padding-top: 4rem
     padding: 3rem
+    overflow: hidden
 
     .upper-section
         display: grid
@@ -54,7 +55,7 @@
         height: 13rem
         border-radius: 100%
         overflow: hidden
-        border: 0.5rem solid $imgOutline
+        border: 0.4rem solid $imgOutline
         max-width: 40vw
         max-height: 40vw
 
@@ -154,8 +155,9 @@
         border: 0.3rem solid #2f5597
         color: #fff
         width: 15rem
+        transition: border 0.1s
 
-        &.active
+        &.active, &:hover
             border-color: #fff
 
         .top
@@ -170,6 +172,9 @@
         border: none
         outline: none
         color: white
+
+    textarea
+        width: 100%
 
     .edit-img
         width: 2rem
@@ -264,6 +269,7 @@
                 width: 20rem
                 background: #333A
                 border-top-right-radius: 1rem
+                border-bottom-right-radius: 1rem
                 // border: 0.5rem solid #3336
                 border-bottom: none
                 border-left: none
@@ -295,3 +301,21 @@
     @media screen and (min-width: 60rem)
         padding: 0
         padding-top: 4rem
+
+    .progress
+        width: 100%
+        padding: 0.5rem
+        border-radius: 1rem
+        background: #2c4288
+        display: flex
+        align-items: center
+        gap: 1rem
+        
+        .progress-bar-background
+            flex-grow: 100
+            border-bottom: 0.3rem solid #ccc
+            
+        .progress-bar
+            border-bottom: 0.5rem solid #00b0f0
+            max-width: 100%
+            transform: skewX(-45deg) translateX(0.25rem)

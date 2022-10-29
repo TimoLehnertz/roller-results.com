@@ -64,13 +64,15 @@ $form-b: $d
         color: #5f79c4
         margin-bottom: 0.5rem
 
-    input[type="text"]:not(.athlete-search input), textarea
+    input[type="text"]:not(.athlete-search input), textarea, input[type="number"]
         margin-bottom: 2rem
         border: none
-        background: #2c4288
+        background: rgb(44, 66, 136)
         border-radius: 0.5rem
         padding: 1rem
         color: white
+        width: 100%
+        resize: vertical
 
     input[type="radio"]
         display: none
@@ -89,7 +91,6 @@ $form-b: $d
             border: 0.4rem solid #fff
             background: #213166
 
-
     @media only screen and (min-width: 45rem)
         margin-left: auto
         margin-right: auto
@@ -99,5 +100,4 @@ $form-b: $d
         padding: 2rem
 
         
-        input[type="text"]:not(.athlete-search input), textarea
-            width: 100%
+        // input[type="text"]:not(.athlete-search input), textarea

@@ -7,6 +7,13 @@ if(!isLoggedIn()) {
     throwError($ERROR_LOGIN_MISSING, "/performance");
 }
 
+$metric = "Time (seconds)";
+if(isset($_GET["pid"])) {
+    $performance = getPerformanceCategory($_GET["pid"]);
+    $metric = getPerformanceGroupTypelong($performance["type"])." (".getPerformanceGroupTypeMetricLong($performance["type"]).")";
+}
+
+
 $error = false;
 if(isset($_POST["submit"])) { // submit
     print_r($_POST);
@@ -56,8 +63,10 @@ $jsUser = [
 include_once "../header.php";
 ?>
 <script>const user = <?=json_encode($jsUser)?>;</script>
-<main class="performance">
+<main class="performance padding bottom">
     <h1 class="align center margin left right double">Upload performance</h1>
+    <br>
+    <br>
     <?php if($error) {
         echo "<p class='font color red'>We are sorry an error occoured :( please try again</p>";
     } ?>
@@ -107,9 +116,9 @@ include_once "../header.php";
         <input type="date" id="date" name="date" required>
         <br>
         <br>
-        <label for="value" class="value-label">Time</label>
-        <input type="number" step="0.0001" name="value" id="value" required>
         <br>
+        <label for="value" class="value-label"><?=$metric?></label>
+        <input type="number" step="0.0001" name="value" id="value" required>
         <br>
         <label for="comments">Comments</label>
         <textarea type="text" name="comments" id="comments" maxlength="2000" placeholder="What did you do?"></textarea>
@@ -126,7 +135,7 @@ include_once "../header.php";
     const athleteSearchBar = new SearchBarSmall("User", false, searchCallback);
     $(".athlete-search").append(athleteSearchBar.elem);
     document.getElementById("myForm").onkeypress = function(e) {
-        let key = e.charCode || e.keyCode || 0;     
+        let key = e.charCode || e.keyCode || 0;
         if (key == 13) {
             e.preventDefault();
         }
@@ -148,7 +157,12 @@ include_once "../header.php";
     });
 
     function searchCallback(athlete) {
-        const elem = $(`<div class="athlete"><img class="profile-img" src="${athlete.image}"><span class="name">${athlete.name}</span></div>`);
+        const elem = $(`<div class="athlete">
+            <div class="info">
+                <img class="profile-img" src="${athlete.image}">
+                <span class="name">${athlete.name}</span>
+            </div>
+        </div>`);
         $(".athlete-wrapper").empty();
         $(".athlete-wrapper").append(elem);
         $("#user").val(athlete.id);
@@ -176,13 +190,16 @@ include_once "../header.php";
         if(!categoriesOpen) {
             $(".performance-category").show();
             $(".category-wrapper").addClass("column");
+            $(".performance-category.active")[0].scrollIntoView({block: "center", inline: "nearest"});
             categoriesOpen = true;
         } else {
             $(".performance-category").removeClass("active");
             $(this).addClass("active");
+            const metric = $(this).attr("metric");
+            console.log(metric);
+            $(".value-label").text(metric);
             $(".performance-category").not(this).hide();
             $(".category-wrapper").removeClass("column");
-            $(".value-label").text($(this).attr("long"));
             $("#idPerformanceCategory").val($(this).attr("id"));
             categoriesOpen = false;
         }

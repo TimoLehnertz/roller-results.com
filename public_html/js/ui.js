@@ -562,6 +562,76 @@ function isFunction(functionToCheck) {
     return functionToCheck && {}.toString.call(functionToCheck) === '[object Function]';
 }
 
+function initPerformanceChart(records, ctx) {
+    const datasets = [];
+    function getDatasetByRecord(record) {
+        for (const dataset of datasets) {
+            if(dataset.idUser == record.user) return dataset;
+        }
+        const dataset = {
+            idUser: record.user,
+            label: record.username,
+            fill: false,
+            borderColor: getRandomColor(),
+            data: []
+        };
+        datasets.push(dataset);
+        return dataset;
+    }
+    
+    for (const record of records) {
+        const dataset = getDatasetByRecord(record);
+        dataset.data.push({
+            x: new Date(record.date),
+            y: record.value
+        });
+    }
+    
+    if(isMobile()) {
+        ctx.height = 1200;
+    }
+    
+    const chart = new Chart(ctx, {
+        type: "line",
+        data: {
+            datasets
+        },
+        options: {
+            plugins: {
+                title: {
+                    text: 'Chart.js Time Scale',
+                    display: true
+                }
+            },
+            scales: {
+                xAxes: [{
+                    type: 'time',
+                    time: {
+                        unit: 'day',
+                        unitStepSize: 1,
+                        displayFormats: {
+                            'day': 'MMM DD'
+                        },
+                        // Luxon format string
+                        tooltipFormat: 'dddd DD.MM.YYYY'
+                    },
+                    title: {
+                        display: true,
+                        text: 'Date'
+                    }
+                }],
+                y: {
+                    title: {
+                        display: true,
+                        text: 'value'
+                    }
+                }
+            },
+        }
+    });
+    return chart;
+}
+
 class PerformanceGroupUserConfig {
     constructor(idPerformanceCategory, existingUsers, thisUser, isAdmin, isCreator, allowConfig = true) {
         this.allowConfig = allowConfig;

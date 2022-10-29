@@ -31,7 +31,7 @@ if(isset($_POST["submit"])) {
         [
             "property" => "name",
             "type" => "string",
-            "maxLength" => 20
+            "maxLength" => 50
         ],[
             "property" => "description",
             "type" => "string",
@@ -59,6 +59,7 @@ if(sizeof($performance["records"]) > 1) {
 }
 
 $admin = amIAdminInPerformanceCategory($_GET["id"]);
+$creator = doIOwnPerformanceCategory($_GET["id"]);
 
 $noHeaderSearchBar = true;
 include_once "../header.php";
@@ -68,26 +69,32 @@ include_once "../header.php";
     const records = <?=json_encode($performance["records"])?>;
 </script>
 <main class="performance">
-    <h1 class="align center">Your performance</h1>
+    <h1 class="align center">Your <?=$performance["name"]?> performance</h1>
+    <a href="/performance"><h2 class="align center font color white">< See all</h2></a>
+    <br>
     <div class="flex-mobile">
         <div>
             <?=$editError?>
-            <form action="#" method="POST">
+            <form action="#" method="POST" autocomplete="off">
                 <div class="flex justify-space-between">
-                    <div class="flex justify-start">
+                    <p></p>
+                    <p class="records-amount"><?=$recordsText?></p>
+                </div>
+                <br>
+                <div class="flex justify-space-between">
+                    <div class="flex justify-start wrap">
                         <?php if($admin) { ?>
-                        <input type="text" name="name" id="name" class="editable-input" value="<?=$performance["name"] ?>">
+                        <input autocomplete="false" type="text" name="name" id="name" maxlength="50" class="editable-input" value="<?=$performance["name"] ?>">
                         <label for="name"><img class="edit-img" src="/img/edit.png" alt="edit"></label>
                         <?php } else { ?>
                         <p class="name"><?=$performance["name"] ?></p>
                         <?php } ?>
                     </div>
-                    <p class="records-amount"><?=$recordsText?></p>
                 </div>
                 <br>
                 <?php if($admin) { ?>
                 <!-- <label for="description"><img class="edit-img" src="/img/edit.png" alt="edit"></label> -->
-                <textarea style="resize: none" name="description" id="description" cols="30" rows="3" class="editable-textarea description" placeholder="Add a description to this Category"><?=$performance["description"]?></textarea>
+                <textarea autocomplete="false" style="resize: none" name="description" id="description" cols="30" rows="5" class="editable-textarea description" placeholder="Add a description to this Category"><?=$performance["description"]?></textarea>
                 <?php } else { ?>
                 <p class="name"><?=$performance["description"] ?></p>
                 <?php } ?>
@@ -100,12 +107,12 @@ include_once "../header.php";
                 ?>
                 </div>
                 <br>
-                <div class="flex row justify-space-evenly your-record align-center">
-                    <p class="flex">Your record</p>
+                <div class="flex row justify-space-evenly gap your-record align-center">
+                    <p class="align center">Personal best</p>
                     <div class="flex row">
                     <?php
                     if(!$personalRecord) {
-                        echo "<a href='upload.php?pid=".$performance["idPerformanceCategory"]."&gop=1' class='btn create margin top no-underline'>Upload now</a>";
+                        echo "<a href='upload.php?pid=".$performance["idPerformanceCategory"]."&gop=1' class='btn create no-underline'>Upload now</a>";
                     } else {
                         echo "<p class='record'>$personalRecord</p>";
                     }
@@ -118,9 +125,10 @@ include_once "../header.php";
                 <?php if($performance["goal"] != NULL) { ?>
                 <div class="flex justify-space-between">
                     <p class="your-goal-label">Your Goal</p>
-                    <p class="your-goal"><?=$performance["goal"]?></p>
+                    <p class="your-goal"><?=$performance["goal"].getPerformanceGroupTypeShort($performance["type"])?></p>
                 </div>
-                <?php } ?>
+                <br>
+                <?php echoProgress($performance);} ?>
                 <br>
                 <div class="flex gap align-center">
                     <div class="new-goal">
@@ -131,16 +139,27 @@ include_once "../header.php";
                     <button type="button" class="set-goal-btn btn create gray" onclick="toggleGoal()">Set a <?php if($performance["goal"] != NULL) echo "new";?> goal</button>
                 </div>
                 <br>
+                <div class="flex gap justify-center">
+                <a href="manage-athletes.php?id=<?=$_GET["id"]?>" class="no-underline btn create gray">See members</a>
+                <?php if($personalRecord) { ?>
+                    <a href='upload.php?pid=<?=$performance["idPerformanceCategory"]?>"&gop=1' class='btn create no-underline'>Upload</a>
+                    <?php } ?>
+                </div>
+                <br>
                 <div class="flex justify-center gap">
                     <a href="/performance/performance.php?id=<?=$_GET["id"]?>" class="no-underline btn create gray">Reset</a>
                     <button name="submit" type="submit" class="btn create ">Save</button>
                 </div>
             </form>
             <br>
-            <div class="flex">
-                <a href="manage-athletes.php?id=<?=$_GET["id"]?>" class="no-underline btn create gray">See members</a>
-                <a href='upload.php?pid=<?=$performance["idPerformanceCategory"]?>"&gop=1' class='btn create no-underline'>Upload</a>
-            </div>
+            <?php if($creator) { ?>
+            <form action="delete-performance.php" method="POST">
+                <div class="flex">
+                    <input type="text" name="id" value="<?=$performance["idPerformanceCategory"]?>" hidden>
+                    <button type="submit" name="submit" class="btn create red">Delete</button>
+                </div>
+            </form>
+            <?php } ?>
             </div>
         <div>
             <h2 class="">Results</h2>
@@ -257,80 +276,9 @@ function deleteRecord(idRecord) {
             alert(res);
         }
     });
-    console.log("deleting");
 }
 
-console.log(records);
-
-datasets = [];
-
-function getDatasetByRecord(record) {
-    for (const dataset of datasets) {
-        if(dataset.idUser == record.user) return dataset;
-    }
-    const dataset = {
-        idUser: record.user,
-        label: record.username,
-        fill: false,
-        borderColor: getRandomColor(),
-        data: []
-    };
-    datasets.push(dataset);
-    return dataset;
-}
-
-for (const record of records) {
-    const dataset = getDatasetByRecord(record);
-    dataset.data.push({
-        x: new Date(record.date),
-        y: record.value
-    });
-}
-
-const ctx = document.getElementById("line-chart");
-
-if(isMobile()) {
-    ctx.height = 1200;
-}
-
-const chart = new Chart(ctx, {
-    type: "line",
-    data: {
-        datasets
-    },
-    options: {
-        plugins: {
-            title: {
-                text: 'Chart.js Time Scale',
-                display: true
-            }
-        },
-        scales: {
-            xAxes: [{
-                type: 'time',
-                time: {
-                    unit: 'day',
-                    unitStepSize: 1,
-                    displayFormats: {
-                        'day': 'MMM DD'
-                    },
-                    // Luxon format string
-                    tooltipFormat: 'dddd DD.MM.YYYY'
-                },
-                title: {
-                    display: true,
-                    text: 'Date'
-                }
-            }],
-            y: {
-                title: {
-                    display: true,
-                    text: 'value'
-                }
-            }
-        },
-    }
-});
+const chart = initPerformanceChart(records, document.getElementById("line-chart"));
 
 $(".table").hide();
 $("input[name='graph-table']").click(function(){

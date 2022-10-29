@@ -591,7 +591,7 @@ if(!isset($NO_GET_API) || $NO_GET_API === false) {
             [
                 "property" => "name",
                 "type" => "string",
-                "maxLength" => 20,
+                "maxLength" => 50,
             ],[
                 "property" => "description",
                 "type" => "string",
@@ -615,7 +615,7 @@ if(!isset($NO_GET_API) || $NO_GET_API === false) {
             ],[
                 "property" => "name",
                 "type" => "string",
-                "maxLength" => 20,
+                "maxLength" => 50,
             ],[
                 "property" => "description",
                 "type" => "string",
@@ -837,13 +837,17 @@ function logError($logErrors, $error) {
  */
 function getPerformanceCategories() {
     if(!isLoggedIn()) return [];
-    return query("  SELECT pc.*, sum(if(pr.user=?, 1, 0)) as myRecords, count(pr.idPerformanceRecord) as records, min(pr.value) as `minValue`, max(pr.value) as `maxValue`, max(uipc.goal) as goal, max(pr.rowCreated) as lastUpload
+    $res = query("  SELECT pc.*, sum(if(pr.user=?, 1, 0)) as myRecords, count(pr.idPerformanceRecord) as records, min(pr.value) as `minValue`, max(pr.value) as `maxValue`, max(uipc.goal) as goal, max(pr.rowCreated) as lastUpload
                     FROM TbPerformanceCategory pc
                     JOIN TbUserInPerformanceCategory uipc ON uipc.performanceCategory = pc.idPerformanceCategory
                     LEFT JOIN TbPerformanceRecord pr ON pr.performanceCategory = pc.idPerformanceCategory
                     WHERE uipc.`user`=?
                     GROUP BY pc.idPerformanceCategory
                     ORDER BY lastUpload DESC, rowCreated DESC;", "ii", $_SESSION["iduser"], $_SESSION["iduser"]);
+    foreach ($res as &$category) {
+        $category["progress"] = getPerformanceCategoryGoal($category);
+    }
+    return $res;
 }
 
 function getPerformanceCategoryUsers($idPerformanceCategory) {
@@ -868,6 +872,7 @@ function getPerformanceCategory($idPerformanceCategory) {
                     GROUP BY pc.idPerformanceCategory
                     ORDER BY lastUpload DESC, rowCreated DESC;", "iii", $_SESSION["iduser"], $_SESSION["iduser"], $idPerformanceCategory);
     if(sizeof($res) == 0) return false;
+    $res[0]["progress"] = getPerformanceCategoryGoal($res[0]);
     return $res[0];
 }
 
@@ -875,17 +880,50 @@ function getPerformanceRecords($idPerformanceCategory) {
     return query("SELECT TbPerformanceRecord.*, TbUser.username FROM TbPerformanceRecord JOIN TbUser ON TbUser.iduser = TbPerformanceRecord.user WHERE performanceCategory=? ORDER BY `date` DESC, `user` ASC, rowCreated ASC;", "i", $idPerformanceCategory);
 }
 
+function getPerformanceCategoryGoal($performanceCategory) {
+    $progress = 0;
+    if($performanceCategory["goal"] != NULL) {
+        if(!isPerformanceGroupTypeMin($performanceCategory["type"])) {
+            if($performanceCategory["goal"] == 0) return 0;
+            $progress = $performanceCategory["maxValue"] / $performanceCategory["goal"];
+        } else {
+            if($performanceCategory["minValue"] == 0) return 0;
+            $progress = $performanceCategory["goal"] / $performanceCategory["minValue"];
+        }
+    }
+    if(is_nan($progress)) return 0;
+    return $progress;
+}
+
+function getLastPerformanceUploads() {
+    if(!isLoggedIn()) return [];
+    return query("SELECT pr.*, tpc.name, tpc.type FROM TbPerformanceRecord pr
+        JOIN TbPerformanceCategory tpc ON tpc.idPerformanceCategory = pr.performanceCategory 
+        WHERE `user` = ? ORDER BY rowCreated DESC LIMIT 15;", "i", $_SESSION["iduser"]);
+}
+
 function getFullperformanceCategory($idPerformanceCategory) {
     if(!isLoggedIn() || !isUserInPerformanceCategory($idPerformanceCategory, $_SESSION["iduser"])) return false; // check rights
     $category = getPerformanceCategory($idPerformanceCategory);
     $records = getPerformanceRecords($idPerformanceCategory);
     $category["records"] = $records;
+    $category["progress"] = getPerformanceCategoryGoal($category);
     return $category;
 }
 
 function updateGoalOnGroup($idPerformanceCategory, $goal) {
     if(!isLoggedIn()) return false;
     return dbExecute("UPDATE TbUserInPerformanceCategory SET goal=? WHERE performanceCategory=? AND `user`=?;", "idi", $goal, $idPerformanceCategory, $_SESSION["iduser"]);
+}
+
+function echoProgress($performanceCategory) {
+    if($performanceCategory["progress"] == NULL || $performanceCategory["progress"] == 0) return;
+    echo "<div class='progress'>
+        <div class='progress-bar-background'>
+            <div class='progress-bar' style='width: ".round($performanceCategory["progress"] * 100)."%;'></div>
+        </div>
+        <p>".round($performanceCategory["progress"] * 100)."%</p>
+    </div>";
 }
 
 /**
@@ -1038,13 +1076,20 @@ function deletePerformanceCategoryUsers($idPerformanceCategory) {
     return dbExecute("DELETE FROM TbUserInPerformanceCategory WHERE performanceCategory = ?;", "i", $idPerformanceCategory);
 }
 
+function deletePerformanceCategoryRecords($idPerformanceCategory) {
+    if(!doIOwnPerformanceCategory($idPerformanceCategory)) return false;
+    return dbExecute("DELETE FROM TbPerformanceRecord WHERE performanceCategory = ?;", "i", $idPerformanceCategory);
+}
+
 /**
  * Deletes a performance category and user links if the current user is the creator
  */
 function deletePerformanceCategory($idPerformanceCategory) {
     if(!doIOwnPerformanceCategory($idPerformanceCategory)) return false;
     if(!deletePerformanceCategoryUsers($idPerformanceCategory)) return false;
-    dbExecute("DELETE FROM TbPerformanceCategory WHERE idPerformanceCategory = ?;", "i", $idPerformanceCategory);
+    deletePerformanceCategoryUsers($idPerformanceCategory);
+    deletePerformanceCategoryRecords($idPerformanceCategory);
+    return dbExecute("DELETE FROM TbPerformanceCategory WHERE idPerformanceCategory = ?;", "i", $idPerformanceCategory);
 }
 
 function canIEditPerformanceRecord($idPerformanceCategory, $targetUser) {
@@ -1106,9 +1151,9 @@ function getPersonalRecordFromPerformanceCategory($category) {
     foreach ($category["records"] as $record) {
         if($record["user"] != $_SESSION["iduser"]) continue;
         if($asc) {
-            if($record < $best) $best = $record["value"];
+            if($record["value"] < $best) $best = $record["value"];
         } else {
-            if($record > $best) $best = $record["value"];
+            if($record["value"] > $best) $best = $record["value"];
         }
     }
     // var_dump($best);
@@ -1120,6 +1165,7 @@ function isPerformanceGroupTypeMin($type) {
         case "time": return true;
         case "bpm": return true;
         case "distance": return false;
+        case "weight": return false;
         default: return false;
     }
 }
@@ -1129,6 +1175,7 @@ function getPerformanceGroupTypeShort($type) {
         case "time": return "s";
         case "bpm": return "bpm";
         case "distance": return "m";
+        case "weight": return "kg";
         default: return "";
     }
 }
@@ -1138,6 +1185,7 @@ function getPerformanceGroupTypeMetricLong($type) {
         case "time": return "seconds";
         case "bpm": return "beats per minute";
         case "distance": return "meters";
+        case "weight": return "kg";
         default: return "";
     }
 }
@@ -1145,8 +1193,9 @@ function getPerformanceGroupTypeMetricLong($type) {
 function getPerformanceGroupTypelong($type) {
     switch($type) {
         case "time": return "Time";
-        case "bpm": return "Bpm";
-        case "distance": return "Meters";
+        case "bpm": return "frequency";
+        case "distance": return "distance";
+        case "weight": return "weight";
         default: return "";
     }
 }
@@ -1163,13 +1212,14 @@ function echoPerformanceCategory($performanceCategory) {
     $name = $performanceCategory["name"];
     $id = $performanceCategory["idPerformanceCategory"];
     echo "
-    <div class='performance-category' id='$id' long='$long'>
+    <div class='performance-category' id='$id' long='$long' metric='".getPerformanceGroupTypelong($performanceCategory["type"])." (".getPerformanceGroupTypeMetricLong($performanceCategory["type"]).")'>
         <div class='top'>
-            <p class='records'>$records</p><p class='best'>$best$short</p>
+            <p class='name margin right'>$name</p><p class='best'>pb: $best$short</p>
         </div>
-        <p class='name'>$name</p>
-        <div></div>
-    </div>";
+        <p class='records'>$records</p>";
+
+    echoProgress($performanceCategory);
+    echo "</div>";
 }
 
 function checkCompetitionAndBelow($idCompetition) {
