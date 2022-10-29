@@ -131,7 +131,10 @@ $(() => {
     if(isLoggedIn) {
         $(".add-athlete-search").append(searchBar.elem);
     } else {
-        $(".add-athlete-search").append(`<br><br><p><a href="/login">log in</a> to mark athletes</p>`);
+        $(".add-athlete-search").append(`<br><br><p><form action="/login/index.php" method="POST">
+                        <input type="text" name="returnTo" value="<?=$_SERVER["REQUEST_URI"]?>" hidden></input>
+                        <button type="submit" name="submit" class="btn create">Log in</button>
+                    </form> to mark athletes</p>`);
     }
 });
 

@@ -50,8 +50,15 @@ if($showActivities) {
             </div>
             <div>
                 <div>
-                    <p class="username"><?=$user["username"] ?? "<a href='/login' class='btn create no-underline'>Login</a>"?></p>
+                    <?php if(isLoggedIn()) { ?>
+                    <p class="username"><?=$user["username"]?></p>
                     <p class="realname"><?=$user["firstname"] ?? ""?> <?=$user["lastname"] ?? ""?></p>
+                    <?php } else { ?>
+                    <form action="/login/index.php" method="POST">
+                        <input type="text" name="returnTo" value="<?=$_SERVER["REQUEST_URI"]?>" hidden></input>
+                        <button type="submit" name="submit" class="btn create">Log in</button>
+                    </form>
+                    <?php } ?>
                 </div>
             </div>
             <div class="goals-wrapper">

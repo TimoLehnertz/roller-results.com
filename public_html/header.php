@@ -153,11 +153,11 @@ if(!$embed) { // hide header if beeing embedded
                     </form>
                     <?php } else { ?>
                     <p>Join the comunity</p>
-                    <a class="btn create no-underline" href="/signup">Sign up</a>
+                    <a class="btn create green no-underline" href="/signup">Sign up</a>
                     <p>Login to see your <br>trainings progress,<br> results analysis<br> and more</p>
                     <form action="/login/index.php" method="POST">
                         <input type="text" name="returnTo" value="<?=$_SERVER["REQUEST_URI"]?>" hidden></input>
-                        <button type="submit" name="submit" class="btn create green">Log in</button>
+                        <button type="submit" name="submit" class="btn create">Log in</button>
                     </form>
                 <?php } ?>
             </div>

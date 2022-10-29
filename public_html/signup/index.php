@@ -66,7 +66,7 @@ if(isset($_GET["email"])){
                         <p class="margin right">
                             Already have an account?
                         </p>
-                        <a class="btn create no-underline" href="/login">Login</a>
+                        <a class="btn create no-underline" href="/login">Log in</a>
                     </div>
                 </div>
             </form>

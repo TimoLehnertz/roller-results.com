@@ -70,7 +70,10 @@ include_once "../header.php";
         <?php if($amIAllowed) { ?>
             <input type="submit" value="Create" name="submit" class="btn default">
         <?php } else { ?>
-            <p><a target="blank" href="/login">Login</a> to create competitions</p>
+            <p><form action="/login/index.php" method="POST">
+                    <input type="text" name="returnTo" value="<?=$_SERVER["REQUEST_URI"]?>" hidden></input>
+                    <button type="submit" name="submit" class="btn create">Log in</button>
+                </form> to create competitions</p>
             <!-- <p>Contact us at <span class="code padding left right">roller.results@gmail.com</span> to get access to this tool</p> -->
         <?php }?>
     </form>

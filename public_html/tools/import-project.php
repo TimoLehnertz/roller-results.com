@@ -76,7 +76,10 @@ function echoAliasSelect() {
         <h1 class="align center margin top triple">Roller results Import procedure</h1>
         <br>
         <?php if(!$canUpload) { ?>
-            <p><a target="blank" href="/login">Login</a> to upload results</p>
+            <p><form action="/login/index.php" method="POST">
+                        <input type="text" name="returnTo" value="<?=$_SERVER["REQUEST_URI"]?>" hidden></input>
+                        <button type="submit" name="submit" class="btn create">Log in</button>
+                    </form> to upload results</p>
             <h2 class="margin top bottom"></h2>
             <!-- <h2 class="margin top bottom">Contact us at <span class="code padding left right">roller.results@gmail.com</span> to get full access to this tool!</h2> -->
         <?php }?>
