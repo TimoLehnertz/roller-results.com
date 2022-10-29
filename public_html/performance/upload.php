@@ -62,7 +62,10 @@ $jsUser = [
 ];
 include_once "../header.php";
 ?>
-<script>const user = <?=json_encode($jsUser)?>;</script>
+<script>
+const user = <?=json_encode($jsUser)?>;
+const idPerformanceCategory = <?=$performance["idPerformanceCategory"] ?? null?>;
+</script>
 <main class="performance padding bottom">
     <h1 class="align center margin left right double">Upload performance</h1>
     <br>
@@ -77,10 +80,7 @@ include_once "../header.php";
             <input type="radio" name="forWho" id="forOthers" value="forOthers">
             <label for="forOthers">For others</label>
         </div>
-        <div class="athlete-select">
-            <input type="text" name="user" id="user" value="" hidden>
-            <div class="athlete-search"></div>
-            <div class="athlete-wrapper margin top"></div>
+        <div class="athlete-select" hidden>
         </div>
         <br>
         <label>Choose your category</label>
@@ -132,13 +132,27 @@ include_once "../header.php";
 <script>
     document.getElementById('date').valueAsDate = new Date();
 
-    const athleteSearchBar = new SearchBarSmall("User", false, searchCallback);
-    $(".athlete-search").append(athleteSearchBar.elem);
-    document.getElementById("myForm").onkeypress = function(e) {
-        let key = e.charCode || e.keyCode || 0;
-        if (key == 13) {
-            e.preventDefault();
-        }
+    updateUsers(idPerformanceCategory);
+    function updateUsers(idPerformanceCategory) {
+        $(".athlete-select").empty()
+        $(".athlete-select").append(`<div class="loading circle"></div>`);
+        if(!idPerformanceCategory) return false;
+        get("performanceCategoryUsers", idPerformanceCategory).receive((succsess, users) => {
+            $(".athlete-select .loading").remove();
+            if(!succsess) return;
+            $(".athlete-select").toggle(users.length > 1);
+            $(`label[for="forOthers"]`).toggle(users.length > 1);
+            if(users.length <= 1) {
+                $("#forMe").prop("checked", true);
+            }
+            $(".athlete-select").toggle($("#forOthers").is(":checked"));
+            let first = true;
+            for (const user of users) {
+                if(user.iduser == phpUser.iduser) continue;
+                addUserToGui(user, first);
+                first = false;
+            }
+        });
     }
 
     let forMe = true;
@@ -156,17 +170,16 @@ include_once "../header.php";
         }
     });
 
-    function searchCallback(athlete) {
-        const elem = $(`<div class="athlete">
+    function addUserToGui(user, first) {
+        const label = $(`<label for="user-${user.iduser}" class="athlete">
             <div class="info">
-                <img class="profile-img" src="${athlete.image}">
-                <span class="name">${athlete.name}</span>
+                <img class="profile-img" src="${user.image ?? "/img/profile-men.png"}">
+                <span class="name">${user.username}</span>
             </div>
-        </div>`);
-        $(".athlete-wrapper").empty();
-        $(".athlete-wrapper").append(elem);
-        $("#user").val(athlete.id);
-        userSelected = true;
+        </lab>`);
+        const input = $(`<input type="radio" name="user" id="user-${user.iduser}" ${first ? "checked" : ""} hidden>`);
+        $(".athlete-select").append(input);
+        $(".athlete-select").append(label);
     }
 
     function validateForm() {
@@ -196,11 +209,11 @@ include_once "../header.php";
             $(".performance-category").removeClass("active");
             $(this).addClass("active");
             const metric = $(this).attr("metric");
-            console.log(metric);
             $(".value-label").text(metric);
             $(".performance-category").not(this).hide();
             $(".category-wrapper").removeClass("column");
             $("#idPerformanceCategory").val($(this).attr("id"));
+            updateUsers($(this).attr("id"))
             categoriesOpen = false;
         }
     });

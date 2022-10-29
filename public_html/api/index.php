@@ -752,8 +752,13 @@ if(!isset($NO_GET_API) || $NO_GET_API === false) {
                 echo "succsess";
             }
         }
+    } else if(isset($_GET["getperformanceCategoryUsers"])) {
+        $users = getPerformanceCategoryUsers($_GET["getperformanceCategoryUsers"]);
+        echo json_encode($users);
     }
 }
+
+
 function validateObjectProperties(&$object, $properties, $logErrors = false) {
     foreach ($properties as $property) {
         if(!validateObjectOnProperty($object, $property, $logErrors)) return false;

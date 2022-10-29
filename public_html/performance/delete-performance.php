@@ -28,7 +28,7 @@ include "../head.php";
 <main class="performance font color white flex" style="height: 110vh">
     <form action="#" method="POST" style="max-width: 30rem">
         <?=$error?>
-        <h1 class="align center">Are you sure to <span class="font color red">permanently delete</span>  the performance group "<?=$performance["name"]?>"</h1>
+        <h1 class="align center">Are you sure to <span class="font color red">permanently delete</span>  the performance group "<?=$performance["name"]?>"?</h1>
         <input type="text" name="id" value="<?=$_POST["id"]?>" hidden>
         <div class="flex justify-space-evenly gap">
             <a href="performance.php?id=<?=$_POST["id"]?>" class="btn create green no-underline">Don't delete</a>
