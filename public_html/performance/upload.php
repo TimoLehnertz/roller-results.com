@@ -16,7 +16,7 @@ if(isset($_GET["pid"])) {
 
 $error = false;
 if(isset($_POST["submit"])) { // submit
-    print_r($_POST);
+    // print_r($_POST);
     if(validateObjectProperties($_POST, [
         [
             "property" => "forWho",
@@ -36,16 +36,18 @@ if(isset($_POST["submit"])) { // submit
             "maxLength" => 2000
         ],
     ], true)) {
-        $user = $_POST["user"];
+        $user = $_POST["user"] ?? $_SESSION["iduser"];
         if($_POST["forWho"] == "forMe") {
             $user = $_SESSION["iduser"];
         }
         $succsess = uploadPerformanceRecord($_POST["idPerformanceCategory"], $user, $_POST["value"], $_POST["comments"], $_POST["date"]);
         if($succsess) {
-            if(isset($_GET["gop"]) && isset($_GET["pid"])) {
-                header("location: /performance/performance.php?id=".$_GET["pid"]."&uploadSuccsess=1");
-            } else {
-                header("location: /performance?uploadSuccsess=1");
+            if(!(isset($_POST["upload-more"]) && $_POST["upload-more"] == "on")) {
+                if(isset($_GET["gop"]) && isset($_GET["pid"])) {
+                    header("location: /performance/performance.php?id=".$_GET["pid"]."&uploadSuccsess=1");
+                } else {
+                    header("location: /performance?uploadSuccsess=1");
+                }
             }
         } else {
             $error = true;
@@ -122,7 +124,13 @@ const idPerformanceCategory = <?=$performance["idPerformanceCategory"] ?? null?>
         <br>
         <label for="comments">Comments</label>
         <textarea type="text" name="comments" id="comments" maxlength="2000" placeholder="What did you do?"></textarea>
-        <br><br>
+        <br>
+        <div class="flex justify-start gap align-center">
+            <input type="checkbox" name="upload-more" id="upload-more" <?=($_POST["upload-more"] ?? "0") === "on" ? "checked" : ""?>>
+            <label for="upload-more" style="margin: 0">Stay on this page</label>
+        </div>
+        <br>
+        <br>
         <div class="flex">
             <a href="/performance" class="btn create gray no-underline">Back</a>
             <input class="btn create" type="submit" name="submit" value="Upload">
@@ -184,10 +192,10 @@ const idPerformanceCategory = <?=$performance["idPerformanceCategory"] ?? null?>
 
     function validateForm() {
         let succsess = true;
-        if(!forMe && !userSelected) {
-            $(".athlete-select").addClass("highlight")
-            succsess =  false;
-        }
+        // if(!forMe && !userSelected) {
+        //     $(".athlete-select").addClass("highlight")
+        //     succsess =  false;
+        // }
         if($("#idPerformanceCategory").val() == "-") {
             succsess =  false;
             $(".category-wrapper").addClass("highlight")

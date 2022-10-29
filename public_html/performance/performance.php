@@ -206,7 +206,7 @@ include_once "../header.php";
                     $value = $record["value"].getPerformanceGroupTypeShort($performance["type"]);
                     $editSection = "";
                     if(canIEditRecord($record)) {
-                        $editSection .= "<button onclick='deleteRecord($idRecord)' class='delete-btn'>Delete</button>";
+                        $editSection .= "<button onclick='deleteRecord($idRecord)' class='btn create red'>Delete</button>";
                     }
                     $youClass = "not-you";
                     if($record["user"] == $_SESSION["iduser"]) $youClass = "you";
