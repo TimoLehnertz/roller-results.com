@@ -58,7 +58,7 @@ if(isset($_GET["email"])){
                     <p class="font size small">We value your privacy and only use cookies for logins</p>
                     <div class="margin top"></div>
                     <input type="checkbox" id="cookies" name="cookies" required>
-                    <label for="cookies" class="margin left">Accept to login Cookies</label>
+                    <label for="cookies" class="margin left">Accept login cookies</label>
                 </div>
                 <div>
                     <button class="btn create green" type="submit"><i class="fas fa-lock margin right btn create gray"></i>Create account</button>
