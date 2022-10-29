@@ -6,8 +6,8 @@ include_once "../api/userAPI.php";
 include_once "../includes/error.php";
 
 
-if(isLoggedIn()){
-    returnHome();
+if(isLoggedIn()) {
+    header("location: /index.php");
     exit(0);
 }
 
@@ -15,7 +15,6 @@ $username = "";
 if(isset($_GET["user"])){
     $username = htmlentities($_GET["user"]);
 }
-
 ?>
 <body class="body login">
     <main class="main">
@@ -28,6 +27,7 @@ if(isset($_GET["user"])){
             </div>
             <form class="form" action="login.php" method="POST">
                 <?=$getErrorMessage?>
+                <input type="text" name="returnTo" value="<?=$_POST["returnTo"] ?? "/index.php"?>" hidden></input>
                 <div>
                     <label for="username">Username / email</label>
                     <br>

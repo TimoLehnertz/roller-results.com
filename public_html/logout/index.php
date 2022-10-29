@@ -9,5 +9,9 @@ if(!isset($_POST["logout-submit"])){
     exit();
 } else {
     logout();
-    header("location: /index.php?logoutComplete");
+    if(isset($_POST["returnTo"])) {
+        header("location: ".$_POST["returnTo"]);
+    } else {
+        header("location: /index.php?logoutComplete");
+    }
 }

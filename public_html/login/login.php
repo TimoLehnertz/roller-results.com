@@ -41,4 +41,8 @@ $registerCountry = $result[0]["registerCountry"];
 if(!login($iduser, !empty($_POST["rememberMe"]))){
     throwError($ERROR_SERVER_ERROR, "/login/index.php?user=$username");
 }
-returnHome();
+if(isset($_POST["returnTo"])) {
+    header("location: ".$_POST["returnTo"]);
+} else {
+    header("location: /index.php");
+}

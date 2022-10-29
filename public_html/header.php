@@ -148,13 +148,17 @@ if(!$embed) { // hide header if beeing embedded
                     <a class='btn create no-underline gray' href='/profile'>Your profile</a>
                     <a href="/performance" class="btn create no-underline">Your performance</a>
                     <form action='/logout/index.php' method='POST'>
+                        <input type="text" name="returnTo" value="<?=$_SERVER["REQUEST_URI"]?>" hidden></input>
                         <button class="btn create red" name="logout-submit" value="1" type="submit"><i class="fas fa-sign-out-alt margin right"></i>Log out</button>
                     </form>
-                <?php } else { ?>
+                    <?php } else { ?>
                     <p>Join the comunity</p>
                     <a class="btn create no-underline" href="/signup">Sign up</a>
                     <p>Login to see your <br>trainings progress,<br> results analysis<br> and more</p>
-                    <a class="btn create green no-underline" href="/login">log in</a>
+                    <form action="/login/index.php" method="POST">
+                        <input type="text" name="returnTo" value="<?=$_SERVER["REQUEST_URI"]?>" hidden></input>
+                        <button type="submit" name="submit" class="btn create green">Log in</button>
+                    </form>
                 <?php } ?>
             </div>
         </div>
