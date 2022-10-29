@@ -16,7 +16,7 @@
     position: absolute
     top: 0rem
     padding: 3rem
-    padding-top: 7rem
+    padding-top: 5rem
     left: 0
     transition: transform 0.2s cubic-bezier(0.075, 0.820, 0.165, 1.000), opacity 0.1s
     background: $bg
@@ -39,7 +39,7 @@
 
         @for $link from 0 through 15
             li:nth-of-type(#{$link})
-                animation: fromLeft $link * 200ms both
+                animation: fromLeft $link * 100ms both
 
         & ~ .hider
             opacity: 1

@@ -6,15 +6,16 @@ $form-b: $d
     display: inline-block
     border-radius: 1rem
     padding: 3rem
-    font-size: 1.3rem
+    font-size: 1.15rem
     transition: box-shadow 0.2s
     max-width: 100vw
+    background: #222
 
     &:focus-within
-        box-shadow: 10px 10px 44px 0px rgba(0,0,0,0.3)
+        box-shadow: 10px 10px 44px 0px rgba(0,20,30,0.7)
 
     div + div
-        border-top: 1px solid #{$form-b}55
+        // border-top: 2px solid #555
         margin-top: 1rem
         padding-top: 1rem
 
@@ -23,8 +24,6 @@ $form-b: $d
         color: #AAA
 
     input
-        color: #FFF
-        background: none
         border: none
         outline: none
         border-bottom-left-radius: 0.2rem
@@ -33,6 +32,8 @@ $form-b: $d
         border-color: $bg
         transition: border-color 0.2s
         width: 100%
+        padding: 0.5rem
+        border-radius: 1rem
         // max-width: 10vw
         
     input[type="checkbox"]
@@ -51,10 +52,11 @@ $form-b: $d
         margin-right: auto
         padding: 0.5rem
 
-    @media only screen and (max-width: 600px)
+    @media only screen and (max-width: 800px)
         font-size: 1rem
-        padding: 0.2rem
+        padding: 1rem
         border-radius: 0rem
+        background: #151515
         // width: 100%
 
 .form-performance

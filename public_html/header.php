@@ -141,16 +141,20 @@ if(!$embed) { // hide header if beeing embedded
         </nav>
         <div class="profile-section">
             <div class="flex column justify-start align-start gap">
-                <?php if($loggedIn){
+                <?php if($loggedIn) {
                     echo "<p class='font size big'><i class='fa fa-solid fa-user margin right'></i>".$user["username"]."</p>";
-                    echo "<a class='btn default font color white' href='/profile'>Your profile</a>";
                     ?>
+                    <p class="realname"><?=$user["firstname"] ?? ""?> <?=$user["lastname"] ?? ""?></p>
+                    <a class='btn create no-underline gray' href='/profile'>Your profile</a>
+                    <a href="/performance" class="btn create no-underline">Your performance</a>
                     <form action='/logout/index.php' method='POST'>
-                        <button class="btn slide signup-btn default" name="logout-submit" value="1" type="submit"><i class="fas fa-sign-out-alt margin right"></i>Log out</button>
+                        <button class="btn create red" name="logout-submit" value="1" type="submit"><i class="fas fa-sign-out-alt margin right"></i>Log out</button>
                     </form>
                 <?php } else { ?>
-                    <a class="btn default" href="/signup">Sign up</a>
-                    <a class="btn default" href="/login">log in</a>
+                    <p>Join the comunity</p>
+                    <a class="btn create no-underline" href="/signup">Sign up</a>
+                    <p>Login to see your <br>trainings progress,<br> results analysis<br> and more</p>
+                    <a class="btn create green no-underline" href="/login">log in</a>
                 <?php } ?>
             </div>
         </div>

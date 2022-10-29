@@ -24,6 +24,9 @@ if(isset($_GET["email"])){
     <main class="main">
         <div class="center">
             <div class="welcome">
+                <div class="flex">
+                    <img src="/img/logo/rr.png" alt="Roller results" style="width: 4rem">
+                </div>
                 <h1>Create an account</h1>
                 <h3 class="subtitle">It's quick and easy</h3>
             </div>
@@ -50,18 +53,18 @@ if(isset($_GET["email"])){
                 </div>
                 <div>
                     <p>Cookies will be used to log me in</p>
+                    <p class="font size small">We value your privacy and only use cookies for logins</p>
                     <div class="margin top"></div>
-                    <label for="cookies">I accept</label>
                     <input type="checkbox" id="cookies" name="cookies" required>
+                    <label for="cookies" class="margin left">Accept to login Cookies</label>
                 </div>
                 <div>
-                    <button class="btn border-only" type="submit"><i class="fas fa-lock margin right btn border-only"></i>Create account</button>
-                    
-                    <div class="flex align-center margin top triple">
+                    <button class="btn create green" type="submit"><i class="fas fa-lock margin right btn create gray"></i>Create account</button>
+                    <div class="flex align-center margin top double">
                         <p class="margin right">
                             Already have an account?
                         </p>
-                        <a class="btn border-only" href="/login">Login</a>
+                        <a class="btn create no-underline" href="/login">Login</a>
                     </div>
                 </div>
             </form>

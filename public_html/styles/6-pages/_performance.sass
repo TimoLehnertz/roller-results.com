@@ -314,8 +314,20 @@
         .progress-bar-background
             flex-grow: 100
             border-bottom: 0.3rem solid #ccc
+            animation: progress-bar-start 0.5s 0.5s both
+            animation-easing: easeInOutCirc
+            transform-origin: left
             
         .progress-bar
             border-bottom: 0.5rem solid #00b0f0
             max-width: 100%
             transform: skewX(-45deg) translateX(0.25rem)
+            animation: progress-bar-start 0.8s 0.5s both
+            animation-easing: easeInOutCirc
+            transform-origin: left
+
+@keyframes progress-bar-start
+    from
+        transform: scaleX(0) skewX(0)
+    to
+        transform: scaleX(1) skewX(-25deg) translateX(0.1rem)

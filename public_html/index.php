@@ -196,5 +196,6 @@ if(isset($_GET["q"]) && !empty($_GET["q"])) {
     }
 </script>
 <?php
-    include_once "footer.php";
+$darkFooter = true;
+include_once "footer.php";
 ?>

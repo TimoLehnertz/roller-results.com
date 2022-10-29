@@ -90,7 +90,7 @@ if($showActivities) {
         </div>
     </div>
     <div class="margin top left right double">
-        <h2 class="align center">Your last activities</h2>
+        <h2 class="align center">Latest uploads</h2>
         <br>
         <?php if($showActivities) { ?>
         <h3><?=$firstCategory["name"]?></h3>

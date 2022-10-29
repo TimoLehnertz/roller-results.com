@@ -113,7 +113,7 @@ function logout() {
 }
 
 function getUser($iduser) {
-    $result = query("SELECT TbUser.*,TbAthlete.image, TbAthlete.gender, TbAthlete.firstname, TbAthlete.lastname FROM TbUser JOIN TbAthlete ON TbAthlete.id  = TbUser.athlete WHERE TbUser.iduser=?;", "i", $iduser);
+    $result = query("SELECT TbUser.*, TbAthlete.image, TbAthlete.gender, TbAthlete.firstname, TbAthlete.lastname FROM TbUser LEFT JOIN TbAthlete ON TbAthlete.id  = TbUser.athlete WHERE TbUser.iduser=?;", "i", $iduser);
     if(sizeof($result) == 0) {
         return false;
     }

@@ -1,4 +1,4 @@
-        <footer class="footer">
+        <footer class="footer <?=(isset($darkFooter) ? "dark" : "")?>">
             <div class="flex mobile align-center justify-space-arround margin bottom">
                 <p class="font color gray">
                     This is a non-profit project. Keep it rolling with your donation

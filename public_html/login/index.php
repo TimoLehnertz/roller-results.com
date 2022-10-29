@@ -21,10 +21,12 @@ if(isset($_GET["user"])){
     <main class="main">
         <div class="center">
             <div class="welcome">
+                <div class="flex">
+                    <img src="/img/logo/rr.png" alt="Roller results" style="width: 4rem">
+                </div>
                 <h1>Welcome back!</h1>
             </div>
             <form class="form" action="login.php" method="POST">
-                
                 <div>
                     <label for="username">Username / email</label>
                     <br>
@@ -40,11 +42,15 @@ if(isset($_GET["user"])){
                     <input type="checkbox" name="rememberMe" id="rememberMe">
                 </div>
                 <div class="flex">
-                    <a href="/index.php" class="btn border-only default">Return home</a>
-                    <button type="submit" class="btn border-only" name="login-submit">Log in</button>
+                    <!-- <a href="/index.php" class="btn border-only default">Return home</a> -->
+                    <button type="submit" class="btn create green no-underline" name="login-submit">Log in</button>
                 </div>
-                <div class="flex">
-                    <a class="btn border-only" href="/signup">Sign up</a>
+                <br>
+                <hr>
+                <br>
+                <div class="flex gap">
+                    <p>No account yet?</p>
+                    <a class="btn create gray no-underline" href="/signup">Sign up</a>
                 </div>
             </form>
         </div>
