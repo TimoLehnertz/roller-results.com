@@ -755,6 +755,9 @@ if(!isset($NO_GET_API) || $NO_GET_API === false) {
     } else if(isset($_GET["getperformanceCategoryUsers"])) {
         $users = getPerformanceCategoryUsers($_GET["getperformanceCategoryUsers"]);
         echo json_encode($users);
+    } else if(isset($_GET["getperformanceRecords"])) {
+        $records = getPerformanceRecords($_GET["getperformanceRecords"]);
+        echo json_encode($records);
     }
 }
 
@@ -882,6 +885,8 @@ function getPerformanceCategory($idPerformanceCategory) {
 }
 
 function getPerformanceRecords($idPerformanceCategory) {
+    if(!isLoggedIn()) return [];
+    if(!isUserInPerformanceCategory($idPerformanceCategory, $_SESSION["iduser"])) return [];
     return query("SELECT TbPerformanceRecord.*, TbUser.username FROM TbPerformanceRecord JOIN TbUser ON TbUser.iduser = TbPerformanceRecord.user WHERE performanceCategory=? ORDER BY `date` DESC, `user` ASC, rowCreated ASC;", "i", $idPerformanceCategory);
 }
 

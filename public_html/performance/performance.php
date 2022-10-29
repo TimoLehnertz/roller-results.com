@@ -67,6 +67,7 @@ include_once "../header.php";
 <script>
     const oldGoal = <?=$performance["goal"] | 0?>;
     const records = <?=json_encode($performance["records"])?>;
+    const idPerformanceCategory = <?=json_encode($performance["idPerformanceCategory"])?>;
 </script>
 <main class="performance">
     <h1 class="align center">Your <?=$performance["name"]?> performance</h1>
@@ -178,7 +179,7 @@ include_once "../header.php";
             <br>
             <br>
             <div class="graph">
-                <canvas id="line-chart" width="800" height="400"></canvas>
+                
             </div>
             <div class="table flex column">
                 <?php
@@ -275,10 +276,22 @@ function deleteRecord(idRecord) {
         } else {
             alert(res);
         }
+        reloadChart();
     });
 }
 
-const chart = initPerformanceChart(records, document.getElementById("line-chart"));
+reloadChart();
+let chart;
+function reloadChart() {
+    $(".graph").empty();
+    $(".graph").append(`<canvas id="line-chart" width="800" height="400"></canvas>`);
+    get("performanceRecords", idPerformanceCategory).receive((succsess, records) => {
+        console.log(succsess);
+        if(!succsess) return;
+        chart = initPerformanceChart(records, document.getElementById("line-chart"));
+    });
+}
+
 
 $(".table").hide();
 $("input[name='graph-table']").click(function(){
