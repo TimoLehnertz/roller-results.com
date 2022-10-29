@@ -70,7 +70,7 @@ include_once "../header.php";
     const idPerformanceCategory = <?=json_encode($performance["idPerformanceCategory"])?>;
 </script>
 <main class="performance">
-    <h1 class="align center">Your <?=$performance["name"]?> performance</h1>
+    <h1 class="align center"><?=$performance["name"]?></h1>
     <a href="/performance"><h2 class="align center font color white">< See all</h2></a>
     <br>
     <div class="flex-mobile">
@@ -95,7 +95,7 @@ include_once "../header.php";
                 <br>
                 <?php if($admin) { ?>
                 <!-- <label for="description"><img class="edit-img" src="/img/edit.png" alt="edit"></label> -->
-                <textarea autocomplete="false" style="resize: none" name="description" id="description" cols="30" rows="5" class="editable-textarea description" placeholder="Add a description to this Category"><?=$performance["description"]?></textarea>
+                <textarea autocomplete="false" style="resize: none" name="description" id="description" cols="30" rows="5" class="editable-textarea description" placeholder="Add a description to this category"><?=$performance["description"]?></textarea>
                 <?php } else { ?>
                 <p class="name"><?=$performance["description"] ?></p>
                 <?php } ?>
@@ -121,11 +121,10 @@ include_once "../header.php";
                     </div>
                 </div>
                 <br>
-                <br>
                 <?=$goalError?>
                 <?php if($performance["goal"] != NULL) { ?>
-                <div class="flex justify-space-between">
-                    <p class="your-goal-label">Your Goal</p>
+                <div class="flex row justify-space-evenly gap your-record align-center">
+                    <p class="align center">Your Goal</p>
                     <p class="your-goal"><?=$performance["goal"].getPerformanceGroupTypeShort($performance["type"])?></p>
                 </div>
                 <br>

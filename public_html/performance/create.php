@@ -79,7 +79,10 @@ include_once "../header.php";
         <div class="athlete-search"></div>
         <br><br>
         <input type="text" name="users" id="users" value="" hidden>
-        <input class="btn create align center" type="submit" name="submit" value="Create">
+        <div class="flex justify-center gap">
+            <a href="/performance" class="btn create gray no-underline">Back</a>
+            <input class="btn create" type="submit" name="submit" value="Create">
+        </div>
     </form>
 </main>
 <script>
