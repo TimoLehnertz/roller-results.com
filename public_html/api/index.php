@@ -189,14 +189,14 @@ if(!isset($NO_GET_API) || $NO_GET_API === false) {
         }
     } else if(isset($_GET["getcountries"])) {
         $res = getCountries();
-        if($res !== false){
+        if($res !== false) {
             echo json_encode($res);
         } else{
             echo "error in api";
         }
     } else if(isset($_GET["getcountryNames"])) {
         $res = getAllCountries();
-        if($res !== false){
+        if($res !== false) {
             echo json_encode($res);
         } else{
             echo "error in api";
@@ -2477,7 +2477,7 @@ function getRace($id) {
     if(sizeof($race) > 0) {
         $race[0]["results"] = query("CALL sp_getRaceResultsNew(?,?)", "is", intval($id), $usedMedals);
         return $race[0];
-    } else{
+    } else {
         return [];
     }
 }
