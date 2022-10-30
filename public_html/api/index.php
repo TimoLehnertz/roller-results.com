@@ -194,6 +194,13 @@ if(!isset($NO_GET_API) || $NO_GET_API === false) {
         } else{
             echo "error in api";
         }
+    } else if(isset($_GET["getcountryNames"])) {
+        $res = getAllCountries();
+        if($res !== false){
+            echo json_encode($res);
+        } else{
+            echo "error in api";
+        }
     } else if(isset($_GET["getworldMovement"])) {
         $res = getWorldMovement();
         if($res !== false){
