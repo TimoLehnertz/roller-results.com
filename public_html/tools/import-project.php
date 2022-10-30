@@ -314,7 +314,7 @@ function compToElem(comp1) {
             attributes: {
                 value: () => comp.startDate,
             },
-            change: (e, val) => comp.startDate = 
+            change: (e, val) => comp.startDate = val
         }, {
             type: "input",
             label: "End date",
@@ -323,7 +323,7 @@ function compToElem(comp1) {
             attributes: {
                 value: () => comp.endDate,
             },
-            change: (e, val) => comp.endDate = 
+            change: (e, val) => comp.endDate = val
         }, {
             type: "input",
             label: "Location",
@@ -332,7 +332,7 @@ function compToElem(comp1) {
             attributes: {
                 value: () => comp.location,
             },
-            change: (e, val) => comp.location = 
+            change: (e, val) => comp.location = val
         }, {
             type: "input",
             label: "Description",
@@ -341,7 +341,7 @@ function compToElem(comp1) {
             attributes: {
                 value: () => comp.description,
             },
-            change: (e, val) => comp.description = 
+            change: (e, val) => comp.description = val
         }, {
             type: "input",
             label: "Type",
@@ -350,7 +350,7 @@ function compToElem(comp1) {
             attributes: {
                 value: () => comp.type,
             },
-            change: (e, val) => comp.type = 
+            change: (e, val) => comp.type = val
         }, {
             type: "input",
             label: "Country",
@@ -359,7 +359,7 @@ function compToElem(comp1) {
             attributes: {
                 value: () => comp.country,
             },
-            change: (e, val) => comp.country = 
+            change: (e, val) => comp.country = val
         }, {
             type: "input",
             label: "Latitude",
@@ -368,7 +368,7 @@ function compToElem(comp1) {
             attributes: {
                 value: () => comp.latitude,
             },
-            change: (e, val) => comp.latitude = 
+            change: (e, val) => comp.latitude = val
         }, {
             type: "input",
             label: "Longitude",
@@ -377,7 +377,7 @@ function compToElem(comp1) {
             attributes: {
                 value: () => comp.longitude,
             },
-            change: (e, val) => comp.longitude = 
+            change: (e, val) => comp.longitude = val
         }, {
             type: "input",
             label: "Contact",
@@ -386,7 +386,7 @@ function compToElem(comp1) {
             attributes: {
                 value: () => comp.contact,
             },
-            change: (e, val) => comp.contact = 
+            change: (e, val) => comp.contact = val
         }, {
             type: "dom",
             data: submitBtn,
@@ -1290,8 +1290,8 @@ function GetTableFromExcel(data) {
 let results = [];
 
 function initiateResults(loadedResults) {
+    // console.log(loadedResults)
     console.log("Excel file loaded");
-    console.log(loadedResults);
     if($("#limitResults").is(':checked')) {
         const maxRows = $("#maxRows").val();
         loadedResults.splice(maxRows);
