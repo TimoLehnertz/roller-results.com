@@ -314,7 +314,7 @@ function compToElem(comp1) {
             attributes: {
                 value: () => comp.startDate,
             },
-            change: (e, val) => comp.startDate = val
+            change: (e, val) => comp.startDate = 
         }, {
             type: "input",
             label: "End date",
@@ -323,7 +323,7 @@ function compToElem(comp1) {
             attributes: {
                 value: () => comp.endDate,
             },
-            change: (e, val) => comp.endDate = val
+            change: (e, val) => comp.endDate = 
         }, {
             type: "input",
             label: "Location",
@@ -332,7 +332,7 @@ function compToElem(comp1) {
             attributes: {
                 value: () => comp.location,
             },
-            change: (e, val) => comp.location = val
+            change: (e, val) => comp.location = 
         }, {
             type: "input",
             label: "Description",
@@ -341,7 +341,7 @@ function compToElem(comp1) {
             attributes: {
                 value: () => comp.description,
             },
-            change: (e, val) => comp.description = val
+            change: (e, val) => comp.description = 
         }, {
             type: "input",
             label: "Type",
@@ -350,7 +350,7 @@ function compToElem(comp1) {
             attributes: {
                 value: () => comp.type,
             },
-            change: (e, val) => comp.type = val
+            change: (e, val) => comp.type = 
         }, {
             type: "input",
             label: "Country",
@@ -359,7 +359,7 @@ function compToElem(comp1) {
             attributes: {
                 value: () => comp.country,
             },
-            change: (e, val) => comp.country = val
+            change: (e, val) => comp.country = 
         }, {
             type: "input",
             label: "Latitude",
@@ -368,7 +368,7 @@ function compToElem(comp1) {
             attributes: {
                 value: () => comp.latitude,
             },
-            change: (e, val) => comp.latitude = val
+            change: (e, val) => comp.latitude = 
         }, {
             type: "input",
             label: "Longitude",
@@ -377,7 +377,7 @@ function compToElem(comp1) {
             attributes: {
                 value: () => comp.longitude,
             },
-            change: (e, val) => comp.longitude = val
+            change: (e, val) => comp.longitude = 
         }, {
             type: "input",
             label: "Contact",
@@ -386,7 +386,7 @@ function compToElem(comp1) {
             attributes: {
                 value: () => comp.contact,
             },
-            change: (e, val) => comp.contact = val
+            change: (e, val) => comp.contact = 
         }, {
             type: "dom",
             data: submitBtn,
@@ -707,7 +707,7 @@ function updateUI() {
                     split.push((concat + " " + word).trim());
                     break;
                 }
-                if(word.length > 2) {
+                if(word.length > 2 || words.length <= 2) {
                     split.push((concat + " " + word).trim());
                     concat = "";
                 } else {
