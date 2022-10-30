@@ -1294,7 +1294,7 @@ function initiateResults(loadedResults) {
     }
     clearFile();
     if(!validateResultsFormat(loadedResults)) return;
-    console.log("file validated")
+    console.log("file validated");
     $(".remove-me-on-athlete-load").hide();
     athletes = [];
     results = loadedResults;
