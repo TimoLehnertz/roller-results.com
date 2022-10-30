@@ -1296,6 +1296,7 @@ function initiateResults(loadedResults) {
         loadedResults.splice(maxRows);
     }
     clearFile();
+    checker = loadedResults;
     if(!validateResultsFormat(loadedResults)) return;
     console.log("file validated");
     $(".remove-me-on-athlete-load").hide();
@@ -1731,6 +1732,7 @@ function parseErrorAt(row, msg) {
     console.log(`Row ${row} invalid. ${msg}`);
     console.log("parse error info:", parseErrorInfo);
     console.trace();
+    console.log(checker);
     return false;
 }
 </script>
