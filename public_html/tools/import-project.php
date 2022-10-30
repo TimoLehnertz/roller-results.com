@@ -820,6 +820,9 @@ function updateUI() {
         countryElem.attr("id", `${uiId}-country`);
         countryElem.val(search.search.country);
         results.find(`#${uiId}-label-create`).append(countryElem);
+        if(search.search.country && search.search.country.length > 0) {
+            results.find(`#${uiId}-label-create`).append(`(${search.search.country})`);
+        }
         results.find(`#${uiId}-label-create`).append(swapNameBtn);
         results.find(`#${uiId}-label-create`).append(countrySmartElem);
         // add listeners
