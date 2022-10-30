@@ -481,7 +481,7 @@ $(() => {
 });
 
 let allCountries = [];
-get("countries").receive((succsess, res) => {
+get("countryNames").receive((succsess, res) => {
     if(succsess) {
         allCountries = res;
         allCountries.sort((a,b) => a.country.localeCompare(b.country));
