@@ -1291,6 +1291,7 @@ let results = [];
 
 function initiateResults(loadedResults) {
     console.log("Excel file loaded");
+    console.log(loadedResults);
     if($("#limitResults").is(':checked')) {
         const maxRows = $("#maxRows").val();
         loadedResults.splice(maxRows);
