@@ -30,6 +30,7 @@ function echoCompsSelect() {
 }
 
 function echoAliasSelect() {
+    if(!isLoggedIn()) return;
     echo "<select onchange='aliasChanged()' class='alias-select' style='max-width: 15rem;'>";
     $groups = getAliasGroups();
     if(sizeof($groups) == 0) {
@@ -38,7 +39,13 @@ function echoAliasSelect() {
         echo "<option value='-1234'>Select</option>";
     }
     foreach ($groups as $group) {
-        echo "<option value='".$group["aliasGroup"]."'>".$group["aliasGroup"]." (".$group["count"]." entries)</option>";
+        $username = "You";
+        $youClass = "you";
+        if($_SESSION["iduser"] != $group["creator"]) {
+            $username = $group["username"];
+            $youClass = "";
+        }
+        echo "<option value='".$group["aliasGroup"]."' class='$youClass'>".$group["aliasGroup"]." (".$group["count"].") $username ".explode(" ",$group["lastUpdate"])[0]."</option>";
     }
     echo "</select>";
 }
@@ -242,7 +249,7 @@ function echoAliasSelect() {
     </section>
 </main>
 <script>
-
+"use strict";
 // $(window).bind('beforeunload', function(){
 //   return 'Are you sure you want to leave? Not uploaded data will be lost';
 // });
@@ -250,10 +257,60 @@ if(phpUser.loggedIn) {
     updateYourContent();
 }
 
-get("countryCodes").receive((succsess, countries) => {
+let allCountries = undefined;
+
+const countryAliases = [
+    {
+        actualName: "Czechia",
+        aliases: ["Czech Republic"],
+    },{
+        actualName: "Hungary",
+        aliases: ["Hungarya"],
+    },{
+        actualName: "Latvia",
+        aliases: ["Lat"],
+    },{
+        actualName: "Switzerland",
+        aliases: ["Sui"],
+    },{
+        actualName: "Iran",
+        aliases: ["Iri"],
+    }
+]
+
+function parseCountryAliases(country) {
+    if(!country) return country;
+    country = country.replace(/\(..\)/, "");
+    country = country.trim();
+    country = country.toLowerCase();
+    if(typeof country !== "string") return country;
+    for (const countryAlias of countryAliases) {
+        if(country == countryAlias.actualName.toLowerCase()) return countryAlias.actualName;
+        for (const alias of countryAlias.aliases) {
+            if(alias.toLowerCase() == country) {
+                return countryAlias.actualName;
+            } 
+        }
+    }
+    return null;
+}
+
+get("countryCodes").receive((succsess, res) => {
     if(!succsess) return alert("Failed to load countries");
-    console.log(countries);
-})
+    allCountries = res;
+});
+
+function getCountryByString(countryString) {
+    if(!allCountries || !countryString) return null;
+    countryString = countryString.toLowerCase();
+    for (const country of allCountries) {
+        const props = ["alpha-2", "alpha-3", "country-code", "iso_3166-2", "name"];
+        for (const prop of props) {
+            if(country[prop]?.toLowerCase() == countryString) return country;
+        }
+    }
+    return parseCountryAliases(countryString);
+}
 
 function updateYourContent() {
     get("yourCompetitions").receive((succsess, comps) => {
@@ -486,13 +543,13 @@ $(() => {
     });
 });
 
-let allCountries = [];
-get("countryNames").receive((succsess, res) => {
-    if(succsess) {
-        allCountries = res;
-        allCountries.sort((a,b) => a.country.localeCompare(b.country));
-    }
-});
+// let allCountries = [];
+// get("countryNames").receive((succsess, res) => {
+//     if(succsess) {
+//         allCountries = res;
+//         allCountries.sort((a,b) => a.country.localeCompare(b.country));
+//     }
+// });
 
 compChanged();
 aliasChanged();
@@ -512,9 +569,9 @@ let existingRaces = undefined;
 let existingCompetition = undefined;
 
 function getCountrySelect() {
-    const elem = $(`<select class="country-select"></select>`);
+    const elem = $(`<select class="country-select"><option value="-1">Select</option></select>`);
     for (const country of allCountries) {
-        elem.append(`<option value="${country.country}">${country.country}</option>`);
+        elem.append(`<option value="${country.name}">${country.name}</option>`);
     }
     return elem;
 }
@@ -571,6 +628,8 @@ function updateSearch() {
     }
 }
 
+let athletesProcessing = false;
+
 /**
  * Valid athlete properties:
  *  firstName,
@@ -581,6 +640,7 @@ function updateSearch() {
  *  alias
  */
 function process(search, aliasGroup) {
+    athletesProcessing = true;
     $(".preview").empty();
     const loadingBar = new LoadingBar();
     let remaining = parseInt(athletes.length * 0.35);
@@ -605,6 +665,7 @@ function process(search, aliasGroup) {
         } else {
             console.log("no succsess");
         }
+        athletesProcessing = false;
     });
 }
 
@@ -691,8 +752,8 @@ function updateUI() {
                 <span class="first-name">${search.search.firstName || "-"}</span> | 
                 <span class="last-name">${search.search.lastName   || "-"}</span>
                 <span class="full-name">${search.search.fullName   || "-"}</span>
-                <span class="gender">${search.search.gender        || "-"}</span>
                 <span class="country">${search.search.country      || "-"}</span>
+                <span class="gender">${search.search.gender        || "-"}</span>
                 <span class="country">${search.search.category     || "-"}</span>
             </div>
             <div>#${i}</div>
@@ -824,7 +885,10 @@ function updateUI() {
         const countrySmartElem = $(`<button>Apply country for all of this club</button>`);
         const swapNameBtn = $(`<button>Swap name</button>`);
         countryElem.attr("id", `${uiId}-country`);
-        countryElem.val(search.search.country);
+        const country = getCountryByString(search.search.country);
+        if(country) {
+            countryElem.val(country.name);
+        }
         results.find(`#${uiId}-label-create`).append(countryElem);
         if(search.search.country && search.search.country.length > 0) {
             results.find(`#${uiId}-label-create`).append(`(${search.search.country})`);
@@ -1006,34 +1070,6 @@ function checkNewAthlete(athlete, i) {
             allowed: ["m", "w", "d"]
         },
     }, i);
-}
-
-const countryAliases = [
-    {
-        dbName: "Czechia",
-        aliases: ["Czech Republic"],
-    },
-    {
-        dbName: "Hungary",
-        aliases: ["Hungarya"],
-    },
-]
-
-function parseCountry(country) {
-    if(!country) return country;
-    country = country.replace(/\(..\)/, "");
-    country = country.trim();
-    country = country.toLowerCase();
-    if(typeof country !== "string") return country;
-    for (const countryAlias of countryAliases) {
-        if(country == countryAlias.dbName.toLowerCase()) return countryAlias.dbName;
-        for (const alias of countryAlias.aliases) {
-            if(alias.toLowerCase() == country) {
-                return countryAlias.dbName;
-            } 
-        }
-    }
-    return country;
 }
 
 function apply(aliasGroup) {
@@ -1242,6 +1278,7 @@ function clearFile() {
 }
 
 function uploadResultsFile() {
+    if(athletesProcessing) alert("Please wait for the last request to finish before uploading more results");
     //Reference the FileUpload element.
     var fileUpload = document.getElementById("fileUpload");
 
@@ -1293,6 +1330,17 @@ function GetTableFromExcel(data) {
     return json;
 }
 
+function trimStringProperties(object) {
+    for (const key in object) {
+        if (Object.hasOwnProperty.call(object, key)) {
+            const element = object[key];
+            if(typeof element == "string") {
+                object[key] = object[key].trim();
+            }
+        }
+    }
+}
+
 let results = [];
 
 function initiateResults(loadedResults) {
@@ -1303,18 +1351,23 @@ function initiateResults(loadedResults) {
         loadedResults.splice(maxRows);
     }
     clearFile();
-    checker = loadedResults;
     if(!validateResultsFormat(loadedResults)) return;
+
     console.log("file validated");
     $(".remove-me-on-athlete-load").hide();
     athletes = [];
     results = loadedResults;
     for (const result of results) {
+        trimStringProperties(result) //Trim all properties
         result.athleteID = result.athleteID ?? result.startNumber;
         result.place = parseInt(result.place);
         result.time = timeToMysqlTime(result.time);
         result.athleteID = result.athleteID ?? result.startNumber;
-        result.country = toTitleCase(parseCountry(result.country));
+        const country = getCountryByString(result.country);
+        if(country !== null) {
+            result.country = country.name;
+        }
+        if(typeof result.team == "string" && result.team.length <= 1) result.team = undefined;
         
         // check athlete is already existing
         let found = false;
@@ -1331,7 +1384,7 @@ function initiateResults(loadedResults) {
             // firstName: toTitleCase(result.firstName),
             // lastName: toTitleCase(result.lastName),
             gender: result.gender.toLowerCase(),
-            country: toTitleCase(parseCountry(result.country)),
+            country: toTitleCase(result.country),
             club: toTitleCase(result.club),
             team: toTitleCase(result.team),
             category: toTitleCase(result.category),
@@ -1803,7 +1856,6 @@ function parseErrorAt(row, msg) {
     console.log(`Row ${row + 2} invalid. ${msg}`);
     console.log("parse error info:", parseErrorInfo);
     console.trace();
-    console.log(checker);
     return false;
 }
 </script>
