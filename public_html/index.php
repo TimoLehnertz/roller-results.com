@@ -16,6 +16,7 @@ if(isset($_GET["q"]) && !empty($_GET["q"])) {
         <?php if(!$searching) { ?>
             <h1 class="search-logo noselect">Roller results</h1>
         <?php } ?>
+        <a href="/competition/index.php?id=457">Results from Worlds in Buenos Aires</a>
         <div class="wrapper">
             <div class="google-search-bar">
                 <label for="search-input">
