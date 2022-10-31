@@ -1630,7 +1630,7 @@ function getAliasGroups() {
     if(!isLoggedIn()) {
         return [];
     }
-    $res = query("SELECT aliasGroup, count(*) as `count` FROM TbAthleteAlias WHERE creator=? GROUP BY aliasGroup;", "i", $_SESSION["iduser"]);
+    $res = query("SELECT aliasGroup, creator, TbUser.username, count(*) as `count`, max(TbAthleteAlias.rowCreated) AS lastUpdate FROM TbAthleteAlias JOIN TbUser ON TbUser.iduser = creator GROUP BY aliasGroup, creator ORDER BY lastUpdate DESC;");
     return $res;
 }
 
