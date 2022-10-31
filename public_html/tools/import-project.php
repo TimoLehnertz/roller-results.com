@@ -84,7 +84,7 @@ function echoAliasSelect() {
             <!-- <h2 class="margin top bottom">Contact us at <span class="code padding left right">roller.results@gmail.com</span> to get full access to this tool!</h2> -->
         <?php }?>
         <a href="/tools/import-preset.xlsx" class="font size big">Download excel preset</a><br>
-            <h2>Format:</h2>
+            <!-- <h2>Format:</h2>
             <ul>
                 <li>Distance:
                         Distance of race.
@@ -126,8 +126,9 @@ function echoAliasSelect() {
                 <li>points: If points race put scored points here<hr></li>
                 <li>remark: Remarks like warnings, dns etc.<hr></li>
                 <li>time: Time of finish. 
-                        We use a standarized time format for beeing able to compare times.
-                        Format: hh:mm:ss.uuu
+                        Time formats you can use:
+                            <div class="time-formats"></div>
+                        <script>$(".time-formats").text(getTimeFormatsString())</script>
                         h: hours
                         m: minutes
                         s: seconds
@@ -140,7 +141,7 @@ function echoAliasSelect() {
                 <li>falseStart: 1 or 0 or nothing<hr></li>
                 <li>didNotStart: 1 or 0 or nothing<hr></li>
             </ul>
-        <br><br><hr><br><br>
+        <br><br><hr><br><br> -->
         <p>Here anybody can upload results from any competition.<br>
         Note: after you uploaded results they will appear as <span class="code">unchecked</span>
         We will review them and set them to <span class="code">checked</span> when they are correct.</p>
@@ -248,6 +249,11 @@ function echoAliasSelect() {
 if(phpUser.loggedIn) {
     updateYourContent();
 }
+
+get("countryCodes").receive((succsess, countries) => {
+    if(!succsess) return alert("Failed to load countries");
+    console.log(countries);
+})
 
 function updateYourContent() {
     get("yourCompetitions").receive((succsess, comps) => {
@@ -463,12 +469,12 @@ function getRaceEdidElem(race) {
 
 $(() => {
     const idCompetition = sessionStorage.getItem('importScriptIdCompetition');
-    if(idCompetition !== undefined) {
+    if(idCompetition && $(`.comps-select option[value='${idCompetition}']`).length !== 0) {
         $(".comps-select").val(idCompetition);
         compChanged();
     }
     const aliasGroup = sessionStorage.getItem('importScriptAliasGroup');
-    if(aliasGroup) {
+    if(aliasGroup && $(`.alias-select option[value='${aliasGroup}']`).length !== 0) {
         if($(`.alias-select option[value='${aliasGroup}']`).length == 0) {
             $(".alias-select").append(`<option value="${aliasGroup}">${aliasGroup}</option>`);
         }
@@ -520,7 +526,7 @@ function compChanged() {
     $("#createAliasBtn").attr("disabled",   idCompetition == "-1234");
     $("#fileUpload").attr("disabled",   idCompetition == "-1234");
 
-    if(idCompetition != "-1234") {
+    if(idCompetition != "-1234" && idCompetition != null) {
         sessionStorage.setItem('importScriptIdCompetition', idCompetition);
         existingRaces = undefined;
         existingCompetition = undefined;
@@ -1304,15 +1310,20 @@ function initiateResults(loadedResults) {
     athletes = [];
     results = loadedResults;
     for (const result of results) {
-        // check if existing
-        let found = false;
         result.athleteID = result.athleteID ?? result.startNumber;
         result.place = parseInt(result.place);
-        for (const athlete of athletes) {
-            if(athlete.alias == result.athleteID) found = true;
-        }
+        result.time = timeToMysqlTime(result.time);
         result.athleteID = result.athleteID ?? result.startNumber;
         result.country = toTitleCase(parseCountry(result.country));
+        
+        // check athlete is already existing
+        let found = false;
+        for (const athlete of athletes) {
+            if(athlete.alias == result.athleteID) {
+                found = true;
+                break;
+            }
+        }
         if(found) continue;
         athletes.push({
             alias: result.athleteID,
@@ -1612,7 +1623,7 @@ function validateObject(object, settings, i) {
                 }
                 if(!succsess) return parseErrorAt(i, `"${value}" is invalid for ${property}. Allowed values are: ${propertySettings.allowed}`);
             }
-            if(propertySettings.type === 'time' && !isTime(value)) return parseErrorAt(i, `"${value}" is no valid time use either the format hh:mm:ss:uuu or remove this value`);
+            if(propertySettings.type === 'time' && !isTime(value)) return parseErrorAt(i, `"${value}" is no valid time. Use one of the following formats ${getTimeFormatsString()}`);
         }
     }
     return true;
@@ -1725,15 +1736,71 @@ function validateResultsFormat(results) {
     return true;
 }
 
+
+const timeFormats = [
+    {
+        format: "hh:mm:ss.uuu",
+        regex: "^(0?[0-9]|1[0-9]|2[1-4]):(0?[0-9]|[1-5][0-9]):(0?[0-9]|[1-5][0-9])\.(00[0-9]|0[0-9][0-9]|[0-9][0-9][0-9])$",
+        toMysqlTime: (time) => time,
+    }, {
+        format: "mm:ss.uuu",
+        regex: "^(0[0-9]|[1-5][0-9]):(0?[0-9]|[1-5][0-9])\.(00[0-9]|0[0-9][0-9]|[0-9][0-9][0-9])$",
+        toMysqlTime: (time) => "00:" + time,
+    }, {
+        format: "ss.uuu",
+        regex: "^(0?[0-9]|[1-5][0-9])\.(00[0-9]|0[0-9][0-9]|[0-9][0-9][0-9])$",
+        toMysqlTime: (time) => "00:00:" + time,
+    }, {
+        format: "hh:mm:ss,uuu",
+        regex: "^(0?[0-9]|1[0-9]|2[1-4]):(0?[0-9]|[1-5][0-9]):(0?[0-9]|[1-5][0-9])\,(00[0-9]|0[0-9][0-9]|[0-9][0-9][0-9])$",
+        toMysqlTime: (time) => time.replace(",", "."),
+    }, {
+        format: "mm:ss,uuu",
+        regex: "^(0?[0-9]|[1-5][0-9]):(0?[0-9]|[1-5][0-9])\,(00[0-9]|0[0-9][0-9]|[0-9][0-9][0-9])$",
+        toMysqlTime: (time) => "00:" + time.replace(",", "."),
+    }, {
+        format: "ss,uuu",
+        regex: "^(0?[0-9]|[1-5][0-9])\,(00[0-9]|0[0-9][0-9]|[0-9][0-9][0-9])$",
+        toMysqlTime: (time) => "00:00:" + time.replace(",", "."),
+    }, {
+        format: "hh:mm",
+        regex: "^(0?[0-9]|1[0-9]|2[1-4]):(0?[0-9]|[1-5][0-9])$",
+        toMysqlTime: (time) => `${time}:00.000`,
+    }
+]
+
+function getTimeFormatsString() {
+    let string = "";
+    for (const timeFormat of timeFormats) {
+        string += "\""+timeFormat.format+"\" ";
+    }
+    return string;
+}
+
 function isTime(time) {
-    return time.match("(0[0-9]|1[0-9]|2[1-4]):(0[0-9]|[1-5][0-9]):(0[0-9]|[1-5][0-9])\.(00[0-9]|0[0-9][0-9]|[0-9][0-9][0-9])") !== null;
+    if(typeof time != "string") return false;
+    time = time.trim();
+    for (const timeFormat of timeFormats) {
+        if(time.match(timeFormat.regex) != null) return true;
+    }
+    return false;
+}
+
+function timeToMysqlTime(time) {
+    if(typeof time != "string") return false;
+    time = time.trim();
+    for (const timeFormat of timeFormats) {
+        const match = time.match(timeFormat.regex);
+        if(match != null) return timeFormat.toMysqlTime(match[0]);
+    }
+    return null;
 }
 
 let parseErrorInfo = undefined;
 
 function parseErrorAt(row, msg) {
-    alert(`Row ${row} invalid. ${msg}`);
-    console.log(`Row ${row} invalid. ${msg}`);
+    alert(`Row ${row + 2} invalid. ${msg}`);
+    console.log(`Row ${row + 2} invalid. ${msg}`);
     console.log("parse error info:", parseErrorInfo);
     console.trace();
     console.log(checker);

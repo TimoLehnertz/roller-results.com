@@ -3363,7 +3363,7 @@ const countries1 = [{"name":"Afghanistan","alpha-2":"AF","alpha-3":"AFG","countr
 
 
 const countries = [
-    {name: 'Neutral', code: 'neutral'}, 
+    {name: 'Neutral', code: 'neutral'},
     {name: 'Afghanistan', code: 'AF'}, 
     {name: 'Åland Islands', code: 'AX'}, 
     {name: 'Albania', code: 'AL'}, 
