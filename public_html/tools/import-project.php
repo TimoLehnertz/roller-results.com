@@ -1178,7 +1178,8 @@ function initStep5() {
         let errors = [];
         for (const result of results) {
             // find missing ids
-            if(result.idAthlete === undefined || typeof result.idAthlete !== "number") {
+            if(result.idAthlete === undefined) {
+            // if(result.idAthlete === undefined || typeof result.idAthlete !== "number") {
                 errors.push(result);
             }
             result.needsUpdate = true;
