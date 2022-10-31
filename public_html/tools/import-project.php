@@ -1454,6 +1454,8 @@ function uploadRace(race, callback) {
                 race?.raceElem?.remove();
                 updateExistingRaces();
             } else {
+                alert("Unable to upload results for race " + race.distance + ". See console for details");
+                console.log("Unable to upload results for race", race);
                 deleteRace(race, (succsess) => {
                     if(succsess) {
                         alert("removed race with invalid results");
@@ -1536,6 +1538,7 @@ function addRaceToQue(race, idCompetition) {
 function deleteRace(race, callback) {
     if(!confirm(`Are you sure to delete the race with id ${race.id}(${race.distance} ${race.gender} ${race.category})?`)) return;
     get("deleteRace", race.id).receive((succsess, res) => {
+        console.log(res);
         if(!succsess) return alert("error occoured while deleting race " + race.id);
         if(res == true) {
             updateExistingRaces();
