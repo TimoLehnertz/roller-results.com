@@ -22,8 +22,8 @@ if(validateObjectProperties($_POST, [
         "type" => "string",
     ]
 ], false)) {
-    initPwReset($_POST["email-or-username"], $_POST["new-password"]);
-    header("location: /login/change-password.php?s=1");
+    var_dump(initPwReset($_POST["email-or-username"], $_POST["new-password"]));
+    // header("location: /login/change-password.php?s=1");
     exit();
 }
     
