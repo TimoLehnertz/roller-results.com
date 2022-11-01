@@ -18,9 +18,11 @@ if(validateObjectProperties($_POST, [
     ],[
         "property" => "email-or-username",
         "type" => "string",
+        "minLength" => 1
     ],[
         "property" => "new-password",
         "type" => "string",
+        "minLength" => 1
     ]
 ], false)) {
     initPwReset($_POST["email-or-username"], $_POST["new-password"]);
@@ -56,12 +58,12 @@ include_once "../head.php";
                 <div>
                     <label for="email-or-username">Email or username</label>
                     <br>
-                    <input type="text" name="email-or-username" id="email-or-username">
+                    <input type="text" name="email-or-username" id="email-or-username" required>
                 </div>
                 <div>
                     <label for="new-password">New password</label>
                     <br>
-                    <input type="password" name="new-password" id="new-password" autocomplete="false">
+                    <input type="password" name="new-password" id="new-password" autocomplete="false" required>
                 </div>
                 <br>
                 <br>
