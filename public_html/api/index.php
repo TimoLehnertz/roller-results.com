@@ -783,7 +783,7 @@ function initPwReset($emailOrUsername, $newPw) {
     $headers = 'From: roller.results@gmail.com'."\r\n".
         'Reply-To: roller.results@gmail.com'. "\r\n".
         'X-Mailer: PHP/'.phpversion();
-    mail($user["email"], "Change password", "Hello ".$_SESSION["username"].",\r\Click the link below to change your password.\r\nhttps://www.roller-results.com/login/change-password.php?id=$resetId\r\n\r\nKind regards\r\nTimo and Alex Lehnertz\r\n\r\nRoller results\r\nhttps://www.roller-results.com\r\n", $headers);
+    mail($user["email"], "Change password", "Hello ".$user["username"].",\r\nClick the link below to change your password.\r\nhttps://www.roller-results.com/login/change-password.php?id=$resetId\r\n\r\nKind regards\r\nTimo and Alex Lehnertz\r\n\r\nRoller results\r\nhttps://www.roller-results.com\r\n", $headers);
     return true;
 }
 
@@ -791,7 +791,7 @@ function processPwReset($resetId) {
     $res = query("SELECT *, TIMESTAMPDIFF(Hour, NOW(), rowCreated) AS `hoursPassed` FROM TbPwReset WHERE resetId=? AND succsess=0 HAVING `hoursPassed` < 1;", "s", $resetId);
     if($res === False || sizeof($res) == 0) return false;
     dbExecute("UPDATE TbPwReset SET `succsess` = 1 WHERE resetId=?;", "s", $resetId);
-    return dbExecute("UPDATE TbUser SET pwdHash=? WHERE iduser=?", "si", $pwdHash, $res["user"]);
+    return dbExecute("UPDATE TbUser SET pwdHash=? WHERE iduser=?;", "si", $res[0]["newPwHash"], $res[0]["user"]);
 }
 
 function checkUserEmail($idUser) {
