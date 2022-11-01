@@ -113,16 +113,5 @@ function sendVerificationMail() {
         'Reply-To: roller.results@gmail.com' . "\r\n" .
         'X-Mailer: PHP/' . phpversion();
         $userId = ($_SESSION["iduser"] + 45673) * 2617;
-    mail($_SESSION["email"], "Verify your mail", "Hello ".$_SESSION["username"].",\r\n
-    Welcome to Roller results. To complete setting up your profile, please click the link below.\r\n
-    If you wish, you can edit your athlete profile by first linking it to this account. Set up the link on your profile page and reply to this mail so that we can activate the link.\r\n
-    http://www.roller-results.com/verify.php?u=$userId\r\n
-    \r\n
-    If you have any questions, just send us an email to this address, or contact us on Instagram.\r\n
-    \r\n
-    Kind regards\r\n
-    Timo and Alex Lehnertz\r\n
-    \r\n
-    Roller results\r\n
-    https://www.roller-results.com\r\n", $headers);
+    mail($_SESSION["email"], "Verify your mail", "Hello ".$_SESSION["username"].",\r\nWelcome to Roller results. To complete setting up your profile, please click the link below.\r\nIf you wish, you can edit your athlete profile by first linking it to this account. Set up the link on your profile page and reply to this mail so that we can activate the link.\r\nhttp://www.roller-results.com/verify.php?u=$userId\r\n\r\nIf you have any questions, just send us an email to this address, or contact us on Instagram.\r\n\r\nKind regards\r\nTimo and Alex Lehnertz\r\n\r\nRoller results\r\nhttps://www.roller-results.com\r\n", $headers);
 }
