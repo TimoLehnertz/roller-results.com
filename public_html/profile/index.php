@@ -72,9 +72,18 @@ echoRandWallpaper();
     <svg style="margin-bottom: 0; position: relative; transform: translateY(85%); z-index: -1;" xmlns="http://www.w3.org/2000/svg" fill="none" preserveAspectRatio="none" viewBox="0 0 1680 40" class="curvature" style="bottom: -1px;"><path d="M0 40h1680V30S1340 0 840 0 0 30 0 30z" fill="#ddd"></path></svg>
     <svg style="margin-bottom: 0; position: relative; top: 0px; z-index: 1;" xmlns="http://www.w3.org/2000/svg" fill="none" preserveAspectRatio="none" viewBox="0 0 1680 40" class="curvature" style="bottom: -1px;"><path d="M0 40h1680V30S1340 0 840 0 0 30 0 30z" fill="#151515"></path></svg>
     <div class="dark section no-shadow">
-        <h1 class="font size biggest"><?=$username ?><i class="fa fa-solid fa-user margin left"></i></h1>
+        <?php if(isset($_GET["ev"])) { ?>
+        <div class="padding top bottom flex mobile justify-center gap" style="background: #444">
+            <p class="font color orange font size big">Your email has been verified 📧 </p>
+            <?php if($user["athlete"] == NULL) { ?>
+                <br>
+                <div class="flex">
+                    <p>Finish your profile by linking it to your athlete profile.<br>When linked send us a mail at <a>roller.results@gmail.com</a>.<br>We will unlock your profile so you can edit all your athletes data.</p>
+                </div>
+        <?php }echo "</div>";} ?>
+        <h1 class="font size biggest"><?=$username ?></h1>
         <p class="align center font size big color light margin top double">
-            Your <span class="font color orange">Roller</span> profile
+            Your <span class="font color orange">Roller results</span> profile
         </p>
     </div>
     <div class="section light">
@@ -100,7 +109,7 @@ echoRandWallpaper();
                 <h2>Who are you?</h2>
                 <p class="align center">Link your athletes profile to your own profile</p>
                 <div class="search-area"></div>
-                <div class="link-athlete flex mobile"></div>
+                <div class="link-athlete flex mobile justify-center gap"></div>
                 <input id="idLinkAthlete" type="hidden" name="idLinkAthlete">
             </form>
             <?php } else { ?>
@@ -158,7 +167,7 @@ echoRandWallpaper();
                             </form>
                         <?php } else { ?>
                             <!-- <h3>Your athlete profile on <span class="font code color b">Roller results</span></h3><br> -->
-                            <p>Your profile isn't verified yet. Contact us on any platfotm to verify that this is you. We do this to ensure nobody can publish false information about you.</p>
+                            <p>Your profile isn't verified yet.<br>Contact us on any platfotm to verify that this is you.<br>We do this to ensure nobody can publish false information about you.</p>
                             <br>
                             <p>Contact us here</p>
                             <ul>
@@ -166,21 +175,32 @@ echoRandWallpaper();
                                 <li><a href="https://www.facebook.com/RollerResults"><i class="fab fa-facebook font color black margin right"></i>Facebook</a></li>
                                 <li>Email: <a>roller.results@gmail.com</a></li>
                             </ul>
+                            <br>
+                            <br>
+                            <br>
+                            <form action="#" method="POST">
+                                <details>
+                                    <summary>Not you?</summary>
+                                    <br>
+                                    <input type="submit" class="btn create red" id="remove-athlete" name="remove-athlete" value="Remove link">
+                                </details>
+                            </form>
                             <?php }?>
                         </div>
                         <div class="your-athlete"></div>
                     </div>
-                    <form action="#" method="POST">
-                        <details>
-                            <summary>Not you?</summary>
-                            <input type="submit" class="btn blender alone" id="remove-athlete" name="remove-athlete" value="Remove link">
-                        </details>
-                    </form>
                 </div>
         <?php } ?>
     </div>
     <div class="section dark">
         <h2>Your content on Roller results</h2>
+        <h3>Your performance</h3>
+        <div class="flex">
+            <a href="/performance" class="btn create no-underline">Check your performance page</a>
+        </div>
+        <br>
+        <br>
+        <br>
         <h3>Your competitions</h3>
         <div class="flex column">
             <?php
@@ -194,13 +214,13 @@ echoRandWallpaper();
             ?>
         </div>
         <br><br>
-        <h3>Your <a href="/analytics">Analytics</a></h3>
+        <h3>Your analytics</h3>
         <div class="flex">
             <div class="flex column align-start gap">
                 <?php
                 $analytics = getUsersAnalytics();
                 if(sizeof($analytics) == 0) {
-                    echo "<p>create your own analytics a href='/analytics'>here</a></p>";
+                    echo "<p>create your own analytics <a href='/analytics'>here</a></p>";
                 }
                 foreach ($analytics as $analytic) {
                     $public = "<span class='code margin right padding left'>".($analytic["public"] == "1" ? "public" : "private")."</span>";
@@ -233,8 +253,8 @@ const athleteSearch = new SearchBarSmall(["Athlete"], false, (option) => {
     const profile = new Profile(athleteDataToProfileData({idAthlete: option.id}));
     profile.update();
     $(".link-athlete").append("<p>Is this you?</p>");
+    $(".link-athlete").append("<input type='submit' name='setLinkAthlete' class='btn create' value='Yes save'>");
     profile.appendTo($(".link-athlete"));
-    $(".link-athlete").append("<input type='submit' name='setLinkAthlete' class='btn slide style-1' value='Yes save'>");
 });
 $(".search-area").append(athleteSearch.elem);
 
