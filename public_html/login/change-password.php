@@ -1,9 +1,6 @@
 <?php
 $noErrorAlert = 1;
-include_once "../head.php";
-
-include_once "../api/userAPI.php";
-include_once "../includes/error.php";
+include_once "../api/index.php";
 
 $message = "";
 if(isset($_GET["s"])) {
@@ -14,29 +11,31 @@ if(isset($_GET["e"])) {
 }
 
 if(validateObjectProperties($_POST, [
-    [
-        "property" => "submit",
-        "value" => "1"
-    ],[
-        "property" => "email-or-username",
-        "type" => "string",
-    ],[
-        "property" => "new-password",
-        "type" => "string",
+[
+    "property" => "submit",
+    "value" => "1"
+],[
+    "property" => "email-or-username",
+    "type" => "string",
+],[
+    "property" => "new-password",
+    "type" => "string",
     ]
 ], true)) {
     initPwReset($_POST["email-or-username"], $_POST["new-password"]);
     header("location: /login/change-password.php?s=1");
     exit();
 }
-
+    
 if(isset($_GET["id"])) {
     if(processPwReset($_GET["id"])) {
         header("location: /login/change-password.php?e=1");
     } else {
         header("location: /login/index.php?pc=1");
     }
+    exit();
 }
+include_once "../head.php";
 ?>
 <body class="body login">
     <main class="main">
