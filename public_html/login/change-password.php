@@ -1,6 +1,6 @@
 <?php
 $noErrorAlert = 1;
-include_once "../api/index.php";
+include_once "../../api/index.php";
 
 $message = "";
 if(isset($_GET["s"])) {
