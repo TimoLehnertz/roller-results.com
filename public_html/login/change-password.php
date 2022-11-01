@@ -1,6 +1,6 @@
 <?php
 $noErrorAlert = 1;
-include_once "../../api/index.php";
+include_once "../api/index.php";
 
 $message = "";
 if(isset($_GET["s"])) {
@@ -22,18 +22,18 @@ if(validateObjectProperties($_POST, [
         "type" => "string",
     ]
 ], false)) {
-    initPwReset($_POST["email-or-username"], $_POST["new-password"]);
+    // initPwReset($_POST["email-or-username"], $_POST["new-password"]);
     header("location: /login/change-password.php?s=1");
     exit();
 }
     
 if(isset($_GET["id"])) {
-    if(processPwReset($_GET["id"])) {
-        header("location: /login/change-password.php?e=1");
-    } else {
-        header("location: /login/index.php?pc=1");
-    }
-    exit();
+    // if(processPwReset($_GET["id"])) {
+    //     header("location: /login/change-password.php?e=1");
+    // } else {
+    //     header("location: /login/index.php?pc=1");
+    // }
+    // exit();
 }
 include_once "../head.php";
 ?>
