@@ -778,7 +778,7 @@ function initPwReset($emailOrUsername, $newPw) {
     $user = getUserByEmailOrusername($emailOrUsername);
     $pwdHash = password_hash($newPw, PASSWORD_DEFAULT);
     if(!$user) return false;
-    $resetId = random_bytes(32);
+    $resetId = bin2hex(random_bytes(32));
     dbInsert("INSERT INTO results.TbPwReset(`user`, resetId, newPwHash)VALUES(?, ?, ?);", "iss", $user["iduser"], $resetId, $pwdHash);
     $headers = 'From: roller.results@gmail.com'."\r\n".
         'Reply-To: roller.results@gmail.com'. "\r\n".
