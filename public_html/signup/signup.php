@@ -108,6 +108,7 @@ if(($iduser = dbInsert("INSERT INTO TbUser(username, email, pwdHash, registerCou
 }
 
 function sendVerificationMail() {
+    if(!isLoggedIn()) return;
     $headers = 'From: roller.results@gmail.com' . "\r\n" .
         'Reply-To: roller.results@gmail.com' . "\r\n" .
         'X-Mailer: PHP/' . phpversion();
