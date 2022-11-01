@@ -32,8 +32,10 @@ if(validateObjectProperties($_POST, [
     
 if(isset($_GET["id"])) {
     if(processPwReset($_GET["id"])) {
+        echo "succsess";
         // header("location: /login/change-password.php?e=1");
     } else {
+        echo "no succsess";
         // header("location: /login/index.php?pc=1");
     }
     exit();
