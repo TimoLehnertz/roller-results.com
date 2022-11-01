@@ -11,17 +11,17 @@ if(isset($_GET["e"])) {
 }
 
 if(validateObjectProperties($_POST, [
-[
-    "property" => "submit",
-    "value" => "1"
-],[
-    "property" => "email-or-username",
-    "type" => "string",
-],[
-    "property" => "new-password",
-    "type" => "string",
+    [
+        "property" => "submit",
+        "value" => "1"
+    ],[
+        "property" => "email-or-username",
+        "type" => "string",
+    ],[
+        "property" => "new-password",
+        "type" => "string",
     ]
-], true)) {
+], false)) {
     initPwReset($_POST["email-or-username"], $_POST["new-password"]);
     header("location: /login/change-password.php?s=1");
     exit();
