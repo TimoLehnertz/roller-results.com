@@ -10,6 +10,7 @@ if(isset($_GET["e"])) {
     $message = "Password could not be changed<br>Please try again";
 }
 
+
 if(validateObjectProperties($_POST, [
     [
         "property" => "submit",
