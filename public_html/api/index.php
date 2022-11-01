@@ -788,7 +788,7 @@ function initPwReset($emailOrUsername, $newPw) {
 }
 
 function processPwReset($resetId) {
-    $res = query("SELECT *, TIMESTAMPDIFF(Hour, NOW(), rowCreated) AS `hoursPassed` FROM TbPwReset WHERE resetId=? AND succsess=0 HAVING `hoursPassed` < 1;", "s", $resetId);
+    $res = query("SELECT *, TIMESTAMPDIFF(Hour, NOW(), rowCreated) AS `hoursPassed` FROM TbPwReset WHERE resetId=? HAVING `hoursPassed` < 1;", "s", $resetId);
     if($res === False || sizeof($res) == 0) return false;
     dbExecute("UPDATE TbPwReset SET `succsess` = 1 WHERE resetId=?;", "s", $resetId);
     echo "moin";
