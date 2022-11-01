@@ -779,11 +779,12 @@ function initPwReset($emailOrUsername, $newPw) {
     $pwdHash = password_hash($newPw, PASSWORD_DEFAULT);
     if(!$user) return false;
     $resetId = random_bytes(32);
-    dbInsert("INSERT INTO results.TbPwReset(`user`, resetId, newPwHash)VALUES(?, ?, ?);", "iss", $user["iduser"], $resetId, $pwdHash);
-    $headers = 'From: roller.results@gmail.com'."\r\n".
-        'Reply-To: roller.results@gmail.com'. "\r\n".
-        'X-Mailer: PHP/'.phpversion();
-    mail($user["email"], "Change password", "Hello ".$_SESSION["username"].",\r\Click the link below to change your password.\r\nhttps://www.roller-results.com/login/change-password.php?id=$resetId\r\n\r\nKind regards\r\nTimo and Alex Lehnertz\r\n\r\nRoller results\r\nhttps://www.roller-results.com\r\n", $headers);
+    // dbInsert("INSERT INTO results.TbPwReset(`user`, resetId, newPwHash)VALUES(?, ?, ?);", "iss", $user["iduser"], $resetId, $pwdHash);
+    // $headers = 'From: roller.results@gmail.com'."\r\n".
+    //     'Reply-To: roller.results@gmail.com'. "\r\n".
+    //     'X-Mailer: PHP/'.phpversion();
+    // mail($user["email"], "Change password", "Hello ".$_SESSION["username"].",\r\Click the link below to change your password.\r\nhttps://www.roller-results.com/login/change-password.php?id=$resetId\r\n\r\nKind regards\r\nTimo and Alex Lehnertz\r\n\r\nRoller results\r\nhttps://www.roller-results.com\r\n", $headers);
+    return true;
 }
 
 function processPwReset($resetId) {
