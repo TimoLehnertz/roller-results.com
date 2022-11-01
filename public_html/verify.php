@@ -13,7 +13,6 @@ if(!$user) {
     header("location: /index.php");
     exit();
 }
-
-var_dump(checkUserEmail($idUser));
+checkUserEmail($idUser);
 
 header("location: /profile/index.php?ev=1");

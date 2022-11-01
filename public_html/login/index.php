@@ -27,6 +27,7 @@ if(isset($_GET["user"])){
             </div>
             <form class="form" action="login.php" method="POST">
                 <?=$getErrorMessage?>
+                <?=isset($_GET["pc"]) ? "<p class='font color green'>Your password has been changed</p>" : ""?>
                 <input type="text" name="returnTo" value="<?=$_POST["returnTo"] ?? "/index.php"?>" hidden></input>
                 <div>
                     <label for="username">Username / email</label>
@@ -52,6 +53,11 @@ if(isset($_GET["user"])){
                 <div class="flex gap">
                     <p>No account yet?</p>
                     <a class="btn create gray no-underline" href="/signup">Sign up</a>
+                </div>
+                <div class="flex row gap font size small">
+                    <p>Problems logging in?</p>
+                    <br>
+                    <a href="change-password.php" class="btn create gray no-underline">Change password</a>
                 </div>
             </form>
         </div>

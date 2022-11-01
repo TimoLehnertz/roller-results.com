@@ -76,13 +76,13 @@ if($pwd1 !== $pwd2){
 /**
  * Check database if all information is valid
  */
-$result = query("SELECT username, email from TbUser WHERE username = ? OR email = ?;", "ss", $username, $email);
+$result = query("SELECT username, email from TbUser WHERE username = ? OR email = ? OR username = ? OR email = ?;", "ssss", $username, $email, $email, $username);
 if(sizeof($result) > 0){
-    if($result[0]["username"] == $username){
+    if($result[0]["username"] == $username) {
         header("location: /signup/index.php?error=$ERROR_USERNAME_TAKEN&user=$username&email=$email");
         exit(0);
     }
-    if($result[0]["email"] == $email){
+    if($result[0]["email"] == $email) {
         header("location: /signup/index.php?error=$ERROR_EMAIL_TAKEN&user=$username&email=$email");
         exit(0);
     }
@@ -109,8 +109,8 @@ if(($iduser = dbInsert("INSERT INTO TbUser(username, email, pwdHash, registerCou
 
 function sendVerificationMail() {
     if(!isLoggedIn()) return;
-    $headers = 'From: roller.results@gmail.com' . "\r\n" .
-        'Reply-To: roller.results@gmail.com' . "\r\n" .
+    $headers = 'From: roller.results@gmail.com' . "\r\n".
+        'Reply-To: roller.results@gmail.com' . "\r\n".
         'X-Mailer: PHP/' . phpversion();
         $userId = ($_SESSION["iduser"] + 45673) * 2617;
     mail($_SESSION["email"], "Verify your mail", "Hello ".$_SESSION["username"].",\r\nWelcome to Roller results. To complete setting up your profile, please click the link below.\r\nIf you wish, you can edit your athlete profile by first linking it to this account. Set up the link on your profile page and reply to this mail so that we can activate the link.\r\nhttp://www.roller-results.com/verify.php?u=$userId\r\n\r\nIf you have any questions, just send us an email to this address, or contact us on Instagram.\r\n\r\nKind regards\r\nTimo and Alex Lehnertz\r\n\r\nRoller results\r\nhttps://www.roller-results.com\r\n", $headers);
