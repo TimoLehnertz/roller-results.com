@@ -111,7 +111,7 @@ if(!$embed) { // hide header if beeing embedded
                     <a href='/tools/index.php'><i class="fa fa-solid fa-toolbox margin right"></i>Tool box</a>
                 </li>
                 <li>
-                    <a href='/skate-map.php'><i class="fa fa-solid fa-map margin right"></i>Skate map</a>
+                    <a href='/track-map/index.php'><i class="fa fa-solid fa-map margin right"></i>Track map</a>
                 </li>
                 <li>
                     <a href="/calendar"><i class="fa fa-solid fa-calendar margin right"></i>Calendar</a>

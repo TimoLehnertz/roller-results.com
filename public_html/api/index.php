@@ -768,6 +768,15 @@ if(!isset($NO_GET_API) || $NO_GET_API === false) {
     }
 }
 
+function uploadPlace($name, $description, $lat, $lng) {
+    if(!isLoggedIn()) return false;
+    return dbExecute("INSERT INTO TbPlace(title, `description`, latitude, longitude, creator) VALUES (?,?,?,?,?)", "ssddi", $name, $description, $lat, $lng, $_SESSION["iduser"]);
+}
+
+function getPlaces() {
+    return query("SELECT * FROM TbPlace;");
+}
+
 function getUserByEmailOrusername($emailOrUsername) {
     $user = query("SELECT * FROM TbUser WHERE username=? OR email=?;", "ss", $emailOrUsername, $emailOrUsername);
     if(!$user || sizeof($user) < 1) return false;
