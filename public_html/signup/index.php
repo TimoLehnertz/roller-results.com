@@ -61,7 +61,7 @@ if(isset($_GET["email"])){
                     <label for="cookies" class="margin left">Accept login cookies</label>
                 </div>
                 <div>
-                    <button class="btn create green" type="submit"><i class="fas fa-lock margin right btn create gray"></i>Create account</button>
+                    <button class="btn create green" type="submit">Create account</button>
                     <div class="flex align-center margin top double">
                         <p class="margin right">
                             Already have an account?
