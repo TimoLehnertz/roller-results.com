@@ -21,16 +21,18 @@ include_once "../head.php";
                 <div class="flex">
                     <img src="/img/logo/rr.png" alt="Roller results" style="width: 4rem">
                 </div>
-                <h1>Welcome <?=$username?></h1>
-                <h2>Your account has been created</h2>
+                <h1>Welcome <?=$username?>!</h1>
+                <h2>Good to have you onboard roller results!</h2>
                 <br>
-                <p>You may want to</p>
-                <p>Finish your profile setup or return home</p>
+                <p>We send an email to <a><?=$_SESSION["email"]?></a> with instructions on how to complete your account on roller results.</p>
                 <br>
-                <br>
+                <!-- <p>You may want to</p> -->
+                <!-- <p>Finish your profile setup or return home</p> -->
+                <!-- <br> -->
+                <!-- <br> -->
                 <div class="flex justify-center gap">
-                    <a href="/index.php" class="btn create gray no-underline">Return home</a>
-                    <a href="/index.php" class="btn create no-underline">Finish setup</a>
+                    <a href="/profile" class="btn create no-underline">Finish setup</a>
+                    <a href="/index.php" class="btn create gray no-underline">Skip for now</a>
                 </div>
             </div>
             <div class="mobile-only">
@@ -39,9 +41,10 @@ include_once "../head.php";
                 <hr>
             </div>
             <div class="form margin left right double">
-                <h2>Introduction</h2>
+                <h2>Whats next?</h2>
                 <br>
-                <p>You will now have access to the following features:</p>
+                <!-- <p>You will now have access to the following features:</p>
+                <br> -->
                 <br>
                 <br>
                 <a href="/performance" target="blank" class="btn create no-underline">Track your training progress</a>

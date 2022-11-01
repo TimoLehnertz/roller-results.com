@@ -100,8 +100,18 @@ $pwdHash = password_hash($pwd1, PASSWORD_DEFAULT);
 if(($iduser = dbInsert("INSERT INTO TbUser(username, email, pwdHash, registerCountry) VALUES (?, ?, ?, ?);", "ssss", $username, $email, $pwdHash, $registerCountry)) !== FALSE){
     // var_dump($iduser);
     login($iduser, true);
+    sendVerificationMail($email);
     header("location: succsess.php?r=3.1415");
 } else {
     header("location: /signup/index.php?error=$ERROR_SERVER_ERROR&user=$username&email=$email");
     exit(0);
+}
+
+function sendVerificationMail() {
+    $headers = 'From: roller.results@gmail.com' . "\r\n" .
+        'Reply-To: roller.results@gmail.com' . "\r\n" .
+        'X-Mailer: PHP/' . phpversion();
+        $userId = ($_SESSION["iduser"] + 45673) * 2617;
+    mail($_SESSION["email"], "Verify your mail", "Welcome to roller results ".$_SESSION["username"]."!\r\n
+    Please click the following link to verify your email and to finish your profile\r\n\r\n http://www.roller-results.com/verify.php?u=$userId", $headers);
 }

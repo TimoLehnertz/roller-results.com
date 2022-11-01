@@ -768,6 +768,9 @@ if(!isset($NO_GET_API) || $NO_GET_API === false) {
     }
 }
 
+function checkUserEmail($idUser) {
+    return dbExecute("UPDATE TbUser set emailChecked=1 WHERE iduser=?;", "i", $idUser);
+}
 
 function validateObjectProperties(&$object, $properties, $logErrors = false) {
     foreach ($properties as $property) {
