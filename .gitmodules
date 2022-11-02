@@ -1,0 +1,3 @@
+[submodule "public_html/Minecraft2D"]
+	path = public_html/Minecraft2D
+	url = https://github.com/TimoLehnertz/Minecraft2D.git
