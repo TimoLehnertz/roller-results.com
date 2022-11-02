@@ -765,12 +765,37 @@ if(!isset($NO_GET_API) || $NO_GET_API === false) {
     } else if(isset($_GET["getperformanceRecords"])) {
         $records = getPerformanceRecords($_GET["getperformanceRecords"]);
         echo json_encode($records);
+    } else if(isset($_GET["setdeletePlace"])) {
+        $place = json_decode(file_get_contents('php://input'), true);
+        if(deletePlace($place["id"] ?? 0)) {
+            echo "succsess";
+        } else {
+            echo "error no permission";
+        }
     }
 }
 
-function uploadPlace($name, $description, $lat, $lng) {
+function getPlace($idPlace) {
+    $res = query("SELECT * FROM TbPlace WHERE idPlaces=?;", "i", $idPlace);
+    if(!$res || sizeof($res) == 0) return false;
+    return $res[0];
+}
+
+function deletePlace($idPlace) {
     if(!isLoggedIn()) return false;
-    return dbExecute("INSERT INTO TbPlace(title, `description`, latitude, longitude, creator) VALUES (?,?,?,?,?)", "ssddi", $name, $description, $lat, $lng, $_SESSION["iduser"]);
+    $place = getPlace($idPlace);
+    if(!$place) {
+        return false;
+    }
+    if($place["creator"] != $_SESSION["iduser"]) {
+        return false;
+    };
+    return dbExecute("DELETE FROM TbPlace WHERE idPlaces=?;", "i", $idPlace);
+}
+
+function uploadPlace($name, $description, $lat, $lng, $contact, $size, $coating, $clubName, $website) {
+    if(!isLoggedIn()) return false;
+    return dbExecute("INSERT INTO TbPlace(title, `description`, latitude, longitude, creator, contact, size, coating, clubName, website) VALUES (?,?,?,?,?,?,?,?,?,?)", "ssddisisss", $name, $description, $lat, $lng, $_SESSION["iduser"], $contact, $size, $coating, $clubName, $website);
 }
 
 function getPlaces() {
