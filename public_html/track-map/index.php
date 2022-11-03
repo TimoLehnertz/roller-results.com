@@ -143,8 +143,8 @@ var lat = localStorage.mapLat;
 var lng = localStorage.mapLng;
 var mapZoomLevel = localStorage.mapZoomZevel;
 if (isNaN(mapZoomLevel)) mapZoomLevel = 12;
-if (isNaN(lat)) lat = 0;
-if (isNaN(lng)) lng = 0;
+if (isNaN(lat)) lat = 48.84657280281416;
+if (isNaN(lng)) lng = 2.355129718780518;
 var map = L.map('map').setView([lat, lng], mapZoomLevel);
 
 L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -213,7 +213,6 @@ function seeMore(idPlace) {
     $(".see-more").append(`<p>size: ${p.website ?? "-"}</p>`);
     $(".see-more").append(`<p>Club name: ${p.clubName ?? "-"}</p>`);
     $(".see-more")[0].scrollIntoView({block: "center", inline: "nearest"});
-    console.log(p)
     if(p.creator == phpUser.iduser) {
         const delBtn = $(`<button class="btn create red">Delete this place</button>`);
         delBtn.click(() => {
