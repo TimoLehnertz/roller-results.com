@@ -933,11 +933,11 @@ function getPerformanceCategoryUsers($idPerformanceCategory) {
     return query("  SELECT `user`.username, `user`.iduser, IF(athlete.image IS NOT NULL, CONCAT('/img/uploads/', athlete.image), NULL) as image, athlete.firstname, athlete.lastname, athlete.gender, uipc.isAdmin, uipc.creator, pc.creator = `user`.iduser as isCreator, count(TbPerformanceRecord.idPerformanceRecord) as uploads
                     FROM TbUserInPerformanceCategory uipc
                     JOIN TbUser `user` ON `user`.iduser = uipc.`user`
-                    LEFT JOIN TbPerformanceRecord ON TbPerformanceRecord.user = `user`.iduser
                     LEFT JOIN TbAthlete athlete ON athlete.id = `user`.athlete
-                    JOIN TbPerformanceCategory pc ON pc.idPerformanceCategory = uipc.performanceCategory
+                    LEFT JOIN TbPerformanceRecord ON TbPerformanceRecord.user = `user`.iduser AND TbPerformanceRecord.performanceCategory = ?
+                    LEFT JOIN TbPerformanceCategory pc ON pc.idPerformanceCategory = uipc.performanceCategory
                     WHERE uipc.performanceCategory = ?
-                    GROUP BY `user`.iduser, athlete.id, uipc.idUserInPerformanceCategory;", "i", $idPerformanceCategory);
+                    GROUP BY `user`.iduser, athlete.id, uipc.idUserInPerformanceCategory;", "ii", $idPerformanceCategory, $idPerformanceCategory);
 }
 
 function getPerformanceCategory($idPerformanceCategory) {

@@ -74,6 +74,7 @@ function echoAthleteImg($athlete){
 }
 
 function defaultProfileImgPath($gender){
+    if(!$gender) return "/img/profile-men.png";
     if(strtolower($gender) == "w"){
         return "/img/profile-female.jpg";
     } else{
