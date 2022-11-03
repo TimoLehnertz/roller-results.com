@@ -33,7 +33,7 @@
                     <p>Platform</p>
                     <!-- <a href="/api/introduction.php">Developer API</a> -->
                     <a href="/blog/index.php">Dev blog</a>
-                    <a href="/minecraft2D/">Minecraft 2D</a>
+                    <a href="/Minecraft2D/">Minecraft 2D</a>
                     <!-- <a href="/impressum/partners.php">Partners</a> -->
                 </div>
                 <div>
