@@ -24,6 +24,10 @@ function permissionsForRole($role){
     return $permissions;
 }
 
+function isAdmin() {
+    return canI("managePermissions");
+}
+
 function canI($permission){
     // $user = null;
     $p;

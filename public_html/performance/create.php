@@ -23,7 +23,7 @@ if(isset($_POST["submit"])) { // submit
         ], [
             "property" => "type",
             "type" => "string",
-            "values" => ["time", "bpm", "distance", "weight"]
+            "minLength" => 1
         ], [
             "property" => "users",
             "type" => "string",
@@ -73,6 +73,12 @@ include_once "../header.php";
             <label for="distance">Distace</label>
             <input type="radio" name="type" id="weight" value="weight">
             <label for="weight">Weight</label>
+            <input type="radio" name="type" id="other" value="">
+            <label for="other">Other</label>
+        </div>
+        <div class="other-area" hidden>
+            <label for="other-input">Other dimension</label>
+            <input type="text" id="other-input" placeholder="Enter your dimension">
         </div>
         <br>
         <label>Invite users</label>
@@ -101,6 +107,15 @@ include_once "../header.php";
             e.preventDefault();
         }
     }
+
+    $("input[name=type]").change(() => {
+        $(".other-area").toggle($("#other").is(":checked"));
+        $("#other-input").attr("required", $("#other").is(":checked"));
+    })
+
+    $("#other-input").on("input", function() {
+        $("#other").val($(this).val());
+    });
 </script>
 <?php
     include_once "../footer.php";

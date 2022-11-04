@@ -739,15 +739,15 @@ class PerformanceGroupUserConfig {
         const makeCreatorBtn = $(`<button class="make-creator-btn">Make creator</button>`);
         makeCreatorBtn.click(() => this.makeCreator(user));
         
-        const higherPermissions = this.permissionLevel > this.getPermissionLevel(user);
-        if(higherPermissions && user.iduser != this.thisUser) {
+        const higherPermissions = this.permissionLevel > this.getPermissionLevel(user) || phpUser.isAdmin;
+        if((higherPermissions && user.iduser != this.thisUser) || phpUser.isAdmin) {
             userOptions.find(".flex").append(removeBtn);
         }
         if(!this.allowConfig) return;
         if(higherPermissions && user.isAdmin) {
             userOptions.find(".flex").append(removeAdminBtn);
         }
-        if(!user.isAdmin && isCreator) {
+        if(!user.isAdmin && (isCreator || phpUser.isAdmin)) {
             userOptions.find(".flex").append(makeAdminBtn);
         }
         if(user.isAdmin && higherPermissions) {
@@ -756,6 +756,7 @@ class PerformanceGroupUserConfig {
     }
 
     makeCreator(user) {
+        user.guiElem.append(`<div class="loading circle"></div>`);
         set("makePerformanceCategoryUserCreator", {idPerformanceCategory: this.idPerformanceCategory, idUser: user.iduser}).receive((res) => {
             if(res == "succsess") {
                 for (const user of this.users) {
@@ -765,6 +766,7 @@ class PerformanceGroupUserConfig {
                 $(".make-creator-btn").remove();
                 $(".remove-admin-btn").remove();
                 this.updateGui();
+                $(".loading").remove();
             } else {
                 alert(res);
             }
@@ -772,10 +774,12 @@ class PerformanceGroupUserConfig {
     }
 
     makeAdmin(user, makeAdmin) {
+        user.guiElem.append(`<div class="loading circle"></div>`);
         set("makePerformanceCategoryUserAdmin", {idPerformanceCategory: this.idPerformanceCategory, idUser: user.iduser, makeAdmin: makeAdmin ? 1 : 0}).receive((res) => {
             if(res == "succsess") {
                 user.isAdmin = makeAdmin;
                 this.updateGui();
+                $(".loading").remove();
             } else {
                 alert(res);
             }
@@ -783,6 +787,7 @@ class PerformanceGroupUserConfig {
     }
 
     removeUser(user) {
+        user.guiElem.append(`<div class="loading circle"></div>`);
         if(this.allowConfig) {
             user.guiElem.append(`<div class="loading circle"></div>`);
             set("removeUserFromPerformanceCategory", {idPerformanceCategory: this.idPerformanceCategory, idUser: user.iduser}).receive((res) => {
@@ -792,6 +797,7 @@ class PerformanceGroupUserConfig {
                 } else {
                     alert(res);
                 }
+                $(".loading").remove();
             });
         } else {
             user.guiElem.remove();

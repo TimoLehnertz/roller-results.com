@@ -915,11 +915,11 @@ function logError($logErrors, $error) {
  */
 function getPerformanceCategories() {
     if(!isLoggedIn()) return [];
-    $res = query("  SELECT pc.*, sum(if(pr.user=?, 1, 0)) as myRecords, count(pr.idPerformanceRecord) as records, min(pr.value) as `minValue`, max(pr.value) as `maxValue`, max(uipc.goal) as goal, max(pr.rowCreated) as lastUpload
+    $res = query("  SELECT pc.*, count(pr.idPerformanceRecord) as myRecords, count(pr.idPerformanceRecord) as records, min(pr.value) as `minValue`, max(pr.value) as `maxValue`, max(uipc.goal) as goal, max(pr.rowCreated) as lastUpload
                     FROM TbPerformanceCategory pc
                     JOIN TbUserInPerformanceCategory uipc ON uipc.performanceCategory = pc.idPerformanceCategory
                     LEFT JOIN TbPerformanceRecord pr ON pr.performanceCategory = pc.idPerformanceCategory
-                    WHERE uipc.`user`=?
+                    WHERE uipc.`user`=? AND (pr.`user` = ? OR pr.`user` IS NULL)
                     GROUP BY pc.idPerformanceCategory
                     ORDER BY lastUpload DESC, rowCreated DESC;", "ii", $_SESSION["iduser"], $_SESSION["iduser"]);
     foreach ($res as &$category) {
@@ -1125,7 +1125,7 @@ function addUsersToPerformanceCategory($idPerformanceCategory, $users) {
  */
 function amIAdminInPerformanceCategory($idPerformanceCategory) {
     if(!isLoggedIn()) return false;
-    return isUserAdminInPerformanceCategory($idPerformanceCategory, $_SESSION["iduser"]);
+    return isUserAdminInPerformanceCategory($idPerformanceCategory, $_SESSION["iduser"]) || isAdmin();
 }
 
 /**
@@ -1145,7 +1145,7 @@ function doesUserOwnPerformanceCategory($idPerformanceCategory, $idUser) {
  */
 function doIOwnPerformanceCategory($idPerformanceCategory) {
     if(!isLoggedIn()) return false;
-    return doesUserOwnPerformanceCategory($idPerformanceCategory, $_SESSION["iduser"]);
+    return doesUserOwnPerformanceCategory($idPerformanceCategory, $_SESSION["iduser"]) || isAdmin();
 }
 
 /**
