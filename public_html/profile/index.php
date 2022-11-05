@@ -231,6 +231,9 @@ echoRandWallpaper();
         </div>
     </div>
 </main>
+<?php
+// var_dump($linkedAthlete);
+?>
 <script>
 
 let existingAthlete = <?php 
