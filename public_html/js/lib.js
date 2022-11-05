@@ -1732,7 +1732,7 @@ class ElemParser{
         switch(ElemParser.getGender(data)){
             case ElemParser.MALE: return $(`<i class="fas fa-mars"></i>`);
             case ElemParser.FEMALE: return $(`<i class="fas fa-venus"></i>`);
-            case ElemParser.DIVERSE: return $(`<img src="/img/diverse.png" alt="diverse">`);
+            case ElemParser.DIVERSE: return $(`<img style="width: 2rem" src="/img/diverse.png" alt="diverse">`);
             default: return ElemParser.getFreshElem();
         }
     }
@@ -2487,7 +2487,7 @@ class Profile {
         switch(this.gender){
             case Profile.MALE: return $(`<i class="fas fa-mars"></i>`);
             case Profile.FEMALE: return $(`<i class="fas fa-venus"></i>`);
-            case Profile.DIVERSE: return $(`<img src="/img/diverse.png" alt="diverse">`);
+            case Profile.DIVERSE: return $(`<i><img style="width: 2rem" src="/img/diverse.png" alt="diverse"></i>`);
             default: return $();
         }
     }

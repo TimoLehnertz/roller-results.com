@@ -2443,17 +2443,10 @@ function getAthleteWithScore($id) {
 }
 
 function getAthlete($id) {
-    global $scoreInfluences;
     global $usedMedals;
-    // $result = query("CALL sp_athleteFull(?, ?, ?)", "iss", intval($id), $scoreInfluences, $usedMedals);
     $result = query("CALL sp_getAthleteNew(?, ?)", "is", intval($id), $usedMedals);
-    // print_r($result);
-    // echo $usedMedals;
-    if(sizeof($result) > 0) {
-        return $result[0];
-    } else {
-        return [];
-    }
+    if(sizeof($result) > 0) return $result[0];
+    return [];
 }
 
 function getAthleteFull($id){

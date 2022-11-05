@@ -1001,7 +1001,7 @@ function getGenderImg(gender) {
         case "w":
         case 'W': return `<i class="fas fa-venus"></i>`;
         case "d":
-        case 'D': return `<img src="/img/diverse.png" alt="diverse">`;
+        case 'D': return `<a><img src="/img/diverse.png" alt="diverse"></i>`;
     }
 }
 
