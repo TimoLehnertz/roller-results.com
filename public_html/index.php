@@ -14,7 +14,8 @@ if(isset($_GET["q"]) && !empty($_GET["q"])) {
 <main class="main search-page <?=$searching ? "searching" : ""?>">
     <form action="" method="GET" onsubmit="return validateForm()">
         <?php if(!$searching) { ?>
-            <h1 class="search-logo noselect">Roller results</h1>
+            <h2 class="search-logo">Where Inline Speedskating<br>results come alive</h1>
+            <h1 class="align center margin top">Roller results</h1>
         <?php } ?>
         <div class="wrapper">
             <?php if(!$searching) { ?>
