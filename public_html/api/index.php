@@ -915,11 +915,11 @@ function logError($logErrors, $error) {
  */
 function getPerformanceCategories() {
     if(!isLoggedIn()) return [];
-    $res = query("  SELECT pc.*, count(pr.idPerformanceRecord) as myRecords, count(pr.idPerformanceRecord) as records, min(pr.value) as `minValue`, max(pr.value) as `maxValue`, max(uipc.goal) as goal, max(pr.rowCreated) as lastUpload
+    $res = query("  SELECT pc.*, count(pr.idPerformanceRecord) as myRecords, min(pr.value) as `minValue`, max(pr.value) as `maxValue`, max(uipc.goal) as goal, max(pr.rowCreated) as lastUpload
                     FROM TbPerformanceCategory pc
                     JOIN TbUserInPerformanceCategory uipc ON uipc.performanceCategory = pc.idPerformanceCategory
-                    LEFT JOIN TbPerformanceRecord pr ON pr.performanceCategory = pc.idPerformanceCategory
-                    WHERE uipc.`user`=? AND (pr.`user` = ? OR pr.`user` IS NULL)
+                    LEFT JOIN TbPerformanceRecord pr ON pr.performanceCategory = pc.idPerformanceCategory AND pr.`user`=?
+                    WHERE uipc.`user`=?
                     GROUP BY pc.idPerformanceCategory
                     ORDER BY lastUpload DESC, rowCreated DESC;", "ii", $_SESSION["iduser"], $_SESSION["iduser"]);
     foreach ($res as &$category) {
@@ -942,13 +942,13 @@ function getPerformanceCategoryUsers($idPerformanceCategory) {
 
 function getPerformanceCategory($idPerformanceCategory) {
     if(!isLoggedIn()) return [];
-    $res = query("  SELECT pc.*, sum(if(pr.user=?, 1, 0)) as myRecords, count(pr.idPerformanceRecord) as records, min(pr.value) as `minValue`, max(pr.value) as `maxValue`, max(uipc.goal) as goal, max(pr.rowCreated) as lastUpload
+    $res = query("  SELECT pc.*, SUM(if(pr.user=?, 1, 0)) as myRecords, count(pr.idPerformanceRecord) as records, min(pr.value) as `minValue`, max(pr.value) as `maxValue`, max(uipc.goal) as goal, max(pr.rowCreated) as lastUpload
                     FROM TbPerformanceCategory pc
                     JOIN TbUserInPerformanceCategory uipc ON uipc.performanceCategory = pc.idPerformanceCategory
-                    LEFT JOIN TbPerformanceRecord pr ON pr.performanceCategory = pc.idPerformanceCategory
+                    LEFT JOIN TbPerformanceRecord pr ON pr.performanceCategory = pc.idPerformanceCategory AND pr.`user`=?
                     WHERE uipc.`user`=? AND pc.idPerformanceCategory=?
                     GROUP BY pc.idPerformanceCategory
-                    ORDER BY lastUpload DESC, rowCreated DESC;", "iii", $_SESSION["iduser"], $_SESSION["iduser"], $idPerformanceCategory);
+                    ORDER BY lastUpload DESC, rowCreated DESC;", "iiii", $_SESSION["iduser"], $_SESSION["iduser"], $_SESSION["iduser"], $idPerformanceCategory);
     if(sizeof($res) == 0) return false;
     $res[0]["progress"] = getPerformanceCategoryGoal($res[0]);
     return $res[0];
@@ -1282,9 +1282,9 @@ function getPerformanceGroupTypelong($type) {
 }
 
 function echoPerformanceCategory($performanceCategory) {
-    $records = $performanceCategory["myRecords"]." ".($performanceCategory["myRecords"] > 1 ? "records" : "record");
-    if($records == 0) {
-        $records = "No records yet";
+    $records = $performanceCategory["myRecords"]." ".($performanceCategory["myRecords"] > 1 ? "uploads" : "upload");
+    if($performanceCategory["myRecords"] == 0) {
+        $records = "No uploads yet";
     }
     $type = $performanceCategory["type"];
     $best = isPerformanceGroupTypeMin($type) ? $performanceCategory["minValue"] : $performanceCategory["maxValue"];
@@ -2455,7 +2455,7 @@ function getAthleteFull($id){
     $result = query("CALL sp_athletePrivateFull(?, ?, ?)", "iss", intval($id), $scoreInfluences, $usedMedals);
     if(sizeof($result) > 0) {
         return $result[0];
-    } else{
+    } else {
         return [];
     }
 }
