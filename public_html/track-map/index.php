@@ -169,24 +169,28 @@ include_once "../header.php";
                 <?php } ?>
             </div>
             <div class="map-section">
-                <div class="filters flex justify-start gap">
+                <div class="filters flex mobile justify-center gap">
                     <p class="font size big">Filters:</p>
-                    <label for="filter-coating">Coating</label>
-                    <select id="filter-coating">
-                        <option value="any" selected>Any</option>
-                        <option value="Asphalt">Asphalt</option>
-                        <option value="Vesmaco">Vesmaco</option>
-                        <option value="ATP">ATP</option>
-                        <option value="Courtsal">Courtsal</option>
-                        <option value="Other">Other</option>
-                    </select>
-                    <label for="filter-corner">Corner</label>
-                    <select id="filter-corner">
-                        <option value="any" selected>Any</option>
-                        <option value="Flat">Flat</option>
-                        <option value="Banked">Banked</option>
-                        <option value="Parabolic">Parabolic</option>
-                    </select>
+                    <div>
+                        <label for="filter-coating">Coating</label>
+                        <select id="filter-coating">
+                            <option value="any" selected>Any</option>
+                            <option value="Asphalt">Asphalt</option>
+                            <option value="Vesmaco">Vesmaco</option>
+                            <option value="ATP">ATP</option>
+                            <option value="Courtsal">Courtsal</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="filter-corner">Corner</label>
+                        <select id="filter-corner">
+                            <option value="any" selected>Any</option>
+                            <option value="Flat">Flat</option>
+                            <option value="Banked">Banked</option>
+                            <option value="Parabolic">Parabolic</option>
+                        </select>
+                    </div>
                     <button class="btn create" onclick="applyFilters()">Apply</button>
                 </div>
 
