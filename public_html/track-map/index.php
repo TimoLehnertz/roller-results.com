@@ -69,7 +69,7 @@ if(validateObjectProperties($_POST, [
     "maxLength" => 1000
 ]
 ], false)) {
-    if(uploadPlace($_POST["idPlace"] ?? NULL, $_POST["title"], $_POST["description"] ?? NULL, $_POST["latitude"], $_POST["longitude"], $_POST["contact"] ?? NULL, $_POST["size"] ?? NULL, $_POST["coating"] ?? NULL, $_POST["clubName"] ?? NULL, $_POST["website"] ?? NULL, $_POST["corner"] ?? NULL, $_POST["videoLink"] ?? NULL, $_POST["famousPeople"] ?? NULL)) {
+    if(uploadPlace($_POST["idPlace"] ?? NULL, $_POST["title"], $_POST["description"] ?? NULL, $_POST["latitude"], $_POST["longitude"], $_POST["contact"] ?? NULL, $_POST["size"] ?? NULL, $_POST["coating"] ?? NULL, $_POST["clubName"] ?? NULL, $_POST["website"] ?? NULL, $_POST["corner"] ?? NULL, $_POST["videoLink"] ?? NULL, $_POST["famousPeople"] ?? NULL, $_POST["coatingYear"] ?? NULL)) {
         header("location: /track-map/index.php?s=1");
         exit();
     } else {
@@ -139,6 +139,10 @@ include_once "../header.php";
                                 <option value="parabolic">Parabolic</option>
                             </select>
                         </div>
+                    </div>
+                    <div>
+                        <label for="coatingYear">Year of coating</label>
+                        <input type="number" name="coatingYear" id="coatingYear">
                     </div>
                     <div>
                         <label for="clubName">Club name</label>
@@ -227,7 +231,9 @@ for (const place of places) {
     if(place.website) html += `<a href="${place.website}">Website</a>`;
     if(place.coating) html += `<p>Coating ${place.coating}</p>`;
     if(place.famousPeople) html += `<p>Famous people ${place.famousPeople}</p>`;
-    if(place.creator == phpUser.iduser) html += `<button class="btn create gray margin right" onclick="edit(${place.idPlaces})">Edit</button>`
+    // if(place.creator == phpUser.iduser) {
+        html += `<button class="btn create gray margin right" onclick="edit(${place.idPlaces})">Edit</button>`
+    // }
     html += `<button class="btn create gray" onclick="seeMore(${place.idPlaces})">See more</button>`
     place.marker = marker;
     marker.bindPopup(html);
@@ -286,6 +292,7 @@ function seeMore(idPlace) {
     $(".see-more").append(`<h2>${p.title}</h2>`);
     $(".see-more").append(`<p>${p.description}</p>`);
     $(".see-more").append(`<p>Coating: ${p.coating ?? "-"}</p>`);
+    $(".see-more").append(`<p>Year of coating: ${p.coatingYear ?? "-"}</p>`);
     $(".see-more").append(`<p>size: ${p.website ?? "-"}</p>`);
     $(".see-more").append(`<p>Club name: ${p.clubName ?? "-"}</p>`);
     $(".see-more").append(`<p>Corner: ${p.corner ?? "-"}</p>`);
@@ -294,9 +301,10 @@ function seeMore(idPlace) {
     }
     $(".see-more").append(`<p>Famous people: ${p.famousPeople ?? "-"}</p>`);
     $(".see-more")[0].scrollIntoView({block: "center", inline: "nearest"});
+    const editBtn = $(`<button class="btn create blue">Edit information</button>`);
+    $(".see-more").append(editBtn);
     if(p.creator == phpUser.iduser) {
         const delBtn = $(`<button class="btn create red">Delete this place</button>`);
-        const editBtn = $(`<button class="btn create blue">Edit information</button>`);
         delBtn.click(() => {
             $(".see-more").append(`<div class="loading circle"></div>`);
             set("deletePlace", {id: p.idPlaces}).receive((res) => {
@@ -310,7 +318,6 @@ function seeMore(idPlace) {
             edit(idPlace);
         })
         $(".see-more").append(delBtn);
-        $(".see-more").append(editBtn);
     }
 }
 

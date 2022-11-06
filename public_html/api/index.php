@@ -793,19 +793,19 @@ function deletePlace($idPlace) {
     return dbExecute("DELETE FROM TbPlace WHERE idPlaces=?;", "i", $idPlace);
 }
 
-function uploadPlace($idPlace, $name, $description, $lat, $lng, $contact, $size, $coating, $clubName, $website, $corner, $videoLink, $famousPeople) {
+function uploadPlace($idPlace, $name, $description, $lat, $lng, $contact, $size, $coating, $clubName, $website, $corner, $videoLink, $famousPeople, $coatingYear) {
     if(!isLoggedIn()) return false;
     if($idPlace != NULL && $idPlace != "-1") {
-        return updatePlace($idPlace, $name, $description, $lat, $lng, $contact, $size, $coating, $clubName, $website, $corner, $videoLink, $famousPeople);
+        return updatePlace($idPlace, $name, $description, $lat, $lng, $contact, $size, $coating, $clubName, $website, $corner, $videoLink, $famousPeople, $coatingYear);
     }
-    return dbExecute("INSERT INTO TbPlace(title, `description`, latitude, longitude, creator, contact, size, coating, clubName, website, corner, videoLink, famousPeople) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)", "ssddisissssss", $name, $description, $lat, $lng, $_SESSION["iduser"], $contact, $size, $coating, $clubName, $website, $corner, $videoLink, $famousPeople);
+    return dbExecute("INSERT INTO TbPlace(title, `description`, latitude, longitude, creator, contact, size, coating, clubName, website, corner, videoLink, famousPeople ,coatingYear) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)", "ssddisisssssss", $name, $description, $lat, $lng, $_SESSION["iduser"], $contact, $size, $coating, $clubName, $website, $corner, $videoLink, $famousPeople, $coatingYear);
 }
 
 function updatePlace($idPlace, $name, $description, $lat, $lng, $contact, $size, $coating, $clubName, $website, $corner, $videoLink, $famousPeople) {
     $place = getPlace($idPlace);
     if(!$place) return false;
-    if($_SESSION["iduser"] != $place["creator"]) return false;
-    return dbExecute("UPDATE TbPlace SET title=?, `description`=?, latitude=?, longitude=?, creator=?, contact=?, size=?, coating=?, clubName=?, website=?, corner=?, videoLink=?, famousPeople=? WHERE idPlace=?", "ssddisissssssi", $name, $description, $lat, $lng, $_SESSION["iduser"], $contact, $size, $coating, $clubName, $website, $corner, $videoLink, $famousPeople, $idPlace);
+    // if($_SESSION["iduser"] != $place["creator"]) return false;
+    return dbExecute("UPDATE TbPlace SET title=?, `description`=?, latitude=?, longitude=?, creator=?, contact=?, size=?, coating=?, clubName=?, website=?, corner=?, videoLink=?, famousPeople=?, coatingYear=? WHERE idPlace=?", "ssddisisssssssi", $name, $description, $lat, $lng, $_SESSION["iduser"], $contact, $size, $coating, $clubName, $website, $corner, $videoLink, $famousPeople, $coatingYear, $idPlace);
 }
 
 function getPlaces() {
