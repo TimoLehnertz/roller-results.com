@@ -235,9 +235,9 @@ for (const place of places) {
     if(place.website) html += `<a href="${place.website}">Website</a>`;
     if(place.coating) html += `<p>Coating ${place.coating}</p>`;
     if(place.famousPeople) html += `<p>Famous people ${place.famousPeople}</p>`;
-    // if(place.creator == phpUser.iduser) {
+    if(phpuser.loggedIn) {
         html += `<button class="btn create gray margin right" onclick="edit(${place.idPlaces})">Edit</button>`
-    // }
+    }
     html += `<button class="btn create gray" onclick="seeMore(${place.idPlaces})">See more</button>`
     place.marker = marker;
     marker.bindPopup(html);
@@ -305,8 +305,13 @@ function seeMore(idPlace) {
     }
     $(".see-more").append(`<p>Famous people: ${p.famousPeople ?? "-"}</p>`);
     $(".see-more")[0].scrollIntoView({block: "center", inline: "nearest"});
-    const editBtn = $(`<button class="btn create blue">Edit information</button>`);
-    $(".see-more").append(editBtn);
+    if(phpuser.loggedIn) {
+        const editBtn = $(`<button class="btn create blue">Edit information</button>`);
+        $(".see-more").append(editBtn);
+        editBtn.click(() => {
+            edit(idPlace);
+        });
+    }
     if(p.creator == phpUser.iduser) {
         const delBtn = $(`<button class="btn create red">Delete this place</button>`);
         delBtn.click(() => {
@@ -318,9 +323,6 @@ function seeMore(idPlace) {
                 map.removeLayer(p.marker);
             });
         });
-        editBtn.click(() => {
-            edit(idPlace);
-        })
         $(".see-more").append(delBtn);
     }
     if(!p.clubName || p.clubName.length == 0) return;
