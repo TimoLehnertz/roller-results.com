@@ -165,11 +165,12 @@ include_once "../header.php";
                 <?php } ?>
             </div>
             <div class="map-section">
-                <div class="filters flex">
-                    <p>Filters</p>
+                <div class="filters flex justify-start gap">
+                    <p class="font size big">Filters:</p>
                     <label for="filter-coating">Coating</label>
                     <select id="filter-coating">
                         <option value="any">Any</option>
+                        <option value="Asphalt">Asphalt</option>
                         <option value="Vesmaco">Vesmaco</option>
                         <option value="ATP">ATP</option>
                         <option value="Courtsal">Courtsal</option>
@@ -338,12 +339,25 @@ function activateAddTrack() {
     document.getElementById('form').reset();
 }
 
+function showAll() {
+    for (const place of places) {
+        map.removeLayer(place.marker);
+        map.addLayer(place.marker);
+    }
+}
+
 function applyFilters() {
     const coating = $("#filter-coating").val();
     const corner = $("#filter-corner").val();
+    showAll();
     for (const place of places) {
         const marker = place.marker;
-        // if(place.corner?.toLowerCase() == coating.toLowerCase())
+        if(coating != "any" && place.coating?.toLowerCase() != coating.toLowerCase()) {
+            map.removeLayer(marker);
+        }
+        if(corner != "any" && place.corner?.toLowerCase() != corner.toLowerCase()) {
+            map.removeLayer(marker);
+        }
     }
 }
 </script>
