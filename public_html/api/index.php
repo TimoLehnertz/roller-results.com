@@ -812,7 +812,7 @@ function updatePlace($idPlace, $name, $description, $lat, $lng, $contact, $size,
     $place = getPlace($idPlace);
     if(!$place) return false;
     // if($_SESSION["iduser"] != $place["creator"]) return false;
-    return dbExecute("UPDATE TbPlace SET title=?, `description`=?, latitude=?, longitude=?, creator=?, contact=?, size=?, coating=?, clubName=?, website=?, corner=?, videoLink=?, famousPeople=?, coatingYear=? WHERE idPlace=?", "ssddisisssssssi", $name, $description, $lat, $lng, $_SESSION["iduser"], $contact, $size, $coating, $clubName, $website, $corner, $videoLink, $famousPeople, $coatingYear, $idPlace);
+    return dbExecute("UPDATE TbPlace SET title=?, `description`=?, latitude=?, longitude=?, creator=?, contact=?, size=?, coating=?, clubName=?, website=?, corner=?, videoLink=?, famousPeople=?, coatingYear=? WHERE idPlaces=?", "ssddisisssssssi", $name, $description, $lat, $lng, $_SESSION["iduser"], $contact, $size, $coating, $clubName, $website, $corner, $videoLink, $famousPeople, $coatingYear, $idPlace);
 }
 
 function getPlaces() {

@@ -92,7 +92,7 @@ include_once "../header.php";
                     <p class="font color green"><?=$message?></p>
                     <h3 class="form-description">Add a track</h3>
                     <button type="button" class="btn create gray add-track-btn" onclick="activateAddTrack()">Add a track instead</button>
-                    <input type="number" name="idPlace" value="-1" hidden>
+                    <input type="number" name="idPlace" id="idPlace" value="-1" hidden>
                     <div>
                         <label for="lng">Title</label>
                         <input type="text" name="title" id="title" maxlength="200" required>
@@ -343,7 +343,7 @@ function edit(idPlace) {
     $(".form-description").text(`Edit ${place.title}`);
     $(".add-track-btn").show();
     $(".save-btn").text("Save changes");
-    $("#idPlace").val(place.idPlace);
+    $("#idPlace").val(place.idPlaces);
 
     $(".form").get()[0].scrollIntoView();
     for (const key in place) {
