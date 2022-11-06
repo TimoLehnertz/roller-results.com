@@ -37,7 +37,7 @@ if(isset($_POST["submit"])) { // submit
             "type" => "string",
             "maxLength" => 2000
         ],
-    ], true)) {
+    ], false)) {
         // print_r($_POST);
         $user = $_POST["user"] ?? $_SESSION["iduser"];
         if($_POST["forWho"] == "forMe") {
