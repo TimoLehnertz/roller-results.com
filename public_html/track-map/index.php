@@ -164,7 +164,29 @@ include_once "../header.php";
                 </form>
                 <?php } ?>
             </div>
-            <div id="map"></div>
+            <div class="map-section">
+                <div class="filters flex">
+                    <p>Filters</p>
+                    <label for="filter-coating">Coating</label>
+                    <select id="filter-coating">
+                        <option value="any">Any</option>
+                        <option value="Vesmaco">Vesmaco</option>
+                        <option value="ATP">ATP</option>
+                        <option value="Courtsal">Courtsal</option>
+                        <option value="Other">Other</option>
+                    </select>
+                    <label for="filter-corner">Corner</label>
+                    <select id="filter-corner">
+                        <option value="any">Any</option>
+                        <option value="Flat">Flat</option>
+                        <option value="Banked">Banked</option>
+                        <option value="Parabolic">Parabolic</option>
+                    </select>
+                    <button class="btn create" onclick="applyFilters()">Apply</button>
+                </div>
+
+                <div id="map"></div>
+            </div>
     </section>
     <section class="section light">
         <div class="see-more"></div>
@@ -208,6 +230,7 @@ for (const place of places) {
     html += `<button class="btn create gray" onclick="seeMore(${place.idPlaces})">See more</button>`
     place.marker = marker;
     marker.bindPopup(html);
+    place.marker = marker;
 }
 
 console.log(places);
@@ -313,6 +336,15 @@ function activateAddTrack() {
     $("#idPlace").val("-1");
     $(".save-btn").text("Upload");
     document.getElementById('form').reset();
+}
+
+function applyFilters() {
+    const coating = $("#filter-coating").val();
+    const corner = $("#filter-corner").val();
+    for (const place of places) {
+        const marker = place.marker;
+        // if(place.corner?.toLowerCase() == coating.toLowerCase())
+    }
 }
 </script>
 <?php
