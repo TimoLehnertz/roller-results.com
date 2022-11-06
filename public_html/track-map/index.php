@@ -319,6 +319,18 @@ function seeMore(idPlace) {
         })
         $(".see-more").append(delBtn);
     }
+    if(!p.clubName || p.clubName.length == 0) return;
+    get("clubAthletes", p.clubName).receive((succsess, athletes) => {
+        if(!succsess) return;
+        const athletesWrapper = $(`<div class="grid four"><p>Club athletes:</p></div>`);
+        for (const athlete of athletes) {
+            const profile = new Profile(athleteDataToProfileData({id: athlete.id, firstname: athlete.firstname, lastname: athlete.lastname}), Profile.MIN);
+            profile.update();
+            profile.appendTo(athletesWrapper);
+        }
+        $(".see-more").append(athletesWrapper);
+        console.log(athletes);
+    });
 }
 
 function edit(idPlace) {

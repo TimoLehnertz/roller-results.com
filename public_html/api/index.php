@@ -773,6 +773,13 @@ if(!isset($NO_GET_API) || $NO_GET_API === false) {
             echo "error no permission";
         }
     }
+    else if(isset($_GET["getclubAthletes"])) {
+        echo json_encode(getAthletesByClub($_GET["getclubAthletes"]));
+    }
+}
+
+function getAthletesByClub($club) {
+    return query("SELECT * FROM TbAthlete WHERE club=?;", "s", $club);
 }
 
 function getPlace($idPlace) {
