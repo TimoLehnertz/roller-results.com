@@ -1093,7 +1093,7 @@ function getRacesElem(races, showSortSelect = true) {
 
 function metersFromDistance(distance) {
     if(!distance) return 0;
-    if(distance.includes("Marathon")) return 42000;
+    if(distance.toLowerCase().includes("marathon")) return 42000;
     const meterString = distance.replace(/\D/g, '');
     if(meterString.length == 0) return 0;
     return parseInt(meterString);
