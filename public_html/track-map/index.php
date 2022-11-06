@@ -235,7 +235,7 @@ for (const place of places) {
     if(place.website) html += `<a href="${place.website}">Website</a>`;
     if(place.coating) html += `<p>Coating ${place.coating}</p>`;
     if(place.famousPeople) html += `<p>Famous people ${place.famousPeople}</p>`;
-    if(phpuser.loggedIn) {
+    if(phpUser.loggedIn) {
         html += `<button class="btn create gray margin right" onclick="edit(${place.idPlaces})">Edit</button>`
     }
     html += `<button class="btn create gray" onclick="seeMore(${place.idPlaces})">See more</button>`
@@ -305,7 +305,7 @@ function seeMore(idPlace) {
     }
     $(".see-more").append(`<p>Famous people: ${p.famousPeople ?? "-"}</p>`);
     $(".see-more")[0].scrollIntoView({block: "center", inline: "nearest"});
-    if(phpuser.loggedIn) {
+    if(phpUser.loggedIn) {
         const editBtn = $(`<button class="btn create blue">Edit information</button>`);
         $(".see-more").append(editBtn);
         editBtn.click(() => {
