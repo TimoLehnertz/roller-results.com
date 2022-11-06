@@ -37,7 +37,7 @@ if(isset($_POST["submit"])) {
             "type" => "string",
             "maxLength" => 200
         ]
-    ], true)) {
+    ], false)) {
         if(!editPerformanceCategory($_GET["id"], $_POST["name"], $_POST["description"])) {
             $editError = "<span class='font color red'>Could not edit performance category :(</span>";
         } else { // succsess
