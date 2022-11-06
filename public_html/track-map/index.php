@@ -173,7 +173,7 @@ include_once "../header.php";
                     <p class="font size big">Filters:</p>
                     <label for="filter-coating">Coating</label>
                     <select id="filter-coating">
-                        <option value="any">Any</option>
+                        <option value="any" selected>Any</option>
                         <option value="Asphalt">Asphalt</option>
                         <option value="Vesmaco">Vesmaco</option>
                         <option value="ATP">ATP</option>
@@ -182,7 +182,7 @@ include_once "../header.php";
                     </select>
                     <label for="filter-corner">Corner</label>
                     <select id="filter-corner">
-                        <option value="any">Any</option>
+                        <option value="any" selected>Any</option>
                         <option value="Flat">Flat</option>
                         <option value="Banked">Banked</option>
                         <option value="Parabolic">Parabolic</option>
