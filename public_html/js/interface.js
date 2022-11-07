@@ -744,7 +744,7 @@ function countryToProfileData(country, useRank = false, alternativeRank = undefi
         image: {data: country.country, type: "countryFlag", link: `/country?id=${country.country}`, width: "100%", height: "100%", class: "countryBig"},
         // right: country.country,
         trophy1, trophy2, trophy3,
-        special: {
+        special: country.special ?? {
             data: country.gold + "",
             tooltip: "Gold medals won on the selected types of competition (" + getUsedMedalsString() + ")",
             type: ElemParser.TEXT

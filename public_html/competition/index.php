@@ -72,6 +72,7 @@ foreach ($bestAthletes as $athlete) {
 ?>
 <script>
     const idCompetition = <?=$idComp?>;
+    const medals = <?=json_encode(getCompMedals($idComp))?>;
 </script>
 <main class="main competition-page">
     <?php if(!$embed) { ?>
@@ -124,24 +125,34 @@ foreach ($bestAthletes as $athlete) {
         <div class="stats">
             <h2 class="races">Statistics</h2>
             <div class="medal-stats" id="medals">
-                <div class="countries">
+                <div class="form-radio flex justify-center gap margin bottom">
+                    <input type="radio" name="type" value="athletes" id="athletes" checked>
+                    <label for="athletes">Athletes</label>
+                    <input type="radio" name="type" value="countries" id="countries" checked>
+                    <label for="countries">Countries</label>
+                </div>
+                <div class="form-radio categories flex mobile justify-center gap">
+                    <p>Categories:</p>
+                </div>
+                <div class="table margin top"></div>
+                <!-- <div class="countries">
                     <h3 class="align center">Countries</h3>
                     <table>
                         <tr><td>Position</td><td>Country</td><td class="goldm"></td><td class="silverm"></td><td class="bronzem"></td><td>Points</td></tr>
                         <?php
-                            $i = 1;
-                            foreach ($bestCountries as $country) {
-                                $countryName = $country["country"];
-                                $bronze = $country["bronze"];
-                                $silver = $country["silver"];
-                                $gold = $country["gold"];
-                                $total = $country["medalScore"];
-                                if(!$total) {
-                                    break;
-                                }
-                                echo "<tr><td>$i</td><td><a href='/country/?id=$countryName'>$countryName</td><td>$gold</td><td>$silver</td><td>$bronze</td><td>$total</td></tr>";
-                                $i++;
-                            }
+                            // $i = 1;
+                            // foreach ($bestCountries as $country) {
+                            //     $countryName = $country["country"];
+                            //     $bronze = $country["bronze"];
+                            //     $silver = $country["silver"];
+                            //     $gold = $country["gold"];
+                            //     $total = $country["medalScore"];
+                            //     if(!$total) {
+                            //         break;
+                            //     }
+                            //     echo "<tr><td>$i</td><td><a href='/country/?id=$countryName'>$countryName</td><td>$gold</td><td>$silver</td><td>$bronze</td><td>$total</td></tr>";
+                            //     $i++;
+                            // }
                         ?>
                     </table>
                 </div>
@@ -150,23 +161,23 @@ foreach ($bestAthletes as $athlete) {
                     <table>
                         <tr><td>Position</td><td>Athlete</td><td class="goldm"></td><td class="silverm"></td><td class="bronzem"></td><td>Points</td></tr>
                         <?php
-                            $i = 1;
-                            foreach ($bestAthletes as $athlete) {
-                                $athleteName = $athlete["fullname"];
-                                $athleteId = $athlete["idAthlete"];
-                                $bronze = $athlete["bronze"];
-                                $silver = $athlete["silver"];
-                                $gold = $athlete["gold"];
-                                $total = $athlete["medalScore"];
-                                if(!$total) {
-                                    break;
-                                }
-                                echo "<tr><td>$i</td><td><a href='/athlete/?id=$athleteId'>$athleteName</td><td>$gold</td><td>$silver</td><td>$bronze</td><td>$total</td></tr>";
-                                $i++;
-                            }
+                            // $i = 1;
+                            // foreach ($bestAthletes as $athlete) {
+                            //     $athleteName = $athlete["fullname"];
+                            //     $athleteId = $athlete["idAthlete"];
+                            //     $bronze = $athlete["bronze"];
+                            //     $silver = $athlete["silver"];
+                            //     $gold = $athlete["gold"];
+                            //     $total = $athlete["medalScore"];
+                            //     if(!$total) {
+                            //         break;
+                            //     }
+                            //     echo "<tr><td>$i</td><td><a href='/athlete/?id=$athleteId'>$athleteName</td><td>$gold</td><td>$silver</td><td>$bronze</td><td>$total</td></tr>";
+                            //     $i++;
+                            // }
                         ?>
                     </table>
-                </div>
+                </div> -->
             </div>
         </div>
         <script>
@@ -199,6 +210,131 @@ foreach ($bestAthletes as $athlete) {
                     location.reload();
                 })
             }
+            
+            const categories = ["All"];
+            function initMedals() {
+                for (const medal of medals) {
+                    if(!categories.includes(medal.category)) categories.push(medal.category);
+                }
+                let first = true;
+                for (const category of categories) {
+                    $(".categories").append(`<input type="checkbox" class="category" name="category" value="${category}" id="${category}" ${first ? "checked" : ""}><label for="${category}">${category}</label>`);
+                    $(".categories").find(`#${category}`).on("change", updateStatistics);
+                    first = false;
+                }
+                $("input[name=type]").on("change", updateStatistics);
+                updateStatistics();
+            }
+
+            function getFilteredMedals() {
+                const newMedals = [];
+                const allowedCategories = [];
+                $(".category").each(function() {
+                    if($(this).is(":checked") && !allowedCategories.includes($(this).val())) {
+                        allowedCategories.push($(this).val());
+                    }
+                });
+                console.log(allowedCategories);
+                if(allowedCategories.includes("All")) return [...medals];
+                for (const medal of medals) {
+                    if(allowedCategories.includes(medal.category)) {
+                        newMedals.push(medal);
+                    }
+                }
+                return newMedals;
+            }
+
+            function getRanking(medals, field) {
+                let rankings = [];
+                function rankingByMedal(medal) {
+                    for (const r of rankings) {
+                        if(r[field] == medal[field]) return r;
+                    }
+                    const newRanking = medal;
+                    newRanking.bronze = 0;
+                    newRanking.silver = 0;
+                    newRanking.gold = 0;
+                    newRanking.medalCount = 0;
+                    newRanking.medals = [];
+                    rankings.push(newRanking);
+                    return newRanking;
+                }
+                for (const medal of medals) {
+                    const ranking = rankingByMedal(medal);
+                    switch(medal.place) {
+                        case 3: ranking.bronze++; break;
+                        case 2: ranking.silver++; break;
+                        case 1: ranking.gold++; break;
+                    }
+                    ranking.medalCount++;
+                    ranking.medals.push(medal);
+                }
+                rankings = rankings.sort((a, b) => b.bronze - a.bronze);
+                rankings = rankings.sort((a, b) => b.silver - a.silver);
+                rankings = rankings.sort((a, b) => b.gold   - a.gold);
+                for (let i = 0; i < rankings.length; i++) {
+                    rankings[i].rank = i+1;
+                }
+                return rankings;
+            }
+
+            
+            const athleteProfileWrappers = [];
+            function athleteProfileDealer(data) {
+                data = {idAthlete: data.idAthlete, image: data.image, firstname: data.firstname, lastname: data.lastname, checked: true};
+                for (const profileWrapper of athleteProfileWrappers) {
+                    if(profileWrapper.idAthlete == data.idAthlete) return profileWrapper.profile;
+                }
+                const profile = new Profile(athleteDataToProfileData(data), Profile.MIN);
+                // profile.update();
+                data.profile = profile;
+                athleteProfileWrappers.push(data);
+                return profile;
+            }
+            
+            const countryProfileWrappers = [];
+            function countryProfileDealer(data) {
+                data = {country: data.country, special: {data: $()}};
+                for (const profileWrapper of countryProfileWrappers) {
+                    if(profileWrapper.country == data.country) {
+                        console.log("saved country");
+                        return profileWrapper.profile;
+                    }
+                }
+                const profile = new Profile(countryToProfileData(data), Profile.MIN);
+                // profile.update();
+                data.profile = profile;
+                countryProfileWrappers.push(data);
+                return profile;
+            }
+
+            function updateStatistics(category) {
+                const newMedals = getFilteredMedals();
+                console.log(newMedals);
+                const isAthletes = $("#athletes").is(":checked");
+                const rankings = getRanking(newMedals, isAthletes ? "idAthlete" : "country");
+                console.log(isAthletes);
+                $(".table").empty();
+                const table = new Table($(".table"), rankings, "").setup({
+                    layout: {
+                        rank: {displayName: "Rank"},
+                        fullname: {displayName: "Name", callback: (row) => {
+                            const elem = $(`<div></div>`);
+                            const profile = isAthletes ? athleteProfileDealer(row) : countryProfileDealer(row);
+                            profile.appendTo(elem);
+                            return elem;
+                        }},
+                        gold: {displayName: "Gold"},
+                        silver: {displayName: "Silver"},
+                        bronze: {displayName: "Bronze"},
+                        medalCount: {displayName: "Medals"}
+                    }
+                });
+                table.useRowAsCallback = true;
+                table.init();
+            }
+
+            initMedals();
         </script>
     </div>
 </main>

@@ -1185,6 +1185,7 @@ class Table {
         this.usedColumns = this.getUsedColumns();
         this.useAnimations = false;
         // this.useAnimations = params.useAnimations || true;
+        return this;
     }
 
     getDisplayNameOfColumn(column){
@@ -1239,6 +1240,7 @@ class Table {
             });
         }
         this.initiated = true;
+        return this;
     }
 
     getLayoutIndex(name){
@@ -2253,6 +2255,7 @@ class Profile {
     }
 
     appendTo(parent){
+        this.wrapper.detach();
         $(parent).append(this.wrapper);
     }
 

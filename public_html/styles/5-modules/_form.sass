@@ -67,6 +67,23 @@ $form-b: $d
         background: #151515
         // width: 100%
 
+.form-radio
+    input[type="radio"], input[type="checkbox"]
+        display: none
+
+        &+label
+            background: #b1b1b1
+            border-radius: 0.5rem
+            border: 0.4rem solid #0000
+            transition: all 0.2s
+            text-align: center
+            padding: 0.2rem 0.5rem
+
+        &:checked+label
+            border: 0.4rem solid #354e86
+            color: white
+            background: #3a519b
+
 .form-performance
 
     label

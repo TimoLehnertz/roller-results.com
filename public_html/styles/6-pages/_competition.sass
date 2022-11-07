@@ -62,34 +62,43 @@
         .stat
             text-align: center
 
-    .medal-stats
-        display: flex
-        flex-direction: row
-        justify-content: space-around
-        *
-            color: black
+    .table
+        overflow-x: scroll
+        // max-width: 100vw
 
         table
-            border-collapse: collapse
+            max-width: 70rem
+            margin-left: auto
+            margin-right: auto
 
-        td
-            border-left: 1px solid #999
+    // .medal-stats
+    //     display: flex
+    //     flex-direction: row
+    //     justify-content: space-around
+    //     *
+    //         color: black
+
+    //     table
+    //         border-collapse: collapse
+
+    //     td
+    //         border-left: 1px solid #999
         
-        td:nth-child(1)
-            border-left: none
+    //     td:nth-child(1)
+    //         border-left: none
         
-        td
-            padding: 0.5rem
-            text-align: center
+    //     td
+    //         padding: 0.5rem
+    //         text-align: center
 
-        tr:nth-child(odd)
-            background: #ccc
+    //     tr:nth-child(odd)
+    //         background: #ccc
 
-        tr:nth-child(1)
-            background: #444
-            td
-                color: white
-            font-size: 1.1rem
+    //     tr:nth-child(1)
+    //         background: #444
+    //         td
+    //             color: white
+    //         font-size: 1.1rem
 
     @media screen and (max-width: 50rem)
         .location
@@ -116,27 +125,27 @@
                 display: inline-block
                 padding-left: 2rem
 
-        .medal-stats
-            flex-direction: column
+        // .medal-stats
+        //     flex-direction: column
 
-            .athletes
-                margin-top: 3rem
+        //     .athletes
+        //         margin-top: 3rem
                 
-            table
-                width: 100%
-                overflow: scroll
+        //     table
+        //         width: 100%
+        //         overflow: scroll
 
-            a
-                font-size: 0.9rem
+        //     a
+        //         font-size: 0.9rem
             
-            td
-                padding: 0.5rem 0
+        //     td
+        //         padding: 0.5rem 0
 
-            td:nth-child(1)
-                display: none
+        //     td:nth-child(1)
+        //         display: none
 
-            tr:nth-child(1)
-                font-size: 1rem
+        //     tr:nth-child(1)
+        //         font-size: 1rem
             
-            .medal
-                transform: scale(0.7)
+        //     .medal
+        //         transform: scale(0.7)
