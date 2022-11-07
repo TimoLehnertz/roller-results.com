@@ -2052,13 +2052,22 @@ function getWorldMovement() {
 }
 
 function getCompAthleteMedals($idComp) {
-    // $res = query("SELECT * FROM vCompAthleteMedals WHERE idCompetition = ?;", "i", $idComp);
     $res = query("CALL sp_getCompAthleteMedals(?)", "i", $idComp);
     if(sizeof($res) > 0){
         return $res;
     } else{
         return [];
     }
+}
+
+
+function getCompMedals($idComp) {
+    return query("SELECT res.place, athlete.id idAthlete, athlete.firstname, athlete.lastname, athlete.image, athlete.country, race.id idRace, race.distance, race.category, race.gender
+        FROM TbCompetition comp
+        JOIN TbRace race ON race.idCompetition = comp.idCompetition
+        JOIN TbResult res ON res.idRace = race.id
+        JOIN TbAthlete athlete ON athlete.id = res.idPerson
+        WHERE comp.idCompetition=? AND res.place BETWEEN 1 AND 3;", "i", $idComp);
 }
 
 function getCompCountryMedals($idComp) {
