@@ -216,11 +216,11 @@ foreach ($bestAthletes as $athlete) {
                 for (const medal of medals) {
                     if(!categories.includes(medal.category)) categories.push(medal.category);
                 }
-                let first = true;
+                // let first = true;
                 for (const category of categories) {
                     $(".categories").append(`<input type="checkbox" class="category" name="category" value="${category}" id="${category}" ${category.toLowerCase() == "senior" || category.toLowerCase() == "sen" ? "checked" : ""}><label for="${category}">${category}</label>`);
                     $(".categories").find(`#${category}`).on("change", updateStatistics);
-                    first = false;
+                    // first = false;
                 }
                 $("input[name=type]").on("change", updateStatistics);
                 updateStatistics();
