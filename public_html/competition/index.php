@@ -218,7 +218,7 @@ foreach ($bestAthletes as $athlete) {
                 }
                 let first = true;
                 for (const category of categories) {
-                    $(".categories").append(`<input type="checkbox" class="category" name="category" value="${category}" id="${category}" ${first ? "checked" : ""}><label for="${category}">${category}</label>`);
+                    $(".categories").append(`<input type="checkbox" class="category" name="category" value="${category}" id="${category}" ${category.toLowerCase() == "senior" || category.toLowerCase() == "sen" ? "checked" : ""}><label for="${category}">${category}</label>`);
                     $(".categories").find(`#${category}`).on("change", updateStatistics);
                     first = false;
                 }
@@ -234,7 +234,9 @@ foreach ($bestAthletes as $athlete) {
                         allowedCategories.push($(this).val());
                     }
                 });
-                console.log(allowedCategories);
+                if(allowedCategories.length == 0) {
+                    allowedCategories.push("all");
+                }
                 if(allowedCategories.includes("All")) return [...medals];
                 for (const medal of medals) {
                     if(allowedCategories.includes(medal.category)) {
