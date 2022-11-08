@@ -79,7 +79,11 @@ if(validateObjectProperties($_POST, [
 }
 $leaflet = true; // enable leafleft
 include_once "../header.php";
-?>
+if(isset($_GET["id"])) { ?>
+    <script>
+        const focusOnPlace = <?=htmlentities($_GET["id"])?>
+    </script>
+<?php } ?>
 <main>
     <section class="section light">
         <h1>Track map</h1>
@@ -242,6 +246,17 @@ for (const place of places) {
     place.marker = marker;
     marker.bindPopup(html);
     place.marker = marker;
+    if(focusOnPlace == place.idPlaces) {
+        focus(place);
+    }
+    marker.on("click", () => {
+        history.pushState(null, '', "/track-map/index.php?id="+place.idPlaces);
+    })
+}
+
+function focus(place) {
+    map.setView([place.latitude, place.longitude], 10);
+    seeMore(place.idPlaces, false);
 }
 
 console.log(places);
@@ -289,7 +304,7 @@ function getPlaceById(idPlace) {
     }
 }
 
-function seeMore(idPlace) {
+function seeMore(idPlace, scroll = true) {
     const p = getPlaceById(idPlace);
     if(!p) return;
     $(".see-more").empty();
@@ -304,7 +319,9 @@ function seeMore(idPlace) {
         $(".see-more").append(`<a href="${p.videoLink}">Video link</a>`);
     }
     $(".see-more").append(`<p>Famous people: ${p.famousPeople ?? "-"}</p>`);
-    $(".see-more")[0].scrollIntoView({block: "center", inline: "nearest"});
+    if(scroll) {
+        $(".see-more")[0].scrollIntoView({block: "center", inline: "nearest"});
+    }
     if(phpUser.loggedIn) {
         const editBtn = $(`<button class="btn create blue">Edit information</button>`);
         $(".see-more").append(editBtn);

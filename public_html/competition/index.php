@@ -261,12 +261,23 @@ foreach ($bestAthletes as $athlete) {
                     rankings.push(newRanking);
                     return newRanking;
                 }
+                const countedMedals = [];
                 for (const medal of medals) {
                     const ranking = rankingByMedal(medal);
-                    switch(medal.place) {
-                        case 3: ranking.bronze++; break;
-                        case 2: ranking.silver++; break;
-                        case 1: ranking.gold++; break;
+                    let medalCounted = false;
+                    for (const countedMedal of countedMedals) {
+                        if(countedMedal.place == medal.place && countedMedal.idRace == medal.idRace) {
+                            medalCounted = true;
+                            break;
+                        }
+                    }
+                    if(!medalCounted) {
+                        switch(medal.place) {
+                            case 3: ranking.bronze++; break;
+                            case 2: ranking.silver++; break;
+                            case 1: ranking.gold++; break;
+                        }
+                        countedMedals.push(medal);
                     }
                     ranking.medalCount++;
                     ranking.medals.push(medal);
