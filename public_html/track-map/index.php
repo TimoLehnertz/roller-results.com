@@ -79,11 +79,10 @@ if(validateObjectProperties($_POST, [
 }
 $leaflet = true; // enable leafleft
 include_once "../header.php";
-if(isset($_GET["id"])) { ?>
-    <script>
-        const focusOnPlace = <?=htmlentities($_GET["id"])?>
-    </script>
-<?php } ?>
+?>
+<script>
+    const focusOnPlace = <?=htmlentities($_GET["id"] ?? "-1")?>
+</script>
 <main>
     <section class="section light">
         <h1>Track map</h1>
