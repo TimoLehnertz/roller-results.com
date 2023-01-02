@@ -1,25 +1,46 @@
 <?php
+
+/**
+ * Index page of performance feature
+ * 
+ * Displays an overview of the logged in profile showing all reached goals and a list of all performance categories
+ * When not logged in this site will only show a mark up and redirect to login as performance groups are only to be used with a valid account
+ */
+
 $noHeaderSearchBar = true;
+// Include the header file for the page
 include_once "../header.php";
+// Include necessary API and error handling files
 include_once "../api/index.php";
 include_once "../includes/error.php";
 
-
+// retrieve current user from DB if logged in
+// Initialize an array to store the user's information
+// If the user is logged in, retrieve their information from the database
+// Otherwise, use default values for the user's image and name
 $user = ["image" => defaultProfileImgPath("m")];
 if(isLoggedIn()) {
     $user = getUser($_SESSION["iduser"]);
 }
 
+// Retrieve all performance categories from the database
 $categories = getPerformanceCategories();
+
+// Initialize variables to keep track of the number of goals and reached goals
 $goals = 0;
 $reached = 0;
+
+// Iterate through the performance categories to count the number of goals and reached goals
 foreach ($categories as $category) {
     if($category["goal"] != NULL && $category["goal"] != 0) $goals++;
     if($category["progress"] != NULL && $category["progress"] >= 1) $reached++;
 }
-// print_r($user);
+
+// Initialize a variable to determine whether to show activities for the first performance category
 $showActivities = false;
 $firstCategory;
+
+// If the user is logged in and there are performance categories available, get the full information for the first category
 if(isLoggedIn() && sizeof($categories) > 0) {
     $firstCategory = getFullperformanceCategory($categories[0]["idPerformanceCategory"]);
     foreach ($firstCategory["records"] as $record) {
@@ -30,9 +51,11 @@ if(isLoggedIn() && sizeof($categories) > 0) {
     }
 }
 
+// If there are records for the user in the first performance category, output a JavaScript variable containing the records
 if($showActivities) {
 ?>
 <script>
+    // Output the records for the first performance category as a JavaScript variable
     const records = <?=json_encode($firstCategory["records"])?>;
 </script>
 <?php } ?>
@@ -48,12 +71,14 @@ if($showActivities) {
                 <a class="btn create no-underline" href="upload.php">Upload</a>
                 <?php } ?>
             </div>
+            <!-- User's name and login form (if not logged in) -->
             <div>
                 <div>
                     <?php if(isLoggedIn()) { ?>
                     <p class="username"><?=$user["username"]?></p>
                     <p class="realname"><?=$user["firstname"] ?? ""?> <?=$user["lastname"] ?? ""?></p>
                     <?php } else { ?>
+                    <!-- Redirect back to this page after logging in -->
                     <form action="/login/index.php" method="POST">
                         <input type="text" name="returnTo" value="<?=$_SERVER["REQUEST_URI"]?>" hidden></input>
                         <button type="submit" name="submit" class="btn create">Log in</button>
@@ -61,16 +86,19 @@ if($showActivities) {
                     <?php } ?>
                 </div>
             </div>
+            <!-- Number of goals reached -->
             <div class="goals-wrapper">
                 <div class="goals">
                     <p><span class="number"><?=$reached?> / <?=$goals?></span> Personal goals reached</p>
                 </div>
             </div>
+            <!-- Link to upload page, displayed on desktop devices -->
             <div class="pc-upload">
                 <a class="btn default round no-underline no-border" href="upload.php">Upload new data</a>
             </div>
         </div>
         <div class="lower-section">
+             <!-- List of performance categories -->
             <div class="list">
                 <?php
                 foreach ($categories as $category) {

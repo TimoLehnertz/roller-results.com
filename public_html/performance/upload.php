@@ -1,24 +1,37 @@
 <?php
+// Set a variable to hide the search bar on this page
 $noHeaderSearchBar = true;
+
+// Include the API index file and error handling file
 include_once "../api/index.php";
 include_once "../includes/error.php";
 
+// Check if the user is logged in
 if(!isLoggedIn()) {
+    // If not, throw an error and redirect the user
     throwError($ERROR_LOGIN_MISSING, "/performance");
 }
 
+// Set the default metric and return link
 $metric = "Time (seconds)";
 $returnLink = "/performance";
+
+// Check if a performance category ID was passed through the URL
 if(isset($_GET["pid"])) {
+    // If so, set the return link to the performance page for that category
     $returnLink = "/performance/performance.php?id=".$_GET["pid"];
+    // Get the details for the specified performance category
     $performance = getPerformanceCategory($_GET["pid"]);
+    // Set the metric based on the category's type
     $metric = getPerformanceGroupTypelong($performance["type"])." (".getPerformanceGroupTypeMetricLong($performance["type"]).")";
 }
 
-
+// Set a default error status
 $error = false;
+
+// Check if the form has been submitted
 if(isset($_POST["submit"])) { // submit
-    // print_r($_POST);
+    // Validate the form input
     if(validateObjectProperties($_POST, [
         [
             "property" => "forWho",
@@ -38,14 +51,16 @@ if(isset($_POST["submit"])) { // submit
             "maxLength" => 2000
         ],
     ], false)) {
-        // print_r($_POST);
+        // Determine the user for the record
         $user = $_POST["user"] ?? $_SESSION["iduser"];
         if($_POST["forWho"] == "forMe") {
             $user = $_SESSION["iduser"];
         }
+        // Attempt to upload the performance record
         $succsess = uploadPerformanceRecord($_POST["idPerformanceCategory"], $user, $_POST["value"], $_POST["comments"], $_POST["date"]);
         if($succsess) {
             if(!(isset($_POST["upload-more"]) && $_POST["upload-more"] == "on")) {
+                // If the upload was successful, check if the user wants to upload more records
                 if(isset($_GET["gop"]) && isset($_GET["pid"])) {
                     header("location: /performance/performance.php?id=".$_GET["pid"]."&uploadSuccsess=1");
                 } else {
@@ -58,8 +73,10 @@ if(isset($_POST["submit"])) { // submit
     }
 }
 
+// Get the details for the current user
 $user = getUser($_SESSION["iduser"]);
 
+// Prepare an array of user data to pass to the JavaScript code
 $jsUser = [
     "id" => $user["iduser"],
     "image" => $user["image"],
@@ -68,6 +85,7 @@ $jsUser = [
 include_once "../header.php";
 ?>
 <script>
+// Pass the user data to the JavaScript code
 const user = <?=json_encode($jsUser)?>;
 const idPerformanceCategory = <?=$performance["idPerformanceCategory"] ?? null?>;
 </script>
@@ -195,10 +213,6 @@ const idPerformanceCategory = <?=$performance["idPerformanceCategory"] ?? null?>
 
     function validateForm() {
         let succsess = true;
-        // if(!forMe && !userSelected) {
-        //     $(".athlete-select").addClass("highlight")
-        //     succsess =  false;
-        // }
         if($("#idPerformanceCategory").val() == "-") {
             succsess =  false;
             $(".category-wrapper").addClass("highlight")

@@ -1,55 +1,77 @@
 <?php
-$noHeaderSearchBar = true;
+// Include necessary files
 include_once "../api/index.php";
 include_once "../includes/error.php";
 
-
+// Check if user is logged in
 if(!isLoggedIn()) {
+    // If not logged in, throw an error and redirect to /performance
     throwError($ERROR_LOGIN_MISSING, "/performance");
 }
 
+// Set error to false initially
 $error = false;
-if(isset($_POST["submit"])) { // submit
+
+// Check if form has been submitted
+if(isset($_POST["submit"])) { 
+    // Validate the submitted data
     if(validateObjectProperties($_POST, [
+        // Validate name
         [
             "property" => "name",
             "type" => "string",
             "minLength" => 1,
             "maxLength" => 50,
-        ], [
+        ], 
+        // Validate description
+        [
             "property" => "description",
             "type" => "string",
             "maxLength" => 200,
-        ], [
+        ], 
+        // Validate type
+        [
             "property" => "type",
             "type" => "string",
             "minLength" => 1
-        ], [
+        ], 
+        // Validate users
+        [
             "property" => "users",
             "type" => "string",
         ],
     ], false)) {
+        // Decode the users array from JSON
         $users = json_decode($_POST["users"]);
+        // Create the performance category
         $idPerformanceCategory = createPerformanceCategory($_POST["name"], $_POST["description"], $_POST["type"], $users);
         if($idPerformanceCategory != false) {
+            // Check if upl GET parameter is set
             if(isset($_GET["upl"])) {
+                // Redirect to upload.php with pid parameter set to the ID of the newly created performance category
                 header("location: upload.php?pid=$idPerformanceCategory");
             } else {
+                // Redirect to /performance/performance.php with id and createSuccsess parameters set
                 header("location: /performance/performance.php?id=$idPerformanceCategory&createSuccsess=1");
             }
         } else {
+            // Set error to true if createPerformanceCategory returns false
             $error = true;
         }
     }
 }
 
+// Get the user's information
 $user = getUser($_SESSION["iduser"]);
 
+// Create an array with the user's information
 $jsUser = [
     "id" => $user["iduser"],
     "image" => $user["image"],
     "name" => "You"
 ];
+
+// Include the header file
 include_once "../header.php";
 ?>
 <script>const user = <?=json_encode($jsUser)?>;</script>

@@ -1,18 +1,27 @@
 <?php
+// Include the API and error handling files
 include_once "../api/index.php";
 include_once "../includes/error.php";
+
+// Check if the user is logged in
 if(!isLoggedIn()) {
+    // If not, redirect to the performance page and throw an error
     throwError($ERROR_LOGIN_MISSING, "/performance");
 }
 
+// Check if the ID parameter is present in the URL
 if(!isset($_GET["id"])) {
+    // If not, throw an invalid arguments error and redirect to the performance page
     throwError($INVALID_ARGUMENTS, "/performance");
 }
 
+// Initialize variables to store any errors that may occur
 $goalError = "";
 $editError = "";
 
+// Check if the form has been submitted
 if(isset($_POST["submit"])) {
+    // Validate the form input
     if(validateObjectProperties($_POST, [
         [
             "property" => "set-goal",
@@ -27,6 +36,7 @@ if(isset($_POST["submit"])) {
         }
     }
 
+     // Validate the form input
     if(validateObjectProperties($_POST, [
         [
             "property" => "name",
@@ -46,11 +56,16 @@ if(isset($_POST["submit"])) {
     }
 }
 
+// If the performance category does not exist, throw a no permission error and redirect to the performance page
 $performance = getFullperformanceCategory($_GET["id"]);
 if(!$performance) {
     throwError($ERROR_NO_PERMISSION, "/performance");
 }
+
+// Initialize a variable to store the text for the number of records
 $recordsText = "no records yet";
+
+// Set the text based on the number of records
 if(sizeof($performance["records"]) == 1) {
     $recordsText = "1 record";
 }
