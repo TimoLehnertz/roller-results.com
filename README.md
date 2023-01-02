@@ -53,3 +53,7 @@ React TS / (PHP?) / Java
 - needs heavy optimization
 
 ## parralel with old version
+ 
+## Front end
+True modular design!
+Has to be leight weight
