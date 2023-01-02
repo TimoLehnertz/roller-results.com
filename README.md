@@ -27,10 +27,10 @@ $dBPwd = "";
  - You should now have a working instance of roller results on your pc
 
 
-#Roller results V2
+# Roller results V2
 Collection of ideas for roller results V2
 
-##standarized formats for events, races, results etc. used for format for import, export, APIs
--Json
--Extendable
--performant
+## standarized formats for events, races, results etc. used for format for import, export, APIs
+- Json
+- Extendable
+- performant
