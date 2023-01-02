@@ -34,3 +34,22 @@ Collection of ideas for roller results V2
 - Json
 - Extendable
 - performant
+
+## type safe programming language
+React TS / (PHP?) / Java
+
+##Better seperation of front and back end
+ 
+## More performance
+- Must run on shitty internet / Devices
+
+## More flexible
+- optimized for live and past results
+- push notifications
+- Colabs with live systems
+- Handle much more data
+ 
+## Database MySQL?
+- needs heavy optimization
+
+## parralel with old version
