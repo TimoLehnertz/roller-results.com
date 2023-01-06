@@ -25,3 +25,35 @@ $dBUsername = "root";
 $dBPwd = "";
 ?>`
  - You should now have a working instance of roller results on your pc
+
+
+# Roller results V2
+Collection of ideas for roller results V2
+
+## standarized formats for events, races, results etc. used for format for import, export, APIs
+- Json
+- Extendable
+- performant
+
+## type safe programming language
+React TS / (PHP?) / Java
+
+##Better seperation of front and back end
+ 
+## More performance
+- Must run on shitty internet / Devices
+
+## More flexible
+- optimized for live and past results
+- push notifications
+- Colabs with live systems
+- Handle much more data
+ 
+## Database MySQL?
+- needs heavy optimization
+
+## parralel with old version
+ 
+## Front end
+True modular design!
+Has to be leight weight
