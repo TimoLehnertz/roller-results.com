@@ -1,0 +1,13 @@
+In Deutschland gibt es eine Reihe von gesetzlichen Vorschriften, die sich auf den Schutz von Umwelt und Ressourcen beziehen. Einige der für das Projekt relevanten Vorschriften sind die folgenden: 
+
+Das Gesetz über die Energieeinsparung (EnEG) enthält Bestimmungen zur Energieeinsparung in Gebäuden und Anlagen. Diese Vorschriften könnten bei der Planung und im Betrieb berücksichtigt werden, indem beispielsweise energieeffiziente Geräte und Technologien verwendet werden. 
+
+Das Kreislaufwirtschaftsgesetz (KrWG) regelt die Verantwortung von Unternehmen für die Entsorgung von Abfällen und den Schutz der Umwelt. Diese Vorschriften empfehlen auf umweltfreundliche Verpackungen zu achten und den Einsatz von Recyclingmaterialien zu favorisieren. 
+
+Die Energieeinsparverordnung (EnEV) enthält Vorschriften zur Energieeinsparung in Gebäuden und Anlagen. Auch hier könnten bei der Planung und im Betrieb Maßnahmen ergriffen werden, um Energie einzusparen. Beispielsweise können durch den Einsatz von energiesparenden Lampen, oder der Nutzung von Solarenergie Energiekosten gesenkt werden. 
+
+Durch den Einsatz von energie- und ressourcenschonenden Technologien können diese Bestimmungen erreicht werden. Beispielsweise können energieeffiziente Geräte, wie Server mit hohem Energieeffizienzindex, oder der Einsatz von Solarenergie zur Stromerzeugung eingesetzt werden, um Energie zu sparen und den CO2-Ausstoß zu reduzieren. Auch der Einsatz von Recyclingmaterialien und energie-sparenden LED-Lampen tragen dazu bei, Ressourcen zu schonen und Nachhaltigkeit zu fördern. 
+
+Es gibt bereits eine Reihe von vergleichbaren Projekten, wie beispielsweise das EPD (Elektronisches Patienten-Dossier), das PVS (Patientenverwaltungssystem), ELGA (Elektronische Gesundheitsakte) oder die eHealth-Plattform. Jedes dieser Systeme hat seine eigenen Ansätze und Lösungen, wie sie mit dem Aspekt Umwelt umgehen. Die Einzelheiten dazu sind nicht öffentlich kommuniziert. 
+
+Es ist erstrebenswert, dass das Projekt der elektronischen Patientenakte nicht nur den gesetzlichen Vorschriften entspricht, sondern auch auf nachhaltige Weise geplant und betrieben wird. Auf diese Weise kann nicht nur den gesetzlichen Anforderungen gerecht werden, sondern auch einen Beitrag zum Schutz von Umwelt und Ressourcen leisten. 
