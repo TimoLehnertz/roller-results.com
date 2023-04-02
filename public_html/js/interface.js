@@ -561,6 +561,7 @@ function getRaceTable(parent, race) {
     let useDisqualificationSportsFault = false;
     let useDisqualificationTechnicalFault = false;
     let useTime = false;
+    let useLaps = false;
     let usePoints = false;
     let useDNS = false;
 
@@ -573,6 +574,9 @@ function getRaceTable(parent, race) {
         if(result.time && result.time.length > 0) {
             result.time = preprocessTime(result.timeDate);
             useTime = true;
+        }
+        if(result.laps) {
+            useLaps = true;
         }
         if(result.points && parseInt(result.points) > 0) usePoints = true;
         if(result.didNotStart == "1") useDNS = true;
@@ -607,16 +611,6 @@ function getRaceTable(parent, race) {
     table.setup({
         layout: {
             place: {allowSort: true, displayName: ""},
-            time: {
-                displayName: "Time",
-                allowSort: true,
-                use: useTime
-            },
-            points: {
-                displayName: "Points",
-                allowSort: true,
-                use: usePoints
-            },
             profiles: {
                 displayName: "Athlete/s",
                 allowSort: false
@@ -624,6 +618,20 @@ function getRaceTable(parent, race) {
             country: {
                 displayName: "",
                 allowSort: false
+            },
+            time: {
+                displayName: "Time",
+                allowSort: true,
+                use: useTime
+            },
+            laps: {
+                displayName: "Laps",
+                use: useLaps
+            },
+            points: {
+                displayName: "Points",
+                allowSort: true,
+                use: usePoints
             },
             didNotStart: {
                 displayName: "DNS",
@@ -1100,6 +1108,7 @@ function metersFromDistance(distance) {
 }
 
 function indexFromCategory(category) {
+    console.log(category);
     if(!category) return 0;
     category = category.toLowerCase();
     if(category.includes("schüler")) return 1;
@@ -1107,7 +1116,7 @@ function indexFromCategory(category) {
     else if(category.includes("cadet") || category.includes("kadetten")) return 3;
     else if(category.includes("junior") || category.includes("junioren")) return 4;
     else if(category.includes("senior") || category.includes("aktive")) return 5;
-    else if(category.includes("masters")) return 6;
+    else if(category.includes("masters") || /^ak( )?\d\d/gmi.test(category)) return 6;
     return 0;
 }
 
@@ -1144,17 +1153,107 @@ function getUncheckedElem() {
     return elem;
 }
 
+let loadedRaceSeries = undefined;
+let raceSeriesCallbacks = [];
+
+function getRaceSeries(callback) {
+    if(loadedRaceSeries === null) return callback(false, null);
+    if(loadedRaceSeries !== undefined) return callback(true, loadedRaceSeries);
+    raceSeriesCallbacks.push(callback);
+    if(raceSeriesCallbacks.length === 1) {
+        get('raceSeries').receive((succsess, raceSeries) => {
+            if(!succsess) {
+                loadedRaceSeries = null;
+                for (const callback of raceSeriesCallbacks) {
+                    callback(false, null);
+                }
+                return;
+            }
+            loadedRaceSeries = raceSeries;
+            for (const callback of raceSeriesCallbacks) {
+                callback(true, loadedRaceSeries);
+            }
+        });
+    }
+}
+
 /**
  * 
  * @param {*} race Race object
  * @param {*} results optional results object. if not given this will be fetched from the backend
  * @returns 
  */
-function getRaceElem(race, results) {
+function getRaceElem(race, results, useIdCompetition = false) {
     if(results !== undefined) {
         race.results = results;
     }
-    const head = $(`<div class="race flex align-center justify-space-between padding right ${race.gender}"><span>${race.distance} ${race.trackStreet} ${race.category} ${race.gender?.toLowerCase() == "m" ? "Men" : "Women"} ${race.round ?? ""}</span></div>`)
+    const head = $(`<div class="race flex justify-left align-start gap padding right ${race.gender}"><span>${useIdCompetition ? race.idCompetition : ''} ${race.distance} ${race.trackStreet} ${race.category} ${race.gender?.toLowerCase() == "m" ? "Men" : "Women"} ${race.round ?? ""}</span></div>`)
+    if(phpUser.isAdmin) {
+        const dropdownElem = $('<Button class="btn blender alone font size medium">Race Series</Button>');
+        head.prepend(dropdownElem);
+        const dropdownSetup = [];
+        
+        const raceSeriesDropdown = new Dropdown(dropdownElem, [ { element: { data: "Loading series..." } } ]);
+        raceSeriesDropdown.setup({
+            name: 'Add to series'
+        });
+        getRaceSeries((succsess, raceSeries) => {
+            if(!succsess) {
+                raceSeriesDropdown.content = [
+                    {
+                        element: {
+                            data: "An error occoured",
+                        },
+                    }
+                ];
+                return;
+            }
+            let seriesCount = 0;
+            raceSeriesDropdown.content = [];
+            for (const raceSerie of raceSeries) {
+                let inSeries = false;
+                for (const idRace of raceSerie.idRaces) {
+                    if(race.id === idRace) {
+                        inSeries = true;
+                        seriesCount++;
+                    }
+                }
+                const li = {
+                    element: {
+                        data: `${raceSerie.year} ${raceSerie.name} | (${inSeries ? `Remove` : `Add`})`,
+                        onclick: (elem) => {
+                            raceSeriesDropdown.close();
+                            console.log(elem);
+                            const adderRemover = inSeries ? 'removeRaceFromSeries' : 'addRaceToSeries';
+                            get(adderRemover, { idRace: race.id, idRaceSeries: raceSerie.idRaceSeries}).receive((succsess, response) => {
+                                if(succsess) {
+                                    // alert('succsess');
+                                    if(inSeries) {
+                                        seriesCount--;
+                                    } else {
+                                        seriesCount++;
+                                    }
+                                    if(seriesCount > 0) {
+                                        dropdownElem.css('backgroundColor', '#305581');
+                                    } else {
+                                        dropdownElem.css('backgroundColor', '#747474');
+                                    }
+                                    inSeries = !inSeries;
+                                    li.element.data = `${raceSerie.year} ${raceSerie.name} | (${inSeries ? `Remove` : `Add`})`;
+                                } else {
+                                    alert('Error');
+                                }
+                            });
+                        }
+                    },
+                }
+                raceSeriesDropdown.content.push(li);
+            }
+            if(seriesCount > 0) {
+                dropdownElem.css('backgroundColor', '#305581');
+            }
+        });
+    }
     if(!race.checked) {
         head.append(getUncheckedElem());
     }

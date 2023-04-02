@@ -485,7 +485,7 @@ class Accordion {
             this.body.css("margin-left", "3rem");
         }
         this.head.css("width", "100%");
-        this.head.click(() => {
+        this.elem.find(".accordion__head").click(() => {
             this.toggle();
         });
         if(this.extended) {
@@ -905,9 +905,12 @@ class Dropdown{
     }
 
     /**
-     * init (caled last by constructor)
+     * init (called last by constructor)
      */
     init(noPositionRelative) {
+        if(this.dropDownElem) {
+            this.dropDownElem.remove();
+        }
         this.dropDownElem = $(`<div class="${Dropdown.dropdownClass} ${this.customClass != undefined ? this.customClass : ""}"></div>`);
         // this.dropDownElem.append(this.content);
         /**
@@ -928,6 +931,11 @@ class Dropdown{
      * Initiate open and close events
      */
     initEvents(){
+        $(this.dropDownElem).click((e) => {
+            // this.toggle();
+            e.stopPropagation();
+        });
+        if(this.eventsInitiated) return;
         $(window).click(() => {
             this.close();
         });
@@ -935,10 +943,7 @@ class Dropdown{
             this.toggle();
             e.stopPropagation();
         });
-        $(this.dropDownElem).click((e) => {
-            // this.toggle();
-            e.stopPropagation();
-        });
+        this.eventsInitiated = true;
     }
 
     toggle() {
@@ -969,11 +974,11 @@ class Dropdown{
         // this.dropDownElem.find(`div.${Dropdown.nameClass}`).css("display", "none");
         if(Array.isArray(object)){
             // this.path.push(object);
-            if(this.name != undefined){
+            if(this.name !== undefined){
                 this.dropDownElem.append(`<div class="${Dropdown.nameClass}">${this.name}</div>`);
             }
-            if(this.parentObj != undefined) {
-                if(object != this.content) {
+            if(this.parentObj !== undefined) {
+                if(object !== this.content) {
                     this.dropDownElem.append(this.getBackButton());
                 }
             }

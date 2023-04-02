@@ -125,6 +125,9 @@ if(!$embed) { // hide header if beeing embedded
                 <li>
                     <a href="/blog"><i class="fa fa-brands fa-stack-exchange margin right"></i>Features</a>
                 </li>
+                <li>
+                    <a href="/race-series"><i class="fa fa-brands fa-stack-exchange margin right"></i>Race Series</a>
+                </li>
                 <!-- <li>
                     <a href="/music"><i class="fa fa-solid fa-music margin right"></i>Music</a>
                 </li> -->

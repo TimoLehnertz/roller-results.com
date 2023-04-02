@@ -6,9 +6,15 @@ $bg-color-zebra: #CCC
     color: #222
     border-collapse: collapse
     background-color: $bg-color
-    overflow: auto
+    overflow-x: auto
     // table-layout: fixed
-    // width: 100%
+    width: fit-content
+    display: block
+    max-width: 100%
+    white-space: nowrap
+
+    tr
+        width: 100%
 
     td + td
         border-left: 1px solid $border-color

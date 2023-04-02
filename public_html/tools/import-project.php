@@ -13,7 +13,7 @@ $canUpload = isLoggedIn();
 function echoCompsSelect() {
     $comps = getAllCompetitions();
     echo "<select onchange='compChanged()' class='comps-select' style='max-width: 15rem;'>";
-    echo "<option value='-1234'>select</option>";
+    echo "<option value='-1234'>Use from result</option>";
     // var_dump($comps);
     foreach ($comps as $comp) {
         $type = $comp["type"];
@@ -200,6 +200,11 @@ function echoAliasSelect() {
             <p>If this is your first time uploading results simply create a new Alias and dont worry about it yet.<br>
             If you uploaded results before and you are uploading again use the old alias if the skaters in your result are stil racing with the same athleteId(numbers)</p>
         </div>
+        <br>
+        <!-- <p>
+            <input type="checkbox" id="merge-races">
+            <label for="merge-races">Merge all results into one race</label>
+        </p> -->
     </div>
     <div class="section dark">
         <h2 class="align center">Step 3: <span class="font size medium margin left">Select results</span></h2>
@@ -215,6 +220,19 @@ function echoAliasSelect() {
         <input type="checkbox" name="limitResults" id="limitResults"><br>
         <label for="maxRows">Max rows</label>
         <input type="number" name="maxRows" id="maxRows" value="10">
+        <p>
+            <p>Seperate races By:</p>
+            <label for="distance">Distance</label>
+            <input type="checkbox" id="distance" checked><br>
+            <label for="gender">Gender</label>
+            <input type="checkbox" id="gender" checked><br>
+            <label for="relay">Relay</label>
+            <input type="checkbox" id="relay" checked><br>
+            <label for="category">Category</label>
+            <input type="checkbox" id="category" checked><br>
+            <label for="trackStreet">Track/Street</label>
+            <input type="checkbox" id="trackStreet" checked><br>
+        </p>
     </div>
     <div class="section light">
         <h2 class="align center">Step 4: <span class="font size medium margin left">Link athletes</span></h2>
@@ -229,7 +247,7 @@ function echoAliasSelect() {
         <p class="remove-me-on-athlete-finish">Save athletes to proceed</p>
         <div class="race-preview flex mobile align-start">
             <div>
-                <h3>Existing races: <button disabled class="update-existing-btn btn blender alone" onclick="updateExistingRaces()">Refresh</button></h3>
+                <!-- <h3>Existing races: <button disabled class="update-existing-btn btn blender alone" onclick="updateExistingRaces()">Refresh</button></h3> -->
                 <div class="existing-races"></div>
             </div>
             <div>
@@ -578,10 +596,10 @@ function getCountrySelect() {
 
 function compChanged() {
     const idCompetition = $(".comps-select").val();
-    $(".alias-select").attr("disabled",     idCompetition == "-1234");
-    $("#newAliasName").attr("disabled",     idCompetition == "-1234");
-    $("#createAliasBtn").attr("disabled",   idCompetition == "-1234");
-    $("#fileUpload").attr("disabled",   idCompetition == "-1234");
+    // $(".alias-select").attr("disabled",     idCompetition == "-1234");
+    // $("#newAliasName").attr("disabled",     idCompetition == "-1234");
+    // $("#createAliasBtn").attr("disabled",   idCompetition == "-1234");
+    // $("#fileUpload").attr("disabled",   idCompetition == "-1234");
 
     if(idCompetition != "-1234" && idCompetition != null) {
         sessionStorage.setItem('importScriptIdCompetition', idCompetition);
@@ -608,7 +626,7 @@ function updateExistingRaces() {
 }
 
 function aliasChanged() {
-    $("#fileUpload").attr("disabled", $(".alias-select").val() == "-1234" || $(".alias-select").val() == null);
+    // $("#fileUpload").attr("disabled", $(".alias-select").val() == "-1234" || $(".alias-select").val() == null);
     if($(".alias-select").val() != "-1234") {
         sessionStorage.setItem('importScriptAliasGroup', $(".alias-select").val());
     }
@@ -643,7 +661,7 @@ function process(search, aliasGroup) {
     athletesProcessing = true;
     $(".preview").empty();
     const loadingBar = new LoadingBar();
-    let remaining = parseInt(athletes.length * 0.35);
+    let remaining = parseInt(athletes.length * 0.45);
     $(".preview").append(`<p>This will take about <span class="remaining"></span> seconds</p>`)
     $(".preview").append(loadingBar.elem);
     let interval;
@@ -1069,6 +1087,11 @@ function checkNewAthlete(athlete, i) {
             required: true,
             allowed: ["m", "w", "d"]
         },
+        DRIVlicence: {
+            type: "string",
+            required: false,
+            maxLength: 100
+        }
     }, i);
 }
 
@@ -1095,10 +1118,12 @@ function apply(aliasGroup) {
         return;
     }
     let i = 0;
+    // let missingAliases = 0;
     for (const athlete of athletes) {
         if(athlete.linkId == "-1234") return alert(`Invalid id given for ${i + 1}th athlete!`);
         if(athlete.createNew && !checkNewAthlete(athlete.newAthlete, i)) return false;
         if(!athlete.search.alias && !athlete.search.id) {
+            // missingAliases++;
             alert("No alias given for " + athlete.search.firstName + " " + athlete.search.lastName);
             return;
         }
@@ -1141,7 +1166,16 @@ function apply(aliasGroup) {
         $(".save-athletes-btn").attr("disabled", false);
         if(succsess) {
             $(".remove-me-on-athlete-finish").hide();
-            initStep5();
+            if(existingRaces !== undefined) {
+                initStep5();
+            } else {
+                loadExistingRacesFromComps(getCompIDsFromResults(results), (succsess) => {
+                    if(!succsess) {
+                        return alert("Please eather select a competition in step 1 or fill in 'idCompetition' for all reaults");
+                    }
+                    initStep5();
+                });
+            }
         } else {
             alert("An error occured");
         }
@@ -1149,19 +1183,42 @@ function apply(aliasGroup) {
     });
 }
 
+function getCompIDsFromResults(results) {
+    const idComps = [];
+    for (const result of results) {
+        if(result.idCompetition === undefined) return false;
+        if(!idComps.includes(result.idCompetition)) {
+            idComps.push(result.idCompetition);
+        }
+    }
+    return idComps;
+}
+
+function loadExistingRacesFromComps(idComps, callback) {
+    console.log(idComps);
+    if(idComps.length === 0) {
+        callback(false);
+    }
+    get('compsRaces', idComps.join(',')).receive((succsess, races) => {
+        if(!succsess) callback(false);
+        existingRaces = races;
+        console.log('fetched races from results idCompetitions', races);
+        callback(true);
+    });
+}
+
 function initStep5() {
     console.log("Initiating step 5");
-    hideUnrelevant();
-    if(existingRaces === undefined) return alert("Please select a competition in step 1 and try again");
+    // hideUnrelevant();
+    
     $(".existing-races").empty();
-    console.log("Existing races:", existingRaces)
     $(".existing-races").append(getRacesElem(existingRaces));
 
     // relinking athletes
     const aliasGroup = $(".alias-select").val();
     console.log("relinking athletes");
     get("aliasGroup", aliasGroup).receive((succsess, aliases) => {
-        console.log("allAliases:",aliases);
+        console.log("allAliases:", aliases);
         if(!succsess) {
             alert("Could not relink results to new athletes");
             return;
@@ -1195,11 +1252,15 @@ function initStep5() {
 /**
  * compares if right has all or more properties of left with the same value
  */
-function compareObjects(left, right) {
+function compareObjects(left, right, strict) {
     for (const key in left) {
         if (Object.hasOwnProperty.call(left, key)) {
             if(Array.isArray(left[key])) continue; //dont compare arrays
-            if(left[key] !== right[key]) return false;
+            if(strict) {
+                if(left[key] !== right[key]) return false;
+            } else {
+                if(left[key] != right[key]) return false;
+            }
         }
     }
     return true;
@@ -1389,6 +1450,7 @@ function initiateResults(loadedResults) {
             club: toTitleCase(result.club),
             team: toTitleCase(result.team),
             category: toTitleCase(result.category),
+            DRIVlicence: result.DRIVlicence ?? null,
         })
     }
     const aliasGroup = $(".alias-select").val();
@@ -1398,7 +1460,7 @@ function initiateResults(loadedResults) {
 
 function objectExistsInArr(a, arr) {
     for (const b of arr) {
-        if(compareObjects(a, b)) {
+        if(compareObjects(a, b, false)) {
             return true;
         }
     }
@@ -1413,6 +1475,7 @@ function raceFromResult(result) {
         isRelay: "0",
         trackRoad: "",
         round: "",
+        idCompetition: -1,
         results: []
     }
     takeFromRight(race, result);
@@ -1421,7 +1484,25 @@ function raceFromResult(result) {
 
 function raceByResult(result, races) {
     for (const race of races) {
-        if(compareObjects(race, result)) return race;
+        // if($('#merge-races').is(":checked")) return race; // take first
+        // if(compareObjects(race, result)) return race;
+        if(result?.idCompetition && (race?.idCompetition != result?.idCompetition)) continue;
+        if($("#distance").is(":checked")) {
+            if(race?.distance !== result?.distance) continue;
+        }
+        if($("#gender").is(":checked")) {
+            if(race?.gender !== result?.gender) continue;
+        }
+        if($("#relay").is(":checked")) {
+            if(race?.isRelay !== result?.isRelay) continue;
+        }
+        if($("#category").is(":checked")) {
+            if(race?.category !== result?.category) continue;
+        }
+        if($("#trackStreet").is(":checked")) {
+            if(race?.trackRoad !== result?.trackRoad) continue;
+        }
+        return race;
     }
     return false;
 }
@@ -1454,12 +1535,14 @@ function initRaces(results) {
         result.category = result.category.toLowerCase();
         result.gender = result.gender.toLowerCase();
         result.trackRoad = result.trackRoad.toLowerCase();
-        if(!objectExistsInArr(raceFromResult(result), quedRaces)) { // new race
+        // const mergeRaces = $('#merge-races').is(':checked');
+        // const canAddRace = !mergeRaces || quedRaces.length === 0;
+        if(!raceByResult(result, quedRaces)) { // new race
             const race = raceFromResult(result);
-            if(race.distance !== "") {
-                quedRaces.push(race);
-                race.results.push(result);
-            }
+            if(race.distance === "") continue;
+            if(!$("#category").is(":checked")) race.category = ''; // dont save category as it is probably could be mixed
+            race.results.push(result);
+            quedRaces.push(race);
         } else {
             const race = raceByResult(result, quedRaces);
             race.results.push(result);
@@ -1490,7 +1573,7 @@ function findExistingRace(race) {
     takeFromRight(testRace, race);
     for (const existing of existingRaces) {
         existing.trackRoad = existing.trackStreet;
-        if(compareObjects(testRace, existing)) {
+        if(compareObjects(testRace, existing, false)) {
             // console.log("existing:", testRace, existing);
             return existing;
         }
@@ -1503,7 +1586,10 @@ function uploadRace(race, callback) {
         log(race);
         return alert("no results for race");
     }
-    const idCompetition = $(".comps-select").val();
+    let idCompetition = $(".comps-select").val();
+    if(idCompetition == '-1234') {
+        idCompetition = race.idCompetition;
+    }
     console.log("uploading race:");
     log(race);
     $(".upload-bnt").attr("disabled", true); // disable all other upload buttons to prevent multiple failures
@@ -1554,9 +1640,10 @@ function addRaceToQue(race, idCompetition) {
     race = JSON.parse(JSON.stringify(race));
     race.trackStreet = race.trackRoad;
     race.checked = true; // remove unchecked flag for this area
-    race.raceYear = existingCompetition.startDate.split("-")[0];
-    race.location = existingCompetition.location;
-    const raceElem = getRaceElem(JSON.parse(JSON.stringify(race)), JSON.parse(JSON.stringify(race.results))); // copying results to prevent it from changing on gui side
+    // TODO CHeck auswirkungen
+    // race.raceYear = existingCompetition.startDate.split("-")[0];
+    // race.location = existingCompetition.location;
+    const raceElem = getRaceElem(JSON.parse(JSON.stringify(race)), JSON.parse(JSON.stringify(race.results)), true); // copying results to prevent it from changing on gui side
     race.raceElem = raceElem;
     $(".races-to-add").append(raceElem);
     const uploadBtn = $(`<button class="upload-bnt btn blender alone margin left">Upload(${race.results.length})</button>`);
@@ -1639,6 +1726,7 @@ function validateObject(object, settings, i) {
             propertySettings.required = propertySettings.required ?? false;
             propertySettings.type = propertySettings.type ?? "string";
             propertySettings.minLength = propertySettings.minLength ?? 0;
+            propertySettings.maxLength = propertySettings.maxnLength ?? null;
 
             if(propertySettings.required && (value == undefined || value == null)) {
                 if(object[propertySettings.alternative] == undefined) {
@@ -1662,6 +1750,7 @@ function validateObject(object, settings, i) {
                 object[property] = object[property].trim();
                 value = object[property];
                 if(value.length < propertySettings.minLength) return parseErrorAt(i, property + " should have at least " + propertySettings.minLength + " characters. " + value.length + " given");
+                if(propertySettings.maxLength && value.length > propertySettings.maxLength) return parseErrorAt(i, property + " should have at most " + propertySettings.maxLength + " characters. got " + value.length + " characters");
             }
             // alert too short values
             if(propertySettings.type === 'integer' && !Number.isInteger(parseFloat(value))) return parseErrorAt(i, `type of ${property} should be integer`);
@@ -1719,6 +1808,7 @@ function validateResultsFormat(results) {
             alternative: "startNumber",
         },
         startNumber: {
+            type: "string",
             required: false,
             minLength: 1,
         },
@@ -1726,17 +1816,17 @@ function validateResultsFormat(results) {
             type: "string",
             required: true,
             alternative: "fullName",
-            minLen: 1
+            minLength: 1
         },
         lastName: {
             type: "string",
             required: true,
             alternative: "fullName",
-            minLen: 1
+            minLength: 1
         },
         fullName: {
             required: false,
-            minLen: 1
+            minLength: 1
         },
         place: {
             required: true,
@@ -1779,8 +1869,17 @@ function validateResultsFormat(results) {
             required: false,
             default: "0",
             allowed: ["0", "1"]
+        },
+        laps: {
+            required: false,
+            type: "string",
+            maxLength: 5
+        },
+        DRIVlicence: {
+            required: false,
+            type: "string",
+            maxLength: 100
         }
-        // country: 3,
     }
     let i = 0;
     for (const result of results) {
@@ -1806,12 +1905,8 @@ const timeFormats = [
         toMysqlTime: (time) => "00:00:" + time,
     }, {
         format: "hh:mm:ss,uuu",
-        regex: "^(0?[0-9]|1[0-9]|2[1-4]):(0?[0-9]|[1-5][0-9]):(0?[0-9]|[1-5][0-9])\,(00[0-9]|0[0-9][0-9]|[0-9][0-9][0-9])$",
+        regex: "^[0-6]?[0-9]:[0-6]?[0-9]:[0-6]?[0-9]\,[0-9]?[0-9]?[0-9]$",
         toMysqlTime: (time) => time.replace(",", "."),
-    }, {
-        format: "mm:ss,uuu",
-        regex: "^(0?[0-9]|[1-5][0-9]):(0?[0-9]|[1-5][0-9])\,(00[0-9]|0[0-9][0-9]|[0-9][0-9][0-9])$",
-        toMysqlTime: (time) => "00:" + time.replace(",", "."),
     }, {
         format: "ss,uuu",
         regex: "^(0?[0-9]|[1-5][0-9])\,(00[0-9]|0[0-9][0-9]|[0-9][0-9][0-9])$",
@@ -1820,6 +1915,14 @@ const timeFormats = [
         format: "hh:mm",
         regex: "^(0?[0-9]|1[0-9]|2[1-4]):(0?[0-9]|[1-5][0-9])$",
         toMysqlTime: (time) => `${time}:00.000`,
+    }, {
+        format: "hh:mm:ss",
+        regex: "^[0-4]?[0-9]:[0-6]?[0-9]:[0-6]?[0-9]$",
+        toMysqlTime: (time) => `${time}.000`,
+    }, {
+        format: "mm:ss,uuu",
+        regex: "^[0-6]?[0-9]:[0-6]?[0-9],[0-9][0-9]?[0-9]?$",
+        toMysqlTime: (time) => `00:${time.replace(",", ".")}`,
     }
 ]
 

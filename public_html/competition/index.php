@@ -199,9 +199,7 @@ foreach ($bestAthletes as $athlete) {
             });
             
             comp.races.filter(race => race.resultCount > 0);
-            // for (const race of comp.races) {
-                $(".races-table").append(getRacesElem(comp.races));
-            // }
+            $(".races-table").append(getRacesElem(comp.races));
 
             function checkComp() {
                 if(!phpUser.isAdmin) return;
@@ -214,13 +212,19 @@ foreach ($bestAthletes as $athlete) {
             const categories = ["All"];
             function initMedals() {
                 for (const medal of medals) {
-                    if(!categories.includes(medal.category)) categories.push(medal.category);
+                    if(!categories.includes(medal.category.replace(/ /g,''))) categories.push(medal.category.replace(/ /g,''));
                 }
-                // let first = true;
+                let categoryCount = 0;
                 for (const category of categories) {
+                    if(!category || category.length === 0) continue;
+                    console.log(category);
                     $(".categories").append(`<input type="checkbox" class="category" name="category" value="${category}" id="${category}" ${category.toLowerCase() == "senior" || category.toLowerCase() == "sen" ? "checked" : ""}><label for="${category}">${category}</label>`);
                     $(".categories").find(`#${category}`).on("change", updateStatistics);
-                    // first = false;
+                    categoryCount++;
+                }
+                if(categoryCount == 1) {
+                    $("#All").prop('checked', true);
+                    $(".categories").hide();
                 }
                 $("input[name=type]").on("change", updateStatistics);
                 updateStatistics();

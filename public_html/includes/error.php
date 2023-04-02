@@ -55,7 +55,7 @@ function getErrormessage($errorCode){
 function throwError($errorCode, $location = "/index.php"){
     if(strpos($location, "?") !== false) {
         header("location: $location&error=$errorCode");
-    } else{
+    } else {
         header("location: $location?error=$errorCode");
     }
     exit(0);
