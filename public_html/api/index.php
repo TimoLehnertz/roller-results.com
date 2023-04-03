@@ -2597,15 +2597,17 @@ function calculateRaceSeries($id) {
         default:
             return false;
     }
-    // return calculateStrikeResults($raceSeries);
+    return calculateStrikeResults($raceSeries);
 }
 
 function calculateStrikeResults($raceSeries) {
-    $raceCount = query("SELECT TbRace.category, TbRace.gender, count(*) as `count` FROM TbRaceInSeries JOIN TbRace ON TbRace.id = TbRaceInSeries.race WHERE raceSeries = ? GROUP BY gender, category;", "i", $raceSeries["idRaceSeries"]);
-    print_r($raceCount);
-    $unStrikedCount = $raceCount - $raceSeries['strikeResults'];
+    // reset all
+    dbExecute("UPDATE TbRaceSeriesPoints SET strikeResultCategory=0, strikeResultOverall=0 WHERE raceSeries=?;", "i", $raceSeries["idRaceSeries"]);
+
+    $countedRaces = query("SELECT countedRaces FROM TbRaceSeries WHERE idRaceSeries = ?;", "i", $raceSeries["idRaceSeries"])[0]["countedRaces"];
+    
     // strikeResults Overall
-    $seriesPointsOverall = query("SELECT * FROM TbRaceSeriesPoints WHERE raceSeries = ? ORDER BY athlete, pointsOverall DESC;", 'i', $raceSeries["idRaceSeries"]);
+    $seriesPointsOverall = query("SELECT * FROM TbRaceSeriesPoints WHERE raceSeries = ? ORDER BY athlete DESC, pointsOverall DESC;", 'i', $raceSeries["idRaceSeries"]);
     $athlete = -1;
     $i = 0;
     $strikedIDs = [];
@@ -2614,7 +2616,7 @@ function calculateStrikeResults($raceSeries) {
             $i = 0;
             $athlete = $seriesPoint['athlete'];
         }
-        if($i >= $unStrikedCount) {
+        if($i >= $countedRaces) {
             $strikedIDs []= $seriesPoint['idRaceSeriesPoint'];
         }
         $i++;
@@ -2629,10 +2631,42 @@ function calculateStrikeResults($raceSeries) {
         $delimiter = ',';
         $fillers []= $strikedID;
     }
-    // if(sizeof($strikedIDs) > 0) {
-        print_r('UPDATE TbRaceSeriesPoints SET strikeResultOverall=1 WHERE idRaceSeriesPoint IN ('.$inList.');');
+    // print_r($strikedIDs);
+    if(sizeof($strikedIDs) > 0) {
+        // print_r('UPDATE TbRaceSeriesPoints SET strikeResultOverall=1 WHERE idRaceSeriesPoint IN ('.$inList.');');
         dbExecute('UPDATE TbRaceSeriesPoints SET strikeResultOverall=1 WHERE idRaceSeriesPoint IN ('.$inList.');', $types, ...$fillers);
-    // }
+    }
+
+    // strikeResults Category
+    $seriesPointsCategory = query("SELECT * FROM TbRaceSeriesPoints WHERE raceSeries = ? ORDER BY athlete DESC, pointsCategory DESC;", 'i', $raceSeries["idRaceSeries"]);
+    $athlete = -1;
+    $i = 0;
+    $strikedIDs = [];
+    foreach ($seriesPointsCategory as $seriesPoint) {
+        if($athlete !== $seriesPoint['athlete']) {
+            $i = 0;
+            $athlete = $seriesPoint['athlete'];
+        }
+        if($i >= $countedRaces) {
+            $strikedIDs []= $seriesPoint['idRaceSeriesPoint'];
+        }
+        $i++;
+    }
+    $types = '';
+    $fillers = [];
+    $inList = '';
+    $delimiter = '';
+    foreach ($strikedIDs as $strikedID) {
+        $types .= 'i';
+        $inList .= $delimiter.'?';
+        $delimiter = ',';
+        $fillers []= $strikedID;
+    }
+    // print_r($strikedIDs);
+    if(sizeof($strikedIDs) > 0) {
+        // print_r('UPDATE TbRaceSeriesPoints SET strikeResultOverall=1 WHERE idRaceSeriesPoint IN ('.$inList.');');
+        dbExecute('UPDATE TbRaceSeriesPoints SET strikeResultCategory=1 WHERE idRaceSeriesPoint IN ('.$inList.');', $types, ...$fillers);
+    }
     return true;
 }
 
@@ -2641,9 +2675,10 @@ function calculateWSC($raceSeries) {
     dbExecute("DELETE FROM TbRaceSeriesPoints WHERE raceSeries = ?", "i", $raceSeries["idRaceSeries"]);
     $raceCount = query("SELECT count(*) as `count` FROM TbRaceInSeries WHERE raceSeries = ?", "i", $raceSeries["idRaceSeries"])[0]["count"];
     // gather and orgabize results
-    $results = query("SELECT TbResult.place, TbResult.idPerson as idAthlete, TbResult.idRace, TbResult.category
+    $results = query("SELECT TbResult.place, TbResult.idPerson as idAthlete, TbResult.idRace, IFNULL(TbResult.category, race.category) as category
     FROM TbRaceInSeries
     JOIN TbResult ON TbResult.idRace = TbRaceInSeries.race
+    JOIN TbRace as race ON race.id = TbRaceInSeries.race
     WHERE raceSeries = ?
     ORDER BY idAthlete;", "i", $raceSeries["idRaceSeries"]);
     $athletes = [];
@@ -2655,19 +2690,20 @@ function calculateWSC($raceSeries) {
             $prevIdAthlete = $result["idAthlete"];
             $currentAthlete = ["results" => []];
         }
+        $currentAthlete['category'] = $result["category"];
         $currentAthlete["results"][$result["idRace"]] = ["placeOverall" => $result["place"], "pointsOverall" => calcWSCScore($result["place"])];
     }
     if($prevIdAthlete >= 0) $athletes[$prevIdAthlete] = $currentAthlete; // adding last athlete
     // get age categories
     foreach ($athletes as $idAthlete => $athlete) {
-        $athletes[$idAthlete]["category"] = 'none';
-        $res = query("SELECT category
-        FROM TbRaceInSeries JOIN TbResult ON TbResult.idRace = TbRaceInSeries.race
-        WHERE raceSeries = ? AND TbResult.category IS NOT NULL AND TbResult.idPerson = ?
-        LIMIT 1", "ii", $raceSeries["idRaceSeries"], $idAthlete);
-        if(sizeof($res) > 0) {
-            $athletes[$idAthlete]["category"] = $res[0]["category"];
-        }
+        // $athletes[$idAthlete]["category"] = 'none';
+        // $res = query("SELECT category
+        // FROM TbRaceInSeries JOIN TbResult ON TbResult.idRace = TbRaceInSeries.race
+        // WHERE raceSeries = ? AND TbResult.category IS NOT NULL AND TbResult.idPerson = ?
+        // LIMIT 1", "ii", $raceSeries["idRaceSeries"], $idAthlete);
+        // if(sizeof($res) > 0) {
+        //     $athletes[$idAthlete]["category"] = $res[0]["category"];
+        // }
     }
     // get category results
     foreach ($athletes as $idAthlete => $athlete) {
@@ -2675,8 +2711,8 @@ function calculateWSC($raceSeries) {
             if(isset($results["placeCategory"])) continue; // already calculated
             $categoryResults = query("SELECT idPerson
             FROM TbResult
-            WHERE TbResult.idRace = ? AND ((TbResult.category = ?) OR (? = 'none' AND TbResult.category IS NULL))
-            ORDER BY TbResult.place ASC;", "iss", $idRace, $athlete["category"], $athlete["category"]);
+            WHERE TbResult.idRace = ? AND (TbResult.category = ? OR TbResult.category IS NULL)
+            ORDER BY TbResult.place ASC;", "is", $idRace, $athlete["category"]);
             for ($i=0; $i < sizeof($categoryResults); $i++) {
                 $categoryResult = $categoryResults[$i];
                 $athletes[$categoryResult["idPerson"]]["results"][$idRace]["placeCategory"] = $i+1;
@@ -2696,12 +2732,11 @@ function calculateWSC($raceSeries) {
                 "pointsOverall" => $results["pointsOverall"],
                 "placeOverall" => $results["placeOverall"],
                 "placeCategory" => $results["placeCategory"],
+                "category" => $athlete["category"],
             ];
         }
     }
-    arrayInsert("TbRaceSeriesPoints", ["race", "athlete", "raceSeries", "pointsCategory", "pointsOverall", "placeOverall", "placeCategory"], "iiiiiii", $inserts);
-    // echo "<pre>";
-    // print_r($inserts);
+    arrayInsert("TbRaceSeriesPoints", ["race", "athlete", "raceSeries", "pointsCategory", "pointsOverall", "placeOverall", "placeCategory", "category"], "iiiiiiis", $inserts);
     return true;
 }
 
@@ -2728,6 +2763,10 @@ function getRaceSeries($id) {
     JOIN TbCompetition comp ON comp.idCompetition = TbRace.idCompetition
     WHERE raceSeries = ?
     ORDER BY comp.startDate ASC, TbRace.distance ASC, TbRace.gender DESC;", "i", $id);
+    $races = [];
+    foreach ($series["races"] as $race) {
+        $races[$race["id"]] = $race;
+    }
     // overall results
     $overallResults = query("SELECT SUM(CASE WHEN strikeResultCategory = 0 THEN pointsCategory ELSE 0 END) AS pointsCategory, SUM(CASE WHEN strikeResultOverall = 0 THEN pointsOverall ELSE 0 END) AS pointsOverall, TbAthlete.*, IFNULL(max(TbResult.category), max(TbRace.category)) as category
     FROM TbRaceSeriesPoints
@@ -2753,15 +2792,21 @@ function getRaceSeries($id) {
         $series["results"][$idAthlete]["placeOverall"] = strtolower($overallResult['gender']) === 'm' ? $placeMen++ : $placeWomen++;
         $series["results"][$idAthlete]["category"] = $category;
     }
-    // race results
-    foreach ($series["races"] as $race) {
-        $raceResults = query("SELECT athlete, pointsCategory, pointsOverall
-        FROM TbRaceSeriesPoints
-        WHERE race = ?;", "i", $race["id"]);
-        foreach ($raceResults as $raceResult) {
-            $raceName = $race["location"];
-            // $raceName = $race["location"].' '.$race["distance"];
+    // individual race results
+    $raceResults = query("SELECT athlete, pointsCategory, pointsOverall, strikeResultCategory, strikeResultOverall, race
+    FROM TbRaceSeriesPoints
+    WHERE raceSeries = ? ORDER BY race DESC;", "i", $id);
+    foreach ($raceResults as $raceResult) {
+        $race = $races[$raceResult["race"]];
+        $raceName = $race["location"];
+        if($raceResult["strikeResultOverall"]) {
+            $series["results"][$raceResult["athlete"]]["$raceName Overall"] = '('.$raceResult["pointsOverall"].')';
+        } else {
             $series["results"][$raceResult["athlete"]]["$raceName Overall"] = $raceResult["pointsOverall"];
+        }
+        if($raceResult["strikeResultCategory"]) {
+            $series["results"][$raceResult["athlete"]]["$raceName Category"] = '('.$raceResult["pointsCategory"].')';
+        } else {
             $series["results"][$raceResult["athlete"]]["$raceName Category"] = $raceResult["pointsCategory"];
         }
     }

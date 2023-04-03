@@ -339,12 +339,10 @@ function athleteDataToProfileData(athlete, useRank = false, alternativeRank = un
             galleryElem.find(".loading").remove();
             if(!succsess) return galleryElem.append(`<p class="font color red>Error occoured while fetching ${athlete.firstname} images. Try again later</p>"`);
             if(images.length == 0) {
-                console.log(athlete);
                 galleryElem.append(`<p class="margin left double">${athlete.firstname} didnt got tagged in any photos yet. Head ofer to the <a href="/gallery">gallery</a> and tag ${athlete?.gender?.toLowerCase() == "m" ? "him" : "her"}.</p>`);
                 return;
             }
             const flexElem = $(`<div class="top-3-images"></div>`);
-            console.log(images);
             let loadedAmount = 0;
             const load = function(amount) {
                 const loadUntil = loadedAmount + amount;
@@ -517,7 +515,6 @@ function getYtVideo(link) {
     }
     const head = $(`<div class="youtube-head"><i class="fab fa-youtube"></i><div class="margin left">${ids.length} ${text}</div></div>`);
     const body = $(`<div class="youtube-body"></div>`);
-    console.log("ids: ", ids);
     for (const id of ids) {
         body.append(
             `<iframe style="width: 100%;"src="https://www.youtube.com/embed/${id}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`
@@ -1108,7 +1105,6 @@ function metersFromDistance(distance) {
 }
 
 function indexFromCategory(category) {
-    console.log(category);
     if(!category) return 0;
     category = category.toLowerCase();
     if(category.includes("schüler")) return 1;
@@ -1223,7 +1219,6 @@ function getRaceElem(race, results, useIdCompetition = false) {
                         data: `${raceSerie.year} ${raceSerie.name} | (${inSeries ? `Remove` : `Add`})`,
                         onclick: (elem) => {
                             raceSeriesDropdown.close();
-                            console.log(elem);
                             const adderRemover = inSeries ? 'removeRaceFromSeries' : 'addRaceToSeries';
                             get(adderRemover, { idRace: race.id, idRaceSeries: raceSerie.idRaceSeries}).receive((succsess, response) => {
                                 if(succsess) {

@@ -35,7 +35,6 @@ echoRandWallpaper();
 ?>
 <script>
     const raceSeries = <?=json_encode($raceSeries)?>;
-    console.log(raceSeries);
 </script>
 <main class="main competitions-page">
     <div class="top-site">
@@ -43,14 +42,13 @@ echoRandWallpaper();
     </div>
     <svg xmlns="http://www.w3.org/2000/svg" fill="none" preserveAspectRatio="none" viewBox="0 0 1680 40" class="curvature" style="bottom: -1px;"><path d="M0 40h1680V30S1340 0 840 0 0 30 0 30z" fill="#ddd"></path></svg>
     <div class="comps">
-        <h1 class="align center font color gray size biggest"><?=$raceSeries["name"]?></h1>
+        <h1 class="align center font color gray size biggest"><?=$raceSeries["name"]?> <?=$raceSeries["year"]?></h1>
+        <?php if(isAdmin()) {?>
         <div class="flex align-center">
-            <p class="font color gray size big">Race series</p>
-            <?php if(isAdmin()) {?>
-                <a href="results.php?id=<?=$id?>&calculate=1" class="btn blender alone no-underline">Calculate points</a>
-                <!-- <button onclick="addRaces()" class="manage-button btn blender alone">Manage</button> -->
-            <?php } ?>
+            <a href="results.php?id=<?=$id?>&calculate=1" class="btn blender alone no-underline">Calculate points</a>
+            <!-- <button onclick="addRaces()" class="manage-button btn blender alone">Manage</button> -->
         </div>
+        <?php } ?>
         <br>
     <section class="dark-section">
     </div>
@@ -59,12 +57,15 @@ echoRandWallpaper();
             <h2>Races:</h2>
             <br>
             <div class="margin left">
-                <?php
-                    foreach($raceSeries["races"] as $race) {
-                        echoRace($race);
-                        echo "<br>";
-                    }
-                ?>
+                <details>
+                    <summary>All races</summary>
+                    <?php
+                        foreach($raceSeries["races"] as $race) {
+                            echoRace($race);
+                            echo "<br>";
+                        }
+                    ?>
+                </details>
             </div>
             </p>
             <br>
@@ -95,14 +96,6 @@ echoRandWallpaper();
         return categories.sort((a,b) => (indexFromCategory(a) - indexFromCategory(b)) * 100 - compareStrings(b, a));
     }
     $('.gender-input').change(() => {
-        // if(!ctrlPressed) {
-        //     const men = $('#men').is(':checked');
-        //     if(men) {
-        //         $('#women').prop('checked', false);
-        //     } else {
-        //         $('#men').prop('checked', false);
-        //     }
-        // }
         initTable(getBannedCategories());
     });
     // let useCategory = true;
@@ -170,6 +163,7 @@ echoRandWallpaper();
     }
 
     function initTable(bannedCategories = []) {
+        console.log(1);
         const men = $('#men').is(':checked');
         const tableData = [];
         for (const result of raceSeries.results) {
@@ -179,35 +173,34 @@ echoRandWallpaper();
             }
         }
         $(".series-results").empty();
-        console.log(tableData);
         const table = new Table($(".series-results"), tableData, "series-results");
         const tableLayout = {
-                placeOverall: {
-                    displayName: "#Overall"
-                },
-                placeCategory: {
-                    displayName: "#Category"
-                },
-                athlete: {
-                    displayName: "Athlete",
-                    allowSort: false,
-                },
-                category: {
-                    displayName: "Category",
-                    // use: useCategory
-                },
-                pointsOverall: {
-                    displayName: "Overall points",
-                },
-                pointsCategory: {
-                    displayName: "Category points",
-                    // use: useCategory
-                },
-            };
-            if(tableData.length > 0) {
-            for (const key in tableData[0]) {
-                if (!Object.hasOwnProperty.call(tableData[0], key)) continue;
-                const element = tableData[0][key];
+            placeOverall: {
+                displayName: "#Overall"
+            },
+            placeCategory: {
+                displayName: "#Category"
+            },
+            athlete: {
+                displayName: "Athlete",
+                allowSort: false,
+            },
+            category: {
+                displayName: "Category",
+                // use: useCategory
+            },
+            pointsOverall: {
+                displayName: "Overall points",
+            },
+            pointsCategory: {
+                displayName: "Category points",
+                // use: useCategory
+            },
+        };
+        for (const row of tableData) {
+            for (const key in row) {
+                if (!Object.hasOwnProperty.call(row, key)) continue;
+                const element = row[key];
                 if(!Number.isInteger(element)) continue;
                 if(tableLayout[key] !== undefined) continue;
                 tableLayout[key] = {
@@ -221,9 +214,9 @@ echoRandWallpaper();
         table.init();
     }
     
-    $(() => {
+    // $(() => {
         initTable();
-    });
+    // });
 </script>
 <?php
 include_once "../footer.php";
