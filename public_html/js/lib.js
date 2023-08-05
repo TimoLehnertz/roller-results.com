@@ -3539,6 +3539,7 @@ const countries = [
     {name: 'Nauru', code: 'NR'}, 
     {name: 'Nepal', code: 'NP'}, 
     {name: 'Netherlands', code: 'NL'}, 
+    {name: 'The Netherlands', code: 'NL'}, 
     {name: 'Netherlands Antilles', code: 'AN'}, 
     {name: 'New Caledonia', code: 'NC'}, 
     {name: 'New Zealand', code: 'NZ'}, 
@@ -3633,5 +3634,6 @@ const countries = [
     {name: 'Yemen', code: 'YE'}, 
     {name: 'Zambia', code: 'ZM'}, 
     {name: 'Zimbabwe', code: 'ZW'},
-    {name: 'Great Britain', code: 'GB'}
+    {name: 'Great Britain', code: 'GB'},
+    {name: 'Czechia', code: 'CZ'}
 ];
