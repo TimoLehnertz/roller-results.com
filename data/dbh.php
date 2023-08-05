@@ -3,6 +3,10 @@ include_once $_SERVER["DOCUMENT_ROOT"]."/../secret/secrets.php";
 
 $dBName = "results";
 
+if (!function_exists('mysqli_init') && !extension_loaded('mysqli')) {
+    echo 'We don\'t have mysqli!!!';
+}
+
 $mysqli = new mysqli($serverName, $dBUsername, $dBPwd, $dBName);
 
 $QUERY_MAX_SIZE = -1;

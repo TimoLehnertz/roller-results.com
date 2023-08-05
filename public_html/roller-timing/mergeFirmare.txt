@@ -1,0 +1,6 @@
+1. add data folder with one file
+2. setup spiffs
+3. run this command in pio/build/<target>
+python -m esptool --chip ESP32 merge_bin -o merged-flash.bin --flash_mode dio --flash_size 4MB 0x1000 bootloader.bin 0x8000 partitions.bin 0x10000 firmware.bin
+
+4. use merged-flash.bin for ESP Web Tools (https://esphome.github.io/esp-web-tools/)
