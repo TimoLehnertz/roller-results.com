@@ -30,7 +30,10 @@ function echoCompsSelect() {
 }
 
 function echoAliasSelect() {
-    if(!isLoggedIn()) return;
+    if(!isLoggedIn()) {
+        echo "<p>Please log in to upload results</p>";
+        return;
+    }
     echo "<select onchange='aliasChanged()' class='alias-select' style='max-width: 15rem;'>";
     $groups = getAliasGroups();
     if(sizeof($groups) == 0) {
