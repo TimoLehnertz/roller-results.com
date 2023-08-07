@@ -812,12 +812,13 @@ function uploadResults($data): bool {
     }
     $idUser = $userRes[0]["iduser"];
     $unnamedSessions = query("SELECT `session` FROM TbRollerTiming WHERE user=? AND `session` LIKE 'My training %' GROUP BY `session`;", "i", $idUser);
-    $number = 1;
+    $number = 0;
     foreach ($unnamedSessions as &$row) {
         if(intval(removeNonNumeric($row['session'])) > $number) {
             $number = intval(removeNonNumeric($row['session']));
         }
     }
+    $number++;
     $sessionName = "My training $number";
     foreach ($data['triggers'] as &$trigger) {
         $trigger["session"] = $sessionName;
