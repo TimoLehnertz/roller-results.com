@@ -801,6 +801,22 @@ if(!isset($NO_GET_API) || $NO_GET_API === false) {
     }
 }
 
+function getRollerTrainings() {
+    if(!isLoggedIn()) {
+        return [];
+    }
+    return query("SELECT `session`, count(*) as `triggers`, max(rowCreated) as `uploadDate` FROM TbRollerTiming WHERE user=? GROUP BY `session`;", "i", $_SESSION["iduser"]);
+}
+
+function getTrainingsSession($sessionName) {
+    if(!isLoggedIn()) return false;
+    $res = query("SELECT * FROM TbRollerTiming WHERE user=? AND `session`=? ORDER BY timeMs ASC;", "is", $_SESSION["iduser"], $sessionName);
+    if(empty($res)) {
+        return false;
+    }
+    return $res;
+}
+
 function removeNonNumeric($inputString) {
     return preg_replace('/[^0-9]/', '', $inputString);
   }

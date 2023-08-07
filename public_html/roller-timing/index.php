@@ -1,103 +1,52 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Roller timing</title>
-    <!-- <script type="module" src="https://unpkg.com/esp-web-tools@9/dist/web/install-button.js?module"></script> -->
-    <script type="module" src="js/install-button.js"></script>
-    <style>
-        body {
-            font-family: 'Roboto', Arial, sans-serif;
-            line-height: 1.6;
-            margin: 0;
-            padding: 0;
-            background-color: #121212;
-            color: #E0E0E0;
-        }
-
-        header {
-            background-color: #1E88E5;
-            color: #FFFFFF;
-            text-align: center;
-            padding: 1rem;
-            margin-bottom: 2rem;
-        }
-
-        h1 {
-            font-size: 3rem;
-            margin: 0;
-        }
-
-        p {
-            font-size: 1.2rem;
-            color: #B0B0B0;
-        }
-
-        ul {
-            padding: 0;
-            margin: 1rem 0;
-            padding-left: 1rem;
-        }
-
-        li {
-            margin-bottom: 1rem;
-        }
-
-        .container {
-            padding: 2rem;
-            max-width: 800px;
-            margin: 0 auto;
-            background-color: #1C1C1C;
-            border-radius: 10px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-        }
-
-        .esp-button-wrapper {
-            display: flex;
-            justify-content: center;
-            margin-top: 2rem;
-        }
-
-        esp-web-install-button:hover {
-            background-color: #1565C0;
-        }
-
-        @media screen and (max-width: 600px) {
-            header {
-                padding: 0.5rem;
-            }
-
-            h1 {
-                font-size: 2rem;
-            }
-
-            .container {
-                padding: 1rem;
-            }
-
-            esp-web-install-button {
-                font-size: 1rem;
-            }
-        }
-    </style>
-</head>
-<body>
-    <header>
-        <h1>Roller timing</h1>
-    </header>
-    <div class="container">
-        <p>Update your roller timing device to the newest firmware</p>
-        <ul>
-            <li>Make sure to use <b>Chrome browser</b></li>
-            <li>Connect your device via USB</li>
-            <li>Install</li>
-            <li>After succsessfull update wait until the display of your device lights up again</li>
-        </ul>
-        In case of failure check that the wire is correctly inserted and repeat the process
-        <div class="esp-button-wrapper">
-            <esp-web-install-button manifest="manifest.json"></esp-web-install-button>
+<?php
+include_once "../api/index.php";
+include_once "../header.php";
+echoRandWallpaper();
+function echoTrainings() {
+    if(!isLoggedIn()) {
+        echo '<div class="flex mobile justify-center gap"><p>Please log in te enable this feature</p><br>
+            <form action="/login/index.php" method="POST">
+                <input type="text" name="returnTo" value="'.$_SERVER["REQUEST_URI"].'" hidden></input>
+                <button type="submit" name="submit" class="btn create">Log in</button>
+            </form></div>';
+        return;
+    }
+    $trainings = getRollerTrainings();
+    if(empty($trainings)) {
+        echo "<p>You didnt upload any results yet</p>";
+    } else {
+        echo "<h2>Your trainings</h2>";
+    }
+    echo "<div class='flex column align center'>";
+    foreach ($trainings as &$training) {
+        $date=date_create($training["uploadDate"]);
+        $dateStr = date_format($date,'Y.m.d');
+        echo "
+        <a class='flex justify-start gap' href='training.php?session={$training["session"]}'>
+        <p>{$training["session"]}</p>
+        <p>({$training["triggers"]}) Laps</p>
+        <p> uploaded at {$dateStr}</p>
+        </a>";
+    }
+    echo "</div>";
+}
+?>
+<main class="main competition-page">
+    <div class="top-site"></div>
+    <svg style="margin-bottom: 0; position: relative; transform: translateY(85%); z-index: -1;" xmlns="http://www.w3.org/2000/svg" fill="none" preserveAspectRatio="none" viewBox="0 0 1680 40" class="curvature" style="bottom: -1px;"><path d="M0 40h1680V30S1340 0 840 0 0 30 0 30z" fill="#ddd"></path></svg>
+    <svg style="margin-bottom: 0; position: relative; top: 0px; z-index: 1;" xmlns="http://www.w3.org/2000/svg" fill="none" preserveAspectRatio="none" viewBox="0 0 1680 40" class="curvature" style="bottom: -1px;"><path d="M0 40h1680V30S1340 0 840 0 0 30 0 30z" fill="#151515"></path></svg>
+    <div class="dark section no-shadow">
+        <h1 class="font size biggest"><i class="fas fa-binoculars margin right"></i>Roller timing</h1>
+        <p class="align center font size big color light margin top double">Your training laps in one place</p>
+    </div>
+    <div class="light section">
+        <div>
+            <?php
+                echoTrainings();
+            ?>
         </div>
     </div>
-</body>
-</html>
+</main>
+<?php
+include_once "../footer.php";
+?>
