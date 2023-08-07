@@ -806,7 +806,7 @@ function removeNonNumeric($inputString) {
   }
 
 function uploadResults($data): bool {
-    $userRes = query("SELECT * FROM TbUser WHERE username=? OR email=?;", "ii", $data["user"], $data["user"]);
+    $userRes = query("SELECT * FROM TbUser WHERE username=? OR email=?;", "ss", $data["user"], $data["user"]);
     if(empty($userRes)) {
         return false;
     }
