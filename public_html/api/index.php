@@ -405,11 +405,16 @@ if(!isset($NO_GET_API) || $NO_GET_API === false) {
     } else if(isset($_GET["uploadResults"])){
         $data = json_decode(file_get_contents('php://input'), true);
         // var_dump($data);
-        if(!isset($_GET["lname"]) || !isset($data["a"]) || !isset($data["d"]) || !isset($data["l"]) || !isset($_GET["user"])) {
-            echo "invalid";
-            exit(0);
+        if(!isset($data["user"]) || !isset($data["triggers"]) || !is_array($data["triggers"])) {
+            http_response_code(400);
+            exit(400);
         }
-        insertLaserResult($data, $_GET["user"], $_GET["lname"]);
+        if(uploadResults($data)) {
+            echo "Succsess";
+        } else {
+            http_response_code(400);
+            exit(400);
+        }
     } else if(isset($_GET["uploadTriggers"]) && isset($_GET["user"])) {
         insertTrigger(file_get_contents('php://input'), $_GET["user"]);
     } else if(isset($_GET["getathleteImages"])) {
@@ -796,11 +801,36 @@ if(!isset($NO_GET_API) || $NO_GET_API === false) {
     }
 }
 
+function removeNonNumeric($inputString) {
+    return preg_replace('/[^0-9]/', '', $inputString);
+  }
+
+function uploadResults($data): bool {
+    $userRes = query("SELECT * FROM TbUser WHERE username=? OR email=?;", "ii", $data["user"], $data["user"]);
+    if(empty($userRes)) {
+        return false;
+    }
+    $idUser = $userRes[0]["iduser"];
+    $unnamedSessions = query("SELECT `session` FROM TbRollerTiming WHERE user=? AND `session` LIKE 'My training %' GROUP BY `session`;", "i", $idUser);
+    $number = 1;
+    foreach ($unnamedSessions as &$row) {
+        if(intval(removeNonNumeric($row['session'])) > $number) {
+            $number = intval(removeNonNumeric($row['session']));
+        }
+    }
+    $sessionName = "My training $number";
+    foreach ($data['triggers'] as &$trigger) {
+        $trigger["session"] = $sessionName;
+        $trigger["user"] = $idUser;
+    }
+    return arrayInsert("TbRollerTiming", ["triggerType", "timeMs", "millimeters", "user", "session"], "iiiis", $data['triggers']);
+}
 
 function removeRaceFromSeries($idRace, $idRaceSeries) {
     if(!isAdmin()) return false;
     if(!isRaceInSeries($idRace, $idRaceSeries)) return true;
     dbExecute('DELETE FROM TbRaceInSeries WHERE race=? AND raceSeries=?;', 'ii', $idRace, $idRaceSeries);
+    dbExecute('DELETE FROM TbRaceSeriesPoints WHERE race=? AND raceSeries=?;', 'ii', $idRace, $idRaceSeries);
     return true;
 }
 
@@ -1666,7 +1696,7 @@ function arrayInsert($tableName, $colNames, $insertTypes, $rows) {
         }
     }
     $sql.=";";
-    dbInsert($sql, $types, ...$vals);
+    return dbInsert($sql, $types, ...$vals) !== false;
 }
 
 function getOvertakesByDistance($distance, $gender) {
@@ -1749,13 +1779,6 @@ function insertTrigger($triggers, $user) {
             dbInsert("INSERT INTO `results`.`TbTrigger` (`user`,`time`)VALUES(?,?);", "ii", $user, $time);
         }
         $lastTime = intval($trigger);
-    }
-}
-
-function insertLaserResult($result, $user, $lasername) {
-    $id = dbInsert("INSERT INTO TbLaserResults(distance,user,laserName,athlete)VALUES(?,?,?,?);", "iiss", $result["d"], $user, $lasername, $result["a"]);
-    foreach ($result["l"] as $lap) {
-        dbInsert("INSERT INTO TbLaserLap(triggerer,millis,laserResult)VALUES(?,?,?);", "iii", $lap["t"], $lap["ms"], $id);
     }
 }
 
@@ -2283,15 +2306,19 @@ function getAllRaceSeriesWithRaces() {
             }
             $raceSerie = $row;
             unset($raceSerie['race']);
-            $raceSerie['idRaces'] = [$row['race']];
+            if($row['race'] !== null) {
+                $raceSerie['idRaces'] = [$row['race']];
+            } else {
+                $raceSerie['idRaces'] = [];
+            }
         } else {
             $raceSerie['idRaces'] [] = $row['race'];
         }
         $idRaceSerie = $row['idRaceSeries'];
     }
-    // if($raceSerie !== null) {
-    //     $raceSeries [] = $raceSerie;
-    // }
+    if($raceSerie !== null) {
+        $raceSeries [] = $raceSerie;
+    }
     return $raceSeries;
 }
 
@@ -2674,6 +2701,7 @@ function calculateWSC($raceSeries) {
     // delete previous points
     dbExecute("DELETE FROM TbRaceSeriesPoints WHERE raceSeries = ?", "i", $raceSeries["idRaceSeries"]);
     $raceCount = query("SELECT count(*) as `count` FROM TbRaceInSeries WHERE raceSeries = ?", "i", $raceSeries["idRaceSeries"])[0]["count"];
+    if($raceCount === 0) return;
     // gather and orgabize results
     $results = query("SELECT TbResult.place, TbResult.idPerson as idAthlete, TbResult.idRace, IFNULL(TbResult.category, race.category) as category
     FROM TbRaceInSeries

@@ -1153,21 +1153,24 @@ let loadedRaceSeries = undefined;
 let raceSeriesCallbacks = [];
 
 function getRaceSeries(callback) {
+    console.log("getRaceSeries")
     if(loadedRaceSeries === null) return callback(false, null);
     if(loadedRaceSeries !== undefined) return callback(true, loadedRaceSeries);
     raceSeriesCallbacks.push(callback);
     if(raceSeriesCallbacks.length === 1) {
+        console.log("fetching RaceSeries");
         get('raceSeries').receive((succsess, raceSeries) => {
+            console.log("race series:", raceSeries);
             if(!succsess) {
                 loadedRaceSeries = null;
                 for (const callback of raceSeriesCallbacks) {
                     callback(false, null);
                 }
-                return;
-            }
-            loadedRaceSeries = raceSeries;
-            for (const callback of raceSeriesCallbacks) {
-                callback(true, loadedRaceSeries);
+            } else {
+                loadedRaceSeries = raceSeries;
+                for (const callback of raceSeriesCallbacks) {
+                    callback(true, loadedRaceSeries);
+                }
             }
         });
     }
@@ -1194,6 +1197,7 @@ function getRaceElem(race, results, useIdCompetition = false) {
             name: 'Add to series'
         });
         getRaceSeries((succsess, raceSeries) => {
+
             if(!succsess) {
                 raceSeriesDropdown.content = [
                     {

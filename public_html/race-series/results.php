@@ -163,6 +163,7 @@ echoRandWallpaper();
     }
 
     function initTable(bannedCategories = []) {
+        if(!raceSeries.results) return;
         console.log(1);
         const men = $('#men').is(':checked');
         const tableData = [];
