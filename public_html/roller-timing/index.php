@@ -24,7 +24,7 @@ function echoTrainings() {
         echo "
         <a class='flex justify-start gap' href='training.php?session={$training["session"]}'>
         <p>{$training["session"]}</p>
-        <p>({$training["triggers"]}) Laps</p>
+        <p>({$training["triggers"]}) Records</p>
         <p> uploaded at {$dateStr}</p>
         </a>";
     }

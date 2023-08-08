@@ -60,7 +60,7 @@ echoRandWallpaper();
 }
 
 .split-lap-distance {
-    width: 3em;
+    width: 5em;
 }
 </style>
 <main class="main competition-page">
