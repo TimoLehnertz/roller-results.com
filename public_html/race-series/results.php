@@ -15,10 +15,11 @@ if(sizeof($raceSeries) == 0) {
 }
 
 if(isset($_GET["calculate"]) && $_GET["calculate"] == "1") {
-    if(calculateRaceSeries($id)) {
+    $error = calculateRaceSeries($id);
+    if($error === true) {
         header("location: results.php?id=$id&calculate-succsess");
-    } else {
-        header("location: results.php?id=$id");
+    } else if($error !== 'inconsistent categories'){
+        header("location: results.php?id=$id&error=$error");
     }
 }
 

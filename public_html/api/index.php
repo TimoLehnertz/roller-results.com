@@ -2634,14 +2634,19 @@ function calculateRaceSeries($id) {
     $raceSeries = query("SELECT * FROM TbRaceSeries WHERE idRaceSeries = ?;", "i", $id);
     if(sizeof($raceSeries) == 0) return false;
     $raceSeries = $raceSeries[0];
+    $error = false;
     switch($raceSeries["type"]) {
         case "WSC":
-            if(!calculateWSC($raceSeries)) return false;
+            $error = calculateWSC($raceSeries);
             break;
         default:
             return false;
     }
-    return calculateStrikeResults($raceSeries);
+    if($error === false) {
+        return calculateStrikeResults($raceSeries);
+    } else {
+        return $error;
+    }
 }
 
 function calculateStrikeResults($raceSeries) {
@@ -2711,7 +2716,7 @@ function calculateStrikeResults($raceSeries) {
         // print_r('UPDATE TbRaceSeriesPoints SET strikeResultOverall=1 WHERE idRaceSeriesPoint IN ('.$inList.');');
         dbExecute('UPDATE TbRaceSeriesPoints SET strikeResultCategory=1 WHERE idRaceSeriesPoint IN ('.$inList.');', $types, ...$fillers);
     }
-    return true;
+    return false;
 }
 
 function calculateWSC($raceSeries) {
@@ -2721,15 +2726,33 @@ function calculateWSC($raceSeries) {
     if($raceCount === 0) return;
     // gather and orgabize results
     $results = query("SELECT TbResult.place, TbResult.idPerson as idAthlete, TbResult.idRace, IFNULL(TbResult.category, race.category) as category
-    FROM TbRaceInSeries
-    JOIN TbResult ON TbResult.idRace = TbRaceInSeries.race
-    JOIN TbRace as race ON race.id = TbRaceInSeries.race
-    WHERE raceSeries = ?
-    ORDER BY idAthlete;", "i", $raceSeries["idRaceSeries"]);
+        FROM TbRaceInSeries
+        JOIN TbResult ON TbResult.idRace = TbRaceInSeries.race
+        JOIN TbRace as race ON race.id = TbRaceInSeries.race
+        WHERE raceSeries = ?
+        ORDER BY idAthlete;", "i", $raceSeries["idRaceSeries"]);
     $athletes = [];
     $prevIdAthlete = -1;
     $currentAthlete = [];
+    // checking that no athletes changed category
+    $checkRes = query("SELECT TbResult.idPerson as idAthlete, CONCAT(athlete.firstname, ' ', athlete.lastname) as name, GROUP_CONCAT(TbResult.category) as categories
+        FROM TbRaceInSeries
+        JOIN TbResult ON TbResult.idRace = TbRaceInSeries.race
+        JOIN TbAthlete as athlete on athlete.id = TbResult.idPerson
+        WHERE raceSeries = ?
+        GROUP BY TbResult.idPerson
+        HAVING count(DISTINCT category) > 1", "i", $raceSeries["idRaceSeries"]);
+    echo"Those athletes have inconsistent categories. Please fix them before calculating";
+    echo "<pre>";
+    print_r($checkRes);
+    echo "</pre>";
+    return "inconsistent categories";
+    // echo "<pre>";
     foreach($results as $result) {
+        // var_dump($result['category']);
+        // if($result['category'] == null) {
+        //     return "no category given for result: #".$result['id'];
+        // }
         if($prevIdAthlete != $result["idAthlete"]) {
             if($prevIdAthlete >= 0) $athletes[$prevIdAthlete] = $currentAthlete;
             $prevIdAthlete = $result["idAthlete"];
@@ -2753,11 +2776,14 @@ function calculateWSC($raceSeries) {
     // get category results
     foreach ($athletes as $idAthlete => $athlete) {
         foreach ($athlete["results"] as $idRace => $results) {
-            if(isset($results["placeCategory"])) continue; // already calculated
+            // if(isset($results["placeCategory"])) continue; // already calculated
             $categoryResults = query("SELECT idPerson
             FROM TbResult
             WHERE TbResult.idRace = ? AND (TbResult.category = ? OR TbResult.category IS NULL)
             ORDER BY TbResult.place ASC;", "is", $idRace, $athlete["category"]);
+            if(sizeof($categoryResults) == 0) {
+                echo $athlete["category"];
+            }
             for ($i=0; $i < sizeof($categoryResults); $i++) {
                 $categoryResult = $categoryResults[$i];
                 $athletes[$categoryResult["idPerson"]]["results"][$idRace]["placeCategory"] = $i+1;
@@ -2765,6 +2791,9 @@ function calculateWSC($raceSeries) {
             }
         }
     }
+    // echo '<pre>';
+    // print_r($athletes);
+    // echo '</pre>';
     // insert scores
     $inserts = [];
     foreach ($athletes as $idAthlete => $athlete) {
@@ -2782,7 +2811,7 @@ function calculateWSC($raceSeries) {
         }
     }
     arrayInsert("TbRaceSeriesPoints", ["race", "athlete", "raceSeries", "pointsCategory", "pointsOverall", "placeOverall", "placeCategory", "category"], "iiiiiiis", $inserts);
-    return true;
+    return false;
 }
 
 function calcWSCScore($place) {
