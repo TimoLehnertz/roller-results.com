@@ -16,7 +16,7 @@ if(sizeof($raceSeries) == 0) {
 
 if(isset($_GET["calculate"]) && $_GET["calculate"] == "1") {
     $error = calculateRaceSeries($id);
-    if($error === true) {
+    if($error === false) {
         header("location: results.php?id=$id&calculate-succsess");
     } else if($error !== 'inconsistent categories'){
         header("location: results.php?id=$id&error=$error");
