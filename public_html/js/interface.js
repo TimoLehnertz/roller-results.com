@@ -561,9 +561,10 @@ function getRaceTable(parent, race) {
     let useLaps = false;
     let usePoints = false;
     let useDNS = false;
+    let useCategory = false;
 
     const dqs = [];
-
+    console.log(results);
     for (const result of race.results) {
         if(result.timeDate !== null) {
             result.time = result.timeDate;
@@ -577,6 +578,7 @@ function getRaceTable(parent, race) {
         }
         if(result.points && parseInt(result.points) > 0) usePoints = true;
         if(result.didNotStart == "1") useDNS = true;
+        if(result.category) useCategory = true;
         if(result.disqualificationSportsFault == "1") useDisqualificationSportsFault = true;
         if(result.disqualificationTechnical == "1") useDisqualificationTechnicalFault = true;
         if(result.disqualificationSportsFault == "1" || result.disqualificationTechnical == "1") {
@@ -644,6 +646,11 @@ function getRaceTable(parent, race) {
                 displayName: "DQ technical",
                 allowSort: true,
                 use: useDisqualificationTechnicalFault
+            },
+            category: {
+                displayName: "Category",
+                allowSort: true,
+                use: useCategory
             }
         }
     });
