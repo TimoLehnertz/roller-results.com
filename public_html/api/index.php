@@ -2742,11 +2742,13 @@ function calculateWSC($raceSeries) {
         WHERE raceSeries = ?
         GROUP BY TbResult.idPerson
         HAVING count(DISTINCT category) > 1", "i", $raceSeries["idRaceSeries"]);
-    echo"Those athletes have inconsistent categories. Please fix them before calculating";
-    echo "<pre>";
-    print_r($checkRes);
-    echo "</pre>";
-    return "inconsistent categories";
+    if(!empty($checkRes)) {
+        echo"Those athletes have inconsistent categories. Please fix them before calculating";
+        echo "<pre>";
+        print_r($checkRes);
+        echo "</pre>";
+        return "inconsistent categories";
+    }
     // echo "<pre>";
     foreach($results as $result) {
         // var_dump($result['category']);
