@@ -2663,7 +2663,7 @@ function getRandomColor() {
     return color;
   }
 
-function sortArray(array, field, desc = true, parse = false){
+function sortArray(array, field, desc = true, parse = false) {
 
     const mul = desc ? -1 : 1;
     array.sort((a, b) => {

@@ -102,6 +102,8 @@ echoRandWallpaper();
     // let useCategory = true;
     categories = [];
     const agePlaces = [];
+    console.log(raceSeries);
+    raceSeries.results = sortArray(raceSeries.results, 'pointsCategory');
     for (const row of raceSeries.results) {
         row.originalAthlete = row.athlete;
         row.athlete = {
@@ -120,6 +122,7 @@ echoRandWallpaper();
         }
         row.placeCategory = agePlaces[agePlaceIndex];
     }
+    raceSeries.results = sortArray(raceSeries.results, 'placeOverall', false);
     categories = sortCategories(categories);
     if(categories.length > 1) {
         categories.unshift("All");
