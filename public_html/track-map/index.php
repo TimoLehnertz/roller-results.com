@@ -10,6 +10,10 @@ if(isset($_GET["e"])) {
     $message = "<span class='font color red'>Could not add place. Please try again</span>";
 }
 
+if(isset($_POST['coatingYear']) && strlen($_POST['coatingYear']) == 0) {
+    unset($_POST['coatingYear']);
+}
+
 if(validateObjectProperties($_POST, [
 [
     "property" => "submit",
@@ -42,6 +46,10 @@ if(validateObjectProperties($_POST, [
     "required" => false,
     "type" => "text",
     "maxLength" => 1000
+],[
+    "property" => "coatingYear",
+    "required" => false,
+    "type" => "number"
 ], [
     "property" => "clubName",
     "required" => false,
@@ -94,7 +102,7 @@ include_once "../header.php";
                 <form action="#" method="POST" class="form" id="form">
                     <p class="font color green"><?=$message?></p>
                     <h3 class="form-description">Add a track</h3>
-                    <button type="button" class="btn create gray add-track-btn" onclick="activateAddTrack()">Add a track instead</button>
+                    <button type="button" class="btn create gray add-track-btn" onclick="activateAddTrack()">Cancel edit</button>
                     <input type="number" name="idPlace" id="idPlace" value="-1" hidden>
                     <div>
                         <label for="lng">Title</label>
