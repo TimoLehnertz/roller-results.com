@@ -150,6 +150,9 @@ if(!$embed) { // hide header if beeing embedded
                     <p class="realname"><?=$user["firstname"] ?? ""?> <?=$user["lastname"] ?? ""?></p>
                     <a class='btn create no-underline gray' href='/profile'>Your profile</a>
                     <a href="/performance" class="btn create no-underline">Your performance</a>
+                    <?php if(doIHaveRollerTiming()) { ?>
+                        <a href="/roller-timing" class="btn create no-underline">Roller timing</a>
+                    <?php } ?>
                     <form action='/logout/index.php' method='POST'>
                         <input type="text" name="returnTo" value="<?=$_SERVER["REQUEST_URI"]?>" hidden></input>
                         <button class="btn create red" name="logout-submit" value="1" type="submit"><i class="fas fa-sign-out-alt margin right"></i>Log out</button>

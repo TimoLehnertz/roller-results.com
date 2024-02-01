@@ -802,6 +802,38 @@ if(!isset($NO_GET_API) || $NO_GET_API === false) {
     }
 }
 
+function rollerTimingNameExists(string $name): bool {
+    return sizeof(query("SELECT idRollerTiming FROM TbRollerTiming WHERE `session`=? LIMIT 1", "s", $name)) > 0;
+}
+
+function doIOwnRollerTiming(string $name): bool {
+    if(!isLoggedIn()) {
+        return false;
+    }
+    $probe = query("SELECT `user` FROM TbRollerTiming WHERE `session`=? LIMIT 1", "s", $name);
+    if(sizeof($probe) === 0) {
+        return false;
+    }
+    return $_SESSION['iduser'] === $probe[0]["user"];
+}
+
+function renameRollerTimingSession(String $from, String $to): bool {
+    if(!doIOwnRollerTiming($from)) {
+        return false;
+    }
+    if(rollerTimingNameExists($to)) {
+        return false;
+    }
+    return dbExecute("UPDATE TbRollerTiming SET `session`=? WHERE `session`=?;", "ss", $to, $from);
+}
+
+function doIHaveRollerTiming(): bool {
+    if(!isLoggedIn()) {
+        return false;
+    }
+    return sizeof(query("SELECT idRollerTiming FROM TbRollerTiming WHERE `user`=? LIMIT 1;", "i", $_SESSION["iduser"])) > 0;
+}
+
 function getRollerTrainings() {
     if(!isLoggedIn()) {
         return [];

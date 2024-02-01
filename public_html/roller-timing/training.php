@@ -13,8 +13,22 @@ if(!isset($_GET["session"])) {
 
 $trainingsSession = getTrainingsSession($_GET["session"]);
 
+$sessionName = $_GET["session"];
+
 if(!$trainingsSession) {
     throwError($ERROR_INVALID_ID, "/roller-timing");
+}
+
+$renameError = false;
+
+if(isset($_POST["rename"])) {
+    if(renameRollerTimingSession($_GET["session"], $_POST["rename"])) {
+        $sessionName = $_POST["rename"];
+        header('location: /roller-timing/training.php?session='.urlencode($_POST["rename"]));
+        exit();
+    } else {
+        $renameError = true;
+    }
 }
 
 include_once "../header.php";
@@ -22,7 +36,6 @@ echoRandWallpaper();
 ?>
 <script>
     const triggers = <?php echo json_encode($trainingsSession, true); ?>;
-    console.log(triggers);
 </script>
 <style>
 .lap, .split-lap {
@@ -69,7 +82,15 @@ echoRandWallpaper();
     <svg style="margin-bottom: 0; position: relative; top: 0px; z-index: 1;" xmlns="http://www.w3.org/2000/svg" fill="none" preserveAspectRatio="none" viewBox="0 0 1680 40" class="curvature" style="bottom: -1px;"><path d="M0 40h1680V30S1340 0 840 0 0 30 0 30z" fill="#151515"></path></svg>
     <div class="dark section no-shadow">
         <h1 class="font size biggest"><i class="fas fa-binoculars margin right"></i>Roller timing</h1>
-        <p class="align center font size big color light margin top double"><?=$_GET["session"]?></p>
+        <form action="#" method="POST">
+                <?php if($renameError) { ?>
+                    <p class="font color red align center">Could not change name. Does the name already exist?</p>
+                <?php } ?>
+                <p class="align center font size big color light margin top double flex mobile justify-center">
+                    <input class="input-transparent" type="text" name="rename" value="<?=$sessionName?>">
+                    <button class="btn create font size medium">Rename</button>
+                </p>
+        </form>
     </div>
     <div class="light section">
         <div id="viewer">
