@@ -409,11 +409,12 @@ if(!isset($NO_GET_API) || $NO_GET_API === false) {
             http_response_code(400);
             exit(400);
         }
-        if(uploadResults($data)) {
-            echo "Succsess";
-        } else {
+        $sessionName = uploadResults($data);
+        if($sessionName === false) {
             http_response_code(400);
             exit(400);
+        } else {
+            echo $sessionName;
         }
     } else if(isset($_GET["uploadTriggers"]) && isset($_GET["user"])) {
         insertTrigger(file_get_contents('php://input'), $_GET["user"]);
@@ -821,26 +822,36 @@ function removeNonNumeric($inputString) {
     return preg_replace('/[^0-9]/', '', $inputString);
   }
 
-function uploadResults($data): bool {
+/**
+ * @return the name of the session or false
+ */
+function uploadResults($data): string {
     $userRes = query("SELECT * FROM TbUser WHERE username=? OR email=?;", "ss", $data["user"], $data["user"]);
     if(empty($userRes)) {
         return false;
     }
-    $idUser = $userRes[0]["iduser"];
-    $unnamedSessions = query("SELECT `session` FROM TbRollerTiming WHERE user=? AND `session` LIKE 'My training %' GROUP BY `session`;", "i", $idUser);
-    $number = 0;
-    foreach ($unnamedSessions as &$row) {
-        if(intval(removeNonNumeric($row['session'])) > $number) {
-            $number = intval(removeNonNumeric($row['session']));
+    if(isset($data["sessionName"]) && is_string($data["sessionName"])) {
+        $sessionName = $data["sessionName"];
+    } else {
+        $idUser = $userRes[0]["iduser"];
+        $unnamedSessions = query("SELECT `session` FROM TbRollerTiming WHERE user=? AND `session` LIKE 'My training %' GROUP BY `session`;", "i", $idUser);
+        $number = 0;
+        foreach ($unnamedSessions as &$row) {
+            if(intval(removeNonNumeric($row['session'])) > $number) {
+                $number = intval(removeNonNumeric($row['session']));
+            }
         }
+        $number++;
+        $sessionName = "My training $number";
     }
-    $number++;
-    $sessionName = "My training $number";
     foreach ($data['triggers'] as &$trigger) {
         $trigger["session"] = $sessionName;
         $trigger["user"] = $idUser;
     }
-    return arrayInsert("TbRollerTiming", ["triggerType", "timeMs", "millimeters", "user", "session"], "iiiis", $data['triggers']);
+    if(!arrayInsert("TbRollerTiming", ["triggerType", "timeMs", "millimeters", "user", "session"], "iiiis", $data['triggers'])) {
+        return false;
+    }
+    return $sessionName;
 }
 
 function removeRaceFromSeries($idRace, $idRaceSeries) {
