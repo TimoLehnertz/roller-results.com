@@ -825,15 +825,23 @@ function removeNonNumeric($inputString) {
 /**
  * @return the name of the session or false
  */
-function uploadResults($data): string {
+function uploadResults($data): string | bool {
+    if(sizeof($data['triggers']) === 0) {
+        return false;
+    }
+    foreach ($data['triggers'] as $trigger) {
+        if(!isset($trigger['triggerType']) || !isset($trigger['millimeters']) || !isset($trigger['timeMs'])) {
+            return false;
+        }
+    }
     $userRes = query("SELECT * FROM TbUser WHERE username=? OR email=?;", "ss", $data["user"], $data["user"]);
     if(empty($userRes)) {
         return false;
     }
+    $idUser = $userRes[0]["iduser"];
     if(isset($data["sessionName"]) && is_string($data["sessionName"])) {
         $sessionName = $data["sessionName"];
     } else {
-        $idUser = $userRes[0]["iduser"];
         $unnamedSessions = query("SELECT `session` FROM TbRollerTiming WHERE user=? AND `session` LIKE 'My training %' GROUP BY `session`;", "i", $idUser);
         $number = 0;
         foreach ($unnamedSessions as &$row) {
