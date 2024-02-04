@@ -1514,140 +1514,140 @@ svg.filter {
 .logo .bubble:nth-of-type(1) {
   top: 36%;
   animation: move-1 infinite;
-  animation-duration: 3013ms;
-  animation-delay: 407ms;
+  animation-duration: 3375ms;
+  animation-delay: 408ms;
 }
 .logo .bubble:nth-of-type(2) {
   top: 61%;
   animation: move-2 infinite;
-  animation-duration: 4537ms;
-  animation-delay: 809ms;
+  animation-duration: 4371ms;
+  animation-delay: 802ms;
 }
 .logo .bubble:nth-of-type(3) {
   top: 86%;
   animation: move-3 infinite;
-  animation-duration: 4205ms;
-  animation-delay: 1205ms;
+  animation-duration: 3715ms;
+  animation-delay: 1206ms;
 }
 .logo .bubble:nth-of-type(4) {
   top: 11%;
   animation: move-4 infinite;
-  animation-duration: 4497ms;
-  animation-delay: 1601ms;
+  animation-duration: 4252ms;
+  animation-delay: 1604ms;
 }
 .logo .bubble:nth-of-type(5) {
   top: 36%;
   animation: move-5 infinite;
-  animation-duration: 4732ms;
-  animation-delay: 2003ms;
+  animation-duration: 4782ms;
+  animation-delay: 2005ms;
 }
 .logo .bubble:nth-of-type(6) {
   top: 61%;
   animation: move-6 infinite;
-  animation-duration: 4725ms;
+  animation-duration: 3855ms;
   animation-delay: 2408ms;
 }
 .logo .bubble:nth-of-type(7) {
   top: 86%;
   animation: move-7 infinite;
-  animation-duration: 4379ms;
-  animation-delay: 2802ms;
+  animation-duration: 4607ms;
+  animation-delay: 2803ms;
 }
 .logo .bubble:nth-of-type(8) {
   top: 11%;
   animation: move-8 infinite;
-  animation-duration: 3994ms;
-  animation-delay: 3208ms;
+  animation-duration: 3303ms;
+  animation-delay: 3203ms;
 }
 .logo .bubble:nth-of-type(9) {
   top: 36%;
   animation: move-9 infinite;
-  animation-duration: 4318ms;
-  animation-delay: 3607ms;
+  animation-duration: 3965ms;
+  animation-delay: 3609ms;
 }
 .logo .bubble:nth-of-type(10) {
   top: 61%;
   animation: move-10 infinite;
-  animation-duration: 3658ms;
-  animation-delay: 4001ms;
+  animation-duration: 4329ms;
+  animation-delay: 4009ms;
 }
 .logo .bubble:nth-of-type(11) {
   top: 86%;
   animation: move-11 infinite;
-  animation-duration: 4343ms;
-  animation-delay: 4408ms;
+  animation-duration: 3306ms;
+  animation-delay: 4405ms;
 }
 .logo .bubble:nth-of-type(12) {
   top: 11%;
   animation: move-12 infinite;
-  animation-duration: 4218ms;
-  animation-delay: 4810ms;
+  animation-duration: 4086ms;
+  animation-delay: 4807ms;
 }
 .logo .bubble:nth-of-type(13) {
   top: 36%;
   animation: move-13 infinite;
-  animation-duration: 3003ms;
-  animation-delay: 5202ms;
+  animation-duration: 4359ms;
+  animation-delay: 5204ms;
 }
 .logo .bubble:nth-of-type(14) {
   top: 61%;
   animation: move-14 infinite;
-  animation-duration: 4375ms;
-  animation-delay: 5604ms;
+  animation-duration: 4488ms;
+  animation-delay: 5610ms;
 }
 .logo .bubble:nth-of-type(15) {
   top: 86%;
   animation: move-15 infinite;
-  animation-duration: 3004ms;
-  animation-delay: 6008ms;
+  animation-duration: 4865ms;
+  animation-delay: 6002ms;
 }
 .logo .bubble:nth-of-type(16) {
   top: 11%;
   animation: move-16 infinite;
-  animation-duration: 4265ms;
-  animation-delay: 6404ms;
+  animation-duration: 4670ms;
+  animation-delay: 6403ms;
 }
 .logo .bubble:nth-of-type(17) {
   top: 36%;
   animation: move-17 infinite;
-  animation-duration: 4094ms;
-  animation-delay: 6808ms;
+  animation-duration: 4556ms;
+  animation-delay: 6805ms;
 }
 .logo .bubble:nth-of-type(18) {
   top: 61%;
   animation: move-18 infinite;
-  animation-duration: 4912ms;
-  animation-delay: 7201ms;
+  animation-duration: 4784ms;
+  animation-delay: 7203ms;
 }
 .logo .bubble:nth-of-type(19) {
   top: 86%;
   animation: move-19 infinite;
-  animation-duration: 4902ms;
-  animation-delay: 7601ms;
+  animation-duration: 3912ms;
+  animation-delay: 7603ms;
 }
 .logo .bubble:nth-of-type(20) {
   top: 11%;
   animation: move-20 infinite;
-  animation-duration: 3303ms;
-  animation-delay: 8008ms;
+  animation-duration: 4393ms;
+  animation-delay: 8009ms;
 }
 
 @keyframes move-1 {
   0% {
     opacity: 1;
-    transform: translateX(0) scaleX(3);
+    transform: translateX(0) scaleX(4);
   }
   30% {
     background: #7f26a8;
   }
   50% {
-    transform: translateX(-116.5%) scaleX(3);
+    transform: translateX(-146%) scaleX(4);
   }
   70% {
     background: #2b0d29;
   }
   100% {
-    transform: translateX(-233%) scaleX(0);
+    transform: translateX(-292%) scaleX(0);
   }
 }
 @keyframes move-2 {
@@ -1659,31 +1659,31 @@ svg.filter {
     background: #7f26a8;
   }
   50% {
-    transform: translateX(-178.5%) scaleX(4);
+    transform: translateX(-216%) scaleX(4);
   }
   70% {
     background: #2b0d29;
   }
   100% {
-    transform: translateX(-357%) scaleX(0);
+    transform: translateX(-432%) scaleX(0);
   }
 }
 @keyframes move-3 {
   0% {
     opacity: 1;
-    transform: translateX(0) scaleX(1);
+    transform: translateX(0) scaleX(2);
   }
   30% {
     background: #7f26a8;
   }
   50% {
-    transform: translateX(-237.5%) scaleX(1);
+    transform: translateX(-157.5%) scaleX(2);
   }
   70% {
     background: #2b0d29;
   }
   100% {
-    transform: translateX(-475%) scaleX(0);
+    transform: translateX(-315%) scaleX(0);
   }
 }
 @keyframes move-4 {
@@ -1695,13 +1695,13 @@ svg.filter {
     background: #7f26a8;
   }
   50% {
-    transform: translateX(-127.5%) scaleX(2);
+    transform: translateX(-149%) scaleX(2);
   }
   70% {
     background: #2b0d29;
   }
   100% {
-    transform: translateX(-255%) scaleX(0);
+    transform: translateX(-298%) scaleX(0);
   }
 }
 @keyframes move-5 {
@@ -1713,70 +1713,52 @@ svg.filter {
     background: #7f26a8;
   }
   50% {
-    transform: translateX(-214.5%) scaleX(4);
+    transform: translateX(-193%) scaleX(4);
   }
   70% {
     background: #2b0d29;
   }
   100% {
-    transform: translateX(-429%) scaleX(0);
+    transform: translateX(-386%) scaleX(0);
   }
 }
 @keyframes move-6 {
   0% {
     opacity: 1;
-    transform: translateX(0) scaleX(1);
+    transform: translateX(0) scaleX(2);
   }
   30% {
     background: #7f26a8;
   }
   50% {
-    transform: translateX(-114%) scaleX(1);
+    transform: translateX(-163%) scaleX(2);
   }
   70% {
     background: #2b0d29;
   }
   100% {
-    transform: translateX(-228%) scaleX(0);
+    transform: translateX(-326%) scaleX(0);
   }
 }
 @keyframes move-7 {
   0% {
     opacity: 1;
-    transform: translateX(0) scaleX(3);
+    transform: translateX(0) scaleX(2);
   }
   30% {
     background: #7f26a8;
   }
   50% {
-    transform: translateX(-244%) scaleX(3);
+    transform: translateX(-184%) scaleX(2);
   }
   70% {
     background: #2b0d29;
   }
   100% {
-    transform: translateX(-488%) scaleX(0);
+    transform: translateX(-368%) scaleX(0);
   }
 }
 @keyframes move-8 {
-  0% {
-    opacity: 1;
-    transform: translateX(0) scaleX(1);
-  }
-  30% {
-    background: #7f26a8;
-  }
-  50% {
-    transform: translateX(-138.5%) scaleX(1);
-  }
-  70% {
-    background: #2b0d29;
-  }
-  100% {
-    transform: translateX(-277%) scaleX(0);
-  }
-}
-@keyframes move-9 {
   0% {
     opacity: 1;
     transform: translateX(0) scaleX(4);
@@ -1785,13 +1767,31 @@ svg.filter {
     background: #7f26a8;
   }
   50% {
-    transform: translateX(-113.5%) scaleX(4);
+    transform: translateX(-225%) scaleX(4);
   }
   70% {
     background: #2b0d29;
   }
   100% {
-    transform: translateX(-227%) scaleX(0);
+    transform: translateX(-450%) scaleX(0);
+  }
+}
+@keyframes move-9 {
+  0% {
+    opacity: 1;
+    transform: translateX(0) scaleX(3);
+  }
+  30% {
+    background: #7f26a8;
+  }
+  50% {
+    transform: translateX(-125%) scaleX(3);
+  }
+  70% {
+    background: #2b0d29;
+  }
+  100% {
+    transform: translateX(-250%) scaleX(0);
   }
 }
 @keyframes move-10 {
@@ -1803,13 +1803,13 @@ svg.filter {
     background: #7f26a8;
   }
   50% {
-    transform: translateX(-105.5%) scaleX(4);
+    transform: translateX(-109%) scaleX(4);
   }
   70% {
     background: #2b0d29;
   }
   100% {
-    transform: translateX(-211%) scaleX(0);
+    transform: translateX(-218%) scaleX(0);
   }
 }
 @keyframes move-11 {
@@ -1821,34 +1821,16 @@ svg.filter {
     background: #7f26a8;
   }
   50% {
-    transform: translateX(-104%) scaleX(2);
+    transform: translateX(-133.5%) scaleX(2);
   }
   70% {
     background: #2b0d29;
   }
   100% {
-    transform: translateX(-208%) scaleX(0);
+    transform: translateX(-267%) scaleX(0);
   }
 }
 @keyframes move-12 {
-  0% {
-    opacity: 1;
-    transform: translateX(0) scaleX(4);
-  }
-  30% {
-    background: #7f26a8;
-  }
-  50% {
-    transform: translateX(-104%) scaleX(4);
-  }
-  70% {
-    background: #2b0d29;
-  }
-  100% {
-    transform: translateX(-208%) scaleX(0);
-  }
-}
-@keyframes move-13 {
   0% {
     opacity: 1;
     transform: translateX(0) scaleX(3);
@@ -1857,16 +1839,16 @@ svg.filter {
     background: #7f26a8;
   }
   50% {
-    transform: translateX(-238.5%) scaleX(3);
+    transform: translateX(-140%) scaleX(3);
   }
   70% {
     background: #2b0d29;
   }
   100% {
-    transform: translateX(-477%) scaleX(0);
+    transform: translateX(-280%) scaleX(0);
   }
 }
-@keyframes move-14 {
+@keyframes move-13 {
   0% {
     opacity: 1;
     transform: translateX(0) scaleX(1);
@@ -1875,34 +1857,16 @@ svg.filter {
     background: #7f26a8;
   }
   50% {
-    transform: translateX(-210%) scaleX(1);
+    transform: translateX(-201%) scaleX(1);
   }
   70% {
     background: #2b0d29;
   }
   100% {
-    transform: translateX(-420%) scaleX(0);
+    transform: translateX(-402%) scaleX(0);
   }
 }
-@keyframes move-15 {
-  0% {
-    opacity: 1;
-    transform: translateX(0) scaleX(2);
-  }
-  30% {
-    background: #7f26a8;
-  }
-  50% {
-    transform: translateX(-195.5%) scaleX(2);
-  }
-  70% {
-    background: #2b0d29;
-  }
-  100% {
-    transform: translateX(-391%) scaleX(0);
-  }
-}
-@keyframes move-16 {
+@keyframes move-14 {
   0% {
     opacity: 1;
     transform: translateX(0) scaleX(3);
@@ -1911,16 +1875,34 @@ svg.filter {
     background: #7f26a8;
   }
   50% {
-    transform: translateX(-226%) scaleX(3);
+    transform: translateX(-145%) scaleX(3);
   }
   70% {
     background: #2b0d29;
   }
   100% {
-    transform: translateX(-452%) scaleX(0);
+    transform: translateX(-290%) scaleX(0);
   }
 }
-@keyframes move-17 {
+@keyframes move-15 {
+  0% {
+    opacity: 1;
+    transform: translateX(0) scaleX(4);
+  }
+  30% {
+    background: #7f26a8;
+  }
+  50% {
+    transform: translateX(-247.5%) scaleX(4);
+  }
+  70% {
+    background: #2b0d29;
+  }
+  100% {
+    transform: translateX(-495%) scaleX(0);
+  }
+}
+@keyframes move-16 {
   0% {
     opacity: 1;
     transform: translateX(0) scaleX(2);
@@ -1929,13 +1911,31 @@ svg.filter {
     background: #7f26a8;
   }
   50% {
-    transform: translateX(-213%) scaleX(2);
+    transform: translateX(-114%) scaleX(2);
   }
   70% {
     background: #2b0d29;
   }
   100% {
-    transform: translateX(-426%) scaleX(0);
+    transform: translateX(-228%) scaleX(0);
+  }
+}
+@keyframes move-17 {
+  0% {
+    opacity: 1;
+    transform: translateX(0) scaleX(4);
+  }
+  30% {
+    background: #7f26a8;
+  }
+  50% {
+    transform: translateX(-121.5%) scaleX(4);
+  }
+  70% {
+    background: #2b0d29;
+  }
+  100% {
+    transform: translateX(-243%) scaleX(0);
   }
 }
 @keyframes move-18 {
@@ -1947,13 +1947,13 @@ svg.filter {
     background: #7f26a8;
   }
   50% {
-    transform: translateX(-243.5%) scaleX(1);
+    transform: translateX(-168.5%) scaleX(1);
   }
   70% {
     background: #2b0d29;
   }
   100% {
-    transform: translateX(-487%) scaleX(0);
+    transform: translateX(-337%) scaleX(0);
   }
 }
 @keyframes move-19 {
@@ -1965,95 +1965,95 @@ svg.filter {
     background: #7f26a8;
   }
   50% {
-    transform: translateX(-162%) scaleX(2);
+    transform: translateX(-132.5%) scaleX(2);
   }
   70% {
     background: #2b0d29;
   }
   100% {
-    transform: translateX(-324%) scaleX(0);
+    transform: translateX(-265%) scaleX(0);
   }
 }
 @keyframes move-20 {
   0% {
     opacity: 1;
-    transform: translateX(0) scaleX(3);
+    transform: translateX(0) scaleX(1);
   }
   30% {
     background: #7f26a8;
   }
   50% {
-    transform: translateX(-187%) scaleX(3);
+    transform: translateX(-137.5%) scaleX(1);
   }
   70% {
     background: #2b0d29;
   }
   100% {
-    transform: translateX(-374%) scaleX(0);
+    transform: translateX(-275%) scaleX(0);
   }
 }
 @keyframes random-rotate {
   10% {
-    transform: rotate(-6deg);
+    transform: rotate(-7deg);
   }
   20% {
-    transform: rotate(5deg);
+    transform: rotate(9deg);
   }
   30% {
     transform: rotate(1deg);
   }
   40% {
-    transform: rotate(7deg);
+    transform: rotate(-4deg);
   }
   50% {
-    transform: rotate(10deg);
+    transform: rotate(9deg);
   }
   60% {
-    transform: rotate(6deg);
+    transform: rotate(-3deg);
   }
   70% {
-    transform: rotate(-6deg);
+    transform: rotate(10deg);
   }
   80% {
-    transform: rotate(-5deg);
+    transform: rotate(8deg);
   }
   90% {
-    transform: rotate(-7deg);
+    transform: rotate(-2deg);
   }
   100% {
-    transform: rotate(1deg);
+    transform: rotate(-6deg);
   }
 }
 @keyframes random-translate {
   10% {
-    transform: translateX(1%);
+    transform: translateX(5%);
   }
   20% {
-    transform: translateX(1%);
+    transform: translateX(2%);
   }
   30% {
-    transform: translateX(2%);
+    transform: translateX(-2%);
   }
   40% {
-    transform: translateX(2%);
+    transform: translateX(-1%);
   }
   50% {
-    transform: translateX(-3%);
-  }
-  60% {
-    transform: translateX(4%);
-  }
-  70% {
     transform: translateX(2%);
   }
+  60% {
+    transform: translateX(0%);
+  }
+  70% {
+    transform: translateX(4%);
+  }
   80% {
-    transform: translateX(5%);
+    transform: translateX(1%);
   }
   90% {
-    transform: translateX(5%);
+    transform: translateX(-3%);
   }
   100% {
-    transform: translateX(1%);
+    transform: translateX(0%);
   }
 }
 .section__header {
@@ -5592,6 +5592,10 @@ svg.filter {
 
 .search-page {
   padding-top: 0rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  min-height: 80vh;
+  margin-top: 20vh;
 }
 .search-page .burger div {
   background: white !important;
