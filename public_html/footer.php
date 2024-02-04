@@ -1,5 +1,5 @@
         <footer class="footer <?=(isset($darkFooter) ? "dark" : "")?>">
-            <div class="flex mobile align-center justify-space-arround margin bottom">
+            <div class="flex mobile align-center justify-center margin bottom gap double">
                 <p class="font color gray">
                     This is a non-profit project. Keep it rolling with your donation
                 </p>
@@ -26,6 +26,7 @@
                     <p>Product</p>
                     <a href="/impressum/index.php">Impressum</a>
                     <a href="/impressum/datenschutz.php">Datenschutzerklärung</a>
+                    <a href="/roller-timing/download.php">Roller Timing</a>
                     <!-- <a href="/impressum/faq.php">Faq</a> -->
                     <!-- <a href="/impressum/features.php">Features</a> -->
                 </div>

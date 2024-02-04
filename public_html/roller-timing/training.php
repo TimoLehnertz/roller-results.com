@@ -36,6 +36,7 @@ echoRandWallpaper();
 ?>
 <script>
     const triggers = <?php echo json_encode($trainingsSession, true); ?>;
+    const sessionName = `<?=erl_encodde($sessionName)?>`;
 </script>
 <style>
 .lap, .split-lap {
@@ -91,6 +92,7 @@ echoRandWallpaper();
                     <button class="btn create font size medium">Rename</button>
                 </p>
         </form>
+        <button class="btn create font size medium" onclick="download()">Download</button>
     </div>
     <div class="light section">
         <div id="viewer">
@@ -188,6 +190,39 @@ function displayLaps(laps) {
         }
         viewer.innerHTML += "</div>";
     }
+}
+
+function download() {
+    downloadCSV(triggers, );
+}
+
+function downloadCSV(session, sessionName) {
+    let csv = "Lap,Lap time(s),Split,Split distance(m),Split time(s)\n";
+    const laps = sessionToLaps(session);
+    for (const lap of laps.toReversed()) {
+        if(lap.done) {
+            csv += `${lap.index + 1},${lap.timeMs / 1000},,,\n`;
+        } else {
+            csv += `${lap.index + 1},,,,,Not finished\n`;
+        }
+        for (const splitLap of lap.splitLaps.toReversed()) {
+            csv += `${lap.index + 1},,${splitLap.splitIndex + 1},${splitLap.distance / 1000},${splitLap.splitTimeMs / 1000}\n`;
+        }
+    }
+    // Creating a Blob for having a csv file format 
+    // and passing the data with type
+    const blob = new Blob([csv], { type: 'text/csv' });
+    // Creating an object for downloading url
+    const url = window.URL.createObjectURL(blob);
+    // Creating an anchor(a) tag of HTML
+    const a = document.createElement('a');
+    // Passing the blob downloading url
+    a.setAttribute('href', url);
+    // Setting the anchor tag attribute for downloading
+    // and passing the download file name
+    a.setAttribute('download', `${parseInt(sessionName)}.csv`);
+    // Performing a download with click
+    a.click();
 }
 
 function moduloWoPercent(x, y) {
