@@ -36,8 +36,8 @@ echoRandWallpaper();
 ?>
 <script>
     const triggers = <?php echo json_encode($trainingsSession, true); ?>;
-    const sessionName = `<?=erl_encodde($sessionName)?>`;
-</script>
+    const sessionName = `<?=$sessionName?>`;
+</script> 
 <style>
 .lap, .split-lap {
     align-items: center;
