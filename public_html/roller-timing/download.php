@@ -33,7 +33,21 @@ echoRandWallpaper();
                 <br>
                 <h2>Versions</h2>
                 <div>
-                    <p class="font size big">2.0 <span class="font color light-green">(latest)</span> <a href="firmware/v2.0.zip" download>download here</a></p>
+                    <p class="font size big">2.1 <span class="font color light-green">(latest)</span> <a href="firmware/v2.1.zip" download>download</a></p>
+                    <br>
+                    <p class="font size big">Changelog</p>
+                    <br>
+                    <p><b>Improvements</b></p>
+                    <br>
+                    <ul>
+                        <li>Added timout to station LEDs of 3 seconds to increase battery life</li>
+                    </ul>
+                </div>
+                <br>
+                <hr>
+                <br>
+                <div>
+                    <p class="font size big">2.0 <a href="firmware/v2.0.zip" download>download</a></p>
                     <br>
                     <p class="font size big">Changelog</p>
                     <br>
