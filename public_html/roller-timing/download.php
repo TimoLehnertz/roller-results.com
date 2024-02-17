@@ -33,7 +33,34 @@ echoRandWallpaper();
                 <br>
                 <h2>Versions</h2>
                 <div>
-                    <p class="font size big">2.1 <span class="font color light-green">(latest)</span> <a href="firmware/v2.1.zip" download>download</a></p>
+                    <p class="font size big">3.0 <span class="font color light-green">(latest)</span> <a href="firmware/v3.0.zip" download>download</a></p>
+                    <br>
+                    <p class="font size big">Changelog</p>
+                    <br>
+                    <p><b>New Features</b></p>
+                    <br>
+                    <ul>
+                        <li>Added Parcour mode</li>
+                    </ul>
+                    <br>
+                    <p><b>Improvements</b></p>
+                    <br>
+                    <ul>
+                        <li>Improved web interface</li>
+                        <li>Added popup to warn of incompatible software versions</li>
+                    </ul>
+                    <br>
+                    <p><b>Fixes</b></p>
+                    <br>
+                    <ul>
+                        <li>Fixed Display changing to station mode after factory reset or software update</li>
+                    </ul>
+                </div>
+                <br>
+                <hr>
+                <br>
+                <div>
+                    <p class="font size big">2.1<a href="firmware/v2.1.zip" download>download</a></p>
                     <br>
                     <p class="font size big">Changelog</p>
                     <br>
