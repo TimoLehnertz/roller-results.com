@@ -801,6 +801,8 @@ if(!isset($NO_GET_API) || $NO_GET_API === false) {
         echo json_encode(getAthletesByClub($_GET["getclubAthletes"]));
     } else if(isset($_GET["getPascalPlaces"])) {
         header("Access-Control-Allow-Origin: *");
+        header("Access-Control-Allow-Headers: *");
+
         echo json_encode(getPascalMemberships());
     }
 }
