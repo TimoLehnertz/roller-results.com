@@ -1332,6 +1332,27 @@ function canIEditPerformanceRecord($idPerformanceCategory, $targetUser) {
     return true;
 }
 
+function canISeePascalPage() {
+    if(!isLoggedIn()) return false;
+    return isset($_SESSION["pascalManager"]) && $_SESSION["pascalManager"];
+}
+
+function getPascalMemberships(): array {
+    return query("SELECT * FROM TbPascalTrainers;");
+}
+
+function addPascalMembership($lat, $long, $name, $contact, $email, $phoneNumber, $website) {
+    return dbInsert("INSERT INTO TbPascalTrainers(lat, `long`, `name`, contact, email, phoneNumber, website) VALUES(?,?,?,?,?,?,?);","ddsssss", $lat, $long, $name, $contact, $email, $phoneNumber, $website);
+}
+
+function updatePascalMembership($id, $lat, $long, $name, $contact, $email, $phoneNumber, $website) {
+    dbExecute("UPDATE TbPascalTrainers SET lat = ?, `long`= ?, `name`= ?, contact = ?, email = ?, phoneNumber = ?, website = ? WHERE `id`=?;","ddsssssi", $lat, $long, $name, $contact, $email, $phoneNumber, $website, $id);
+}
+
+function deletePascalMembership($id) {
+    dbExecute("DELETE FROM TbPascalTrainers WHERE id=?","i", $id);
+}
+
 function uploadPerformanceRecord($idPerformanceCategory, $idUser, $value, $comment, $date) {
     if(!isLoggedIn()) return false;
     if(!isUserInPerformanceCategory($idPerformanceCategory, $_SESSION["iduser"])) return false;

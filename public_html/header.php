@@ -86,6 +86,13 @@ if(!$embed) { // hide header if beeing embedded
                 <li>
                     <a href="/index.php"><i class="fa-solid fa-magnifying-glass-plus"></i>Search</a>
                 </li>
+                <?php if(canISeePascalPage()) { ?>
+                <li style="margin-top: 1rem">
+                    <div style="background: #347; border-radius: 1rem; padding: 0.5rem">
+                        <a href="/pascal/index.php" style="padding-top: 0"><i class="fa fa-solid fa-map margin right"></i>Pascal map manager</a>
+                    </div>
+                </li>
+                <?php } ?>
                 <li>
                     <a href="/home/index.php"><i class="fas fa-home margin right"></i>Home</a>
                 </li>
