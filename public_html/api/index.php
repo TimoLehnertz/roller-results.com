@@ -79,6 +79,7 @@ $functions = [
     "setraceLinks" => 1,
     "setanalytics" => 1,
     "setupdateCompetition" => 1,
+    "getPascalPlaces" => 1,
 ];
 
 
@@ -796,9 +797,11 @@ if(!isset($NO_GET_API) || $NO_GET_API === false) {
         } else {
             echo "error no permission";
         }
-    }
-    else if(isset($_GET["getclubAthletes"])) {
+    } else if(isset($_GET["getclubAthletes"])) {
         echo json_encode(getAthletesByClub($_GET["getclubAthletes"]));
+    } else if(isset($_GET["getPascalPlaces"])) {
+        header("Access-Control-Allow-Origin: *");
+        echo json_encode(getPascalMemberships());
     }
 }
 

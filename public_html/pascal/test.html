@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script src='https://api.mapbox.com/mapbox-gl-js/v2.9.1/mapbox-gl.js'></script>
+  <link href='https://api.mapbox.com/mapbox-gl-js/v2.9.1/mapbox-gl.css' rel='stylesheet' />
+
+  <style>
+    #menu {
+      position: absolute;
+      background: #ffffff;
+      padding: 10px;
+      top: 1rem;
+      left: 1rem;
+      border-radius: 0.4rem;
+      font-family: 'Open Sans', sans-serif;
+    }
+
+    #map {
+      width: 100%;
+      height: 30rem;
+    }
+  </style>
+
+
+  <div id='map'></div>
+
+  <div id="menu">
+    <input id="satellite-streets-v12" type="radio" name="rtoggle" value="satellite" checked="checked">
+    <!-- See a list of Mapbox-hosted public styles at -->
+    <!-- https://docs.mapbox.com/api/maps/styles/#mapbox-styles -->
+    <label for="satellite-streets-v12">satellite streets</label>
+    <input id="light-v11" type="radio" name="rtoggle" value="light">
+    <label for="light-v11">light</label>
+    <input id="dark-v11" type="radio" name="rtoggle" value="dark">
+    <label for="dark-v11">dark</label>
+    <input id="streets-v12" type="radio" name="rtoggle" value="streets">
+    <label for="streets-v12">streets</label>
+    <input id="outdoors-v12" type="radio" name="rtoggle" value="outdoors">
+    <label for="outdoors-v12">outdoors</label>
+  </div>
+
+  <script>
+    mapboxgl.accessToken = 'pk.eyJ1IjoidGltb2xlaGVucnR6IiwiYSI6ImNsdTl3Znk5YzBkeXUyam5pam9rOXh5MzcifQ.RlcKUY4JrAw41P3KqglP-g';
+    var map = new mapboxgl.Map({
+      container: 'map',
+      style: 'mapbox://styles/mapbox/streets-v11'
+    });
+    map.addControl(new mapboxgl.NavigationControl());
+
+    const layerList = document.getElementById('menu');
+    const inputs = layerList.getElementsByTagName('input');
+
+    for (const input of inputs) {
+      input.onclick = (layer) => {
+        const layerId = layer.target.id;
+        map.setStyle('mapbox://styles/mapbox/' + layerId);
+      };
+    }
+
+    let mapLoaded = false;
+    let locationsLoaded = false;
+
+    let locations = null;
+
+    function checkIfAllIsLoaded() {
+      if (mapLoaded && locationsLoaded) {
+        addLocations();
+      }
+    }
+
+    function addLocations() {
+
+    }
+
+
+    const response = fetch("https://www.roller-results.com/api?getPascalPlaces=1");
+
+    response.then(async (res) => {
+      const body = await res.json();
+      console.log(body);
+      locations = body;
+      locationsLoaded = true;
+      checkIfAllIsLoaded();
+    })
+
+    map.on('load', () => {
+      mapLoaded = true;
+      checkIfAllIsLoaded();
+
+      map.addSource('earthquakes', {
+        type: 'geojson',
+        // Use a URL for the value for the data property.
+        data: 'https://docs.mapbox.com/mapbox-gl-js/assets/earthquakes.geojson'
+      });
+
+      map.addLayer({
+        'id': 'earthquakes-layer',
+        'type': 'circle',
+        'source': 'earthquakes',
+        'paint': {
+          'circle-radius': 4,
+          'circle-stroke-width': 2,
+          'circle-color': 'red',
+          'circle-stroke-color': 'white'
+        }
+      });
+    });
+  </script>
+
+</body>
+
+</html>
