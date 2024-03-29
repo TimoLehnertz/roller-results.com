@@ -6,7 +6,7 @@ if(!canISeePascalPage()) {
 }
 
 if(isset($_POST["update-membership"])) {
-  updatePascalMembership($_POST["id"], $_POST["lat"], $_POST["long"], $_POST["name"], $_POST["contact"], $_POST["email"], $_POST["phoneNumber"], $_POST["website"]);
+  updatePascalMembership($_POST["id"], $_POST["lat"], $_POST["long"], $_POST["name"], $_POST["contact"], $_POST["email"], $_POST["phoneNumber"], $_POST["website"], $_POST["level"]);
   header("location: /pascal#".$_POST["id"]);
   return;
 }
@@ -18,7 +18,7 @@ if(isset($_POST["delete-membership"])) {
 }
 
 if(isset($_POST["add-membership"])) {
-  $id = addPascalMembership($_POST["lat"], $_POST["long"], $_POST["name"], $_POST["contact"], $_POST["email"], $_POST["phoneNumber"], $_POST["website"]);
+  $id = addPascalMembership($_POST["lat"], $_POST["long"], $_POST["name"], $_POST["contact"], $_POST["email"], $_POST["phoneNumber"], $_POST["website"], $_POST["level"]);
   header("location: /pascal#".$id);
   return;
 }
@@ -41,6 +41,16 @@ if(isLoggedIn()) {
         <br>
         <form action="#" method="POST" class='form' style="max-width: 30rem">
           <label for='name'>Name</label><input required id='name' type='text' name='name' placeholder="Name">
+          <br>
+          <br>
+          <label for="level" class="margin right">Level</label>
+          <select name="level" id="level">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+          </select>
+          <br>
+          <br>
           <label for='contact'>Contact</label><input id='contact' type='text' name='contact' placeholder="Contact">
           <label for='email'>Email</label><input id='email' type='email' name='email' placeholder="Email">
           <label for='phoneNumber'>Phone number</label><input id='phoneNumber' type='text' name='phoneNumber' placeholder="Phone number">
@@ -79,6 +89,11 @@ if(isLoggedIn()) {
             $id = $membership["id"];
               echo "<p>#$id</p><br>";
               echo "<input type='number' value='$id' style='display: none;' name='id'>";
+              echo "<label for='$id-level' class='m,margin right'>Level</label><select id='$id-level' name='level'>";
+              echo "<option ".($membership['level'] == 1 ? 'selected="selected"' : '')." value='1'>1</option>";
+              echo "<option ".($membership['level'] == 2 ? 'selected="selected"' : '')." value='2'>2</option>";
+              echo "<option ".($membership['level'] == 3 ? 'selected="selected"' : '')." value='3'>3</option>";
+              echo "</select><br><br>";
               foreach ($membershipData as $key => $value) {
                 echo "<label for='$id-$key'>$key</label>";
                 echo "<input id='$id-$key' name='$key' placeholder='$key' value='$value' maxlength='200'>";

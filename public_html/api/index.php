@@ -1361,12 +1361,12 @@ function getPascalMemberships(): array {
     return query("SELECT * FROM TbPascalTrainers;");
 }
 
-function addPascalMembership($lat, $long, $name, $contact, $email, $phoneNumber, $website) {
-    return dbInsert("INSERT INTO TbPascalTrainers(lat, `long`, `name`, contact, email, phoneNumber, website) VALUES(?,?,?,?,?,?,?);","ddsssss", $lat, $long, $name, $contact, $email, $phoneNumber, $website);
+function addPascalMembership($lat, $long, $name, $contact, $email, $phoneNumber, $website, $level) {
+    return dbInsert("INSERT INTO TbPascalTrainers(lat, `long`, `name`, contact, email, phoneNumber, website, `level`) VALUES(?,?,?,?,?,?,?,?);","ddsssssi", $lat, $long, $name, $contact, $email, $phoneNumber, $website, $level);
 }
 
-function updatePascalMembership($id, $lat, $long, $name, $contact, $email, $phoneNumber, $website) {
-    dbExecute("UPDATE TbPascalTrainers SET lat = ?, `long`= ?, `name`= ?, contact = ?, email = ?, phoneNumber = ?, website = ? WHERE `id`=?;","ddsssssi", $lat, $long, $name, $contact, $email, $phoneNumber, $website, $id);
+function updatePascalMembership($id, $lat, $long, $name, $contact, $email, $phoneNumber, $website, $level) {
+    dbExecute("UPDATE TbPascalTrainers SET lat = ?, `long`= ?, `name`= ?, contact = ?, email = ?, phoneNumber = ?, website = ?, level = ? WHERE `id`=?;","ddsssssii", $lat, $long, $name, $contact, $email, $phoneNumber, $website, $level, $id);
 }
 
 function deletePascalMembership($id) {
