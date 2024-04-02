@@ -810,6 +810,8 @@ if(!isset($NO_GET_API) || $NO_GET_API === false) {
           }
           echo($path);
         var_dump(file_put_contents($path."/payhip-log.txt", "\n------------------- ".date("Y-m-d H:i:s")." --------------------\n", FILE_APPEND));
+        $get = var_export($_GET, true);
+        file_put_contents($path."/payhip-log.txt", $get, FILE_APPEND);
         file_put_contents($path."/payhip-log.txt", file_get_contents('php://input'), FILE_APPEND);
     }
 }
