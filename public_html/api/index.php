@@ -809,7 +809,7 @@ if(!isset($NO_GET_API) || $NO_GET_API === false) {
             mkdir($path, 0700, true);
           }
           echo($path);
-        file_put_contents($path."/payhip-log.txt", "\n------------------- ".date("Y-m-d H:i:s")." --------------------\n", FILE_APPEND);
+        var_dump(file_put_contents($path."/payhip-log.txt", "\n------------------- ".date("Y-m-d H:i:s")." --------------------\n", FILE_APPEND));
         file_put_contents($path."/payhip-log.txt", file_get_contents('php://input'), FILE_APPEND);
     }
 }
