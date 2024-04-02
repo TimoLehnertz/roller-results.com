@@ -804,8 +804,12 @@ if(!isset($NO_GET_API) || $NO_GET_API === false) {
         echo json_encode(getPascalMemberships());
     } else if(isset($_GET["payhip-webhook"])) {
         $path = $_SERVER["DOCUMENT_ROOT"]."/../logs/payhip-log.txt";
+        if (!is_dir($path)) {
+            // dir doesn't exist, make it
+            mkdir($path);
+          }
         file_put_contents($path, "\n------------------- ".date("Y-m-d H:i:s")." --------------------\n", FILE_APPEND);
-        file_put_contents($path, file_get_contents('php://input'), FILE_APPEND);
+        file_put_contents($path, file_get_contents('php://input'), FILE_APPEND | FILE_);
     }
 }
 
