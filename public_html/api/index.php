@@ -806,7 +806,7 @@ if(!isset($NO_GET_API) || $NO_GET_API === false) {
         $path = $_SERVER["DOCUMENT_ROOT"]."/../logs";
         if (!file_exists($path)) {
             // dir doesn't exist, make it
-            echo mkdir($path);
+            var_dump(mkdir($path));
             echo "mkdir ";
           }
         echo $path;
