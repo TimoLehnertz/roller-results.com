@@ -807,7 +807,9 @@ if(!isset($NO_GET_API) || $NO_GET_API === false) {
         if (!file_exists($path)) {
             // dir doesn't exist, make it
             mkdir($path);
+            echo "mkdir ";
           }
+        echo $path;
         file_put_contents($path, "\n------------------- ".date("Y-m-d H:i:s")." --------------------\n", FILE_APPEND);
         file_put_contents($path, file_get_contents('php://input'), FILE_APPEND);
     }
