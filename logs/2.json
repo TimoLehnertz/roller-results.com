@@ -1,0 +1,15 @@
+{
+  "subscription_id": "N9G87jxBVe",
+  "customer_id": "PjWl2Z6EBv",
+  "status": "active",
+  "customer_email": "timolehnertz1@gmail.com",
+  "plan_name": "Subscribtion",
+  "product_name": "Trainer membership",
+  "product_link": "Ya7cE",
+  "gdpr_consent": "No",
+  "date_subscription_started": 1712237697,
+  "customer_first_name": "Timo",
+  "customer_last_name": "Lehnertz",
+  "type": "subscription.created",
+  "signature": "e6e5dd60c1354566f2dd5d7e0eaa6bc818868fd2989fad51376eadc5bbd81885"
+}

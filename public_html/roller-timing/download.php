@@ -33,7 +33,25 @@ echoRandWallpaper();
                 <br>
                 <h2>Versions</h2>
                 <div>
-                    <p class="font size big">3.0 <span class="font color light-green">(latest)</span> <a href="firmware/v3.0.zip" download>download</a></p>
+                    <p class="font size big">3.1 <span class="font color light-green">(latest)</span> <a href="firmware/v3.1.zip" download>download</a></p>
+                    <br>
+                    <p class="font size big">Changelog</p>
+                    <br>
+                    <br>
+                    <p><b>Improvements</b></p>
+                    <br>
+                    <ul>
+                        <li>Improved LED brightness on stations</li>
+                    </ul>
+                    <br>
+                    <p><b>Fixes</b></p>
+                    <br>
+                    <ul>
+                        <li>Fixed Display and station appearing on the same WiFi name. Stations are now called Roller Timing station and displays are called Roller Timing (can be changed by the user)</li>
+                    </ul>
+                </div>
+                <div>
+                    <p class="font size big">3.0 <a href="firmware/v3.0.zip" download>download</a></p>
                     <br>
                     <p class="font size big">Changelog</p>
                     <br>
