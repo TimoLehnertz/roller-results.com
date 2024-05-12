@@ -23,7 +23,7 @@ if(isset($_POST["add-membership"])) {
   return;
 }
 
-$memberships = getPascalMemberships();
+$memberships = getPascalMembershipsWithCode();
 
 $noHeaderSearchBar = true;
 include_once "../header.php";
@@ -59,10 +59,10 @@ if(isLoggedIn()) {
           <br>
           <div class="flex gap">
             <div class="flex column">
-              <label for='lat'>Latitude</label><input required id='lat' type='number' step='0.00000001' name='lat'>
+              <label for='lat'>Latitude</label><input id='lat' type='number' step='0.00000001' name='lat'>
             </div>
             <div class="flex column" style="margin-top: 0; padding-top: 0">
-              <label for='long'>Longitude</label><input required id='long' type='number' step='0.00000001' name='long'>
+              <label for='long'>Longitude</label><input id='long' type='number' step='0.00000001' name='long'>
             </div>
           </div>
           <br>
@@ -99,10 +99,11 @@ if(isLoggedIn()) {
                 echo "<input id='$id-$key' name='$key' placeholder='$key' value='$value' maxlength='200'>";
               }
               echo "<br><br><div class='flex gap'><div class='flex column'>";
-                echo "<label for='$id-lat'>Latitude</label><input required id='$id-lat' type='number' step='0.00000001' name='lat' value='".$membership["lat"]."'>";
+              echo "<label for='$id-lat'>Latitude</label><input required id='$id-lat' type='number' step='0.00000001' name='lat' value='".$membership["lat"]."'>";
               echo "</div> <div class='flex column' style='margin-top: 0; padding-top: 0'>";
-                echo "<label for='$id-long'>Longitude</label><input required id='$id-long' type='number' step='0.00000001' name='long' value='".$membership["long"]."'>";
+              echo "<label for='$id-long'>Longitude</label><input required id='$id-long' type='number' step='0.00000001' name='long' value='".$membership["long"]."'>";
               echo "</div></div>";
+              echo "<br><p>Access code: <span class='font color orange'>".($membership['customer_id'])."</span></p>";
               echo "<br>";
               echo "<button class='btn blender alone' name='update-membership' type='submit'>Edit membership</button>";
               echo "<br>";

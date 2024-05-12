@@ -801,19 +801,75 @@ if(!isset($NO_GET_API) || $NO_GET_API === false) {
         echo json_encode(getAthletesByClub($_GET["getclubAthletes"]));
     } else if(isset($_GET["getPascalPlaces"])) {
         cors();
-        echo json_encode(getPascalMemberships());
+        echo json_encode(getPascalMembershipsForMap());
     } else if(isset($_GET["payhip-webhook"])) {
+        cors();
         $path = dirname($_SERVER["DOCUMENT_ROOT"])."/logs";
         if (!file_exists($path)) {
             // dir doesn't exist, make it
             mkdir($path, 0700, true);
           }
-          echo($path);
-        var_dump(file_put_contents($path."/payhip-log.txt", "\n------------------- ".date("Y-m-d H:i:s")." --------------------\n", FILE_APPEND));
+        //   echo($path);
+        file_put_contents($path."/payhip-log.txt", "\n------------------- ".date("Y-m-d H:i:s")." --------------------\n", FILE_APPEND);
         $get = var_export($_GET, true);
         file_put_contents($path."/payhip-log.txt", $get, FILE_APPEND);
         file_put_contents($path."/payhip-log.txt", file_get_contents('php://input'), FILE_APPEND);
+        $event = json_decode(file_get_contents('php://input'), true);
+        if($event['type'] === 'subscription.created') {
+            createPascalSubscribtion($event);
+        } else if($event['type'] === 'subscription.deleted') {
+            deletePascalSubscribtion($event);
+        }
+    } else if(isset($_GET["updatePascalMembership"])) {
+        cors();
+        if(!array_key_exists("customer_id", $_GET) || !array_key_exists("lat", $_GET) || !array_key_exists("long", $_GET) || !array_key_exists("name", $_GET) || !array_key_exists("contact", $_GET) || !array_key_exists("email", $_GET) || !array_key_exists("phoneNumber", $_GET) || !array_key_exists("website", $_GET)) {
+            echo "invalid args";
+            http_response_code(400);
+            exit;
+        }
+        $customerID = $_GET["customer_id"];
+        $lat = $_GET["lat"];
+        $long = $_GET["long"];
+        $name = $_GET["name"];
+        $contact = $_GET["contact"];
+        $email = $_GET["email"];
+        $phoneNumber = $_GET["phoneNumber"];
+        $website = $_GET["website"];
+        updatePascalMembershipByUser($customerID, $lat, $long, $name, $contact, $email, $phoneNumber, $website);
+    } else if(isset($_GET["getPascalMembership"])) {
+        cors();
+        if(!array_key_exists("customer_id", $_GET)) {
+            echo "invalid args";
+            exit();
+        }
+        $customer_id = $_GET["customer_id"];
+        echo json_encode(getPascalMembership($customer_id));
     }
+}
+
+function levelByPascalEvent($event): ?int {
+    return 2;
+}
+
+// {"subscription_id":"N9G87jxBVe","customer_id":"PjWl2Z6EBv","status":"active","customer_email":"timolehnertz1@gmail.com","plan_name":"Subscribtion","product_name":"Trainer membership","product_link":"Ya7cE","gdpr_consent":"No","date_subscription_started":1712237697,"customer_first_name":"Timo","customer_last_name":"Lehnertz","type":"subscription.created","signature":"e6e5dd60c1354566f2dd5d7e0eaa6bc818868fd2989fad51376eadc5bbd81885"}
+function createPascalSubscribtion($event) {
+    $name = $event['customer_first_name'].' '.$event['customer_last_name'];
+    $rows = query("SELECT * FROM TbPascalTrainers WHERE customer_id=?;", "s", $event["customer_id"]);
+    $level = levelByPascalEvent($event);
+    if(sizeof($rows) > 0) {
+        dbExecute("UPDATE TbPascalTrainers SET `level`=? WHERE customer_id=?;", "is", $level, $event["customer_id"]);
+    } else {
+        dbExecute("INSERT INTO TbPascalTrainers (`name`, email, `level`, customer_id) VALUES(?,?,?,?);","ssis", $name, $event['customer_email'], $level, $event["customer_id"]);
+    }
+}
+
+// {"subscription_id":"N9G87jxBVe","customer_id":"PjWl2Z6EBv","status":"canceled","customer_email":"timolehnertz1@gmail.com","plan_name":"Subscribtion","product_name":"Trainer membership","product_link":"Ya7cE","gdpr_consent":"No","date_subscription_started":1712237697,"date_subscription_deleted":1712237776,"customer_first_name":"Timo","customer_last_name":"Lehnertz","type":"subscription.deleted","signature":"e6e5dd60c1354566f2dd5d7e0eaa6bc818868fd2989fad51376eadc5bbd81885"}
+function deletePascalSubscribtion($event) {
+    $level = levelByPascalEvent($event);
+    if($level === null) {
+        return;
+    }
+    $row = dbExecute("DELETE FROM TbPascalTrainers WHERE customer_id=? AND `level`=?;", "si", $event["customer_id"], $level);
 }
 
 function cors() {
@@ -1368,12 +1424,40 @@ function canISeePascalPage() {
     return isset($_SESSION["pascalManager"]) && $_SESSION["pascalManager"];
 }
 
-function getPascalMemberships(): array {
-    return query("SELECT * FROM TbPascalTrainers;");
+function getPascalMembership($customer_id): ?array {
+    $res = query("SELECT lat, `long`, `name`, contact, email, phoneNumber, website, `level` FROM TbPascalTrainers WHERE customer_id=?;", "s", $customer_id);
+    if(count($res) === 0) {
+        return null;
+    }
+    return $res[0];
 }
 
+function getPascalMembershipsForMap(): array {
+    return query("SELECT `id`, lat, `long`, `name`, contact, email, phoneNumber, website, `level` FROM TbPascalTrainers WHERE lat != 0 && `long` != 0;");
+}
+
+function getPascalMembershipsWithCode(): array {
+    return query("SELECT `id`, lat, `long`, `name`, contact, email, phoneNumber, website, `level`, `customer_id` FROM TbPascalTrainers;");
+}
+
+function generateRandomString($length = 10) {
+    $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    $charactersLength = strlen($characters);
+    $randomString = '';
+    for ($i = 0; $i < $length; $i++) {
+        $randomString .= $characters[random_int(0, $charactersLength - 1)];
+    }
+    return $randomString;
+}
+
+
 function addPascalMembership($lat, $long, $name, $contact, $email, $phoneNumber, $website, $level) {
-    return dbInsert("INSERT INTO TbPascalTrainers(lat, `long`, `name`, contact, email, phoneNumber, website, `level`) VALUES(?,?,?,?,?,?,?,?);","ddsssssi", $lat, $long, $name, $contact, $email, $phoneNumber, $website, $level);
+    $user_id = generateRandomString(10);
+    return dbInsert("INSERT INTO TbPascalTrainers(lat, `long`, `name`, contact, email, phoneNumber, website, `level`, customer_id) VALUES(?,?,?,?,?,?,?,?,?);","ddsssssis", $lat, $long, $name, $contact, $email, $phoneNumber, $website, $level, $user_id);
+}
+
+function updatePascalMembershipByUser($customerID, $lat, $long, $name, $contact, $email, $phoneNumber, $website) {
+    dbExecute("UPDATE TbPascalTrainers SET lat = ?, `long`= ?, `name`= ?, contact = ?, email = ?, phoneNumber = ?, website = ? WHERE `customer_id`=?;","ddssssss", $lat, $long, $name, $contact, $email, $phoneNumber, $website, $customerID);
 }
 
 function updatePascalMembership($id, $lat, $long, $name, $contact, $email, $phoneNumber, $website, $level) {
