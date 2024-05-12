@@ -59,12 +59,28 @@ if(isLoggedIn()) {
           <br>
           <div class="flex gap">
             <div class="flex column">
-              <label for='lat'>Latitude</label><input id='lat' type='number' step='0.00000001' name='lat'>
+              <label for='lat'>Latitude</label><input id='lat' type='number' step='0.00000001' name='lat' value="0" onchange="checkCoords()">
             </div>
             <div class="flex column" style="margin-top: 0; padding-top: 0">
-              <label for='long'>Longitude</label><input id='long' type='number' step='0.00000001' name='long'>
+              <label for='long'>Longitude</label><input id='long' type='number' step='0.00000001' name='long' value="0" onchange="checkCoords()">
             </div>
           </div>
+          <br>
+          <script>
+            function checkCoords() {
+              const lat = document.getElementById('lat').value;
+              const long = document.getElementById('long').value;
+              if(lat == 0 || long == 0) {
+                document.getElementById('coord-notice-1').classList.remove("hidden");
+                document.getElementById('coord-notice-2').classList.add("hidden");
+              } else {
+                document.getElementById('coord-notice-1').classList.add("hidden");
+                document.getElementById('coord-notice-2').classList.remove("hidden");
+              }
+            }
+          </script>
+          <p id="coord-notice-1" class="font color light"><b>Note:</b> Will only get displayed on the map after lat and long are set by you or the user himself.</p>
+          <p id="coord-notice-2" class="hidden font color green">Will be displayed on the map</p>
           <br>
           <button class='btn blender alone' name='add-membership' type='submit'>Add membership</button>
         </form>
@@ -103,6 +119,9 @@ if(isLoggedIn()) {
               echo "</div> <div class='flex column' style='margin-top: 0; padding-top: 0'>";
               echo "<label for='$id-long'>Longitude</label><input required id='$id-long' type='number' step='0.00000001' name='long' value='".$membership["long"]."'>";
               echo "</div></div>";
+              if($membership["lat"] == 0 || $membership["long"] == 0) {
+                echo "<br><p>Will not be displayed be displayed on the map until the coordinates are set</p>";
+              }
               echo "<br><p>Access code: <span class='font color orange'>".($membership['customer_id'])."</span></p>";
               echo "<br>";
               echo "<button class='btn blender alone' name='update-membership' type='submit'>Edit membership</button>";
