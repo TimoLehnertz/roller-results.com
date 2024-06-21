@@ -1,0 +1,13 @@
+{
+    "name": "timo/roller-results.com",
+    "type": "project",
+    "authors": [
+        {
+            "name": "TimoLehnertz",
+            "email": "57093983+TimoLehnertz@users.noreply.github.com"
+        }
+    ],
+    "require": {
+        "timo-lehnertz/formula": "^2.0.0"
+    }
+}
