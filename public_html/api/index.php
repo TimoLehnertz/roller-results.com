@@ -1453,10 +1453,14 @@ function generateRandomString($length = 10) {
 
 function addPascalMembership($lat, $long, $name, $contact, $email, $phoneNumber, $website, $level) {
     $user_id = generateRandomString(10);
+    $long = str_replace(",", ".", $long);
+    $lat = str_replace(",", ".", $lat);
     return dbInsert("INSERT INTO TbPascalTrainers(lat, `long`, `name`, contact, email, phoneNumber, website, `level`, customer_id) VALUES(?,?,?,?,?,?,?,?,?);","ddsssssis", $lat, $long, $name, $contact, $email, $phoneNumber, $website, $level, $user_id);
 }
 
 function updatePascalMembershipByUser($customerID, $lat, $long, $name, $contact, $email, $phoneNumber, $website) {
+    $long = str_replace(",", ".", $long);
+    $lat = str_replace(",", ".", $lat);
     dbExecute("UPDATE TbPascalTrainers SET lat = ?, `long`= ?, `name`= ?, contact = ?, email = ?, phoneNumber = ?, website = ? WHERE `customer_id`=?;","ddssssss", $lat, $long, $name, $contact, $email, $phoneNumber, $website, $customerID);
 }
 
